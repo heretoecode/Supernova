@@ -1013,3 +1013,5 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   header. Decision pending (0.156 P5 and RULES §11 currently say "replace, never stack").
 - **Decided (owner, 13 Nov 2026):** lists opened from a panel **sit on top of it**, the panel behind darkened and pushed
   back (`player/28` bottom), for Subtitle track, Audio track and Download subtitles alike; no Back row, no header.
+- **Re-tick finished (owner, 13 Nov 2026):** Customise Home and Edit Page move into the Home and library-page redesigns,
+  where those panels live. Next: the Settings, Home and library-page redesigns.
