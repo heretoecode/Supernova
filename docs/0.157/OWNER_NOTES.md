@@ -1020,3 +1020,13 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   items), stacking (lists sit on top). Only the Details hero tagline was never closed (see below).
 - **Decided (owner, 13 Nov 2026): no tagline on any hero** (Home or Details); every hero uses the two-line description.
   Search, Files, Details, Preparing playback, the player HUD and Playback Settings are fully settled as designs.
+
+## 32. Library pages — first pass (owner, 13 Nov 2026; mock-ups `library-pages/01`–`03`)
+- **One design and one piece of code for Movies, TV Shows and the owner's own page;** only which titles differ (owner).
+  Order agreed: library pages next, then Home; Settings last.
+- First pass drawn with Claude's recommendations, for the owner to pick apart: toolbar with the Watched filter chips,
+  Sort, Genres and Edit page, the page's facts on the right (the big statistics row folded away); 7 posters a row,
+  title and a second line under each (year · length, or time left when started), progress bar on started titles, a
+  tick on watched ones; long-press menu beside the poster (Play; Mark as watched, Fix match, Remove from library;
+  Delete file); Edit page as one master-list panel (Page name, Shows, Genres, Years, Sources, Opens sorted by, Delete
+  page), with Movies / TV Shows hiding what does not apply.
