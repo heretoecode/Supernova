@@ -1082,3 +1082,6 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   list (live: only ranges that hold titles; Left/Right steps From / To), Streaming services list; the whole Sort menu
   (General, Trakt, Files, Series groups; Year sort gone). Studio list: search only above 12 items. Your Library: not
   focusable, Down / Up scroll; heading gaps measured equal. Mock-ups `library-pages/22`–`25`.
+- **Owner on library v7 (13 Nov 2026, part 1; rest to follow):** Filters menu, Genre list, Years list approved; three-line
+  caption liked in principle but looks busy. Open: "Resume" plus progress bar duplicate (Claude: drop the word, line two
+  reads "S1 E2 · 31 min left"); caption colours (Claude: only the title bright, lines two and three both soft, to calm it).
