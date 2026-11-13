@@ -247,6 +247,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - A title with no file opens its service's app, never a Supernova page (§3).
 
 ## 19. Player
+- **Title logo:** wherever a title is shown large (Home and Details heroes, the compact Details logo, Preparing playback,
+  the player) it is the title's **official logo artwork**; when a title has none, its name in plain text. Mock-ups draw
+  the name as a stand-in.
 - Title block in one fixed place, the same on Preparing playback and the HUD; the age rating alone top left for the
   first 6–8 s; logo and episode line appear with it, then fade together (REVIEW_0156, §23.11).
 - Track names in plain words plus pills (`track-names/01`, `02`).

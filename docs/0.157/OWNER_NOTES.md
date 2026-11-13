@@ -986,3 +986,5 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   block: logo; title line; metadata row **without** the badge (year · length · genres); then **the age rating badge with
   its reasons on its own line**, always shown with the block (no fade). Preparing playback: the same block, spinner and
   "Preparing playback…" three times further below. Mock-ups `player/26`, `27`.
+- **Player re-tick done (owner, 13 Nov 2026).** v11 title block approved; Details keeps its own badge-first metadata row
+  (owner: be flexible where needed). The large title is the official logo artwork everywhere (plain name if none).
