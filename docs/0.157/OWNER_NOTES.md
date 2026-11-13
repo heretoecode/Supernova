@@ -1123,3 +1123,8 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   on Move, Down again on the next row's first card, Right from Move to Hide. Customise Home: **Your Rows above
   Built-In Rows**. Add a row opens on top (`home-v2/04`): Row name, Includes, Genres, Years, Minimum rating, Add new
   titles automatically; Sort by, Order; Delete row — the same rows as Customise page.
+- **Add a row, corrected from the code (13 Nov 2026):** today's options are Row name, Icon (Automatic or a genre icon),
+  Content type, Genres + Match, Sort (Date added / Title / Year), Order, Maximum items (5–30), Automatically include new
+  matching media, Delete row. Redrawn (`home-v2/05`) with Icon and Maximum items added (10 · 15 · 20 · 25 · 30),
+  "Add new titles automatically" beside Maximum items. Years and Minimum rating are Claude's additions (match Customise
+  page): owner to decide. Genres / Years use the library-page lists.
