@@ -1035,3 +1035,20 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   ranges: this year, last 5 years, decades), Minimum rating (stepper), Original language, Studio / Network; How To Show
   It — Show, Sort by (Title · Release date · Date added), Order, View (Grid / List); This Page — Save changes, Delete page.
   Pictures 1–2 redrawn on the owner's own page (`04`, `05`).
+- **Library pages, owner 13 Nov 2026:** keep **list view** (rarely used, but needed to manage storage: size per episode
+  shows which titles free the most space); redraw it. Grid captions show the value being sorted by (e.g. "1.0 GB per
+  episode · 9 episodes"). Stats kept: number of titles, total size, on this Shield / on the network; dropped: library
+  status (the Files dot covers it), last updated, unwatched / in progress / added this month (the Watched filter covers
+  them). **"Edit page" renamed "Customise page"** (matches Customise Home). **Customise page floats** like Playback
+  Settings (rule for every side panel). The panel sets how the page **opens** (Opens showing / Opens sorted by); the
+  toolbar changes it for now. **No Save button:** changes apply live, Back closes.
+- **What the toolbar has today (from the code, for the detailed pass):**
+  - Buttons: Filters ▾ · Sort: <choice> ▾ · Order (A → Z / Z → A, Newest / Oldest first, Ascending / Descending,
+    Highest / Lowest ranked first) · Grid View / List View · Columns (list view only).
+  - Filters: Genre · Year · Streaming Service (pick several) · Clear Filters.
+  - Sort: Date Added · Title · Release Date (TV: Air Date; own page: Release / Air Date) · Trakt Trending · Trakt Popular
+    (shown "unavailable" without Trakt) · then every available column except Title and Date added: Year, Seasons,
+    Episodes, Runtime, Resolution, HDR, Audio, File size, Avg. ep. size (TV), Modified, Codec, Bitrate, Container, Path.
+  - Columns (list view): Title (always shown), Year, Seasons, Episodes, Runtime, Resolution, HDR, Audio, File size,
+    Avg. ep. size, Date added, Modified, Codec, Bitrate, Container, Path; reorder with ◀ ▶; Reset to default; Done.
+  - Known overlaps to resolve: Year sort vs Release Date (decided: Year goes); "Done" in Columns (rule: no Done).

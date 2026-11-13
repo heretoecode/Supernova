@@ -185,7 +185,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   is darkened and pushed back slightly (about 45% brightness, 96% size) with the row you came from still visible; the
   list in front is offset a little down and left, with the faint edge and a deeper shadow; no title or back header;
   Back closes it and returns to that row. Mock-up `player/28` (bottom).
-- Panels are sized to their content.
+- Panels are sized to their content. **Every side panel floats** (owner, 13 Nov): rounded corners, a gap from the
+  screen edges, sized to its content and scrolling inside, like Playback Settings (Customise page, Artwork, …).
 
 ## 12. Buttons
 - Rest: plain (no grey box that could read as focus) — on artwork, a dark box at about 72% so text stays readable.
