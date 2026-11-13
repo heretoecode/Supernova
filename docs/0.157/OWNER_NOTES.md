@@ -1052,3 +1052,5 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   - Columns (list view): Title (always shown), Year, Seasons, Episodes, Runtime, Resolution, HDR, Audio, File size,
     Avg. ep. size, Date added, Modified, Codec, Bitrate, Container, Path; reorder with ◀ ▶; Reset to default; Done.
   - Known overlaps to resolve: Year sort vs Release Date (decided: Year goes); "Done" in Columns (rule: no Done).
+- **Panel opacity 95% (owner, 13 Nov 2026):** every pop-up, menu and panel, one shared value (90% let posters ghost
+  through). Library mock-ups v3: `library-pages/07`–`10`.

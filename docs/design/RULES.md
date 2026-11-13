@@ -178,7 +178,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   opens it) (§4, §19).
 
 ## 11. Panels and pop-ups
-- Pop-ups, menus and side panels: `#16181C` at **90%** opacity, no outline, soft shadow; one shared value (§4).
+- Pop-ups, menus and side panels: `#16181C` at **95%** opacity (owner, 13 Nov; was 90%, too see-through over posters),
+  no outline, soft shadow; one shared value (§4).
   On the flat charcoal page a menu gets a faint edge so it separates (Files v8).
 - Focused item: filled white, black text and icon (section 3).
 - **A list opened from a panel sits on top of it** (owner, 13 Nov; replaces "never stack", 0.156 P5): the panel behind
