@@ -220,7 +220,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Focus starts on T** (the most common first letter of film and series titles).
 - **Focus stays on the key you pressed,** however fast you type. Results arriving or the page refreshing never take
   it away (Fix match bug, §27).
-- Shown on the page, not in a side panel. On Search the field and keyboard are on the left, results on the right; the
+- Shown on the page, not in a side panel. **Opened from a menu or side panel** (e.g. a choice list's search), it sits
+  beside that panel, never covering it, in a panel of its own with the same background (owner, 13 Nov). On Search the field and keyboard are on the left, results on the right; the
   keyboard stays visible.
 - Typing is forgiving wherever it searches: capitals, punctuation and a leading "The" ignored, one-letter typos,
   original titles, TMDB / IMDb / TVDB / Trakt numbers (Files v11).

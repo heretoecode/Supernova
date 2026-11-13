@@ -1001,3 +1001,5 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
 - **Search (proposed, on long lists only: countries, languages):** a search row at the top; OK opens the shared keyboard
   on the page to the left of the panel (never covering it); the typed text shows in the search row and the list filters
   live under "Results". Awaiting the owner.
+- **Choice list, owner 13 Nov:** service ticking, glide and focus approved. A keyboard opened from a menu or panel gets
+  the same panel background (`choice-list/04`); on full pages it stays on the page.
