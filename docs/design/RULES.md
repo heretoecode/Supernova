@@ -180,7 +180,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ## 11. Panels and pop-ups
 - Pop-ups, menus and side panels: `#16181C` at **95%** opacity (owner, 13 Nov; was 90%, too see-through over posters),
   no outline, soft shadow; one shared value (§4).
-  On the flat charcoal page a menu gets a faint edge so it separates (Files v8).
+  **Over a page** (flat charcoal) every menu and panel gets a faint edge so it separates; **over video** none
+  (Playback Settings) (Files v8; owner, 13 Nov).
 - Focused item: filled white, black text and icon (section 3).
 - **A list opened from a panel sits on top of it** (owner, 13 Nov; replaces "never stack", 0.156 P5): the panel behind
   is darkened and pushed back slightly (about 45% brightness, 96% size) with the row you came from still visible; the
@@ -205,7 +206,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ## 14. Artwork, cards and heroes
 - **Every piece of artwork has one thin white line on its edge (about 60%) with a soft inner shade** — heroes, row
   cards, Details tab cards, the player strip, library posters, Search thumbnails (§18 v17).
-- Focused artwork grows and gets the solid thick white ring (section 3).
+- Focused artwork grows and gets the solid thick white ring (section 3). **Library posters:** the poster and its two
+  lines underneath are one card; the whole card grows and the ring goes round both (owner, 13 Nov).
 - **One row card size:** 16:9, 400×225 (focused 440×248), 24 px gap, a sliver of the next card at the edge (§9).
   Title and details inside the picture on a shade; no blue caption bars. Library posters keep one portrait size on
   every library page, with a plain white title and grey line underneath.

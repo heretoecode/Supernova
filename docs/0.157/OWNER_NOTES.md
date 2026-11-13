@@ -1054,3 +1054,8 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   - Known overlaps to resolve: Year sort vs Release Date (decided: Year goes); "Done" in Columns (rule: no Done).
 - **Panel opacity 95% (owner, 13 Nov 2026):** every pop-up, menu and panel, one shared value (90% let posters ghost
   through). Library mock-ups v3: `library-pages/07`–`10`.
+- **Library pages v4 / Files v17 (owner, 13 Nov 2026):** stats leave the library pages entirely; a new fifth Files tab
+  **Statistics** (your whole library, then one row per library page named as the page is, with on this Shield / on the
+  network). The focused poster and its two lines are one card (grows, ring round both). Menus and panels over a page get
+  the faint edge (Customise page); over video none. 95% everywhere is fine (layout and decisions unchanged).
+  Mock-ups `library-pages/11`–`13`, `network-files-tabs/42`.
