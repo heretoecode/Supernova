@@ -275,12 +275,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ---
 
 ## Open questions (to settle when the page comes up)
-- **Details' section titles** (Reception, Key information…) still use the old short white underline (`v15-b`). Under
-  section 5 they would get an icon and the heading spacing instead. Settle in re-tick step 3 (Details).
-- **Home row text:** inside the picture (current rule) or below it — to mock up (§22).
+- **Home row text:** inside the picture (current rule) or below it — with the Home redesign.
 - **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.
-- **Separator strength on charcoal:** the Details values (24% rows / 32% columns) were tuned on Space Black; check them
-  on charcoal in step 3.
+- Settled 12–13 Nov: Details headings (icons, no underline) and Details lines (faint row lines, no column lines).
 
 ## Replaced rules (do not use)
 - Navy glass at 97% with a light outline for panels → 90% `#16181C`, no outline (5 Nov).

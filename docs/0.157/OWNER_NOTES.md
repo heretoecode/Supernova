@@ -1015,3 +1015,6 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   back (`player/28` bottom), for Subtitle track, Audio track and Download subtitles alike; no Back row, no header.
 - **Re-tick finished (owner, 13 Nov 2026):** Customise Home and Edit Page move into the Home and library-page redesigns,
   where those panels live. Next: the Settings, Home and library-page redesigns.
+- **Check (13 Nov 2026):** older "awaiting the owner" lines above are all settled by later entries: seek loading (central
+  ring, §30), All files access (yes, §23), Playback tab headings (plain list, approved), choice-list search (above 12
+  items), stacking (lists sit on top). Only the Details hero tagline was never closed (see below).
