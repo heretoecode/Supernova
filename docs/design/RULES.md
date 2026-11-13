@@ -171,6 +171,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Group headings in menus and side panels** (More menu, long-press, Playback Settings, every one): the words
   **centred on a thin line** ("——— Files & Media ———"), **Title Case** (each word capitalised), a little larger than the
   rows' second lines (28 px). Pages use icon headings and gaps (owner, 12 Nov).
+- **A single action at the foot of a panel (Delete row, Delete page, Clear filters) has no heading:** a plain line
+  sets it apart (owner, 13 Nov).
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
   such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
@@ -220,6 +222,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Hero buttons sit in a fixed place at the bottom left** of the hero, whatever the text length (owner, 12 Nov).
 - **Artwork picker by place:** Hero and rows · Library page (one backdrop for hero and rows; posters for library
   pages); no title; a side panel sliding in from the right, the hero previewing the picture you are on.
+- **Home row cards: caption box under the 16:9 picture** (title, one line, inset progress bar), as library posters
+  (owner, 13 Nov); nothing printed over the artwork. The player strip keeps its text inside.
 - Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
 
 ## 14b. Details pages (all four kinds)

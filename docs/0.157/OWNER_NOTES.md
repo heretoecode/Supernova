@@ -1128,3 +1128,6 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   matching media, Delete row. Redrawn (`home-v2/05`) with Icon and Maximum items added (10 · 15 · 20 · 25 · 30),
   "Add new titles automatically" beside Maximum items. Years and Minimum rating are Claude's additions (match Customise
   page): owner to decide. Genres / Years use the library-page lists.
+- **Home (owner, 13 Nov 2026):** caption box under Home row cards **approved**. "This Row" / "This Page" headings dropped:
+  a plain line sets Delete row / Delete page apart (rule). Icon picker as a grid of icons with names, tick on the current
+  one, no box on tiles at rest (`home-v2/06`, `07`).
