@@ -1007,3 +1007,7 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   the list; the keyboard in its matching panel beside it (approved). The design replaces every long list (languages,
   country, services, encodings, the player's track lists). Lists opened from a row have **no title / back header**
   (removes the "‹ Subtitle Track" header and its odd focus, 0.156 P6). Rules in `docs/design/RULES.md` §9.
+- **Player sub-lists (owner, 13 Nov 2026):** "None" is removed from Subtitle track (the Subtitles switch turns them off;
+  picking a track turns them on). Two ways shown for comparison (`player/28`): a list replacing the panel with a Back
+  row at the top, or a list sitting on top of Playback Settings with the panel behind darkened and pushed back, no back
+  header. Decision pending (0.156 P5 and RULES §11 currently say "replace, never stack").
