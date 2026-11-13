@@ -1069,3 +1069,10 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
     beside them; extra stats: % watched, hours to watch everything, % in 4K, % in HDR, added this month, and "Most space
     per episode".
   - Owner's earlier critique of Edit Page (walkthrough §04) checked and carried into the redesign (list in the reply).
+- **Library pages v6 / Files v19 (owner, 13 Nov 2026):** ring exactly on the card edge (no gap); toolbar keeps today's
+  order Filters · Sort · Order · List view, Customise page locked right; toolbar focus is the white box (a button whose
+  menu is open returns to rest). Filters: Watched as a row like Genre / Year / Streaming services, Clear filters at the
+  bottom in its own group. Customise page fits without scrolling; Match folded into the Genres list (Match: Any · All at
+  its top); every list shows only values present in the library, with counts; Years opens Quick choices plus From / To.
+  Your Library: big figures replaced by a Total Library section in the same row style. Mock-ups
+  `library-pages/17`–`21`, `network-files-tabs/44`. Rule added: mock-ups show the whole panel / page.

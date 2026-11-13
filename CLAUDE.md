@@ -32,6 +32,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   inside the designs. Panels sized to their content. Up to about five inline choices; more go in a side panel.
 - **Mock-up frame (owner, 12 Nov 2026):** every mock-up picture gets a thin light-grey frame round its edge (not part of
   the design) so its edge shows on a dark screen.
+- **Whole picture (owner, 13 Nov 2026):** a mock-up shows the whole panel or page top to bottom, made as tall as needed,
+  even if the real screen scrolls: the owner can't critique what they can't see.
 - **Fewest mock-ups (owner, 12 Nov 2026; mindful of usage):** one picture covers as many things to assess as can be
   seen together on one screen; never one picture per item. Applying agreed rules (`docs/design/RULES.md`) to an
   approved page needs no mock-up (at most one sample screen); only genuinely new pieces are drawn. With each picture,
