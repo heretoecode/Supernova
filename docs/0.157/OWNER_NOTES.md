@@ -1018,3 +1018,5 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
 - **Check (13 Nov 2026):** older "awaiting the owner" lines above are all settled by later entries: seek loading (central
   ring, §30), All files access (yes, §23), Playback tab headings (plain list, approved), choice-list search (above 12
   items), stacking (lists sit on top). Only the Details hero tagline was never closed (see below).
+- **Decided (owner, 13 Nov 2026): no tagline on any hero** (Home or Details); every hero uses the two-line description.
+  Search, Files, Details, Preparing playback, the player HUD and Playback Settings are fully settled as designs.

@@ -209,7 +209,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   every library page, with a plain white title and grey line underneath.
 - **Heroes:** Home and Details the same size and place, 1776×820, the next row or tabs peeking below; Home has
   carousel dots. Going from a Home hero into Details the card stays exactly where it is (REVIEW_0156 Home).
-- Hero text: description **two lines** on Home and Details; More › Full description opens a pop-up sized to the
+- Hero text: **no tagline anywhere** (owner, 13 Nov); description **two lines** on Home and Details; More › Full description opens a pop-up sized to the
   text, mirroring the hero: title, title line (seasons/episodes), then the text; no icon.
 - **Hero buttons sit in a fixed place at the bottom left** of the hero, whatever the text length (owner, 12 Nov).
 - **Artwork picker by place:** Hero and rows · Library page (one backdrop for hero and rows; posters for library
