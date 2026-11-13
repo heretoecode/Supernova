@@ -1131,3 +1131,7 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
 - **Home (owner, 13 Nov 2026):** caption box under Home row cards **approved**. "This Row" / "This Page" headings dropped:
   a plain line sets Delete row / Delete page apart (rule). Icon picker as a grid of icons with names, tick on the current
   one, no box on tiles at rest (`home-v2/06`, `07`).
+- **Home approved (owner, 13 Nov 2026):** bottom of Add a row (plain line before Delete row) and the icon picker approved;
+  everything else not answered is approved (Years and Minimum rating on rows kept; Maximum items 10–30). Automatic icon
+  (from the code): the first genre chosen for the row gives its icon; with no genre, a plain list icon. **Home done.**
+  Next: Settings.
