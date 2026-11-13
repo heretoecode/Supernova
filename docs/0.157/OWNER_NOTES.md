@@ -1085,3 +1085,9 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
 - **Owner on library v7 (13 Nov 2026, part 1; rest to follow):** Filters menu, Genre list, Years list approved; three-line
   caption liked in principle but looks busy. Open: "Resume" plus progress bar duplicate (Claude: drop the word, line two
   reads "S1 E2 · 31 min left"); caption colours (Claude: only the title bright, lines two and three both soft, to calm it).
+- **Diagnostics 13 Nov 20:48 (owner):** screen jump on TV Shows at 20:47 explained — a Put.io scan every minute
+  rebuilds the library page although nothing changed (417 ms stall). Fixes in `docs/0.157/DIAGNOSTICS_2026-11-13.md`.
+- **Decided (owner, 13 Nov 2026):** Trakt sorts hidden when Trakt is not connected, independent of the Home Trending /
+  Popular switches; Seasons / Episodes sort by count (Most / Fewest first), Series group hidden on Movies, movies last on
+  mixed pages; Sort menu (grouped) has no search row — search applies to choice lists only. Library captions: drop the
+  word "Resume" (bar shows it), only the title bright.

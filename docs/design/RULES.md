@@ -157,7 +157,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **One choice:** OK ticks and closes. **Several:** OK ticks / unticks, the list stays open; ticked items sit under
   **Selected, A–Z**; a ticked item glides up into its place (about ¼ s), an unticked one glides back; focus stays where
   you were (next row).
-- **Search appears automatically when a list has more than 12 items** (more than one screen), at the top, worded for
+- **Search appears automatically when a choice list has more than 12 items** (grouped menus such as Sort excepted) (more than one screen), at the top, worded for
   the list ("Search countries", "Search services"); a list that grows past 12 (services come and go) gains it, one that
   shrinks loses it. OK opens the shared keyboard in its own matching panel beside the list; results filter live.
 - **No title or back header** on a list opened from a row (the row already named it): no "‹ Subtitle Track" header;
