@@ -181,7 +181,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Pop-ups, menus and side panels: `#16181C` at **90%** opacity, no outline, soft shadow; one shared value (§4).
   On the flat charcoal page a menu gets a faint edge so it separates (Files v8).
 - Focused item: filled white, black text and icon (section 3).
-- Never stack one panel on another: a row that opens a list replaces the panel, Back returns (P5).
+- **A list opened from a panel sits on top of it** (owner, 13 Nov; replaces "never stack", 0.156 P5): the panel behind
+  is darkened and pushed back slightly (about 45% brightness, 96% size) with the row you came from still visible; the
+  list in front is offset a little down and left, with the faint edge and a deeper shadow; no title or back header;
+  Back closes it and returns to that row. Mock-up `player/28` (bottom).
 - Panels are sized to their content.
 
 ## 12. Buttons

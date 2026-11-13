@@ -1011,3 +1011,5 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   picking a track turns them on). Two ways shown for comparison (`player/28`): a list replacing the panel with a Back
   row at the top, or a list sitting on top of Playback Settings with the panel behind darkened and pushed back, no back
   header. Decision pending (0.156 P5 and RULES §11 currently say "replace, never stack").
+- **Decided (owner, 13 Nov 2026):** lists opened from a panel **sit on top of it**, the panel behind darkened and pushed
+  back (`player/28` bottom), for Subtitle track, Audio track and Download subtitles alike; no Back row, no header.
