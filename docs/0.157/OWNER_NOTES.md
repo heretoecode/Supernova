@@ -988,3 +988,16 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   "Preparing playback…" three times further below. Mock-ups `player/26`, `27`.
 - **Player re-tick done (owner, 13 Nov 2026).** v11 title block approved; Details keeps its own badge-first metadata row
   (owner: be flexible where needed). The large title is the official logo artwork everywhere (plain name if none).
+
+## 31. The shared choice list (owner, 13 Nov 2026; mock-ups `choice-list/01`–`03`)
+- One design for every long list (languages, countries, encodings, services; the player's track lists keep their
+  approved name + pills form). White tick on the right; no Cancel / Done; Back closes; choices take effect at once.
+- **Width:** as wide as the longest item in the whole list plus the standard padding (menu rule); approved.
+- **One choice** (Country, Details language): OK ticks and closes. **Several** (Your services, download languages):
+  OK ticks / unticks and the list stays open; ticked items sit under **Selected in A–Z order**; a newly ticked item
+  glides up into its alphabetical place (about a quarter of a second), an unticked one glides back down to All; focus
+  stays where you were (moves to the next row) so you can keep ticking.
+- Group headings Suggested / Selected / All / Results in the centred Title Case menu style.
+- **Search (proposed, on long lists only: countries, languages):** a search row at the top; OK opens the shared keyboard
+  on the page to the left of the panel (never covering it); the typed text shows in the search row and the list filters
+  live under "Results". Awaiting the owner.
