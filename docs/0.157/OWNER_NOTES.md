@@ -982,3 +982,7 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   row centred between the tab line and the bottom edge; Playback tab as **one plain list** (no Picture / Playback
   headings) plus the For This Series save row "Use this format and skipping for all of Marshals". Rule added: nothing
   vanishes from the middle of a line. Mock-ups `player/23`–`25`.
+- **Player v11 (owner, 13 Nov 2026):** Playback tab (plain list + save row) and the centred chapter row approved. Title
+  block: logo; title line; metadata row **without** the badge (year · length · genres); then **the age rating badge with
+  its reasons on its own line**, always shown with the block (no fade). Preparing playback: the same block, spinner and
+  "Preparing playback…" three times further below. Mock-ups `player/26`, `27`.
