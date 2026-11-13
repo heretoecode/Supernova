@@ -174,3 +174,15 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
 - Panels drawn (`settings-v2/06`): OpenSubtitles (account, downloads left today, Change account, Sign out), Font
   (built in, then from your folder, each previewed), Text encoding (Automatic, then by language with flags). Custom fonts
   folder uses the shared folder picker (`network-files-tabs/40`).
+- **Owner, 13 Nov (batch 1, round 2):** Open videos in another player **stays in Playback › General** (Advanced is not
+  a bucket); it opens **Supernova's own "Play With" list** (apps that can play video, "Always use this choice") instead of
+  Android's. Skipping keeps **four** choices, mapped from 0.156: Play normally → **Off**; Show skip (5 s) → **Show
+  button**; Auto skip → **Skip**; Smart → **Skip when binge-watching** (skips automatically when you've just come from the
+  previous episode, otherwise shows the button). Experimental label → RULES. Default Appearance matches the player's
+  Subtitle Appearance one for one (size, colour, position, outline, background, opacity); Font, fonts folder, black bars
+  and encoding are global only. OpenSubtitles: signed out shows only Sign in; signed in shows Change account (sign in
+  as someone else — one account at a time) and Sign out; the sign-in form is username and password fields with the
+  keyboard panel beside (`settings-v2/07`).
+- **Foreign-language lines (owner's report):** with "Full subtitles…" off and English audio, Supernova picks the forced
+  track; if the file has none, foreign lines show nothing. Fix for 0.157: when no forced track exists, fetch an
+  OpenSubtitles "foreign parts only" subtitle automatically; if none, fall back to the full track.

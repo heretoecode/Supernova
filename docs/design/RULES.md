@@ -109,6 +109,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Status pills** sit in a fixed column between the names and the buttons: plain text in a thin outline, no colour,
   all the same width, and they stay put when the row is focused (Files v4). A pill may carry an icon (Search §26:
   ▶ Resume, ✓ Watched, ○ Unwatched; the open-in-app icon for a service).
+- **Experimental label** (owner, 13 Nov): a large new feature still being proven gets a small outlined "Experimental"
+  label right after its name (Seek previews); removed once it has proven itself.
 - A pill tells you something the heading doesn't (no "In library" under "In your library").
 - The left of a row is what it is; the right is what OK does (e.g. the download icon on a subtitle, shown on the
   focused row only).
