@@ -91,6 +91,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **No blue for text or values** anywhere (§6). Single values (steppers, lists) are plain white.
 - Dates: day month year, e.g. "12 Nov 2026"; with a time "5 Nov · 14:40". Say "local time", never a place or zone.
 - Dots (·) separate facts in a line of text, never places or buttons.
+- **Nothing vanishes from the middle of a line** (owner, 13 Nov): anything temporary gets a line of its own and the
+  whole line fades, so nothing slides to close a gap.
 - **Standard wording (use it everywhere the same thing appears):**
   - Play / "Resume S1 E1 · 16 min left" (Details hero, §3). Short form on pills: "Resume S5 E3" (§26).
   - "Watched", "Unwatched" for state.

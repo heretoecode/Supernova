@@ -976,3 +976,9 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   Picture held one row) and a save row "Use this format and skipping for all of <show>"; **title block at the top left,
   level with the clock**, with the age rating's reasons beside the badge at the start (fading after 8 s) and Preparing
   playback moving to match (`player/21`, `22`).
+- **Player v10 (owner, 13 Nov 2026), proposed:** title block at the top left, level with the clock (owner wants it
+  there); the age rating's reasons on **their own line** under the metadata row, lined up under the year (no second
+  badge); the whole line fades after 8 s, nothing slides; Preparing playback the same with its spinner below; chapter
+  row centred between the tab line and the bottom edge; Playback tab as **one plain list** (no Picture / Playback
+  headings) plus the For This Series save row "Use this format and skipping for all of Marshals". Rule added: nothing
+  vanishes from the middle of a line. Mock-ups `player/23`–`25`.
