@@ -1076,3 +1076,9 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   its top); every list shows only values present in the library, with counts; Years opens Quick choices plus From / To.
   Your Library: big figures replaced by a Total Library section in the same row style. Mock-ups
   `library-pages/17`–`21`, `network-files-tabs/44`. Rule added: mock-ups show the whole panel / page.
+- **Library pages v7 (owner, 13 Nov 2026):** cards grow 8% (as today); three-line caption with the progress bar on its
+  bottom edge; order button wording follows the sort in plain words (Largest / Smallest first, A–Z, Newest first…) for
+  every sort; menus open under the button pressed (app-wide rule); Watched list, Genre list with the genre icons, Year
+  list (live: only ranges that hold titles; Left/Right steps From / To), Streaming services list; the whole Sort menu
+  (General, Trakt, Files, Series groups; Year sort gone). Studio list: search only above 12 items. Your Library: not
+  focusable, Down / Up scroll; heading gaps measured equal. Mock-ups `library-pages/22`–`25`.

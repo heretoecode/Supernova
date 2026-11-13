@@ -173,7 +173,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
   such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
-- Opens beside the item it belongs to, not in a corner (§19).
+- **Opens beside the button or item that opened it** (drops down under a toolbar button), never in a corner (§19; owner,
+  13 Nov).
 - Never offer what does nothing or makes no sense (no Restart on an unstarted film; no "More info" when OK already
   opens it) (§4, §19).
 
