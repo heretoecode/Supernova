@@ -1091,3 +1091,9 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   Popular switches; Seasons / Episodes sort by count (Most / Fewest first), Series group hidden on Movies, movies last on
   mixed pages; Sort menu (grouped) has no search row — search applies to choice lists only. Library captions: drop the
   word "Resume" (bar shows it), only the title bright.
+- **Library pages v8 (13 Nov 2026), for the owner:** calmer caption (only the title bright; "S1 E2 · 31 min left", no
+  "Resume"); Columns menu under its button: Shown (ticked, in column order; Left/Right moves the focused column earlier /
+  later), Hidden (A–Z), Reset to default at the bottom; no Done, no "Title (always shown)" row (Title always shows);
+  Page name types with the keyboard in its own panel beside Customise page, the text appearing in the row itself;
+  long-press for a TV show: Resume S1 E2, Play from the start; Mark show as watched, Fix match, Remove from library;
+  Delete all episode files (with the delete warning). Mock-ups `library-pages/27`–`30`.
