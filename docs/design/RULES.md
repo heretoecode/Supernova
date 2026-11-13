@@ -113,7 +113,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - The left of a row is what it is; the right is what OK does (e.g. the download icon on a subtitle, shown on the
   focused row only).
 - The focused row shows its own buttons (up to about five); the remote's Menu button opens the same actions as a menu.
-- Title, description and switch are vertically centred on every row (§20).
+- **Everything in a row sits on the row's centre line** (owner, 13 Nov): label, value, chip, switch, arrow, tick — in
+  every row, menu and panel (§20).
 - Instant actions with an **Undo** notice instead of "are you sure?" where the action can be undone. Real deletions:
   one clear warning in Supernova's own design (§23.5).
 
@@ -250,7 +251,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - After Android ends the app it reopens on the same page with focus restored; a first launch after a reboot opens
   Home (§23.2).
 - Read-only pages (Details tab) have nothing focusable: Down/Up scroll, one more Up returns to the tabs (§1).
-- Move mode locks focus to what is being moved until OK/Back (§19).
+- **Moving things (one gesture app-wide):** OK picks the item up (it lifts, with ⌃⌄), Up/Down moves it, the page behind
+  follows live, OK or Back puts it down; focus is locked to the item meanwhile (Home rows, list-view columns) (§19).
 - Rows a left arrow appears beside: move the whole row right to make room; never just the first card (§19).
 
 ## 17. Motion

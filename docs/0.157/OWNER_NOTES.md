@@ -1097,3 +1097,7 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   Page name types with the keyboard in its own panel beside Customise page, the text appearing in the row itself;
   long-press for a TV show: Resume S1 E2, Play from the start; Mark show as watched, Fix match, Remove from library;
   Delete all episode files (with the delete warning). Mock-ups `library-pages/27`–`30`.
+- **Library pages v9 (owner, 13 Nov 2026):** caption line three follows the sort (confirmed); progress bar inset inside the
+  caption so it never touches the focus ring (`31`); no limit on columns (Title keeps the most room, long values end in
+  "…"); columns move with the app-wide move gesture (OK picks up, Up/Down, live table) (`33`); How To Show It reordered
+  Show · View · Sort by · Order; everything in a row on its centre line (rule) (`32`). TV show long-press approved.
