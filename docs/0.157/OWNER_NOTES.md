@@ -1059,3 +1059,13 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   network). The focused poster and its two lines are one card (grows, ring round both). Menus and panels over a page get
   the faint edge (Customise page); over video none. 95% everywhere is fine (layout and decisions unchanged).
   Mock-ups `library-pages/11`–`13`, `network-files-tabs/42`.
+- **Library pages v5 / Files v18 (owner, 13 Nov 2026):**
+  - Poster and caption are one card: the caption sits on its own box under the artwork (as today, but charcoal grey,
+    not blue); the ring fits the artwork exactly and extends just round the caption.
+  - The watched quick filters (All · Unwatched · In progress · Watched) move into **Filters** (Clear filters first, then
+    Show, then Filter by: Genre, Year, Streaming services). Customise page is **locked to the right**; Columns appears
+    beside Grid view in list view without anything moving.
+  - Files tab renamed **Your Library**; no heading repeating it, no facts on the right; big figures with icons and words
+    beside them; extra stats: % watched, hours to watch everything, % in 4K, % in HDR, added this month, and "Most space
+    per episode".
+  - Owner's earlier critique of Edit Page (walkthrough §04) checked and carried into the redesign (list in the reply).
