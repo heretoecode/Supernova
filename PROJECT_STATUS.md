@@ -53,7 +53,7 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 ### Design rulebook (12 Nov 2026)
 Every agreed design rule is in [`docs/design/RULES.md`](docs/design/RULES.md); pages are built from it. Re-tick of
 older designs against the newer rules, in six steps: 1 Search (done), 2 Files (done), 3 Details (done), 4 Player (done), 5 the shared
-choice list, 6 Customise Home and Edit Page. Then the Settings, Home and library-page redesigns.
+choice list (done), 6 Customise Home and Edit Page. Then the Settings, Home and library-page redesigns.
 
 ### Mock-ups still to make (list agreed 11 Nov 2026)
 1. Settings: tab arrangement and each tab; the shared choice list (white tick, flags); Backup; Diagnostics; About

@@ -150,7 +150,18 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   "Selected" straight away, animated).
 - Countries get flags; languages use flags only for real locales, otherwise a neutral globe.
 - Codes get plain words (subtitle encodings: no bare "CP1252").
-- Needs a mock-up (re-tick step 5).
+- **Used for every long list** (owner, 13 Nov; mock-ups `choice-list/01`–`04`): interface, audio, subtitle, download and
+  Details languages; Country; Your services; subtitle encodings; the player's Subtitle track and Audio track lists (with
+  their approved name + pills rows). Short action menus (More, long-press, Sort) stay menus.
+- **Width:** the longest item in the whole list plus the standard padding (min 360 px, max 40% of the screen, "…").
+- **One choice:** OK ticks and closes. **Several:** OK ticks / unticks, the list stays open; ticked items sit under
+  **Selected, A–Z**; a ticked item glides up into its place (about ¼ s), an unticked one glides back; focus stays where
+  you were (next row).
+- **Search appears automatically when a list has more than 12 items** (more than one screen), at the top, worded for
+  the list ("Search countries", "Search services"); a list that grows past 12 (services come and go) gains it, one that
+  shrinks loses it. OK opens the shared keyboard in its own matching panel beside the list; results filter live.
+- **No title or back header** on a list opened from a row (the row already named it): no "‹ Subtitle Track" header;
+  Back returns (fixes 0.156 P6, the odd focus round that header).
 
 ## 10. Menus (pop-up and context menus)
 - **Every item has its own icon; no two alike in one menu**; opposites get mirrored icons (A–Z / Z–A) (§15).

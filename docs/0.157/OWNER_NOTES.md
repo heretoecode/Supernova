@@ -1003,3 +1003,7 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   live under "Results". Awaiting the owner.
 - **Choice list, owner 13 Nov:** service ticking, glide and focus approved. A keyboard opened from a menu or panel gets
   the same panel background (`choice-list/04`); on full pages it stays on the page.
+- **Shared choice list done (owner, 13 Nov 2026).** Search: automatic when a list has **more than 12 items**, worded for
+  the list; the keyboard in its matching panel beside it (approved). The design replaces every long list (languages,
+  country, services, encodings, the player's track lists). Lists opened from a row have **no title / back header**
+  (removes the "‹ Subtitle Track" header and its odd focus, 0.156 P6). Rules in `docs/design/RULES.md` §9.
