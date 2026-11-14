@@ -1291,3 +1291,17 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   text; pick the best by default; keep variety; never replace a backdrop the owner chose; hero and rows may use
   different artwork; where nothing suits, a gentle shade behind the text. First, simple version in 0.157 (decided
   12 Nov); applies to the Details hero now and Home's in 0.158.
+
+## 45. Diagnostics 14 Nov received; wrong matches seen in NOVA too; TMDB key (owner, 14 Nov 2026)
+- **Diagnostics report** exported 14 Nov 23:49 local time received; kept out of the repository (personal data); read
+  for faults when 0.157 coding starts.
+- **Wrong matches happen in NOVA as well**, so the cause is in the shared scanning/matching code, not Supernova's
+  screens. Examples (owner): a series folder and file named "Phoenix Rising (2022)" matched to a 2007 title; The O.C.
+  S2 E6 matched to a 2009 documentary; several around Father Ted. Nothing to investigate yet (owner).
+- **Claude:** NOVA 6.6.5's MediaLib change "scraper: prefer file name/path over metadata title" (9 Nov) fits these
+  exactly: when a video file carries its own title inside it, the scraper trusted that over the folder and file name.
+  Proposed: bring just that matching fix into 0.157 (small, and it is the biggest cause of wrong data), then re-check
+  matches on Library Care without touching manual fixes. The rest of NOVA 6.6.5+ stays in 0.158. Awaiting the owner.
+- **Own TMDB key (later):** Supernova uses the TMDB key built into NOVA. TMDB's terms tie a key to one application, so
+  before Supernova is shared or made public it needs its own key (and TMDB's required credit, already in About ›
+  Credits). Added to REVISIT_LATER and the roadmap's Later column.

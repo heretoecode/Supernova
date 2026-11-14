@@ -9,7 +9,9 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 
 const cols = [
   ['Undecided', [
-    ['Nothing left', ['Codex: not for now; Claude does it all, Codex only if needed', 'Portrait cast cards and release '
+    ['Waiting for your yes', ['Bring NOVA’s “match by file name” fix forward into 0.157 (wrong matches, e.g. '
+      + 'Father Ted)']],
+    ['Settled', ['Codex: not for now; Claude does it all, Codex only if needed', 'Portrait cast cards and release '
       + 'notes approved']],
   ]],
   ['0.157', [
@@ -44,7 +46,7 @@ const cols = [
   ['Later / someday', [
     ['To discuss', ['Release notes: proper notes for every version (0.156 has two vague lines)']],
     ['Planned', ['Newer NOVA engine stack, as its own version', 'Make the repository private; private Releases page',
-      '“Going public” checklist (history, titles, privacy, diagnostics cut back)']],
+      '“Going public” checklist (history, titles, privacy, diagnostics cut back)', 'Supernova’s own TMDB key']],
     ['Parked by you', ['Supernova screensaver (designed)', 'Picture in picture could return', 'Documentation website',
       'Built-in OMDb key (ratings without your own key)', 'Discovery / Coming Soon in Search']],
     ['Old ideas (concept only)', ['Launcher channels on the home screen', 'Profiles', 'Person pages',

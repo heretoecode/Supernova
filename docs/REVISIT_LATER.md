@@ -9,6 +9,10 @@ Items already built or scheduled are left out (see the bottom of this file).
 - 0.156's notes are two vague lines. Rethink how notes are written and shown, and whether to rewrite older
   versions' notes from their records. 0.157's own notes will already be written properly.
 
+## Supernova's own TMDB key (owner, 14 Nov 2026)
+- Supernova still uses NOVA's built-in TMDB key. TMDB keys belong to one application, so Supernova needs its own
+  before it is shared or public. Part of the "going public" checklist.
+
 ## Ratings without a personal OMDb key — added 4 Nov 2026
 - **Decision (owner):** do not build an OMDb key into the app for now. Reception's IMDb, Rotten Tomatoes and
   Metacritic scores keep using the key typed into Settings (`omdb_api_key`, `metadata/OmdbSupplement.java`,
