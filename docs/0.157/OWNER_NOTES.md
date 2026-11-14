@@ -1240,4 +1240,10 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   app in the background (splash and Home instead of the page you were on). Measure first, then cut.
 - **Owner's principle (14 Nov):** all non-visual improvements go in 0.157: every bug and diagnostics finding, memory,
   focus, NOVA 6.6.5+, the SAFE clean-out. Redesigns are chosen afterwards (Files is in). `VERSION_PLAN.md` updated.
-- Other redesigns: waiting for the owner.
+- **Redesigns (owner, 14 Nov):** Player (with Preparing playback) in 0.157; Settings, onboarding and Search in 0.158;
+  Home, library pages and Details still open.
+- **Episode counts on TV show posters (owner, 14 Nov):** today a show reads "1 season, 10 episodes" until it is
+  started, then the line becomes Resume and the count is lost. The approved caption (`library-pages` v8–v9) has the
+  same gap ("2021 · 6 episodes" turns into "S1 E2 · 31 min left"). Claude proposes line two always keeps the size:
+  not started "3 seasons · 30 episodes"; started "S2 E3 · 18 of 30 left" (the bar already shows how far into the
+  episode). Awaiting the owner.
