@@ -1238,4 +1238,6 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - **Memory (owner asked, 14 Nov):** the ~750 MB seen in the 10 Nov diagnostics (D6, agreed in principle 11 Nov) was
   only a line in the bug list; now its own item, proposed for 0.157 because it is the likely reason Android ends the
   app in the background (splash and Home instead of the page you were on). Measure first, then cut.
-- Other areas: waiting for the owner.
+- **Owner's principle (14 Nov):** all non-visual improvements go in 0.157: every bug and diagnostics finding, memory,
+  focus, NOVA 6.6.5+, the SAFE clean-out. Redesigns are chosen afterwards (Files is in). `VERSION_PLAN.md` updated.
+- Other redesigns: waiting for the owner.

@@ -84,6 +84,17 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
   works, but adding a connection or changing folders is not pleasant). With it: R0 (Files is built on it), the first
   half of Media Transfers (already decided for 0.157; it lives in Files), Library Care with the one Fix match page.
 
+- **Principle (owner, 14 Nov 2026):** everything that makes the app better under the bonnet goes in 0.157, whatever
+  the redesigns: every bug in section 3 (all diagnostics findings included), memory, focus fixes, the NOVA 6.6.5+
+  changes, the SAFE NOVA clean-out and the rest of section 4. Redesigns are then chosen on top (Files already in).
+- **Most urgent (Claude, 14 Nov):** 1 memory (Android ends the app, you lose your place); 2 the library page rebuilt
+  every minute during a Put.io scan (stalls, screen jumps; small fix); 3 focus lost after coming back to the app or
+  from standby; 4 Trakt's API change (sync could stop quietly); then seek previews, the skip button, the Episodes
+  row, the stuck scanning pill, Recently Added, files deleted elsewhere, scan limits.
+- **Order of work:** fixes in shared code first (engine, scanning, memory, focus handling), so every redesign is
+  built on solid ground. A focus bug on a page being redesigned in the same version is fixed in the new page, not
+  twice; a page that waits keeps its fix in today's code.
+
 ## Claude's suggested split (owner decides; updated 14 Nov)
 
 - **0.157:** R0 foundation, R6 Files (with Transfers' first half and Library Care), R2 library pages (their
