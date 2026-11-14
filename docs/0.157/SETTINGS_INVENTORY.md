@@ -211,3 +211,22 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
 - **Subtitles › When To Show (owner, 14 Nov 2026):** Show subtitles; Full subtitles when the audio is in your language
   (on by default); **Also translate other languages — Experimental** (on by default): adds lines in other languages from
   a built-in forced track or an OpenSubtitles "foreign parts only" file, merged on screen. Build it, then judge.
+
+## Owner on batch 2 (14 Nov 2026) and Claude's answers (awaiting confirmation)
+- .nfo: "Save details as .nfo files" = from now on, write one for each newly matched title; "Export .nfo files now" =
+  once, for everything already there. Reword: **"Write .nfo files for new titles"** (switch) and **"Write .nfo files for
+  the whole library"** (action, progress in the row: "412 of 1,000 · Stop", then "Done · 1,000 written").
+- **Rule proposal: › only when a row opens a list or page.** Actions show their verb as plain text without › (Clear,
+  Send, Fetch, Save, Back up); progress and "Done" appear in the row itself; warnings where data is lost.
+- Home Hero: started titles already leave the hero (code: HeroPlaybackEligibility). At least one source must stay on.
+  Possible extra sources: Because You Watched, Your rows; "Change every 8 · 12 · 20 s".
+- Show first folds into Your services: Selected list is ordered with the move gesture; the top is shown first.
+- Trakt "Sync your library" = Trakt's *collection* (what you own), separate from watched history.
+- OMDb key: no label needed; if the key is built in later the row simply goes.
+- Backup: Everything = all except private data (passwords, file locations); Settings only = every setting, no Home rows,
+  pages, history or matches; Choose = a list of about six groups. Back up now / Restore / Save report use a remembered
+  folder (changeable in its own row), progress in the row, no Android notification.
+- Network shares options (alternate SMB2+, SMBv2, resolver order, TCP / UDP / mDNS discovery, newer SFTP) **move to
+  Files › Connections** as an "Advanced" row at the bottom.
+- About: build date; "Based on NOVA 6.6.4"; a version opens a pop-up like Full description, one change per line; list the
+  last five versions plus "All versions".
