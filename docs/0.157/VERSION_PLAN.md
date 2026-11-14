@@ -1,7 +1,8 @@
 # What goes in 0.157 and what waits for 0.158 (draft, 14 Nov 2026)
 
-Everything agreed and not yet coded, for the owner to split between versions. Size is a rough guide:
-**S** small (a day or less), **M** medium (a few days), **L** large (a week or more). Each redesign includes everything
+Everything agreed and not yet coded, for the owner to split between versions. Size is relative, not days:
+**S** small, **M** medium, **L** large (for scale: all 45 items of 0.156 took about two days from approved designs to
+signed build). Each redesign includes everything
 that lives on that page (e.g. Home includes Customise Home; library pages include Customise page, the old Edit Page).
 
 ## 1. Redesigns (all designed and approved unless marked)
