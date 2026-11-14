@@ -1218,5 +1218,7 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - **Owner, 14 Nov:** Movies and the third page approved. TV Shows text contradicted itself ("12 found so far … they
   appear as they're found" yet none shown): the message now shows only while nothing is found yet, with no count
   (RULES §23). "Customise page" is the approved button name on a set-up page (`library-pages` v6–v9), so the empty
-  page uses the same words. Where its panel opens: being discussed (Claude: the right-hand side panel, as on a set-up
-  page, so the page stays in view and updates live).
+  page uses the same words. **Approved (owner, 14 Nov):** Customise page opens as the floating right-hand side panel
+  on an empty page too (not in the middle by its button), so the page stays in view and fills in live; the message
+  steps aside while the panel is open. Rule: menus open beside their button; page-changing side panels float on the
+  right (RULES §11). Empty library pages approved.

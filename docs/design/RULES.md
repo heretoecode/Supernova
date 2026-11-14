@@ -182,6 +182,11 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   on the same line ("Library ———").
 - **Opens beside the button or item that opened it** (drops down under a toolbar button), never in a corner (§19; owner,
   13 Nov).
+- **Menus versus side panels (owner, 14 Nov 2026):** the "beside the button" rule is for menus (short pick-lists such
+  as Sort, Filters, a long-press menu). A **side panel that changes the page behind it** (Customise page, Artwork,
+  Playback Settings) always floats on the right, wherever its button is, so the page stays in view and updates live
+  as you change things. On an empty page the page's message steps aside while the panel is open and the space beside
+  the panel shows the live result.
 - Never offer what does nothing or makes no sense (no Restart on an unstarted film; no "More info" when OK already
   opens it) (§4, §19).
 
