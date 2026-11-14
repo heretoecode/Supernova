@@ -310,8 +310,8 @@ const UPDN = '<path d="M8 9l4-4 4 4M8 15l4 4 4-4"/>';
 const TICK = '<path d="M5 12.5l4.5 4.5L19 7.5"/>';
 const svcRow = (n, c, t, o) => `<div class="lr ${o.f ? 'focus' : ''} ${o.p ? 'picked' : ''}"><span class="lg">${logo(n, c)}</span>
   <span class="lt"><b>${t}</b>${o.line ? `<small>${o.line}</small>` : ''}</span>${o.p ? svg(UPDN, 26) : ''}${o.on ? svg(TICK, 26) : ''}</div>`;
-const servicesList = `<div class="lists"><div class="sl wide">${mg('Selected')}<div class="hint">In order: the top one is shown first ·
-  OK on a ticked service picks it up to move it</div>
+const servicesList = `<div class="lists"><div class="sl wide"><div class="hint top">Your first choice goes at the top.<br>Press OK on a
+  ticked service to move it.</div>${mg('Selected')}
   ${svcRow('primevideo', '#0B0D12', 'Prime Video', { on: true, p: true, line: 'Shown first' })}
   ${svcRow('netflix', '#E50914', 'Netflix', { on: true })}${svcRow('disneyplus', '#2E6BFF', 'Disney+', { on: true })}
   ${mg('All')}${svcRow('appletv', '#FFFFFF', 'Apple TV+', {})}${svcRow('paramountplus', '#0064FF', 'Paramount+', {})}
@@ -434,8 +434,8 @@ top:5px;left:5px;width:32px;height:32px;border-radius:50%;background:#C9D3E6}.sw
 .act{font-size:28px;font-weight:500;padding:0 6px}.prog{display:flex;align-items:center;gap:18px;font-size:28px;font-weight:500}
 .pbar{width:220px;height:6px;border-radius:3px;background:rgba(255,255,255,.2)}.pbar b{display:block;height:6px;border-radius:3px;background:#fff}
 .row.focus .pbar{background:rgba(11,13,18,.15)}.row.focus .pbar b{background:#0B0D12}
-.sl.wide{width:900px}.lr .sw{margin-left:auto}.lr .chips{margin-left:auto}.hint{font-size:22px;color:#C9D3E6;padding:0 22px 10px}.lg{display:flex;width:64px;justify-content:center}
-.lr.picked{background:#F4F6FB;color:#0B0D12;transform:scale(1.03);box-shadow:0 10px 30px rgba(0,0,0,.6)}.lr.picked small{color:#3A4256}
+.sl.wide{width:900px}.lr .sw{margin-left:auto}.lr .chips{margin-left:auto}.hint{font-size:22px;color:#C9D3E6;padding:0 22px 10px}.hint.top{font-size:24px;line-height:1.5;padding:18px 22px 8px}.lg{display:flex;width:64px;justify-content:center}
+.lr.picked{background:#F4F6FB;color:#0B0D12;transform:scale(1.03);box-shadow:0 10px 30px rgba(0,0,0,.6)}.lr.picked small{color:#3A4256}.lr.picked>svg{color:#0B0D12}
 .inside{font-size:24px;color:#e8edf6;line-height:1.6;padding:6px 22px 14px}
 .pop{width:820px;padding:36px 40px}.pt{display:block;font-size:34px;font-weight:500}.ps{font-size:23px;color:#C9D3E6}
 .pop ul{margin:18px 0 0;padding-left:26px;font-size:26px;line-height:1.7;color:#e8edf6}

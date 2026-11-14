@@ -230,3 +230,4 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
   Files › Connections** as an "Advanced" row at the bottom.
 - About: build date; "Based on NOVA 6.6.4"; a version opens a pop-up like Full description, one change per line; list the
   last five versions plus "All versions".
+- Your services: the hint moves above Selected and reads "Your first choice goes at the top. Press OK on a ticked service to move it." (`settings-v2/22`). Library and Services tabs approved (owner, 14 Nov).
