@@ -1180,6 +1180,11 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   Bluetooth keyboard) lands in the box; (2) if the phone app only offers its text box when Android's keyboard is
   showing, add a "Phone keyboard" key that opens Android's keyboard for the same box, then returns to ours.
   Test on the Shield with the phone app; whichever works becomes the rule for every text box, passwords included.
-  Password boxes keep a show/hide eye so a pasted password can be checked.
+  Password boxes get a show/hide eye so a pasted password can be checked (approved, owner 14 Nov).
+- **Owner, 14 Nov:** the phone app shows its text box only when the Shield tells it a text box is active, so the
+  paste option never even appears in Supernova today. So the fix must start a real Android keyboard session on our
+  text box (that is what alerts the phone app), while keeping Android's on-screen keyboard out of sight if possible.
+  If it can only alert the phone with Android's keyboard visible, use the "Phone keyboard" key. Approved: do
+  whatever it takes.
 - Approved the same day (owner): the new mark and loading ring everywhere (RULES §21); bringing in the TV-relevant
   NOVA 6.6.5+ changes (§35).
