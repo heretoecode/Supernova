@@ -9,8 +9,8 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 
 const cols = [
   ['Undecided', [
-    ['Help', ['Codex back for 0.157, or Claude does it all']],
-    ['Waiting for your yes', ['Cast and crew portrait cards (0157-checks/01)', '0.157 release notes style (same picture)']],
+    ['Nothing left', ['Codex: not for now; Claude does it all, Codex only if needed', 'Portrait cast cards and release '
+      + 'notes approved']],
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
@@ -19,13 +19,13 @@ const cols = [
       'Details: four kinds, new tabs, metadata row, full description, artwork picker, More menu, portrait cast and crew',
       'Player: Preparing playback, title block, seek preview, centre ring, skip button, Playback tab, track names, '
       + 'subtitle lists, Experimental translate']],
-    ['Engine', ['Merge Codex’s 13 finished items', 'Seek loading engine']],
+    ['Engine', ['Merge Codex’s 13 finished items', 'Seek loading signal (Codex built it; merge and test)']],
     ['Old NOVA out', ['Hidden grid and hidden screens', 'Picture in picture, Issue digest', 'All files access once '
       + '(no Android screens)']],
     ['Speed and reliability', ['Memory (about 750 MB today)', 'No page rebuild every minute during scans',
       'Scan rules (one at a time, 15 min, launch limit)', 'Reopen where you were, focus restored, standby',
       'Focus jumping when Down is held', 'Check network drops and Put.io pause sync']],
-    ['Bugs', ['Seek previews missing', 'Episodes row missing in the player', 'Chapter names', 'Skip button faults',
+    ['Bugs', ['Seek previews: hidden switch and missing pictures', 'Episodes row missing in the player', 'Chapter names', 'Skip button faults',
       'Stuck “Scanning…” pill', 'Started titles stay in Recently Added', 'Files deleted elsewhere not tidied',
       'Details tabs pop in; hero waits for artwork', 'JustWatch link']],
     ['Data and behaviour', ['Subtitles ready at Preparing; next two episodes; full subtitles in your language',

@@ -1276,3 +1276,18 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - Owner asked to see the whole Details page with the portrait cast cards in place: `details-background/21` (v20):
   hero, tabs, Details tab with faint row lines, Cast, Crew as portrait cards. **Approved (owner, 14 Nov).**
 - Usage (owner): the full reset is saved for 0.157 coding; coding with the newest model where possible.
+
+## 44. Codex, seek loading, seek previews, hero backdrops (owner, 14 Nov 2026)
+- **Codex: not for now.** Claude does all of 0.157 using the Fable reset first, then the full reset; Codex only if it
+  proves necessary. Undecided list empty.
+- **Seek loading signal (Codex #20)** is not the thumbnails: it tells the player "still loading at this position"
+  after a seek so the centre loading ring shows (and goes) at the right time. Codex built it on its branch; it needs
+  merging and a Shield test. Stays in 0.157.
+- **Seek previews (thumbnails, P10)** exist: the engine is there and on by default, but (1) the Settings switch is
+  hidden (Claude's 0.156 slip: never moved into Advanced) and (2) no pictures appear on Put.io or local files, cause
+  to find. Fixing what exists: stays in 0.157.
+- **Calmer hero backdrops** = the owner's walkthrough idea (9 Nov): score every backdrop TMDB offers for the hero:
+  room on the left for the text and buttons, the subject towards the right, not too bright or saturated behind the
+  text; pick the best by default; keep variety; never replace a backdrop the owner chose; hero and rows may use
+  different artwork; where nothing suits, a gentle shade behind the text. First, simple version in 0.157 (decided
+  12 Nov); applies to the Details hero now and Home's in 0.158.
