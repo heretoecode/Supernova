@@ -221,6 +221,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   cards, Details tab cards, the player strip, library posters, Search thumbnails (§18 v17).
 - Focused artwork grows and gets the solid thick white ring (section 3). **Library posters:** the poster and its two
   lines underneath are one card; the whole card grows and the ring goes round both (owner, 13 Nov).
+- **Library poster caption (owner, 14 Nov 2026):** line one the title (the only bright line); line two always keeps a
+  TV show's size: not started "3 seasons · 30 episodes" (one season: "10 episodes"), started "S2 E3 · 18 of 30
+  left" (the inset bar shows how far into the episode; no "Resume", no minutes left for shows); films started:
+  "42 min left"; line three follows the sort.
 - **One row card size:** 16:9, 400×225 (focused 440×248), 24 px gap, a sliver of the next card at the edge (§9).
   Title and details inside the picture on a shade; no blue caption bars. Library posters keep one portrait size on
   every library page, with a plain white title and grey line underneath.

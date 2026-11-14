@@ -1246,4 +1246,4 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   started, then the line becomes Resume and the count is lost. The approved caption (`library-pages` v8–v9) has the
   same gap ("2021 · 6 episodes" turns into "S1 E2 · 31 min left"). Claude proposes line two always keeps the size:
   not started "3 seasons · 30 episodes"; started "S2 E3 · 18 of 30 left" (the bar already shows how far into the
-  episode). Awaiting the owner.
+  episode). **Approved (owner, 14 Nov);** RULES §13.
