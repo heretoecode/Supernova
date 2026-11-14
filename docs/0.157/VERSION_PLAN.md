@@ -77,11 +77,18 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
 - Is Codex back? Until then Claude does everything.
 - "Going public" checklist kept for one day (history, titles, certificate contact, licence notices).
 
-## Claude's suggested split (owner decides)
+## Owner's choices so far
 
-- **0.157:** R0 foundation, R1 Home, R2 library pages, R3 Details, R4 Search, R5 Player, R8 brand, the major bugs,
-  the Codex merge and the SAFE clean-out. (Everything you touch every evening.)
-- **0.158:** R6 Files with Media Transfers, R7 Settings, R9 onboarding, the per-series transfers and schedule.
+- **0.157 must have (owner, 14 Nov 2026):** R6 **Files** (today's Network & Files is half old design, half new: it
+  works, but adding a connection or changing folders is not pleasant). With it: R0 (Files is built on it), the first
+  half of Media Transfers (already decided for 0.157; it lives in Files), Library Care with the one Fix match page.
+
+## Claude's suggested split (owner decides; updated 14 Nov)
+
+- **0.157:** R0 foundation, R6 Files (with Transfers' first half and Library Care), R2 library pages (their
+  long-press Fix match opens Files' page), R5 Player, R8 brand, the major bugs, the NOVA 6.6.5 changes, the Codex
+  merge and the SAFE clean-out.
+- **0.158:** R1 Home, R3 Details, R4 Search, R7 Settings, R9 onboarding, the per-series transfers and schedule.
 - **Later, on its own:** the newer NOVA engine.
-- Dependency to watch: library long-press › Fix match opens Files' Fix match page. If Files waits for 0.158, 0.157
-  keeps today's Fix match until then.
+- Why: Files makes 0.157 a big version, so the pages that already work well today (Home, Details, Search) wait one
+  version; anything can still be swapped.

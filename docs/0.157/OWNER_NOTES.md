@@ -1230,3 +1230,9 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   → Home "Finding your videos" · Restore: Find your backup → Choose a backup (contents listed; no warning on a fresh
   install) → Restoring (bar) → Restored, sign in again → Restart now. Smart steps (RULES §23). "Step 2 of 3" in
   words, not dots (dots mean the Home carousel). **Approved.**
+
+## 40. What goes in 0.157 (owner, 14 Nov 2026; `VERSION_PLAN.md`)
+- **Files is a must for 0.157:** today's Network & Files is a mix of the old ChatGPT-era design and the new one (one
+  of the six landing panels redesigned, the rest not). Everything works, but adding a connection or changing folder
+  choices is unpleasant. Comes with R0 (foundation), Media Transfers' first half and Library Care / Fix match.
+- Other areas: waiting for the owner.
