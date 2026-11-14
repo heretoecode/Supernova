@@ -50,6 +50,16 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   [`docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md`](docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md).
 - Older Preview-era files and early planning: [`docs/archive/`](docs/archive/README.md).
 
+### Where things stand (14 Nov 2026, end of the design phase)
+- Every redesign is designed and approved. Waiting for the owner's yes: portrait cast cards and the 0.157 release
+  notes style (`docs/design/proposals/0157-checks/01`).
+- What goes in which version: `docs/0.157/VERSION_PLAN.md` and the board `docs/0.157/board/version-board.png`.
+  0.157 = foundation, Files, Details, Preparing playback, Player and Playback Settings, new mark, and all fixes and
+  under-the-bonnet work. 0.158 = Home, library pages, Search, Settings, onboarding, NOVA 6.6.5+, Transfers part two.
+- Open: whether Codex returns for 0.157. Before coding: the latest diagnostics report; merge Codex's 13 items;
+  bring `main` up to date with 0.156.
+- Owner's notes while Claude is unavailable: `docs/INBOX.md` or a GitHub issue titled "Inbox: …".
+
 ### Design status (14 Nov 2026)
 Every page is designed and approved: Search, Files (with Transfers and Your Library), Details, Player and Playback
 Settings, the shared choice list, library pages (incl. empty pages), Home, Settings, onboarding (14 Nov) and the new
