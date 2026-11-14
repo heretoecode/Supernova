@@ -15,7 +15,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 
 ## Start here, in order
 
-1. This file. Then `docs/INBOX.md`: notes the owner left while Claude was unavailable; deal with them first.
+1. This file. Then `docs/INBOX.md` and any open GitHub issue titled "Inbox: …": notes the owner left while Claude was
+   unavailable; deal with them first.
 2. `PROJECT_STATUS.md` — what is released, what is in progress, what is waiting for the owner.
 3. `docs/0.156/RELEASE_LIST.md` — everything in the next version, with a Progress section.
 4. `docs/0.155/OWNER_NOTES.md` — the owner's reports, numbered, with each decision and approval.
