@@ -330,6 +330,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   Settings) shows as done with where it was set ("Set in Settings", "Added in Files") and a tick; a step with nothing
   left to do is skipped.
 - The welcome stays on Home until videos are added or a backup is restored; then Home becomes Home.
+- Progress through the steps is written, not drawn: "Step 2 of 3" in soft text above the heading. Dots are kept for
+  the Home carousel only (owner, 14 Nov 2026).
 - **Empty library pages** (`library-pages/34`): no toolbar while there is nothing to filter or sort; one centred
   message with an icon. Nothing added yet: "No films yet" / "No TV shows yet" and **Add your videos** (to Home's
   Add your videos step while setting up, otherwise Files). First scan running and nothing found yet: the loading ring,

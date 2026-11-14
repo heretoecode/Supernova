@@ -4,7 +4,7 @@
 // Settings) · Home during the first scan · Add your videos after "Not now" on Access.
 // Right, Restore: Access to your files (both paths; skipped if already granted) · Find your backup · Choose a backup
 // with what is in it · Restoring (a bar: known progress) · Restored, sign in again.
-// Step dots count only the steps after Welcome. Made-up names, dates and sizes. Light frame = picture edge.
+// "Step 2 of 3" (owner, 14 Nov: words, not dots, which mean a carousel on Home) counts the steps after Welcome. Made-up names, dates and sizes. Light frame = picture edge.
 // Run: FONT_DIR=<roboto woff2 dir> node render-v3.js
 const fs = require('fs');
 const path = require('path');
@@ -64,8 +64,7 @@ const nav = mark => `<div class="nav"><span class="brand">SUPERNOVA</span><span 
   </div>`;
 const page = (body, step) => `<div class="frame">${nav('line')}<div class="pg"><div class="col">${step === null ? ''
   : dots(3, step)}${body}</div></div></div>`;
-const dots = (n, on) => `<div class="dots">${Array.from({ length: n }, (_, i) => `<i class="${i === on ? 'on' : ''}">
-  </i>`).join('')}</div>`;
+const dots = (n, on) => `<div class="step">Step ${on + 1} of ${n}</div>`;
 
 const welcome = page(`<div class="hero"><div class="mk">${mark}</div><h1>Welcome to Supernova</h1>
   <p>Your films and TV shows, from this device, drives and network shares, in one place.</p></div>
@@ -157,7 +156,7 @@ repeating-linear-gradient(180deg,#B22234 0 2.15px,#fff 2.15px 4.3px)!important;b
 .actions{display:flex;gap:22px;margin-top:40px}
 .btn{height:84px;padding:0 44px;border-radius:42px;display:inline-flex;align-items:center;font-size:30px;
 font-weight:500;background:rgba(255,255,255,.1)}.btn.focus{background:#F4F6FB;color:#0B0D12}
-.dots{display:flex;gap:16px;margin-bottom:30px}
+.step{font-size:26px;color:#C9D3E6;margin-bottom:14px}
 .dots i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.3)}.dots i.on{background:#fff;width:40px;
 border-radius:7px}
 .ring{width:110px;height:110px;margin:120px auto 40px}
