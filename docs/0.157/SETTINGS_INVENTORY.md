@@ -199,3 +199,12 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
   your language. Proposal: make "Full subtitles when the audio is in your language" **on by default**.
 - OpenSubtitles signed out: one-line note; **QR code to create a free account** under Sign in (`settings-v2/08`); Play
   With's doubled line fixed.
+- **Approved (owner, 14 Nov 2026):** Skip button lives in the **rightmost slot of the control row** (… Settings ·
+  Skip intro); without controls it sits on exactly that spot; with nothing to skip the slot is gone and the seek bar
+  takes the room. OpenSubtitles QR code approved.
+- **Subtitles for other languages inside a show (owner):** OpenSubtitles marks each subtitle with flags such as
+  hearing-impaired (SDH), **foreign parts only**, machine / AI translated and trusted uploader — but **no flag for "translates
+  every language spoken"**. Plan for 0.157: when the main English subtitle is on, also look for a **"foreign parts only"**
+  English subtitle for the same release and, if found, **show both together** (merged on screen), as with a built-in
+  forced track. In Download subtitles, show pills for SDH and Foreign parts only. SDH files more often note other
+  languages ("[speaking French]").
