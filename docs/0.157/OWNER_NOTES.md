@@ -1274,5 +1274,5 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - **0.157 release notes style approved** (`0157-checks/01`, bottom): grouped under centred headings, plain words.
   Owner: a little more detail per point, but **each point stays on one line**. No further mock-up needed.
 - Owner asked to see the whole Details page with the portrait cast cards in place: `details-background/21` (v20):
-  hero, tabs, Details tab with faint row lines, Cast, Crew as portrait cards. Awaiting the owner.
+  hero, tabs, Details tab with faint row lines, Cast, Crew as portrait cards. **Approved (owner, 14 Nov).**
 - Usage (owner): the full reset is saved for 0.157 coding; coding with the newest model where possible.
