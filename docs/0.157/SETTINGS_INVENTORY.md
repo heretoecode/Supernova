@@ -244,5 +244,5 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
   straight over the About page. Seven tabs confirmed by the pictures. **All redesigns are now designed:** Search, Files,
   Details, Player and Playback Settings, the shared choice list, library pages, Home, Settings.
 - **Open-source licences list (owner, 14 Nov 2026).** The About row opens a floating, grouped list of the 71 components
-  (name and licence type on each row, search row because over 12); OK on one opens its pop-up with a 300 px QR code
+  (name and licence type on each row, search row because over 12); OK on one opens its pop-up with a 170 px QR code
   to that licence's full text. One QR code on screen at a time (RULES §20). Mock-up `settings-v2/27`.

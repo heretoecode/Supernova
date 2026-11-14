@@ -453,7 +453,7 @@ const licList = `<div class="sl licl"><div class="lr search">${svg(I.search, 28)
   ${mg('Networking')}${L('OkHttp', 'Apache-2.0')}${L('jcifs-ng', 'LGPL-2.1')}${L('JSch', 'BSD-3-Clause')}
   ${mg('Android And Java')}${L('AndroidX', 'Apache-2.0 · 38 libraries')}${L('Kotlin', 'Apache-2.0')}
   <div class="more">… and 59 more, grouped the same way</div></div>`;
-const licPop2 = `<div class="sl"><div class="qrrow">${QR(300)}<div><b>FFmpeg</b><small>Licensed under the GNU Lesser General Public
+const licPop2 = `<div class="sl"><div class="qrrow">${QR(170)}<div><b>FFmpeg</b><small>Licensed under the GNU Lesser General Public
   Licence 2.1. Scan to read the full licence on your phone.</small></div></div></div>`;
 const licPic = `<div class="lists"><div class="col">${licList}</div><div class="col">${licPop2}</div></div>`;
 
