@@ -52,7 +52,8 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 
 ### Design status (14 Nov 2026)
 Every page is designed and approved: Search, Files (with Transfers and Your Library), Details, Player and Playback
-Settings, the shared choice list, library pages, Home and Settings. Records: `docs/0.157/OWNER_NOTES.md` §26–33,
+Settings, the shared choice list, library pages (incl. empty pages), Home, Settings, onboarding (14 Nov) and the new
+mark and loading ring (14 Nov). Split between 0.157 and 0.158: `docs/0.157/VERSION_PLAN.md`, waiting for the owner. Records: `docs/0.157/OWNER_NOTES.md` §26–33,
 `docs/0.157/SETTINGS_INVENTORY.md`, `docs/design/RULES.md`. Next: coding 0.157 when the owner gives the go-ahead
 (diagnostics first).
 

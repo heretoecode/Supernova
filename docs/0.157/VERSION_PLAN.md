@@ -10,14 +10,14 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
 | --- | --- | --- | --- | --- |
 | R0 | **Shared foundation** | Panels and menus (95%, floating, stacking), the shared choice list, the one keyboard, focus and path, headings, artwork edge and focus growth, the move gesture, "no Android screens" (All files access asked once) | L | — (every redesign is built on it: must be in the first version) |
 | R1 | **Home** | Hero (description, carousel dots, smoother changes), caption-box row cards, Move/Hide beside headings, Customise Home: Your Rows, Add a row with its options, icon picker | L | R0 |
-| R2 | **Library pages** | Posters with caption box, Filters (incl. All/Unwatched/In progress/Watched, replacing Hide Watched), Sort (one Release date), Columns with the move gesture, list view, long-press menu, Customise page (ex Edit Page) | L | R0 |
+| R2 | **Library pages** | Posters with caption box, Filters (incl. All/Unwatched/In progress/Watched, replacing Hide Watched), Sort (one Release date), Columns with the move gesture, list view, long-press menu, Customise page (ex Edit Page), empty pages and the + page (`library-pages/34`) | L | R0 |
 | R3 | **Details** | Four kinds (film, series, season, episode), tabs Details · Episodes · Extras · More Like This, metadata row, full description pop-up, artwork picker, More menu, hero hand-over from Home | L | R0 |
 | R4 | **Search** | Library first, "On your services" headings (From the world of / Related to / More from), recent searches with clear | M | R0 |
 | R5 | **Player and Playback Settings** | Title block with age rating, Preparing playback, seek preview layout, centre loading ring, skip button in the control row, Playback tab (play mode, Stop playing at, Still watching), track names and pills, subtitle lists stacked on the panel | L | R0 |
 | R6 | **Files** | Tabs incl. Transfers, Your Library stats, Library Care (Fix match page, re-check of matches, Library Health), Scan one source, connections add/remove, one-step delete, top-bar Files with scan ring and attention mark | L | R0 (R2's long-press Fix match opens Files' Fix match page) |
 | R7 | **Settings** | Seven tabs, every setting kept/moved/merged/removed as in the inventory, Backup and Restore with progress, Diagnostics, About (credits, licences list with QR pop-ups, release notes) | L | R0 |
 | R8 | **App icon, banner, splash and loading ring** | New mark (`brand/03` version 1, approved); the same mark spins as the app's one loading ring everywhere (RULES §21) | S | — |
-| R9 | **Onboarding** *(not designed yet)* | First launch: Start fresh or Restore a backup, permission, add sources, language and subtitles, first scan | M | Mock-ups; R7's Restore |
+| R9 | **Onboarding** | On Home under the top bar, never blocking: Welcome (Start fresh / Restore), Access, Add your videos, Languages, first scan; Restore: find, choose, restoring, sign in again, restart; smart steps (`onboarding/03`, approved) | M | R7's Restore |
 
 ## 2. New features (agreed behaviour)
 

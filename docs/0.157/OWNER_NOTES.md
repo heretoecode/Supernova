@@ -1222,3 +1222,11 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   on an empty page too (not in the middle by its button), so the page stays in view and fills in live; the message
   steps aside while the panel is open. Rule: menus open beside their button; page-changing side panels float on the
   right (RULES §11). Empty library pages approved.
+
+## 39. Onboarding approved (owner, 14 Nov 2026; mock-up `onboarding/03` v3)
+- The whole flow, both paths, every step (v3): Welcome on Home under the top bar (Start fresh / Restore from a
+  backup / look around first) · Access to your files (both paths; skipped if granted; "Not now" allowed, local rows
+  then say "Needs access to your files first") · Start fresh: Add your videos → Languages → Finish and start scanning
+  → Home "Finding your videos" · Restore: Find your backup → Choose a backup (contents listed; no warning on a fresh
+  install) → Restoring (bar) → Restored, sign in again → Restart now. Smart steps (RULES §23). "Step 2 of 3" in
+  words, not dots (dots mean the Home carousel). **Approved.**
