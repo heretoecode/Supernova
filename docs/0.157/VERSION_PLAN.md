@@ -54,7 +54,8 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
 | Fix match keyboard focus | S (fixed by R0's one keyboard) |
 | Details tabs pop in; Home hero change waits for artwork | M |
 | Files deleted elsewhere (e.g. on the Put.io website) not tidied away at the next scan | M |
-| Focus jumping when holding Down; memory use | M |
+| Focus jumping when holding Down | S |
+| **Memory: the app was about 750 MB when closed (diagnostics, 10 Nov).** Likely why Android sometimes ends it in the background, so it reopens on Home with the splash instead of where you were. First add memory to diagnostics (per page: app, native, artwork cache), then cut the biggest users (likely full-size artwork kept in memory, NOVA's hidden screens, the page rebuilt every minute during scans) | M |
 | JustWatch link opens nothing (becomes a plain credit line) | S |
 | Still to check on the Shield: Put.io pause/resume sound out of step; network-drop recovery | S |
 
@@ -86,7 +87,7 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
 ## Claude's suggested split (owner decides; updated 14 Nov)
 
 - **0.157:** R0 foundation, R6 Files (with Transfers' first half and Library Care), R2 library pages (their
-  long-press Fix match opens Files' page), R5 Player, R8 brand, the major bugs, the NOVA 6.6.5 changes, the Codex
+  long-press Fix match opens Files' page), R5 Player, R8 brand, the major bugs (memory included), the NOVA 6.6.5 changes, the Codex
   merge and the SAFE clean-out.
 - **0.158:** R1 Home, R3 Details, R4 Search, R7 Settings, R9 onboarding, the per-series transfers and schedule.
 - **Later, on its own:** the newer NOVA engine.

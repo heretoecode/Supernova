@@ -1235,4 +1235,7 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - **Files is a must for 0.157:** today's Network & Files is a mix of the old ChatGPT-era design and the new one (one
   of the six landing panels redesigned, the rest not). Everything works, but adding a connection or changing folder
   choices is unpleasant. Comes with R0 (foundation), Media Transfers' first half and Library Care / Fix match.
+- **Memory (owner asked, 14 Nov):** the ~750 MB seen in the 10 Nov diagnostics (D6, agreed in principle 11 Nov) was
+  only a line in the bug list; now its own item, proposed for 0.157 because it is the likely reason Android ends the
+  app in the background (splash and Home instead of the page you were on). Measure first, then cut.
 - Other areas: waiting for the owner.
