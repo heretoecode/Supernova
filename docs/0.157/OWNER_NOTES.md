@@ -1258,3 +1258,14 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - **Cast and crew photos:** TMDB supplies portrait (2:3) photos; the round crop cuts off heads (seen on a 2026 film).
   Claude agrees: switch to portrait cards with rounded corners like posters, with the artwork edge and focus ring,
   name and role underneath; initials when there is no photo. Part of the Details redesign. Awaiting the owner.
+
+## 42. Layers: what the owner wants first (14 Nov 2026)
+- **Trakt:** the owner has never connected Trakt in Supernova, so no Trakt check in 0.157; all of NOVA 6.6.5+ is 0.158.
+- **The second layer first:** the first layer (Home and library pages) can wait for 0.158; everything after it, on
+  the way to watching, goes in 0.157: **Details**, **Preparing playback**, the **player controls** and **Playback
+  Settings**. With Files, the foundation and all the under-the-bonnet work.
+- Details in 0.157 after the portrait cast cards are checked (`0157-checks/01`, top). Knock-ons (Claude): the
+  Home-to-Details glide waits for the Home redesign; Details' own hero is built now. Library long-press › Fix match
+  can already go to Files' new Fix match page in 0.157, even on today's library pages.
+- **0.157 release notes:** to be really good; draft shown in `0157-checks/01` (bottom): grouped under centred
+  headings, one change per line in plain words. Older versions' notes wait (REVISIT_LATER).

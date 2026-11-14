@@ -9,20 +9,17 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 
 const cols = [
   ['Undecided', [
-    ['Redesigns', ['Home (hero, caption-box rows, Customise Home)', 'Details (four kinds, new tabs, artwork picker)',
-      'Home and Details go together, both in or both out', 'Library pages (posters, Filters, Sort, Columns, list '
-      + 'view, Customise page, empty pages, + page, episode counts)']],
     ['Help', ['Codex back for 0.157, or Claude does it all']],
-    ['Design', ['Cast and crew: portrait photos instead of circles (Claude: yes)']],
+    ['Waiting for your yes', ['Cast and crew portrait cards (0157-checks/01)', '0.157 release notes style (same picture)']],
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
       + 'app, password eye', 'New mark: icon, banner, splash, loading ring', 'Files: Transfers (copy, resilience, '
       + 'delete after copy), Your Library, Library Care, Fix match page, Scan one source, connections, top-bar ring',
+      'Details: four kinds, new tabs, metadata row, full description, artwork picker, More menu, portrait cast and crew',
       'Player: Preparing playback, title block, seek preview, centre ring, skip button, Playback tab, track names, '
       + 'subtitle lists, Experimental translate']],
-    ['Engine and NOVA', ['Merge Codex’s 13 finished items', 'Trakt: check NOVA’s Trakt change; bring it forward only '
-      + 'if our sync is breaking', 'Seek loading engine']],
+    ['Engine', ['Merge Codex’s 13 finished items', 'Seek loading engine']],
     ['Old NOVA out', ['Hidden grid and hidden screens', 'Picture in picture, Issue digest', 'All files access once '
       + '(no Android screens)']],
     ['Speed and reliability', ['Memory (about 750 MB today)', 'No page rebuild every minute during scans',
@@ -34,10 +31,11 @@ const cols = [
     ['Data and behaviour', ['Subtitles ready at Preparing; next two episodes; full subtitles in your language',
       'UK age ratings; reception offline; technical info', 'Calmer hero backdrops', 'Region from the device',
       'Automatic sort titles', 'Diagnostics: 2 weeks, clear after export, memory and delete logging',
-      'Six backup groups', 'Licences tidied', '0.157’s own release notes written properly']],
+      'Six backup groups', 'Licences tidied', '0.157’s release notes written properly (grouped, one change a line)']],
   ]],
   ['0.158', [
-    ['Redesigns', ['Settings (seven tabs, Backup and Restore, Diagnostics, About)', 'Onboarding (on Home, Start fresh '
+    ['Redesigns', ['Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)', 'Library pages (posters, '
+      + 'Filters, Sort, Columns, list view, Customise page, empty pages, + page, episode counts)', 'Settings (seven tabs, Backup and Restore, Diagnostics, About)', 'Onboarding (on Home, Start fresh '
       + '/ Restore, smart steps)', 'Search (library first, On your services, recent searches)']],
     ['Features', ['Media Transfers part two: per-series “Bring new episodes”', 'Media Transfers schedule']],
     ['Engine and NOVA', ['NOVA 6.6.5 and later, the TV parts: matching by file name, Samba fixes, software-decoding '
