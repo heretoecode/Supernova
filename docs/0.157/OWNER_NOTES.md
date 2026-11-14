@@ -1167,3 +1167,19 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   them clear of the controls.
 - Messenger app folders (Telegram etc.) never scanned; dependency updates.
 - Not relevant to a TV: phone notches, portrait, rotation, double-tap zones, status bars.
+
+## 36. Paste from the phone into Supernova's keyboard (owner, 14 Nov 2026)
+- The owner pastes long passwords (e.g. from a password manager) into the NVIDIA Shield TV phone app, which types
+  them into the Shield. It works in NOVA but not in Supernova's keyboard.
+- Cause (from the code): the phone app hands its text to Android's own keyboard service, which types into whatever
+  text box has focus. Supernova's one keyboard switches Android's keyboard off (`setShowSoftInputOnFocus(false)`)
+  and never lets the text box take focus (`KeyboardInput.addFocusables` is empty; the keys own focus). So the phone
+  app has nowhere to put the text.
+- Plan (part of R0, the one keyboard; 0.157): (1) keep the text box connected to Android's keyboard service while
+  our keyboard is open, without Android's keyboard appearing over ours, so text from the phone app (and a USB or
+  Bluetooth keyboard) lands in the box; (2) if the phone app only offers its text box when Android's keyboard is
+  showing, add a "Phone keyboard" key that opens Android's keyboard for the same box, then returns to ours.
+  Test on the Shield with the phone app; whichever works becomes the rule for every text box, passwords included.
+  Password boxes keep a show/hide eye so a pasted password can be checked.
+- Approved the same day (owner): the new mark and loading ring everywhere (RULES §21); bringing in the TV-relevant
+  NOVA 6.6.5+ changes (§35).
