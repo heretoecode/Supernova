@@ -325,6 +325,13 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   Settings) shows as done with where it was set ("Set in Settings", "Added in Files") and a tick; a step with nothing
   left to do is skipped.
 - The welcome stays on Home until videos are added or a backup is restored; then Home becomes Home.
+- **Empty library pages** (`library-pages/34`): no toolbar while there is nothing to filter or sort; one centred
+  message with an icon. Nothing added yet: "No films yet" / "No TV shows yet" and **Add your videos** (to Home's
+  Add your videos step while setting up, otherwise Files). First scan running: the loading ring, "Finding your …",
+  a count; posters appear as they are found.
+- **The third page before it is set up:** a **+** icon in the top bar (like Search and Settings, an icon); its page says
+  "Make this page your own" with the same **Customise page** button the page keeps once set up (same panel), and one
+  quiet line: "More options for your library are in Files and Settings." No full-screen walkthrough.
 
 ## Open questions (to settle when the page comes up)
 - **Home row text:** inside the picture (current rule) or below it — with the Home redesign.

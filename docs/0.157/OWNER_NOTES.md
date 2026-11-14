@@ -1205,3 +1205,13 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   under the normal top bar, in place of the hero and rows, so Up reaches every page. (3) It must be smart: if the user
   sets something elsewhere first (e.g. languages in Settings), the step shows it as already set or is skipped
   (RULES §23). Redrawn as `onboarding/02` (v2). Restore path and Access step as in `01`, now under the top bar.
+
+## 38. Library pages before they have anything in them (owner, 14 Nov 2026; mock-up `library-pages/34`)
+- Now that onboarding never blocks the app, Movies, TV Shows and the third page can be opened before anything is
+  added. Today: "Your library has no films yet." with "Open Network & Files"; the third page shows a **+** in the top
+  bar and opens straight into its editor.
+- Proposed: Movies/TV Shows empty = icon, "No films yet", "Add your videos"; during the first scan = the loading
+  ring, "Finding your TV shows", a running count. Third page: keep the **+** icon (consistent with the Search and
+  Settings icons; the top bar opens a page on a short pause, so landing on + shows the explanation); the page offers
+  the normal Customise page button rather than a full-screen walkthrough (owner's preference), with the line "More
+  options for your library are in Files and Settings." Awaiting the owner's comments.
