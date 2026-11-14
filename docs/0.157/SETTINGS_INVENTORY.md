@@ -186,3 +186,16 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
 - **Foreign-language lines (owner's report):** with "Full subtitles…" off and English audio, Supernova picks the forced
   track; if the file has none, foreign lines show nothing. Fix for 0.157: when no forced track exists, fetch an
   OpenSubtitles "foreign parts only" subtitle automatically; if none, fall back to the full track.
+- **Skip button (owner, 14 Nov; diagnostics 23:44–23:52):** the button works (23:48:30, OK skipped to 5:30). Faults found
+  in the code: (1) it is shown **10 s**, but the setting says "5 seconds"; (2) after rewinding to **before** the intro
+  starts it stays on screen (it only checks "before the end of the part"); (3) with the controls open it floats at a
+  fixed height that no longer matches the new controls, so it jumps and overlaps; (4) its pressing is not in
+  diagnostics. Design (`player/29`, `30`): normal-size button; without controls bottom right, focused so one OK skips,
+  a thin bar drains over 10 s; with controls it sits in the button row beside Settings until the part ends. Shown
+  only while the position is inside the part. Diagnostics log shown / pressed / dismissed.
+- **Subtitles for every language spoken:** a downloaded English subtitle file subtitles whatever its makers translated —
+  normally every non-English line, and usually not the English ones. Supernova shows that file in full whatever the
+  audio. The "only forced" behaviour applies to subtitle tracks **inside** the video file when the audio is already in
+  your language. Proposal: make "Full subtitles when the audio is in your language" **on by default**.
+- OpenSubtitles signed out: one-line note; **QR code to create a free account** under Sign in (`settings-v2/08`); Play
+  With's doubled line fixed.
