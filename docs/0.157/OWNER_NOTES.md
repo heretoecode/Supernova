@@ -1188,3 +1188,16 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   whatever it takes.
 - Approved the same day (owner): the new mark and loading ring everywhere (RULES §21); bringing in the TV-relevant
   NOVA 6.6.5+ changes (§35).
+
+## 37. Onboarding, first pass (14 Nov 2026; mock-up `onboarding/01`)
+- Today (from the code): Android's storage prompt (old NOVA `PermissionChecker`), a mostly empty Home with
+  placeholder cards, a one-off "Welcome to Supernova" pop-up, and "Choose Your Media Folders" (local folders only,
+  Save & Finish). Network shares, Put.io, languages and restore are left for the user to find.
+- Proposed, four steps with dots: **Welcome** (the new mark; Start fresh / Restore from a backup, the owner's idea) →
+  **Access to your files** (asked once, so later deletes and folder pickers stay inside Supernova; RULES "no Android
+  screens") → Start fresh: **Add your videos** (folders on this Shield, USB drive, network share, Put.io; nothing
+  scanned until Continue) → **Languages** (audio, subtitles, Where to Watch region from the Shield) → Finish and start
+  scanning. Restore: **Find your backup** (this Shield, USB drive, network share; then the approved Restore list and
+  "In This Backup") → **Restored: sign in again** (backups keep no passwords; the phone-paste fix helps here) →
+  Restart Supernova.
+- Awaiting the owner's comments.
