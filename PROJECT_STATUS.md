@@ -50,6 +50,12 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   [`docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md`](docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md).
 - Older Preview-era files and early planning: [`docs/archive/`](docs/archive/README.md).
 
+### Design status (14 Nov 2026)
+Every page is designed and approved: Search, Files (with Transfers and Your Library), Details, Player and Playback
+Settings, the shared choice list, library pages, Home and Settings. Records: `docs/0.157/OWNER_NOTES.md` §26–33,
+`docs/0.157/SETTINGS_INVENTORY.md`, `docs/design/RULES.md`. Next: coding 0.157 when the owner gives the go-ahead
+(diagnostics first).
+
 ### Design rulebook (12 Nov 2026)
 Every agreed design rule is in [`docs/design/RULES.md`](docs/design/RULES.md); pages are built from it. Re-tick of
 older designs against the newer rules, in six steps: 1 Search (done), 2 Files (done), 3 Details (done), 4 Player (done), 5 the shared

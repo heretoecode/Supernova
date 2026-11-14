@@ -240,3 +240,6 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
   options: a line under every option; rows centred. Your services list sized to its content, hint wrapping inside it
   (rule reminder: menu width = longest item + standard padding). Release notes pop-up approved. Mock-ups
   `settings-v2/23`–`26`.
+- **Settings design approved (owner, 14 Nov 2026).** Credits pop-ups approved; Open-source licences opens its QR pop-up
+  straight over the About page. Seven tabs confirmed by the pictures. **All redesigns are now designed:** Search, Files,
+  Details, Player and Playback Settings, the shared choice list, library pages, Home, Settings.
