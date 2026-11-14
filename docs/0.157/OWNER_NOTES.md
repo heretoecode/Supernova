@@ -1214,4 +1214,9 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   ring, "Finding your TV shows", a running count. Third page: keep the **+** icon (consistent with the Search and
   Settings icons; the top bar opens a page on a short pause, so landing on + shows the explanation); the page offers
   the normal Customise page button rather than a full-screen walkthrough (owner's preference), with the line "More
-  options for your library are in Files and Settings." Awaiting the owner's comments.
+  options for your library are in Files and Settings."
+- **Owner, 14 Nov:** Movies and the third page approved. TV Shows text contradicted itself ("12 found so far … they
+  appear as they're found" yet none shown): the message now shows only while nothing is found yet, with no count
+  (RULES §23). "Customise page" is the approved button name on a set-up page (`library-pages` v6–v9), so the empty
+  page uses the same words. Where its panel opens: being discussed (Claude: the right-hand side panel, as on a set-up
+  page, so the page stays in view and updates live).

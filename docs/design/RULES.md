@@ -327,8 +327,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - The welcome stays on Home until videos are added or a backup is restored; then Home becomes Home.
 - **Empty library pages** (`library-pages/34`): no toolbar while there is nothing to filter or sort; one centred
   message with an icon. Nothing added yet: "No films yet" / "No TV shows yet" and **Add your videos** (to Home's
-  Add your videos step while setting up, otherwise Files). First scan running: the loading ring, "Finding your …",
-  a count; posters appear as they are found.
+  Add your videos step while setting up, otherwise Files). First scan running and nothing found yet: the loading ring,
+  "Finding your TV shows", "The first ones appear here in a moment." No count: the moment the first title is found
+  the message goes and the posters show, filling in as the scan goes on (the ring beside Files says it is still
+  running) (owner, 14 Nov).
 - **The third page before it is set up:** a **+** icon in the top bar (like Search and Settings, an icon); its page says
   "Make this page your own" with the same **Customise page** button the page keeps once set up (same panel), and one
   quiet line: "More options for your library are in Files and Settings." No full-screen walkthrough.

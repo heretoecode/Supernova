@@ -46,7 +46,7 @@ const movies = `<div class="frame">${nav('Movies', 'line')}${empty(svg(I.film, 6
   'Add a folder, a drive or a network share and your films appear here.',
   btn('folderplus', 'Add your videos', true))}</div>`;
 const shows = `<div class="frame">${nav('TV Shows', 'line')}${empty(`<div class="ring">${mark}</div>`,
-  'Finding your TV shows', '12 found so far. They appear here as they’re found.')}</div>`;
+  'Finding your TV shows', 'The first ones appear here in a moment.')}</div>`;
 const third = `<div class="frame">${nav('+', 'line')}${empty(svg(I.page, 60), 'Make this page your own',
   'Choose what it shows: a genre, a service, what you haven’t watched yet, anything you like. Give it a name and it '
   + 'takes the place of the + in the top bar.', btn('edit', 'Customise page', true),
