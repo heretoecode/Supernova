@@ -143,6 +143,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   choice list (section 9).
 - Prefer clock times and real values to abstract ones (Sleep timer → "Stop playing at": Off · 17:32 · 18:02 · 18:32 ·
   End of episode).
+- **› only on rows that open a list or page** (owner, 14 Nov). Actions show their verb in plain text (Clear, Send, Save,
+  Back up); their progress and "Done" show in the row itself, never as an Android notification.
 - Avoid click-throughs and pop-ups wherever an inline choice fits. No "‹ value ›" arrows where chips fit.
 - Long explanations are short help lines, never full-page blue boxes of text (§20 Backup).
 
