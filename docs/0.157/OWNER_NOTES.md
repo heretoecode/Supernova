@@ -1135,3 +1135,14 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   everything else not answered is approved (Years and Minimum rating on rows kept; Maximum items 10–30). Automatic icon
   (from the code): the first genre chosen for the row gives its icon; with no genre, a plain list icon. **Home done.**
   Next: Settings.
+
+## 34. App icon, Shield banner and splash (14 Nov 2026; mock-ups `brand/01`–`02`)
+- From the walkthrough (10 Nov): the splash still uses the old space-blue background; review the launcher icon and
+  banner against the charcoal look, keeping the recognisable rings and staying legible at launcher size.
+- What the app supplies today: banner `foundation_banner` (320×180), adaptive icon `foundation_launcher`, splash
+  `foundation_splash_image` (1920×1080 picture shown as the window background, so it only appears on a cold start:
+  that explains the walkthrough's "splash on some returns but not others").
+- Two options drawn, both on charcoal `#16181C` with the wordmark centred with the rings: **A** keeps today's glowing
+  rings (cut from the current artwork); **B** redraws them as clean shapes with two sparks, crisper at small sizes.
+  Awaiting the owner's choice.
+- 0.156 review: the owner's ChatGPT walkthrough (§21) covered the review; only network-interruption recovery is left.
