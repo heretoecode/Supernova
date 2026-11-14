@@ -289,6 +289,13 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 
 ---
 
+## 20. QR codes
+
+- A QR code on screen is about 300 px square at 1080p (about 18 cm on a 52" TV), so a phone can read it from the
+  sofa. 170 px only works from about a metre (owner, 14 Nov 2026).
+- Only one QR code on screen at a time, with its blank border around it. Never a QR code per row in a list: the
+  phone may read the neighbour, and small codes can't be read from the sofa. A list opens a pop-up with the one code.
+
 ## Open questions (to settle when the page comes up)
 - **Home row text:** inside the picture (current rule) or below it — with the Home redesign.
 - **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.
