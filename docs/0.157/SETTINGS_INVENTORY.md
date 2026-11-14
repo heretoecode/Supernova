@@ -231,3 +231,12 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
 - About: build date; "Based on NOVA 6.6.4"; a version opens a pop-up like Full description, one change per line; list the
   last five versions plus "All versions".
 - Your services: the hint moves above Selected and reads "Your first choice goes at the top. Press OK on a ticked service to move it." (`settings-v2/22`). Library and Services tabs approved (owner, 14 Nov).
+- **Owner on batch 3 (14 Nov 2026):** Backup Choose = the ~25 parts grouped into six (confirmed). Restore: OK on Restore
+  lists the backups in the folder → one opens "In This Backup" → Restore this backup → back on System with progress in
+  the Restore row; when done the row offers **Restart now** (library and history need a restart to finish). About: the
+  app information row goes — its unique facts join the header ("Built … · based on NOVA 6.6.4 · Android TV 11"); free
+  space and library counts live on Files. Credits: each service opens a pop-up with what it supplies, any required
+  wording (e.g. TMDB's notice) and a QR code to its site; Open-source licences opens a pop-up with the QR code. Network
+  options: a line under every option; rows centred. Your services list sized to its content, hint wrapping inside it
+  (rule reminder: menu width = longest item + standard padding). Release notes pop-up approved. Mock-ups
+  `settings-v2/23`–`26`.
