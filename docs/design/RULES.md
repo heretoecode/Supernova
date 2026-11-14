@@ -310,6 +310,22 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - At small sizes (top bar, inside a row, about 28 px at 1080p) the strokes are drawn thicker so both rings stay
   clear; the shape and the spin directions never change.
 
+## 22. Wording: "this device", never "Shield"
+
+- Supernova may run on other Android TV devices (and may be public one day), so the app never says "Shield" or
+  "NVIDIA Shield". Use **this device** ("On this device", "Folders on this device", "From this device", Files' tab
+  "This Device"). Applies to every page and to mock-ups from 14 Nov 2026 on; older approved mock-ups that say
+  "This Shield" are read as "This Device" (owner, 14 Nov 2026).
+
+## 23. Onboarding never blocks the app
+
+- First launch opens Home with the normal top bar; the welcome and its steps sit in Home's space where the hero and
+  rows will be. Up reaches the top bar, so every page can be explored first (owner, 14 Nov 2026).
+- Steps are smart: anything already done elsewhere (access granted, a source added in Files, a language set in
+  Settings) shows as done with where it was set ("Set in Settings", "Added in Files") and a tick; a step with nothing
+  left to do is skipped.
+- The welcome stays on Home until videos are added or a backup is restored; then Home becomes Home.
+
 ## Open questions (to settle when the page comes up)
 - **Home row text:** inside the picture (current rule) or below it — with the Home redesign.
 - **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.

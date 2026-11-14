@@ -1200,4 +1200,8 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   scanning. Restore: **Find your backup** (this Shield, USB drive, network share; then the approved Restore list and
   "In This Backup") → **Restored: sign in again** (backups keep no passwords; the phone-paste fix helps here) →
   Restart Supernova.
-- Awaiting the owner's comments.
+- **Owner, 14 Nov:** (1) never say "Shield" in the app: "this device" everywhere (RULES §22). (2) Onboarding must
+  never block the app (the owner dislikes apps that force a walkthrough before you can look around): it lives on Home
+  under the normal top bar, in place of the hero and rows, so Up reaches every page. (3) It must be smart: if the user
+  sets something elsewhere first (e.g. languages in Settings), the step shows it as already set or is skipped
+  (RULES §23). Redrawn as `onboarding/02` (v2). Restore path and Access step as in `01`, now under the top bar.
