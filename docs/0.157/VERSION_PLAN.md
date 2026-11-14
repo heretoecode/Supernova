@@ -79,6 +79,51 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
 - Is Codex back? Until then Claude does everything.
 - "Going public" checklist kept for one day (history, titles, certificate contact, licence notices).
 
+## 0.157 without the redesigns: what is left (14 Nov 2026)
+
+**A. Engine and NOVA**
+1. Merge Codex's unmerged 0.157 work (13 of 23 items: tab summaries, reachability, scan one source, scan signal,
+   automatic scan choices, recent scans, Find it again everywhere, Not a film, Library Health lists, forgiving Fix
+   match search, connections forms, folder artwork, More Like This sources …; each checked before it goes in).
+2. NOVA 6.6.5 and later, the TV parts: Trakt's newer calls (checked first), matching by file name, Samba fixes,
+   software-decoding notice, picture-subtitle position.
+3. Seek loading signal (#20), tested on the Shield.
+
+**B. Clearing out old NOVA**
+4. The SAFE clean-out list: NOVA's hidden grid and hidden screens that still run behind Supernova's, unused code.
+5. Remove picture in picture (recorded so it can return) and the Issue digest.
+6. "No Android screens": ask for All files access once, so deleting and folder picking stay inside Supernova.
+
+**C. Speed and reliability**
+7. Memory: measure per page in diagnostics, then cut (about 750 MB today).
+8. No page rebuild when a scan changes nothing (the minute-by-minute Put.io stalls).
+9. Scan rules: one at a time, none within 15 minutes of the last, a limit on scans at launch.
+10. Reopen on the page you were on with focus restored; after standby too. Focus not jumping when Down is held.
+11. Network-drop recovery checked; Put.io pause/resume sound in step checked.
+
+**D. Bugs**
+12. Seek preview pictures on Put.io and local files. 13. Episodes row missing in the player for some series.
+14. Chapter names after merging intro/credits. 15. Skip button: right duration, gone after rewinding, logged.
+16. Stuck "Scanning…" pill. 17. Started titles leave Recently Added. 18. Files deleted elsewhere tidied at the next
+scan, history kept. 19. Details tabs popping in; Home hero change waiting for artwork. 20. JustWatch link that opens
+nothing becomes a plain credit line.
+
+**E. Data and behaviour (no new screens)**
+21. Subtitles: ready during Preparing playback, next two episodes fetched, full subtitles when the audio is in your
+    language (the Experimental translate option comes with the Player redesign).
+22. UK age ratings with reasons; Reception stored offline; technical information per file.
+23. Smarter, calmer hero backdrops. 24. Where to Watch region from the device. 25. Automatic sort-title rebuild.
+26. Diagnostics: kept 2 weeks (1/2/4), clear after export, memory and delete steps logged.
+27. Simpler backup groups (the six agreed). 28. Release notes and licences data tidied.
+
+**F. Foundation (R0), shared by every page**
+29. Panels, menus, the shared choice list, focus and path, headings, artwork edge, the move gesture.
+30. The one keyboard, with paste from the phone app and the password show/hide eye.
+31. The new mark: app icon, banner, splash and the one loading ring.
+
+Anything that needs a redesigned screen to show it (recent scans, reachability, Library Health lists, Not a film,
+library statistics) arrives with that page; Files is in 0.157, so most do too.
+
 ## Owner's choices so far
 
 - **0.157 must have (owner, 14 Nov 2026):** R6 **Files** (today's Network & Files is half old design, half new: it
