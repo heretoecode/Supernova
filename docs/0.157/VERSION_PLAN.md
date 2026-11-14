@@ -16,7 +16,7 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
 | R5 | **Player and Playback Settings** | Title block with age rating, Preparing playback, seek preview layout, centre loading ring, skip button in the control row, Playback tab (play mode, Stop playing at, Still watching), track names and pills, subtitle lists stacked on the panel | L | R0 |
 | R6 | **Files** | Tabs incl. Transfers, Your Library stats, Library Care (Fix match page, re-check of matches, Library Health), Scan one source, connections add/remove, one-step delete, top-bar Files with scan ring and attention mark | L | R0 (R2's long-press Fix match opens Files' Fix match page) |
 | R7 | **Settings** | Seven tabs, every setting kept/moved/merged/removed as in the inventory, Backup and Restore with progress, Diagnostics, About (credits, licences list with QR pop-ups, release notes) | L | R0 |
-| R8 | **App icon, banner, splash and loading ring** | New mark (choice pending, `brand/03`); the same mark spins as the app's one loading ring | S | Owner's choice of mark |
+| R8 | **App icon, banner, splash and loading ring** | New mark (`brand/03` version 1, approved); the same mark spins as the app's one loading ring everywhere (RULES §21) | S | — |
 | R9 | **Onboarding** *(not designed yet)* | First launch: Start fresh or Restore a backup, permission, add sources, language and subtitles, first scan | M | Mock-ups; R7's Restore |
 
 ## 2. New features (agreed behaviour)
@@ -66,6 +66,7 @@ that lives on that page (e.g. Home includes Customise Home; library pages includ
 | Legacy NOVA clean-out, SAFE list only (incl. NOVA's hidden grid and screens) | M | Approved |
 | Seek loading engine (#20) | S | Needs a Shield test |
 | Newer NOVA engine (#21) | L | Not started; suggest its own version |
+| NOVA 6.6.5 and later, the TV-relevant parts (Trakt calls, matching by file name, Samba fixes, software-decoding notice, picture-subtitle position) | M | Notes §35; check Trakt first |
 | Simpler backup categories; automatic sort-title rebuild; deletion steps in diagnostics | S | |
 
 ## 5. Admin (not code)

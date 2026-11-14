@@ -1146,3 +1146,24 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   rings (cut from the current artwork); **B** redraws them as clean shapes with two sparks, crisper at small sizes.
   Awaiting the owner's choice.
 - 0.156 review: the owner's ChatGPT walkthrough (§21) covered the review; only network-interruption recovery is left.
+- **Retired (owner, 14 Nov):** the glowing space-blue rings belong to the old look. New mark drawn in three versions
+  (`brand/03`): **version 1, plain open arcs, approved.** It is also the app's one loading ring, spinning outer
+  clockwise and inner anticlockwise (owner's original idea; a closed ring never looked as if it moved). Everywhere a
+  wait has no known length; bars for known progress (RULES §21). Options A and B (`brand/01`, `02`) are superseded.
+
+## 35. NOVA has moved on: 6.6.5 and later (checked 14 Nov 2026)
+Supernova is on NOVA 6.6.4 (3 Nov). Upstream released **6.6.5 on 10 Nov** and has more since. Worth bringing in for
+a TV (our fork is heavily changed, so each is carried across by hand, not merged wholesale):
+- **Trakt:** lists paginated, 64-bit list IDs, move to Trakt's newer "last activities" call (MediaLib). Check first:
+  if Trakt retired the old call, sync could break.
+- **Matching:** the scraper prefers the file name and path over the title written inside the file (MediaLib). Should
+  mean fewer wrong matches.
+- **Network:** SMB share credentials kept in scan data; no duplicate Samba discovery at start-up; Samba probes stop
+  early (MediaLib, FileCoreLibrary).
+- **Playback:** a notice when hardware decoding falls back to software (we would put it in diagnostics and our own
+  pop-up); Dolby Vision decoder order kept, with a warning when a fallback may show wrong colours; libdovi in the
+  native build (Dolby Vision profile 5 on devices without Dolby Vision hardware; low value on the Shield).
+- **Subtitles:** a vertical position setting for picture subtitles (PGS/VobSub, i.e. Blu-ray rips); fixes keeping
+  them clear of the controls.
+- Messenger app folders (Telegram etc.) never scanned; dependency updates.
+- Not relevant to a TV: phone notches, portrait, rotation, double-tap zones, status bars.

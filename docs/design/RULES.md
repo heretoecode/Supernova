@@ -296,6 +296,20 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Only one QR code on screen at a time, with its blank border around it. Never a QR code per row in a list: the
   phone may read the neighbour, and small codes can't be read from the sofa. A list opens a pop-up with the one code.
 
+## 21. The Supernova mark and the loading ring
+
+- **The mark (owner, 14 Nov 2026; `brand/03` row 1):** two open white rings on charcoal, the outer with its gap at
+  the lower right, the inner with its gap at the upper left. Used for the app icon, the Shield banner (with the
+  SUPERNOVA wordmark beside it) and the splash (wordmark under it). The glowing space-blue rings are retired.
+- **The loading ring is the mark, spinning:** outer ring clockwise, inner ring anticlockwise. It is the only
+  "please wait" sign in the app, for any wait of unknown length: the splash while the app starts, Preparing playback,
+  the centre of the player when playback waits (seek, slow network), beside Files in the top bar while a scan runs,
+  a page or folder still loading, Details or Search still fetching, signing in, Restore getting ready.
+- **Known progress uses a bar, not the ring:** copies, transfers, backup and restore once under way, the skip
+  button's 10 s, anything that can say "40%" (rows show progress and "Done" in the row).
+- At small sizes (top bar, inside a row, about 28 px at 1080p) the strokes are drawn thicker so both rings stay
+  clear; the shape and the spin directions never change.
+
 ## Open questions (to settle when the page comes up)
 - **Home row text:** inside the picture (current rule) or below it — with the Home redesign.
 - **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.
