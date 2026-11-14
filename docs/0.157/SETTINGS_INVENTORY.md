@@ -208,3 +208,6 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
   English subtitle for the same release and, if found, **show both together** (merged on screen), as with a built-in
   forced track. In Download subtitles, show pills for SDH and Foreign parts only. SDH files more often note other
   languages ("[speaking French]").
+- **Subtitles › When To Show (owner, 14 Nov 2026):** Show subtitles; Full subtitles when the audio is in your language
+  (on by default); **Also translate other languages — Experimental** (on by default): adds lines in other languages from
+  a built-in forced track or an OpenSubtitles "foreign parts only" file, merged on screen. Build it, then judge.
