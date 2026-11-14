@@ -1247,3 +1247,14 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
   same gap ("2021 · 6 episodes" turns into "S1 E2 · 31 min left"). Claude proposes line two always keeps the size:
   not started "3 seasons · 30 episodes"; started "S2 E3 · 18 of 30 left" (the bar already shows how far into the
   episode). **Approved (owner, 14 Nov);** RULES §14.
+
+## 41. Owner's comments on the version board (14 Nov 2026; `docs/0.157/board/`)
+- **NOVA 6.6.5+ moves to 0.158** (owner). Claude: one exception, in 0.157 check whether NOVA's Trakt change means
+  Trakt is retiring the call our sync uses; bring just that part forward only if our sync is breaking.
+- **Release notes need a rethink (later, to discuss):** 0.156's notes are two vague lines ("Library scanning, backup
+  reliability and diagnostic improvements" / "Player, metadata, network files and settings improvements. See the
+  release list for device checks"). Claude: 0.157's own notes will be written properly, one change per line in plain
+  words, as part of signing; how to redo older versions' notes is the later discussion.
+- **Cast and crew photos:** TMDB supplies portrait (2:3) photos; the round crop cuts off heads (seen on a 2026 film).
+  Claude agrees: switch to portrait cards with rounded corners like posters, with the artwork edge and focus ring,
+  name and role underneath; initials when there is no photo. Part of the Details redesign. Awaiting the owner.

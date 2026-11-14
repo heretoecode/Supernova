@@ -13,6 +13,7 @@ const cols = [
       'Home and Details go together, both in or both out', 'Library pages (posters, Filters, Sort, Columns, list '
       + 'view, Customise page, empty pages, + page, episode counts)']],
     ['Help', ['Codex back for 0.157, or Claude does it all']],
+    ['Design', ['Cast and crew: portrait photos instead of circles (Claude: yes)']],
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
@@ -20,8 +21,8 @@ const cols = [
       + 'delete after copy), Your Library, Library Care, Fix match page, Scan one source, connections, top-bar ring',
       'Player: Preparing playback, title block, seek preview, centre ring, skip button, Playback tab, track names, '
       + 'subtitle lists, Experimental translate']],
-    ['Engine and NOVA', ['Merge Codex’s 13 finished items', 'NOVA 6.6.5+: Trakt (check first), matching by file '
-      + 'name, Samba fixes, software-decoding notice, picture-subtitle height', 'Seek loading engine']],
+    ['Engine and NOVA', ['Merge Codex’s 13 finished items', 'Trakt: check NOVA’s Trakt change; bring it forward only '
+      + 'if our sync is breaking', 'Seek loading engine']],
     ['Old NOVA out', ['Hidden grid and hidden screens', 'Picture in picture, Issue digest', 'All files access once '
       + '(no Android screens)']],
     ['Speed and reliability', ['Memory (about 750 MB today)', 'No page rebuild every minute during scans',
@@ -33,14 +34,17 @@ const cols = [
     ['Data and behaviour', ['Subtitles ready at Preparing; next two episodes; full subtitles in your language',
       'UK age ratings; reception offline; technical info', 'Calmer hero backdrops', 'Region from the device',
       'Automatic sort titles', 'Diagnostics: 2 weeks, clear after export, memory and delete logging',
-      'Six backup groups', 'Release notes and licences tidied']],
+      'Six backup groups', 'Licences tidied', '0.157’s own release notes written properly']],
   ]],
   ['0.158', [
     ['Redesigns', ['Settings (seven tabs, Backup and Restore, Diagnostics, About)', 'Onboarding (on Home, Start fresh '
       + '/ Restore, smart steps)', 'Search (library first, On your services, recent searches)']],
     ['Features', ['Media Transfers part two: per-series “Bring new episodes”', 'Media Transfers schedule']],
+    ['Engine and NOVA', ['NOVA 6.6.5 and later, the TV parts: matching by file name, Samba fixes, software-decoding '
+      + 'notice, picture-subtitle height, Trakt']],
   ]],
   ['Later / someday', [
+    ['To discuss', ['Release notes: proper notes for every version (0.156 has two vague lines)']],
     ['Planned', ['Newer NOVA engine stack, as its own version', 'Make the repository private; private Releases page',
       '“Going public” checklist (history, titles, privacy, diagnostics cut back)']],
     ['Parked by you', ['Supernova screensaver (designed)', 'Picture in picture could return', 'Documentation website',

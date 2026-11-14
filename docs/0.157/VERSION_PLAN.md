@@ -141,6 +141,7 @@ library statistics) arrives with that page; Files is in 0.157, so most do too.
   built on solid ground. A focus bug on a page being redesigned in the same version is fixed in the new page, not
   twice; a page that waits keeps its fix in today's code.
 
+- **NOVA 6.6.5+ moved to 0.158 (owner, 14 Nov);** 0.157 only checks Trakt and fixes it if our sync is breaking.
 - **Redesigns decided (owner, 14 Nov):** 0.157 also gets **R5 Player** (with Preparing playback). **0.158:** R7 Settings
   (its eight tiles were partly redesigned already and work well, unlike Network & Files), R9 onboarding, R4 Search.
   Open: R1 Home, R2 library pages, R3 Details.

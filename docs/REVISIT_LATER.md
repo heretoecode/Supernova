@@ -5,6 +5,10 @@ Gathered 4 Nov 2026 from this session and the older registers (`docs/Future Deve
 `docs/archive/early-planning/project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md`, `docs/design/CODEX_WORK_QUEUE_2026-10-27.md`).
 Items already built or scheduled are left out (see the bottom of this file).
 
+## Release notes, properly (owner, 14 Nov 2026) — to discuss
+- 0.156's notes are two vague lines. Rethink how notes are written and shown, and whether to rewrite older
+  versions' notes from their records. 0.157's own notes will already be written properly.
+
 ## Ratings without a personal OMDb key — added 4 Nov 2026
 - **Decision (owner):** do not build an OMDb key into the app for now. Reception's IMDb, Rotten Tomatoes and
   Metacritic scores keep using the key typed into Settings (`omdb_api_key`, `metadata/OmdbSupplement.java`,
