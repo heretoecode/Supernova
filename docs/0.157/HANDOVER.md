@@ -64,6 +64,12 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   in the master order Details · Episodes · Extras · More Like This; heroes' metadata row Age rating · Year · Length ·
   Genres (`SharedMetadata`); episode title line "Season 2 · Episode 8 · Title".
 
+- Step 10 (Player) started, Playback Settings: Stop playing at (clock times; `stopLabels`), Play mode Stop after
+  this · Play next · Repeat this · Repeat all (`SubtitlePlaybackBackend.playModes`), Skip intros and credits Off ·
+  Show button · Automatic (`skipModes`). Still to do: Still watching? with time choices (needs player logic in
+  `PlayerStillWatching`), the rest of R5 (title block, Preparing playback, seek preview card, skip button in the
+  control row, track names and pills, subtitle lists stacked on the panel).
+
 ## In flight
 - Builds so far: 4 (10 failing tests), 5 (compile error), 6 (2 failing), 7 (3 failing; fixed in `2afbc9e`).
   **Build 8 (43774031993) started 15 Nov 23:17** on everything up to `2afbc9e`, including all the evening's work
