@@ -74,6 +74,9 @@ public final class PreviewPages extends FrameLayout {
     private final PageAdapter adapter = new PageAdapter();
     private final Click click;
     private Snapshot snapshot = new Snapshot();
+    /** Shows the redesigned Files page instead of the old one while it is being finished (0.157 step 8). */
+    static final String FILES_PAGE_SWITCH = "supernova_files_page";
+    private com.archos.mediacenter.video.leanback.files.FilesPage filesPage;
     private List<Box> files = new ArrayList<>();
     private final List<Shortcut> librarySources =
                                                                                           new ArrayList<>(),
@@ -2746,6 +2749,11 @@ public final class PreviewPages extends FrameLayout {
         }
 
         private void networkLayout(LinearLayout container) {
+            if (tab == 3 && PreferenceManager.getDefaultSharedPreferences(getContext())
+                                .getBoolean(FILES_PAGE_SWITCH, false)) {
+                filesLayout(container);
+                return;
+            }
             container.setOrientation(LinearLayout.HORIZONTAL);
             container.setGravity(Gravity.TOP);
             container.setClipChildren(false);
@@ -2780,6 +2788,71 @@ public final class PreviewPages extends FrameLayout {
             container.addView(sharedBrowser, new LinearLayout.LayoutParams(-1, -1));
             if (networkEntryPending)
                 container.post(PreviewPages.this::requestNetworkEntryFocus);
+        }
+
+        /** The redesigned Files page (step 8 of 0.157); the old screens still open from it. */
+        private void filesLayout(LinearLayout container) {
+            container.setLayoutParams(new RecyclerView.LayoutParams(
+                -1, Math.max(dp(360), getHeight() - list.getPaddingTop() - list.getPaddingBottom())));
+            if (filesPage == null)
+                filesPage = new com.archos.mediacenter.video.leanback.files.FilesPage(getContext());
+            if (filesPage.getParent() instanceof ViewGroup)
+                ((ViewGroup)filesPage.getParent()).removeView(filesPage);
+            List<Base> media = new ArrayList<>();
+            for (Entry entry : snapshot.technical)
+                media.add(entry.media);
+            com.archos.mediaprovider.ImportState imports = com.archos.mediaprovider.ImportState.VIDEO;
+            boolean importing = imports.isInitialImport() || imports.isRegularImport();
+            com.archos.mediacenter.video.leanback.files.LibraryCareCounts counts =
+                com.archos.mediacenter.video.leanback.files.LibraryCareCounts.count(
+                    media, importing,
+                    video -> LibraryHealth.state(getContext(), video) != LibraryHealth.State.AVAILABLE);
+            long lastScan = PreferenceManager.getDefaultSharedPreferences(getContext())
+                                .getLong("preview_scan_result_time", 0);
+            boolean scanning = PreviewLibraryScan.active();
+            List<com.archos.mediacenter.video.leanback.files.FilesPage.Device> devices =
+                com.archos.mediacenter.video.leanback.files.FilesPageData.devices(files, media);
+            filesPage.update(counts, com.archos.mediacenter.video.leanback.files.FilesPageData.videoCount(media),
+                             lastScan, scanning);
+            filesPage.setDevices(devices, device -> {
+                for (Box box : files)
+                    if (device.name.equals(box.getName()) || !device.removable && box.getBoxId() == Box.ID.FOLDERS) {
+                        click.open(new Presenter.ViewHolder(container), box);
+                        return;
+                    }
+            });
+            filesPage.setConnections(
+                com.archos.mediacenter.video.leanback.files.FilesPageData.connections(librarySources, media),
+                new com.archos.mediacenter.video.leanback.files.FilesPage.ConnectionActions() {
+                    @Override public void open(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
+                        networkSection("library");
+                    }
+
+                    @Override public void tryAgain(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
+                        networkSection("library");
+                    }
+
+                    @Override public void edit(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
+                        networkSection("saved");
+                    }
+
+                    @Override public void remove(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
+                        networkSection("saved");
+                    }
+
+                    @Override public void add() {
+                        networkSection("add");
+                    }
+                });
+            filesPage.setSources(
+                com.archos.mediacenter.video.leanback.files.FilesPageData.sources(devices, librarySources),
+                source -> {
+                    if (source.local)
+                        PreviewLibraryScan.request(getContext());
+                    else
+                        com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
+                });
+            container.addView(filesPage, new LinearLayout.LayoutParams(-1, -1));
         }
 
         private void setNetworkBack(View view, Runnable back) {
