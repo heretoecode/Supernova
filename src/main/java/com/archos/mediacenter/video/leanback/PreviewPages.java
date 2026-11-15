@@ -1453,6 +1453,31 @@ public final class PreviewPages extends FrameLayout {
         return rowMover;
     }
 
+    /**
+     * Holding Down or Up on Movies or TV Shows repeats faster than the grid can scroll. A repeat that arrives while
+     * the grid is still moving, or while the focused poster is not on screen, used to send focus to the top; such
+     * repeats now wait for the grid to settle.
+     */
+    private boolean heldVerticalMustWait(KeyEvent event) {
+        if (tab != 1 && tab != 2)
+        {
+            return false;
+        }
+        int key = event.getKeyCode();
+        boolean vertical = key == KeyEvent.KEYCODE_DPAD_DOWN || key == KeyEvent.KEYCODE_DPAD_UP;
+        if (!vertical || event.getAction() != KeyEvent.ACTION_DOWN || event.getRepeatCount() == 0)
+        {
+            return false;
+        }
+        View focused = list.findFocus();
+        if (focused == null)
+        {
+            return list.hasFocus() || list.getScrollState() != RecyclerView.SCROLL_STATE_IDLE;
+        }
+        return list.getScrollState() != RecyclerView.SCROLL_STATE_IDLE || list.hasPendingAdapterUpdates()
+            || list.isComputingLayout();
+    }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (tab == 0 && rowMover != null && event.getKeyCode() == KeyEvent.KEYCODE_BACK && !rowMover.moving()) {
@@ -1466,6 +1491,10 @@ public final class PreviewPages extends FrameLayout {
         if (event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_UP)
             recordRemoteInput();
         int remoteKey = event.getKeyCode();
+        if (heldVerticalMustWait(event))
+        {
+            return true;
+        }
         if (tab == 0 && (remoteKey == KeyEvent.KEYCODE_DPAD_LEFT || remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT)) {
             View focused = findFocus();
             String tag = focused == null ? "" : String.valueOf(focused.getTag());
