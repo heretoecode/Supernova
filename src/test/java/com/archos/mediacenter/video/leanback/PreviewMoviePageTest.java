@@ -300,7 +300,7 @@ public class PreviewMoviePageTest {
             tags.setRuntime(45, TimeUnit.MINUTES);
             page.bind(episode);
             page.setTags(tags, Collections.emptyList(), Collections.emptyList());
-            assertNotNull(PreviewPagesTest.findText(page, "S1 E1"));
+            assertNotNull(PreviewPagesTest.findText(page, "Season 1 · Episode 1 · Pilot"));
             assertNotNull(PreviewPagesTest.findText(page, "45m"));
             assertNotNull(PreviewPagesTest.findText(page, "Drama"));
             assertNull(PreviewPagesTest.findText(page, "9.8"));
