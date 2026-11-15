@@ -19,3 +19,5 @@ All times local. Coding time only; waiting for the owner or for a blocked build 
 | 15 Nov 18:10– | Resumed. Fourth build had failed at 13:39: compiled, 10 of 2,145 tests failing. All ten fixed; fifth build started 18:12. |
 
 Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of coding before the limit is reached.
+| 15 Nov 18:22 | Fifth build failed after 10 minutes (compile stage). Meanwhile: Issues Digest out, picture in picture out, All files access asked once. |
+| 15 Nov 18:48 | Owner asked whether finished: no; reading the fifth build's failure report. |
