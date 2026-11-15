@@ -87,6 +87,22 @@ public final class FilesPageData
         return sources;
     }
 
+    /** Worker thread only: how many files MediaLib recorded as unreadable. */
+    public static int unreadable(android.content.Context context)
+    {
+        try (com.archos.mediaprovider.video.LibraryHealthEvidence store =
+                 new com.archos.mediaprovider.video.LibraryHealthEvidence(context);
+             android.database.Cursor rows = store.getReadableDatabase().rawQuery(
+                 "SELECT COUNT(*) FROM evidence WHERE kind=?", new String[] {"COULD_NOT_READ"}))
+        {
+            return rows.moveToFirst() ? rows.getInt(0) : 0;
+        }
+        catch (RuntimeException unavailable)
+        {
+            return 0;
+        }
+    }
+
     public static int videoCount(List<Base> media)
     {
         int count = 0;

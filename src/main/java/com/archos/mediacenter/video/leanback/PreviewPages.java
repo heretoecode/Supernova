@@ -2853,6 +2853,12 @@ public final class PreviewPages extends FrameLayout {
                         com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
                 });
             container.addView(filesPage, new LinearLayout.LayoutParams(-1, -1));
+            final com.archos.mediacenter.video.leanback.files.FilesPage page = filesPage;
+            final Context app = getContext().getApplicationContext();
+            new Thread(() -> {
+                int unreadable = com.archos.mediacenter.video.leanback.files.FilesPageData.unreadable(app);
+                page.post(() -> page.setUnreadable(unreadable));
+            }, "FilesUnreadable").start();
         }
 
         private void setNetworkBack(View view, Runnable back) {

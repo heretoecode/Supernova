@@ -260,6 +260,8 @@ public final class FilesPage extends LinearLayout
         boolean ready = counts != null;
         row(column, "folder", "Missing files", "In your library but no longer found",
             ready ? LibraryCareCounts.pill(counts.missing, "file", "files") : "Loading…", this::openHealth, true);
+        row(column, "film", "Couldn't be read", "Files Supernova could not open",
+            unreadable < 0 ? "Loading…" : LibraryCareCounts.pill(unreadable, "file", "files"), this::openHealth, false);
         row(column, "search", "Not matched", "Videos without a movie or TV show",
             ready ? LibraryCareCounts.pill(counts.notMatched, "video", "videos") : "Loading…",
             this::openHealth, false);
@@ -557,6 +559,15 @@ public final class FilesPage extends LinearLayout
         }
         row.setTag(column.findViewWithTag("files.row.first") == null ? "files.row.first" : ROW);
         column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, 64)));
+    }
+
+    private int unreadable = -1;
+
+    /** Files Supernova could not open (MediaLib's read evidence); -1 while it is being counted. */
+    public void setUnreadable(int count)
+    {
+        unreadable = count;
+        show(tabs.openTab());
     }
 
     private void openHealth()
