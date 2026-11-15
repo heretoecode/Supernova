@@ -73,13 +73,22 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   row, the rest of R5 (title block, seek preview card, skip button in the
   control row, track names and pills, subtitle lists stacked on the panel).
 
-## In flight
-- Builds so far: 4 (10 failing tests), 5 (compile error), 6 (2 failing), 7 (3 failing; fixed in `2afbc9e`).
-  **Build 8 (43774031993) started 15 Nov 23:17** on everything up to `2afbc9e`, including all the evening's work
-  (Files page, top bar, Details pieces). Plain JUnit tests must not touch classes with Android static set-up
-  (`SupernovaStyle`, `Diagnostics`, views, drawables): use Robolectric for those.
-- To read the exact MediaLib code the build uses: add a worktree of `aos-MediaLib` at the pinned revision
-  (`prepare-supernova155-workspace.py`) and `git apply` the MediaLib patches from the lock file in order.
+## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
+- **Build 8 (43774031993) started 23:17** on `2afbc9e`. Everything after it (Files page on by default, Playback
+  Settings items, Preparing playback, track lists, sort titles, Couldn't be read, …) goes into build 9. On failure:
+  `report-test-failures.yml` with `run_id`, read the job log's last ~60 lines, fix, push, re-run.
+- **Next items, in order:** (1) build 8 result → build 9; (2) player HUD layout (R5): title block top left level with
+  the clock, controls lower, seek preview as a card with time and chapter inside, skip button at the end of the
+  control row with its 10 s bar, chapter row centred; check with `preview-renders.yml`; (3) Files: Check matches
+  (needs a re-match engine), Found on your network, real reachability pills; (4) subtitles plan (ready during
+  Preparing playback, next two episodes); (5) calmer hero backdrops (needs a way to tell the owner's chosen backdrop
+  from TMDB's default first); (6) version bump to 0.157 (`assets/foundation/release-history.json`, Gradle version,
+  `tools/test_settings_0143_mapping.py` expects 0.156), final release notes from `RELEASE_NOTES_DRAFT.md`;
+  (7) green conformance on the final commit, then sign with `supernova-0156-qa.yml` (owner approved this final
+  build only) and report the APK.
+- Skipped with reasons in `QUESTIONS.md`: hidden NOVA grid, memory cuts, backup groups.
+- Tests must not touch Android-static classes outside Robolectric. Tests of the old Files screens set
+  `supernova_files_page` false.
 
 ## Not done yet
 - **Dead connection still scanned** (diagnostics 14 Nov, finding 3): the source list is chosen inside MediaLib's
