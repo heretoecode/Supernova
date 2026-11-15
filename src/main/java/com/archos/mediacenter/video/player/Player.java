@@ -1636,7 +1636,9 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             {
                 mPlayerListener.onSeekStart(msec);
             }
-            int pictureToken = seekLoading().begin(mMediaPlayer, msec, seekChapters);
+            // Test doubles skip field initialisers, so an unset chapter list counts as none.
+            java.util.List<PlaybackChapters.Chapter> chapters = seekChapters == null ? java.util.List.of() : seekChapters;
+            int pictureToken = seekLoading().begin(mMediaPlayer, msec, chapters);
             try
             {
                 boolean tracked = pictureToken > 0 && mMediaPlayer instanceof AvosMediaPlayer &&

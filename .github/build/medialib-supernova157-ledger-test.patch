@@ -1,0 +1,17 @@
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkScanLedgerTest.java b/test/java/com/archos/mediaprovider/video/NetworkScanLedgerTest.java
+index 821f1e9..c053aca 100644
+--- a/test/java/com/archos/mediaprovider/video/NetworkScanLedgerTest.java
++++ b/test/java/com/archos/mediaprovider/video/NetworkScanLedgerTest.java
+@@ -251,6 +251,12 @@ public class NetworkScanLedgerTest {
+                 writes.incrementAndGet();
+                 return new ScanResult(true, false);
+             }
++
++            // The service has no Android context here; the scan lock needs a real folder, or the worker fails
++            // before it reaches the provider gate and the test's outcome depends on timing.
++            @Override public java.io.File getFilesDir() {
++                return org.robolectric.RuntimeEnvironment.getApplication().getFilesDir();
++            }
+         };
+         field(NetworkScannerServiceVideo.class, "mHandler").set(service, new Handler(Looper.getMainLooper()));
+         ExecutorService executor = (ExecutorService) field(NetworkScannerServiceVideo.class, "mScanExecutor").get(service);

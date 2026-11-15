@@ -306,15 +306,21 @@
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova157-background-rescan.patch",
       "sha256": "80b23e111047a6e6998802cd2f7cb27dc27b164444ba2bc555191016fa0febca"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-ledger-test.patch",
+      "sha256": "d4a44d08cfedd242a29f93d8087341acba880c432f21d2945a365b47b2821903"
     }
   ],
   "supernova155": {
-    "note": "0.155 engine release: native/avos is not prepared from source in the app build; the reviewed prebuilt arm64 engine (native run 41848351713, archive 42e1990b\u2026) is installed by package-supernova156-native.py. Retired avos operations: .github/build/avos-preview414.patch, .github/build/avos-supernova135.patch, .github/build/avos-supernova141-chapters.patch, .github/build/avos-supernova145-buffer-limits.patch, .github/build/avos-supernova146-upstream.patch"
+    "note": "0.155 engine release: native/avos is not prepared from source in the app build; the reviewed prebuilt arm64 engine (native run 41848351713, archive 42e1990b…) is installed by package-supernova156-native.py. Retired avos operations: .github/build/avos-preview414.patch, .github/build/avos-supernova135.patch, .github/build/avos-supernova141-chapters.patch, .github/build/avos-supernova145-buffer-limits.patch, .github/build/avos-supernova146-upstream.patch"
   },
   "supernova156": {
     "note": "0.156: Codex Parts A-D and B17a MediaLib/FileCore changes, applied in hand-back order (docs/codex/HANDOVER.md); verified to apply cleanly on the pinned sources 5 Nov 2026."
   },
   "supernova157": {
-    "note": "0.157: Codex continuation patches (six Java registrations from docs/codex/reports/2026-11-06-0157.md, in its order), then the seek-preview retriever fix and the TV-relevant NOVA 6.6.5+ changes (matching by file name, SMB share credentials, Trakt list paging and 64-bit ids, messenger folders; Samba discovery start result, network initialisation priority). Not carried: import notification change, Dolby Vision colour-fallback metadata key (clashes with this engine's keys), dependency bumps. The two native avos 0.157 patches wait for a new reviewed engine archive."
+    "note": "0.157: Codex continuation patches (six Java registrations from docs/codex/reports/2026-11-06-0157.md, in its order), then the seek-preview retriever fix and the TV-relevant NOVA 6.6.5+ changes (matching by file name, SMB share credentials, Trakt list paging and 64-bit ids, messenger folders; Samba discovery start result, network initialisation priority). Not carried: import notification change, Dolby Vision colour-fallback metadata key (clashes with this engine's keys), dependency bumps. The two native avos 0.157 patches wait for a new reviewed engine archive. Then medialib-supernova157-ledger-test (15 Nov): the ledger test's scanner gets a real files folder so the scan lock works and the test no longer depends on timing."
   }
 }
