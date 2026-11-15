@@ -216,3 +216,16 @@ is ever wanted back.
   (e.g. both following one series at different paces: one resume point; an episode watched alone ticks it for the
   other). Titles tagged as one person's (e.g. the partner's series) don't matter: their progress is theirs anyway
   and hidden from the other's view. Together titles watched together are fine too.
+- **Owner, 15 Nov (round 2):** (1) a long view name must never push the tabs right (the third page could run into
+  Files): use a **fixed-size icon** instead of a labelled button. (2) **Drop "SUPERNOVA" from the top bar**: you know
+  which app you are in, and it frees room; the icon takes its place at the far left. (3) Call it the **user switcher**
+  ("user switching menu"), not profiles. (4) **Two kinds of tags:** **user tags** (Me, Alex, Together: the ones the
+  user switcher uses) and **general tags** (Christmas, Classics: collections anyone makes). A title can have both, e.g.
+  Together + Christmas, or Me + Classics.
+- **Claude, round 2:** the icon should still say which view is on without words: a round badge with the person's
+  initial (M, A), two overlapping circles for Together, the grid for Everything; same size whatever the name. Long-
+  press › Tags opens one panel with two groups, **Users** and **Tags**; library Filters show the same two groups, each
+  tag cycling Off › Hide › Only. Views mostly use user tags but may also use general ones (Me can hide Classics).
+  Bonus: a general tag can feed a Home row or the custom library page (Customise Home › Add a row › Tag: Christmas),
+  so the Christmas films appear as a row in December and vanish otherwise.
+- Open: can views use general tags, or users only? Who can create user tags (everyone, or only in Settings)?
