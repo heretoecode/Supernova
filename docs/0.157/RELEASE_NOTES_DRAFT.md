@@ -27,6 +27,7 @@ coded is listed; it still needs a green build and the owner's Shield test before
 - Tabs in one order: Details · Episodes · Extras · More Like This
 - The line under the title reads age rating · year · length · genres, on Home and Details alike
 - Episodes show "Season 2 · Episode 8 · Title" under the logo, as in the player
+- A show with one season lists its episodes straight away, with no season page
 
 ## Player
 - Preparing playback shows the episode as "Season 2 · Episode 8 · Title" and the age rating
