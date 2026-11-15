@@ -256,3 +256,7 @@ is ever wanted back.
 - Next mock-up must show the whole flow: user switcher, Edit users and views (list, add, edit with name and icon
   picker, delete with warning, default user), Details hero with tags, More › Tags, New tag with the keyboard, the
   select mode for tagging many titles, library Filters with Users and Tags.
+- **Two questions to settle (owner will come back to them):** (1) can a user's view also hide general tags (e.g. Me
+  hides Classics by default), not just other users' titles? (2) per-user tags (seen only by their owner, e.g. the
+  owner's Classics) as well as global tags (everyone's, e.g. Christmas), or every tag shared? Full-flow mock-up
+  `tags-views/03` drawn 15 Nov to discuss.
