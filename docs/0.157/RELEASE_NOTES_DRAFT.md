@@ -48,6 +48,7 @@ coded is listed; it still needs a green build and the owner's Shield test before
 - Started titles leave Recently Added
 - The skip button shows the right length and goes after rewinding
 - Where to Watch uses your device's country until you pick one
+- The JustWatch credit in Settings no longer pretends to open something
 
 ## Settings
 - Keep diagnostics for 1, 2 or 4 weeks
