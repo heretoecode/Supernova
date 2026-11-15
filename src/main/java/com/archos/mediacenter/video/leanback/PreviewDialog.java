@@ -66,6 +66,7 @@ public final class PreviewDialog {
                 windows.removeIf(reference -> reference.get() == null || reference.get() == this);
                 windows.add(new WeakReference<>(this));
                 modalState(windows);
+                stackLook(windows);
             }
             @Override
             public void dismiss() {
@@ -82,6 +83,7 @@ public final class PreviewDialog {
                         WINDOWS.remove(owner);
                 }
                 modalState(windows);
+                stackLook(windows);
                 if (!showing)
                     return;
                 View root = previousRoot.get(), requested = previous.get(), target = requested;
@@ -123,6 +125,30 @@ public final class PreviewDialog {
                 ? kind
                 : "dialog");
         return dialog;
+    }
+
+    /** The panel behind a list: darkened to about 45% brightness and pushed back to 96% (RULES §11). */
+    static final float BEHIND_SCALE = 0.96f;
+    static final int BEHIND_SHADE = 0x8C000000;
+
+    /** Only the top window is at full size and brightness; every window under it is pushed back. */
+    private static void stackLook(List<WeakReference<Dialog>> windows) {
+        if (windows == null)
+            return;
+        Dialog top = null;
+        for (WeakReference<Dialog> reference : windows)
+            if (reference.get() != null && reference.get().isShowing())
+                top = reference.get();
+        for (WeakReference<Dialog> reference : windows) {
+            Dialog dialog = reference.get();
+            if (dialog == null || dialog.getWindow() == null)
+                continue;
+            View root = dialog.getWindow().getDecorView();
+            boolean behind = top != null && dialog != top;
+            float scale = behind ? BEHIND_SCALE : 1f;
+            root.animate().scaleX(scale).scaleY(scale).setDuration(180).start();
+            root.setForeground(behind ? new android.graphics.drawable.ColorDrawable(BEHIND_SHADE) : null);
+        }
     }
 
     private static void modalState(List<WeakReference<Dialog>> windows) {
