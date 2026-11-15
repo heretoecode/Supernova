@@ -40,6 +40,17 @@ public final class FilesSummary
         return facts;
     }
 
+    /** Connections tab: "3 Connections · 2 Reachable · 1,416 Videos" (mock-up network-files-tabs/05). */
+    public static List<Fact> connectionFacts(int connections, int reachable, int videos)
+    {
+        List<Fact> facts = new ArrayList<>();
+        facts.add(new Fact("integration", connections + (connections == 1 ? " Connection" : " Connections")));
+        facts.add(new Fact("done", reachable + " Reachable"));
+        facts.add(new Fact("film", NumberFormat.getIntegerInstance(Locale.UK).format(videos)
+            + (videos == 1 ? " Video" : " Videos")));
+        return facts;
+    }
+
     /** "Just now", "12 min ago", "3 hours ago", "2 days ago", or "Not scanned yet". */
     public static String ago(long thenMs, long nowMs)
     {

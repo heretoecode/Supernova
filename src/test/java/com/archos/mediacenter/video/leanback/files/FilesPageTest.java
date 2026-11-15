@@ -67,6 +67,54 @@ public class FilesPageTest
         assertEquals("Media server", scanned.get(0).label);
     }
 
+    @Test
+    public void connectionsTabListsConnectionsThenAdd()
+    {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FilesPage page = new FilesPage(activity);
+        activity.setContentView(page);
+        java.util.List<String> done = new java.util.ArrayList<>();
+        FilesPage.ConnectionActions actions = new FilesPage.ConnectionActions()
+        {
+            @Override
+            public void open(FilesPage.Connection connection)
+            {
+                done.add("open");
+            }
+            @Override
+            public void tryAgain(FilesPage.Connection connection)
+            {
+                done.add("again");
+            }
+            @Override
+            public void edit(FilesPage.Connection connection)
+            {
+                done.add("edit");
+            }
+            @Override
+            public void remove(FilesPage.Connection connection)
+            {
+                done.add("remove");
+            }
+            @Override
+            public void add()
+            {
+                done.add("add");
+            }
+        };
+        page.setConnections(java.util.List.of(new FilesPage.Connection(
+            "Office PC", android.net.Uri.parse("sftp://office/videos"), false, 0, 0)), actions);
+        findTabs(page).select(FilesPage.CONNECTIONS);
+        View first = page.findViewWithTag("files.row.first");
+        assertNotNull(first);
+        assertTrue(String.valueOf(first.getContentDescription()).contains("Not reachable"));
+        first.requestFocus();
+        View focused = first.findFocus();
+        assertNotNull(focused);
+        focused.performClick();
+        assertEquals("again", done.get(0));
+    }
+
     private static PageTabs findTabs(View view)
     {
         if (view instanceof PageTabs)

@@ -23,8 +23,8 @@ import java.util.List;
 
 /**
  * The redesigned Files page (owner, 6–12 Nov 2026; mock-ups network-files-tabs/33–44; RULES): plain charcoal, tabs
- * This Device · Connections · Library Care (Transfers later) with the open tab's facts on the right. Built up tab by tab;
- * it replaces the old Files page once every tab is in (see docs/0.157/HANDOVER.md).
+ * This Device · Connections · Library Care (Transfers later) with the open tab's facts on the right. Built up tab
+ * by tab; it replaces the old Files page once every tab is in (see docs/0.157/HANDOVER.md).
  */
 public final class FilesPage extends LinearLayout
 {
@@ -97,6 +97,52 @@ public final class FilesPage extends LinearLayout
         show(tabs.openTab());
     }
 
+    /** A saved connection on the Connections tab. */
+    public static final class Connection
+    {
+        public final String name;
+        public final android.net.Uri root;
+        /** Null while it is being checked. */
+        public final Boolean reachable;
+        public final long videos;
+        public final long lastSeenMs;
+
+        public Connection(String name, android.net.Uri root, Boolean reachable, long videos, long lastSeenMs)
+        {
+            this.name = name;
+            this.root = root;
+            this.reachable = reachable;
+            this.videos = videos;
+            this.lastSeenMs = lastSeenMs;
+        }
+    }
+
+    /** What the Connections tab's buttons do; the hosting page supplies the existing flows. */
+    public interface ConnectionActions
+    {
+        void open(Connection connection);
+
+        void tryAgain(Connection connection);
+
+        void edit(Connection connection);
+
+        void remove(Connection connection);
+
+        void add();
+    }
+
+    public static final int CONNECTIONS = 1;
+    private final List<Connection> connections = new java.util.ArrayList<>();
+    private ConnectionActions connectionActions;
+
+    public void setConnections(List<Connection> latest, ConnectionActions actions)
+    {
+        connections.clear();
+        connections.addAll(latest);
+        connectionActions = actions;
+        show(tabs.openTab());
+    }
+
     /** New figures from the library; the open tab and the summary redraw. */
     public void update(LibraryCareCounts latest, int videoCount, long lastScan, boolean scanRunning)
     {
@@ -123,6 +169,10 @@ public final class FilesPage extends LinearLayout
         {
             libraryCare(column);
         }
+        else if (tab == CONNECTIONS)
+        {
+            connections(column);
+        }
     }
 
     private void showSummary()
@@ -131,6 +181,18 @@ public final class FilesPage extends LinearLayout
         int toCheck = counts == null ? 0 : counts.toCheck();
         List<FilesSummary.Fact> facts =
             FilesSummary.facts(videos, toCheck, lastScanMs, System.currentTimeMillis(), scanning);
+        if (tabs.openTab() == CONNECTIONS)
+        {
+            int reachable = 0;
+            for (Connection connection : connections)
+            {
+                if (Boolean.TRUE.equals(connection.reachable))
+                {
+                    reachable++;
+                }
+            }
+            facts = FilesSummary.connectionFacts(connections.size(), reachable, videos);
+        }
         for (int index = 0; index < facts.size(); index++)
         {
             if (index > 0)
@@ -260,6 +322,143 @@ public final class FilesPage extends LinearLayout
         }
     }
 
+    /** Files › Connections (mock-up network-files-tabs/05): your connections, then Add a connection. */
+    private void connections(LinearLayout column)
+    {
+        heading(column, "Your Connections", "integration", false);
+        long now = System.currentTimeMillis();
+        for (Connection connection : connections)
+        {
+            String scheme = connection.root == null ? "" : connection.root.getScheme();
+            List<Action> actions = new java.util.ArrayList<>();
+            if (Boolean.FALSE.equals(connection.reachable))
+            {
+                actions.add(new Action("Try again", "scan", () -> connectionActions.tryAgain(connection)));
+            }
+            else
+            {
+                actions.add(new Action("Open", "folder", () -> connectionActions.open(connection)));
+            }
+            actions.add(new Action("Edit", "formatting", () -> connectionActions.edit(connection)));
+            actions.add(new Action("Remove", "discard", () -> connectionActions.remove(connection)));
+            actionRow(column, ConnectionLine.kind(scheme).equals("WebDAV") ? "files" : "integration",
+                      connection.name,
+                      ConnectionLine.second(scheme, connection.reachable, connection.videos, connection.lastSeenMs,
+                                            now),
+                      ConnectionLine.pill(connection.reachable), actions);
+        }
+        row(column, "plus", "Add a connection", "Computer, NAS, WebDAV, SFTP or FTP", null,
+            () -> {
+                if (connectionActions != null)
+                {
+                    connectionActions.add();
+                }
+            }, connections.isEmpty());
+    }
+
+    /** A button on a focused row. */
+    static final class Action
+    {
+        final String label;
+        final String icon;
+        final Runnable run;
+
+        Action(String label, String icon, Runnable run)
+        {
+            this.label = label;
+            this.icon = icon;
+            this.run = run;
+        }
+    }
+
+    /**
+     * A row whose buttons appear when it is focused (RULES §7; FLAT_PAGE_PRINCIPLES): focus lands on the first button,
+     * Left and Right move between them, Up and Down move to the next row.
+     */
+    private void actionRow(LinearLayout column, String icon, String name, String line, String pill,
+                           List<Action> actions)
+    {
+        Context context = getContext();
+        LinearLayout row = new LinearLayout(context);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setFocusable(true);
+        row.setFocusableInTouchMode(true);
+        int pad = SupernovaStyle.dp(context, 20);
+        row.setPadding(pad, 0, SupernovaStyle.dp(context, 10), 0);
+        row.setContentDescription(name + ", " + pill);
+        TextView mark = new TextView(context);
+        PreviewIcon.apply(mark, icon, 16);
+        row.addView(mark, new LayoutParams(SupernovaStyle.dp(context, 36), -2));
+        LinearLayout words = new LinearLayout(context);
+        words.setOrientation(VERTICAL);
+        TextView title = text(name, 18, Color.WHITE);
+        TextView second = text(line, 13.5f, SECOND_LINE);
+        words.addView(title);
+        words.addView(second);
+        row.addView(words, new LayoutParams(0, -2, 1));
+        TextView status = text(pill, 13.5f, Color.WHITE);
+        status.setGravity(Gravity.CENTER);
+        row.addView(status, new LayoutParams(SupernovaStyle.dp(context, 95), SupernovaStyle.dp(context, 22)));
+        row.addView(new View(context), new LayoutParams(0, 1, 0.4f));
+        List<TextView> buttons = new java.util.ArrayList<>();
+        Runnable restyle = () -> {
+            boolean inside = row.hasFocus();
+            row.setBackground(inside ? box(SupernovaStyle.FOCUS_FILL) : null);
+            int ink = inside ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
+            title.setTextColor(ink);
+            second.setTextColor(inside ? SupernovaStyle.FOCUS_TEXT : SECOND_LINE);
+            status.setTextColor(ink);
+            status.setBackground(outline(ink));
+            mark.setTextColor(ink);
+            SupernovaStyle.tintIcons(mark);
+            for (TextView button : buttons)
+            {
+                boolean focused = button.isFocused();
+                button.setVisibility(inside ? VISIBLE : GONE);
+                button.setTextColor(focused ? Color.WHITE : ink);
+                button.setBackground(focused ? box(SupernovaStyle.FOCUS_TEXT) : box(0x14000000));
+                SupernovaStyle.tintIcons(button);
+            }
+        };
+        for (Action action : actions)
+        {
+            TextView button = text(action.label, 15, Color.WHITE);
+            button.setGravity(Gravity.CENTER);
+            button.setFocusable(true);
+            button.setFocusableInTouchMode(true);
+            int inner = SupernovaStyle.dp(context, 12);
+            button.setPadding(inner, 0, inner, 0);
+            PreviewIcon.apply(button, action.icon, 14);
+            button.setOnClickListener(view -> action.run.run());
+            button.setOnFocusChangeListener((view, focused) -> row.post(restyle));
+            LayoutParams size = new LayoutParams(-2, SupernovaStyle.dp(context, 30));
+            size.leftMargin = SupernovaStyle.dp(context, 6);
+            row.addView(button, size);
+            buttons.add(button);
+        }
+        row.setOnFocusChangeListener((view, focused) -> {
+            if (focused && !buttons.isEmpty())
+            {
+                for (TextView button : buttons)
+                {
+                    button.setVisibility(VISIBLE);
+                }
+                buttons.get(0).requestFocus();
+            }
+            row.post(restyle);
+        });
+        restyle.run();
+        Object previous = column.getChildCount() == 0 ? null : column.getChildAt(column.getChildCount() - 1).getTag();
+        if (previous instanceof String && ((String) previous).startsWith(ROW))
+        {
+            View divider = new View(context);
+            divider.setBackgroundColor(LINE);
+            column.addView(divider, new LayoutParams(-1, Math.max(1, SupernovaStyle.dp(context, 1))));
+        }
+        row.setTag(column.findViewWithTag("files.row.first") == null ? "files.row.first" : ROW);
+        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, 64)));
+    }
+
     private void openHealth()
     {
         getContext().startActivity(new Intent(getContext(), LibraryHealthActivity.class));
@@ -297,7 +496,7 @@ public final class FilesPage extends LinearLayout
         row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         int pad = SupernovaStyle.dp(context, 20);
         row.setPadding(pad, 0, pad, 0);
-        row.setContentDescription(name + ", " + pill);
+        row.setContentDescription(pill == null ? name : name + ", " + pill);
         TextView mark = new TextView(context);
         PreviewIcon.apply(mark, icon, 16);
         row.addView(mark, new LayoutParams(SupernovaStyle.dp(context, 36), -2));
@@ -308,9 +507,11 @@ public final class FilesPage extends LinearLayout
         words.addView(title);
         words.addView(second);
         row.addView(words, new LayoutParams(0, -2, 1));
-        TextView status = text(pill, 13.5f, Color.WHITE);
+        TextView status = text(pill == null ? "" : pill, 13.5f, Color.WHITE);
         status.setGravity(Gravity.CENTER);
         status.setBackground(outline(Color.WHITE));
+        // A row without a status keeps the column's space, so names and chevrons stay lined up.
+        status.setVisibility(pill == null ? INVISIBLE : VISIBLE);
         row.addView(status, new LayoutParams(SupernovaStyle.dp(context, 95), SupernovaStyle.dp(context, 22)));
         row.addView(new View(context), new LayoutParams(0, 1, 0.6f));
         TextView chevron = text("›", 20, Color.WHITE);
@@ -321,7 +522,7 @@ public final class FilesPage extends LinearLayout
             title.setTextColor(ink);
             second.setTextColor(focused ? SupernovaStyle.FOCUS_TEXT : SECOND_LINE);
             status.setTextColor(ink);
-            status.setBackground(outline(ink));
+            status.setBackground(pill == null ? null : outline(ink));
             chevron.setTextColor(ink);
             mark.setTextColor(ink);
             SupernovaStyle.tintIcons(mark);

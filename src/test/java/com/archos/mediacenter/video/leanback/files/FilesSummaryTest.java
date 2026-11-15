@@ -36,4 +36,13 @@ public class FilesSummaryTest
         assertEquals("1 hour ago", FilesSummary.ago(MINUTE, 62 * MINUTE));
         assertEquals("2 days ago", FilesSummary.ago(MINUTE, MINUTE + 48 * 60 * MINUTE));
     }
+
+    @Test
+    public void connectionsTabFacts()
+    {
+        List<FilesSummary.Fact> facts = FilesSummary.connectionFacts(3, 2, 1416);
+        assertEquals("3 Connections", facts.get(0).text);
+        assertEquals("2 Reachable", facts.get(1).text);
+        assertEquals("1,416 Videos", facts.get(2).text);
+    }
 }
