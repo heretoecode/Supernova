@@ -53,6 +53,22 @@ public class PermissionChecker {
 
     private static boolean hasManageExternalStoragePermission = CustomApplication.isManageExternalStoragePermissionInManifest();
 
+    private static final String ALL_FILES_ASKED = "supernova_all_files_access_asked";
+
+    private static boolean allFilesAsked(Activity activity)
+    {
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity)
+            .getBoolean(ALL_FILES_ASKED, false);
+    }
+
+    private static void markAllFilesAsked(Activity activity)
+    {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity)
+            .edit()
+            .putBoolean(ALL_FILES_ASKED, true)
+            .apply();
+    }
+
     private static final int PERM_REQ_RW = 1;
     private static final int PERM_REQ_MANAGE = 2;
 
@@ -102,7 +118,12 @@ public class PermissionChecker {
         }
         if (log.isDebugEnabled()) log.debug("checkAndRequestPermission: hasManageExternalStoragePermissionactivityToRequestManageStorageExists={}", activityToRequestManageStorageExists);
 
-        if(Build.VERSION.SDK_INT >= 30 && hasManageExternalStoragePermission && activityToRequestManageStorageExists) { // MANAGE_EXTERNAL_STORAGE has it all and is introduced in API>=31 except for TV
+        // All files access is asked for once (owner, 12 Nov 2026): if it was refused, fall back to the media permissions
+        // and do not ask again at every start.
+        boolean allFilesRefused = Build.VERSION.SDK_INT >= 30 && allFilesAsked(activity)
+            && !Environment.isExternalStorageManager();
+        if(Build.VERSION.SDK_INT >= 30 && hasManageExternalStoragePermission && activityToRequestManageStorageExists
+            && !allFilesRefused) { // MANAGE_EXTERNAL_STORAGE has it all and is introduced in API>=31 except for TV
             if (log.isDebugEnabled()) log.debug("checkAndRequestPermission: is MANAGE_EXTERNAL_STORAGE granted? {}", Environment.isExternalStorageManager());
             if (!isDialogDisplayed && !Environment.isExternalStorageManager()) {
                 if (log.isDebugEnabled()) log.debug("checkAndRequestPermission: requesting MANAGE_EXTERNAL_STORAGE");
@@ -118,6 +139,7 @@ public class PermissionChecker {
                             },
                             PERM_REQ_MANAGE
                     );
+                    markAllFilesAsked(activity);
                     isDialogDisplayed = true;
                 } else {
                     if (Build.VERSION.SDK_INT >= 33) { // Need POST_NOTIFICATIONS too
@@ -130,6 +152,7 @@ public class PermissionChecker {
                                 },
                                 PERM_REQ_MANAGE
                         );
+                        markAllFilesAsked(activity);
                         isDialogDisplayed = true;
                     } else {
                         ActivityCompat.requestPermissions(
@@ -140,6 +163,7 @@ public class PermissionChecker {
                                 },
                                 PERM_REQ_MANAGE
                         );
+                        markAllFilesAsked(activity);
                         isDialogDisplayed = true;
                     }
                 }
