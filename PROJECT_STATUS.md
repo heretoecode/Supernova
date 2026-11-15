@@ -52,10 +52,10 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 
 ### 0.157 coding (started 15 Nov 2026)
 - Build order steps 1–5 coded except `main` (needs the owner's yes), the version number, the dead connection still
-  scanned (with Files, step 8) and memory cuts (wait for Shield numbers). Step 6 partly: Issues Digest and picture in
-  picture out, All files access asked once; NOVA's hidden grid waits for per-route proof. Step 7 started: the new
-  mark (loading ring, icon, banner, splash) and one shared panel value.
-- Not yet green: build 6 running (15 Nov 18:50). Details and what is next:
+  scanned (with Files) and memory cuts (wait for Shield numbers). Step 6 partly (Issues Digest, picture in picture
+  out; All files access once). Step 7 (foundation) mostly coded. Step 8: the new Files page is built behind a
+  switch. Steps 9–11 started (Details, Player settings, data). Running notes: `docs/0.157/RELEASE_NOTES_DRAFT.md`.
+- Not yet green: build 8 running (15 Nov 23:17); builds 4–7 failed on a few tests each, all fixed. Details and what is next:
   [`docs/0.157/HANDOVER.md`](docs/0.157/HANDOVER.md). Time taken: `docs/0.157/TIMELOG.md`.
 - For the owner to check on the Shield when a build is ready: deleting a local file (no Android screen expected),
   the new mark's orientation (copied from the mock-up picture; RULES §21's wording differs).

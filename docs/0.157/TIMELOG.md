@@ -32,3 +32,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 19:50–23:16 | **Not working: the session stopped** (about 3½ hours). Build 7 had failed meanwhile. |
 | 15 Nov 23:16– | Resumed. |
 | 15 Nov 23:16–23:18 | Build 7: 3 failing tests, fixed; build 8 started 23:17. |
+| 15 Nov 23:18–23:25 | While build 8 runs: Playback Settings (Stop playing at, Play mode, Skip intros and credits, Still watching?), AI names out of code comments, release notes draft. |
