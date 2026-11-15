@@ -209,3 +209,10 @@ is ever wanted back.
   - Limit to accept: one shared history and progress (no per-person Continue Watching); the view keeps the other
     person's half-watched titles out of sight.
 - Where it could land: with the library pages redesign (0.158) or later; owner to decide.
+- **Owner, 15 Nov:** still a discussion item (parked). Tags fit what profiles were meant to do. Hide/Only works like
+  the order button: OK on a tag in Filters cycles **Off › Hide › Only**. The view switch sits at the **start of the
+  top bar, left of Home**, because it decides what Home shows. First look: `design/proposals/tags-views/01`.
+- **The shared-history limit, made precise:** it only matters for titles **both** people watch **separately**
+  (e.g. both following one series at different paces: one resume point; an episode watched alone ticks it for the
+  other). Titles tagged as one person's (e.g. the partner's series) don't matter: their progress is theirs anyway
+  and hidden from the other's view. Together titles watched together are fine too.
