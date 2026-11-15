@@ -373,6 +373,7 @@ public final class PreviewDialog {
         scroll.setVerticalScrollBarEnabled(false);
         LinearLayout rows = new LinearLayout(c);
         rows.setOrientation(android.widget.LinearLayout.VERTICAL);
+        rows.setTag(CHOICE_ROWS);
         scroll.addView(rows);
         TextView search = ChoiceListSearch.shown(labels) ? searchRow(c, title) : null;
         if (search != null)
@@ -572,6 +573,67 @@ public final class PreviewDialog {
             TextView label = root.findViewWithTag("preview-label:" + i);
             row.setContentDescription(label.getText() + (checked.contains(i) ? ", selected" : ", not selected"));
         }
+    }
+
+    private static final String CHOICE_ROWS = "choice.rows";
+    private static final String SELECTED_HEADING = "choice.selected.heading";
+
+    /**
+     * For long lists with several choices (RULES §9): ticks are updated and the ticked items glide up under
+     * "Selected", A–Z, in about a quarter of a second; an unticked item glides back. Focus stays where you were.
+     */
+    public static void updateChecksSelectedFirst(Dialog dialog, Set<Integer> checked, String[] labels) {
+        if (dialog == null || dialog.getWindow() == null)
+            return;
+        updateChecks(dialog, checked);
+        View found = dialog.getWindow().getDecorView().findViewWithTag(CHOICE_ROWS);
+        if (!(found instanceof LinearLayout))
+            return;
+        LinearLayout rows = (LinearLayout)found;
+        View focused = rows.findFocus();
+        int focusedAt = focused == null ? -1 : rows.indexOfChild(focused);
+        List<View> chosen = new ArrayList<>();
+        List<View> others = new ArrayList<>();
+        View heading = rows.findViewWithTag(SELECTED_HEADING);
+        for (int n = 0; n < rows.getChildCount(); n++) {
+            View child = rows.getChildAt(n);
+            if (child == heading)
+                continue;
+            boolean ticked = child.getTag() instanceof Integer && child.isFocusable()
+                             && checked.contains((Integer)child.getTag());
+            (ticked ? chosen : others).add(child);
+        }
+        chosen.sort((a, b) -> labels[(Integer)a.getTag()].compareToIgnoreCase(labels[(Integer)b.getTag()]));
+        others.sort((a, b) -> Integer.compare(order(a), order(b)));
+        if (heading == null) {
+            heading = SupernovaStyle.groupHeading(rows.getContext(), "Selected", SupernovaStyle.GROUP_HEADING_SP);
+            heading.setTag(SELECTED_HEADING);
+            heading.setLayoutParams(new LinearLayout.LayoutParams(-1, dp(rows.getContext(), 25)));
+        }
+        android.transition.TransitionManager.beginDelayedTransition(
+            rows, new android.transition.ChangeBounds().setDuration(250));
+        rows.removeAllViews();
+        if (!chosen.isEmpty())
+            rows.addView(heading);
+        for (View row : chosen)
+            rows.addView(row);
+        for (View row : others)
+            rows.addView(row);
+        if (focusedAt >= 0)
+            focusNear(rows, Math.min(focusedAt, rows.getChildCount() - 1));
+    }
+
+    private static int order(View row) {
+        return row.getTag() instanceof Integer ? (Integer)row.getTag() : Integer.MAX_VALUE;
+    }
+
+    private static void focusNear(LinearLayout rows, int index) {
+        for (int n = index; n < rows.getChildCount(); n++)
+            if (rows.getChildAt(n).isFocusable() && rows.getChildAt(n).requestFocus())
+                return;
+        for (int n = index - 1; n >= 0; n--)
+            if (rows.getChildAt(n).isFocusable() && rows.getChildAt(n).requestFocus())
+                return;
     }
 
     public static void updateChecks(Dialog dialog, Set<Integer> checked) {

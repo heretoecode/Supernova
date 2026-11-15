@@ -101,23 +101,19 @@ final class PreviewPreferenceDialogs {
         CharSequence[] values = p.getEntryValues(), entries = p.getEntries();
         if (values == null || entries == null)
             return;
-        String[] labels = new String[entries.length + 1];
+        // No Done row: Back closes and each tick takes effect at once (RULES §9).
+        String[] labels = new String[entries.length];
         Set<Integer> checked = new HashSet<>();
         for (int i = 0; i < entries.length; i++) {
             labels[i] = entries[i].toString();
             if (selected.contains(values[i].toString()))
                 checked.add(i);
         }
-        labels[entries.length] = "Done";
         Dialog[] d = {
             null
         };
         d[0] =
             PreviewDialog.choose(f.requireContext(), String.valueOf(p.getTitle()), labels, focus, checked, false, i -> {
-                if (i == entries.length) {
-                    d[0].dismiss();
-                    return;
-                }
                 Set<String> next = new HashSet<>(selected);
                 String value = values[i].toString();
                 if (!next.remove(value))
@@ -130,9 +126,10 @@ final class PreviewPreferenceDialogs {
                     for (int j = 0; j < values.length; j++)
                         if (selected.contains(values[j].toString()))
                             checked.add(j);
-                    PreviewDialog.updateChecks(d[0], checked);
+                    PreviewDialog.updateChecksSelectedFirst(d[0], checked, labels);
                 }
             });
+        PreviewDialog.updateChecksSelectedFirst(d[0], checked, labels);
         languageIcons(d[0], p, values);
     }
 
