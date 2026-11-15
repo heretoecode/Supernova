@@ -143,6 +143,7 @@ library statistics) arrives with that page; Files is in 0.157, so most do too.
 
 - **NOVA 6.6.5+ back in 0.157 (owner, 15 Nov):** its "match by file name" fix explains the wrong matches, so all of
   NOVA's latest comes in; then re-check matches on Library Care.
+- **Users and tags pinned for 0.158 (owner, 15 Nov), still in discussion** (REVISIT_LATER, Profiles).
 - **Media Transfers: all of it in 0.158 (owner, 15 Nov);** Files in 0.157 without the Transfers tab.
   Decisions gathered in `docs/0.158/MEDIA_TRANSFERS.md`.
 - **0.157 also gets R3 Details** (owner: the layers on the way to watching first). **R1 Home and R2 library pages: 0.158.**

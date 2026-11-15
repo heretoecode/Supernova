@@ -240,3 +240,19 @@ is ever wanted back.
   list's Users group has no "New user" and a typo can't create a stray person; general tags can be made anywhere
   ("New tag"). (b) "Views using general tags" means a user's view may hide or show general tags too (Me hides
   Classics), not only other users' titles. Claude: yes to both; owner to decide.
+- **Owner, 15 Nov (round 4): pinned for 0.158, still in discussion** (more talk and mock-ups before it is final).
+  - **One global icon picker**, extended with new icons for users (two people for Together, rocket, flower …), drawn
+    larger and clearer than in `02`.
+  - **Users are managed only in the user switcher menu** (top bar, reachable from every page except playback):
+    create, edit (name, icon), delete. Everywhere else (long-press, Details › More › Tags) users can only be picked.
+  - **Default user per installation**, changeable: e.g. Together in the living room, the partner in the bedroom;
+    Supernova opens on that user every time.
+  - **Tags show on the Details hero card itself**, not in the tabs below.
+  - Titles can have **many tags** (ticks are multi-select); More › Tags opens the Users and Tags list (yes).
+  - "New tag" opens the one keyboard in its own panel beside the list (the approved keyboard-from-a-panel rule); the
+    new tag is ticked straight away. Possibly an icon for each tag from the same picker (to decide).
+- Still open, in plain words: when a user's view is on (say Me), may it also hide a kind of title, e.g. Classics, as
+  well as other people's titles? Claude: yes.
+- Next mock-up must show the whole flow: user switcher, Edit users and views (list, add, edit with name and icon
+  picker, delete with warning, default user), Details hero with tags, More › Tags, New tag with the keyboard, the
+  select mode for tagging many titles, library Filters with Users and Tags.

@@ -37,6 +37,8 @@ const cols = [
     ['Redesigns', ['Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)', 'Library pages (posters, '
       + 'Filters, Sort, Columns, list view, Customise page, empty pages, + page, episode counts)', 'Settings (seven tabs, Backup and Restore, Diagnostics, About)', 'Onboarding (on Home, Start fresh '
       + '/ Restore, smart steps)', 'Search (library first, On your services, recent searches)']],
+    ['In discussion, pinned here', ['Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA '
+      + 'name), user and general tags, views, default user (more mock-ups first)']],
     ['Features', ['Media Transfers, all of it: copy, checks, resilience, delete after copy, per-series “Bring new '
       + 'episodes”, schedule (docs/0.158/MEDIA_TRANSFERS.md)']],
   ]],

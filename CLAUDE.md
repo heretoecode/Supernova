@@ -38,6 +38,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   the design) so its edge shows on a dark screen.
 - **Whole picture (owner, 13 Nov 2026):** a mock-up shows the whole panel or page top to bottom, made as tall as needed,
   even if the real screen scrolls: the owner can't critique what they can't see.
+- **Whole flow (owner, 15 Nov 2026):** a mock-up shows every screen the drawn pieces lead to (e.g. a menu's "Edit …"
+  row, what "New tag" opens, the keyboard step), across as many frames or pictures as needed, so the owner never has
+  to ask "and what does that open?".
 - **Fewest mock-ups (owner, 12 Nov 2026; mindful of usage):** one picture covers as many things to assess as can be
   seen together on one screen; never one picture per item. Applying agreed rules (`docs/design/RULES.md`) to an
   approved page needs no mock-up (at most one sample screen); only genuinely new pieces are drawn. With each picture,
