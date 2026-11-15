@@ -51,11 +51,14 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 - Older Preview-era files and early planning: [`docs/archive/`](docs/archive/README.md).
 
 ### 0.157 coding (started 15 Nov 2026)
-- Build order steps 1–4 are coded except: `main` (needs the owner's yes), the version number, and the dead
-  connection that is still scanned (goes with Files, step 8). Step 5 (focus) is coded: reopen where you were, focus
-  after standby, held Down. Memory cuts wait for the owner's Shield numbers.
-- Not yet green: conformance has not passed on the 0.157 code. Current state, what is built and what is next:
+- Build order steps 1–5 coded except `main` (needs the owner's yes), the version number, the dead connection still
+  scanned (with Files, step 8) and memory cuts (wait for Shield numbers). Step 6 partly: Issues Digest and picture in
+  picture out, All files access asked once; NOVA's hidden grid waits for per-route proof. Step 7 started: the new
+  mark (loading ring, icon, banner, splash) and one shared panel value.
+- Not yet green: build 6 running (15 Nov 18:50). Details and what is next:
   [`docs/0.157/HANDOVER.md`](docs/0.157/HANDOVER.md). Time taken: `docs/0.157/TIMELOG.md`.
+- For the owner to check on the Shield when a build is ready: deleting a local file (no Android screen expected),
+  the new mark's orientation (copied from the mock-up picture; RULES §21's wording differs).
 - Build order and batches: `docs/0.157/VERSION_PLAN.md` (end).
 
 ### Where things stand (14 Nov 2026, end of the design phase)
