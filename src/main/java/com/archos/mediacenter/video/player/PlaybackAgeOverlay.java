@@ -16,7 +16,8 @@ import org.json.JSONObject;
 
 /** Passive FD-001 overlay, using only territory-scoped cached provider classification. */
 final class PlaybackAgeOverlay extends View {
-    static final long FADE_MS = 500, DWELL_MS = 10000;
+    // Fully shown for 8 seconds as playback starts (owner, 12 Nov 2026).
+    static final long FADE_MS = 500, DWELL_MS = 8000;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final SurfaceController surface;
     private final Runnable fade = this::fadeOut;

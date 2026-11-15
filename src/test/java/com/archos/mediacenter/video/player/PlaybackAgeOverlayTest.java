@@ -79,7 +79,7 @@ public class PlaybackAgeOverlayTest {
             assertFalse(view.isFocusable());
             view.playbackStarted();
             assertEquals(View.VISIBLE, view.getVisibility());
-            assertEquals(10000, PlaybackAgeOverlay.DWELL_MS);
+            assertEquals(8000, PlaybackAgeOverlay.DWELL_MS);
             view.stop();
             assertEquals(View.GONE, view.getVisibility());
             view.playbackStarted();
