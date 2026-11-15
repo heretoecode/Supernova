@@ -81,16 +81,28 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
 
     private List<PlaybackSubtitlePanel.Track> asTracks(List<TVMenuItem> items, boolean subtitles) {
         List<PlaybackSubtitlePanel.Track> out = new ArrayList<>();
+        com.archos.mediacenter.video.utils.VideoMetadata metadata =
+            subtitles || Player.sPlayer == null ? null : Player.sPlayer.getVideoMetadata();
+        // Audio tracks in plain words with pills when the engine's list lines up with the menu.
+        boolean details = metadata != null && metadata.getAudioTrackNb() == items.size();
         for (int i = 0; i < items.size(); i++) {
             TVMenuItem item = items.get(i);
             final int index = i;
             Object language = item.getTag(R.id.preview_track_language);
-            out.add(new PlaybackSubtitlePanel.Track(plain(item), language instanceof String ? (String)language : null,
+            String label = plain(item);
+            List<String> pills = java.util.Collections.emptyList();
+            if (details) {
+                TrackDetails track = TrackDetails.audio(metadata.getAudioTrack(i));
+                if (!track.language().isEmpty())
+                    label = track.language();
+                pills = PlaybackSubtitlePanel.pills(track);
+            }
+            out.add(new PlaybackSubtitlePanel.Track(label, language instanceof String ? (String)language : null,
                                                     item.isChecked(), item.isEnabled(), () -> {
                                                         if (subtitles && index > 0)
                                                             lastTrack = index;
                                                         item.previewClick();
-                                                    }));
+                                                    }, pills));
         }
         return out;
     }

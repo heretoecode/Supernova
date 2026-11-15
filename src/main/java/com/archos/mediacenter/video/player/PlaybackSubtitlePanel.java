@@ -47,14 +47,39 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         final String label, language;
         final boolean selected, enabled;
         final Runnable select;
+        /** Plain words and pills for the track lists (owner; mock-ups track-names/01–02); empty when unknown. */
+        final List<String> pills;
 
         Track(String label, String language, boolean selected, boolean enabled, Runnable select) {
+            this(label, language, selected, enabled, select, java.util.Collections.emptyList());
+        }
+
+        Track(String label, String language, boolean selected, boolean enabled, Runnable select, List<String> pills) {
             this.label = label;
             this.language = language;
             this.selected = selected;
             this.enabled = enabled;
             this.select = select;
+            this.pills = pills;
         }
+    }
+
+    /** Pills for a track: Original or Audio description (or SDH, Forced), then the format, then the channels. */
+    static List<String> pills(TrackDetails details) {
+        List<String> pills = new ArrayList<>();
+        if (details.original())
+            pills.add("Original");
+        if (details.audioDescription())
+            pills.add("Audio description");
+        if (details.sdh())
+            pills.add("SDH");
+        if (details.forced())
+            pills.add("Forced");
+        if (!details.format().isEmpty())
+            pills.add(details.format());
+        if (!details.channels().isEmpty())
+            pills.add(details.channels());
+        return pills;
     }
 
     /** One value of a native single-choice menu (Format, 3D Mode, Play Mode). */
@@ -1231,7 +1256,24 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         TextView label = text(track.label, 21, Color.WHITE, true);
         label.setSingleLine(true);
         label.setEllipsize(TextUtils.TruncateAt.END);
-        row.addView(label, new LayoutParams(0, -2, 1));
+        if (track.pills.isEmpty()) {
+            row.addView(label, new LayoutParams(0, -2, 1));
+        } else {
+            row.addView(label, new LayoutParams(-2, -2));
+            for (String pill : track.pills) {
+                TextView chip = text(pill, 16, Color.WHITE, false);
+                chip.setSingleLine(true);
+                chip.setPadding(s(10), s(2), s(10), s(2));
+                android.graphics.drawable.GradientDrawable edge = new android.graphics.drawable.GradientDrawable();
+                edge.setCornerRadius(s(10));
+                edge.setStroke(Math.max(1, s(1)), 0xAAFFFFFF);
+                chip.setBackground(edge);
+                LayoutParams gap = new LayoutParams(-2, -2);
+                gap.leftMargin = s(12);
+                row.addView(chip, gap);
+            }
+            row.addView(new View(owner), new LayoutParams(0, 1, 1));
+        }
         TextView tick = text("✓", 24, VALUE, false);
         tick.setVisibility(track.selected ? VISIBLE : INVISIBLE);
         row.addView(tick, new LayoutParams(s(28), -2));
