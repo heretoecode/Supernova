@@ -62,8 +62,19 @@ final class PreviewPlaybackLoading extends FrameLayout {
         episode = text("", 16);
         episode.setMaxLines(2);
         episode.setEllipsize(TextUtils.TruncateAt.END);
-        episode.setPadding(0, dp(10), 0, dp(20));
+        episode.setPadding(0, dp(10), 0, dp(10));
         labels.addView(episode);
+        // The age rating in its outlined badge on its own line (owner, 12 Nov 2026; player title block).
+        age = text("", 14);
+        age.setPadding(dp(7), dp(2), dp(7), dp(2));
+        android.graphics.drawable.GradientDrawable badge = new android.graphics.drawable.GradientDrawable();
+        badge.setCornerRadius(dp(4));
+        badge.setStroke(Math.max(1, dp(1)), 0xDDFFFFFF);
+        age.setBackground(badge);
+        age.setVisibility(GONE);
+        LinearLayout.LayoutParams ageSize = new LinearLayout.LayoutParams(-2, -2);
+        ageSize.bottomMargin = dp(10);
+        labels.addView(age, ageSize);
         LinearLayout status = new LinearLayout(context);
         status.setGravity(Gravity.CENTER_VERTICAL);
         status.setPadding(0, dp(18), 0, 0);
@@ -100,10 +111,50 @@ final class PreviewPlaybackLoading extends FrameLayout {
                         break;
                     }
             Episode selected = video instanceof Episode ? (Episode) video : null;
-            episode.setText(PreviewTaglines.cached(context, selected != null, online,
-                selected == null ? 0 : selected.getSeasonNumber(), selected == null ? 0 : selected.getEpisodeNumber()));
+            if (selected != null)
+                episode.setText(episodeLine(selected.getSeasonNumber(), selected.getEpisodeNumber(),
+                                            selected.getEpisodeName()));
+            else
+                episode.setText(PreviewTaglines.cached(context, false, online, 0, 0));
+            loadAge(selected != null, selected != null ? showOnlineId(library, video) : online);
         }
         episode.setVisibility(episode.length() == 0 ? GONE : VISIBLE);
+    }
+
+    private TextView age;
+
+    /** "Season 2 · Episode 8 · We Don't Talk Anymore", the same as Details and the player. */
+    static String episodeLine(int season, int episode, String name) {
+        String line = "Season " + season + " · Episode " + episode;
+        return name == null || name.trim().isEmpty() ? line : line + " · " + name.trim();
+    }
+
+    private static long showOnlineId(PreviewLibraryLoader.Snapshot library, Video video) {
+        if (library == null)
+            return 0;
+        for (PreviewLibraryLoader.Entry entry : library.episodes)
+            if (((Video) entry.media).getId() == video.getId())
+                return entry.onlineId;
+        return 0;
+    }
+
+    /** Reads the age rating from the metadata cache only: Preparing playback never waits on the network for it. */
+    private void loadAge(boolean show, long onlineId) {
+        if (onlineId <= 0)
+            return;
+        Context app = getContext().getApplicationContext();
+        String kind = show ? "tv" : "movie";
+        String country = com.archos.mediacenter.video.streaming.StreamingRepository.country(app);
+        com.archos.mediacenter.video.streaming.StreamingRepository.IO.submit(() -> {
+            org.json.JSONObject cached = com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(
+                app, kind, onlineId, show ? "content_ratings" : "release_dates");
+            String rating = PlaybackAgeOverlay.loadCertificate(cached, country, () -> null);
+            post(() -> {
+                boolean known = PlaybackAgeOverlay.valid(rating);
+                age.setText(known ? rating : "");
+                age.setVisibility(known ? VISIBLE : GONE);
+            });
+        });
     }
 
     private boolean waitingForFrame;
