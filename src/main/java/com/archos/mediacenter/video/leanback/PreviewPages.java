@@ -78,6 +78,8 @@ public final class PreviewPages extends FrameLayout {
     static final String FILES_PAGE_SWITCH = "supernova_files_page";
     private com.archos.mediacenter.video.leanback.files.FilesPage filesPage;
     private com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.Job networkSearch;
+    private final Map<String, Boolean> reachability = new java.util.HashMap<>();
+    private long reachabilityCheckedAt;
     private List<Box> files = new ArrayList<>();
     private final List<Shortcut> librarySources =
                                                                                           new ArrayList<>(),
@@ -2827,7 +2829,8 @@ public final class PreviewPages extends FrameLayout {
                     }
             });
             filesPage.setConnections(
-                com.archos.mediacenter.video.leanback.files.FilesPageData.connections(librarySources, media),
+                withReachability(
+                    com.archos.mediacenter.video.leanback.files.FilesPageData.connections(librarySources, media)),
                 new com.archos.mediacenter.video.leanback.files.FilesPage.ConnectionActions() {
                     @Override public void open(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
                         networkSection("library");
@@ -2877,6 +2880,33 @@ public final class PreviewPages extends FrameLayout {
                 int unreadable = com.archos.mediacenter.video.leanback.files.FilesPageData.unreadable(app);
                 page.post(() -> page.setUnreadable(unreadable));
             }, "FilesUnreadable").start();
+        }
+
+        /** Adds what the last check found (and when each was last seen); starts a check at most once a minute. */
+        private List<com.archos.mediacenter.video.leanback.files.FilesPage.Connection> withReachability(
+            List<com.archos.mediacenter.video.leanback.files.FilesPage.Connection> plain) {
+            List<com.archos.mediacenter.video.leanback.files.FilesPage.Connection> known = new ArrayList<>();
+            List<Uri> roots = new ArrayList<>();
+            for (com.archos.mediacenter.video.leanback.files.FilesPage.Connection c : plain) {
+                Boolean state = c.root == null ? null : reachability.get(c.root.toString());
+                long seen = c.root == null ? 0
+                    : com.archos.mediacenter.video.leanback.files.ConnectionCheck.lastSeen(getContext(), c.root);
+                known.add(new com.archos.mediacenter.video.leanback.files.FilesPage.Connection(
+                    c.name, c.root, state, c.videos, seen));
+                if (c.root != null)
+                    roots.add(c.root);
+            }
+            long now = SystemClock.elapsedRealtime();
+            if (!roots.isEmpty() && now - reachabilityCheckedAt > 60_000) {
+                reachabilityCheckedAt = now;
+                com.archos.mediacenter.video.leanback.files.ConnectionCheck.check(getContext(), roots, (root, ok) ->
+                    post(() -> {
+                        reachability.put(root.toString(), ok);
+                        if (tab == 3)
+                            render("connection_checked");
+                    }));
+            }
+            return known;
         }
 
         private void setNetworkBack(View view, Runnable back) {
