@@ -549,6 +549,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     };
 
     private boolean mForceSoftwareDecoding;
+    private boolean mHardwareVideoDecoderSeen;
+    private boolean mSoftwareFallbackNotified;
     private int mLastExistState = -1;
     private boolean mIsReleased = false;
 
@@ -970,6 +972,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         mMetadataReady = false;
         mIsBusy = false;
         mUpdateMetadata = false;
+        mHardwareVideoDecoderSeen = false;
+        mSoftwareFallbackNotified = false;
         if (mSurfaceController != null)
             mSurfaceController.setMediaPlayer(null);
         if (mEffectRenderer != null)
@@ -1936,6 +1940,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
                 mPlayerListener.onOSDUpdate();
             }
             mVideoMetadata.setData(data);
+            noteDecoder(data);
 
             if (mPlayerListener != null)
             {
@@ -2393,6 +2398,31 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     public void setListener(Listener listener)
     {
         mPlayerListener = listener;
+    }
+
+    /**
+     * Tells the viewer once when playback that began on the hardware decoder falls back to software (NOVA 8372160).
+     * Software-only playback and a forced software setting are not failures.
+     */
+    private void noteDecoder(MediaMetadata data)
+    {
+        int decoderKey = IMediaPlayer.METADATA_KEY_VIDEO_TRACK + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DECODER;
+        if (!data.has(decoderKey))
+            return;
+        int decoder = data.getInt(decoderKey);
+        if (decoder == LibAvos.MP_DECODER_SW)
+        {
+            if (!mHardwareVideoDecoderSeen || mForceSoftwareDecoding || mSoftwareFallbackNotified || mPlaybackEnding)
+                return;
+            mSoftwareFallbackNotified = true;
+            Diagnostics.event("video_software_fallback", "source_kind", Diagnostics.sourceType(mUri));
+            Toast.makeText(mContext, "Hardware decoding failed. Playing with software decoding; it may stutter.",
+                           Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (decoder == LibAvos.MP_DECODER_HW_OMX || decoder == LibAvos.MP_DECODER_HW_OMXCODEC
+            || decoder == LibAvos.MP_DECODER_HW_MEDIACODEC || decoder == LibAvos.MP_DECODER_HW_OMXPLUS)
+            mHardwareVideoDecoderSeen = true;
     }
 
     public interface Listener
