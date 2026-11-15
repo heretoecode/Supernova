@@ -353,9 +353,36 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
             return Collections.emptyList();
         }
         List<PlaybackSubtitlePanel.Choice> out = new ArrayList<>();
-        for (TVMenuItem item : radios(title))
+        List<TVMenuItem> items = radios(title);
+        if (key.equals("playmode") && items.size() == 5)
+            return playModes(items, playingEpisode());
+        for (TVMenuItem item : items)
             out.add(
                 new PlaybackSubtitlePanel.Choice(plain(item), item.isChecked(), item.isEnabled(), item::previewClick));
+        return out;
+    }
+
+    /**
+     * Play mode (owner, 12 Nov 2026): Stop after this · Play next · Repeat this · Repeat all. "Play next" is NOVA's
+     * binge watching for an episode and its folder mode for any other video; no shuffle. The engine's five modes, in
+     * menu order, are single, folder, repeat single, repeat folder and binge.
+     */
+    static List<PlaybackSubtitlePanel.Choice> playModes(List<TVMenuItem> items, boolean episode) {
+        TVMenuItem single = items.get(0);
+        TVMenuItem folder = items.get(1);
+        TVMenuItem repeatSingle = items.get(2);
+        TVMenuItem repeatFolder = items.get(3);
+        TVMenuItem binge = items.get(4);
+        TVMenuItem next = episode && binge.isEnabled() ? binge : folder;
+        List<PlaybackSubtitlePanel.Choice> out = new ArrayList<>();
+        out.add(new PlaybackSubtitlePanel.Choice("Stop after this", single.isChecked(), single.isEnabled(),
+                                                 single::previewClick));
+        out.add(new PlaybackSubtitlePanel.Choice("Play next", folder.isChecked() || binge.isChecked(),
+                                                 next.isEnabled(), next::previewClick));
+        out.add(new PlaybackSubtitlePanel.Choice("Repeat this", repeatSingle.isChecked(), repeatSingle.isEnabled(),
+                                                 repeatSingle::previewClick));
+        out.add(new PlaybackSubtitlePanel.Choice("Repeat all", repeatFolder.isChecked(), repeatFolder.isEnabled(),
+                                                 repeatFolder::previewClick));
         return out;
     }
 
