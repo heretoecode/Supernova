@@ -280,3 +280,11 @@ is ever wanted back.
   next time; (6) where general tags are renamed or deleted (a Tags list in Edit users and views?); (7) users and tags
   included in Backup; (8) possibly ship tags and Filters first, the user switcher next, if 0.158 is too full.
 - **Mock-up rule (owner, 15 Nov):** full size, up to about four screens per picture, never one sheet of 13.
+- **Owner, 15 Nov (round 6), answers to the open list above:** (1) **every tag is shared**; views do the hiding.
+  (2) **Record who watched each play from the start** (separate progress can come later). (3) **Users and tags can be
+  edited:** rename and re-icon users, and rename, re-icon or delete general tags (a Tags list beside Users in Edit
+  users and views; deleting a tag warns how many titles it comes off). (4) **Users and tags are part of Backup.**
+  (6) **It stays one feature** in 0.158, not split. (5) Nudges: owner asked how they would look (described 15 Nov:
+  a Library Care row "8 new titles without a user tag" with a Tag them button that opens select mode with those
+  titles ticked; "12 hidden by Me" in the library page's facts; a hidden title in Search shows its user's icon and
+  name in its second line). Waiting for the owner's answer.
