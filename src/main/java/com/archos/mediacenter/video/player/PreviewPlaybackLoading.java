@@ -272,9 +272,12 @@ final class PreviewPlaybackLoading extends FrameLayout {
             id = Long.parseLong(info.isShow ? info.scraperShowId : info.scraperMovieId);
         } catch (Exception unavailable) {
         }
-        episode.setText(
-            PreviewTaglines.cached(getContext(), info.isShow, id, info.scraperSeasonNr, info.scraperEpisodeNr));
+        // Episodes: "Season 2 · Episode 8 · Title"; films keep their tagline.
+        episode.setText(show
+            ? episodeLine(info.scraperSeasonNr, info.scraperEpisodeNr, info.scraperEpisodeName)
+            : PreviewTaglines.cached(getContext(), false, id, 0, 0));
         episode.setVisibility(episode.length() == 0 ? GONE : VISIBLE);
+        loadAge(info.isShow, id);
         if (info.uri != null && !info.uri.equals(source) && !info.uri.equals(fileSource)) {
             requestedArtwork = false;
             cachedArtwork = null;

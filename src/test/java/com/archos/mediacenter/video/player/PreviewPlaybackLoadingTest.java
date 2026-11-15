@@ -54,12 +54,12 @@ public class PreviewPlaybackLoadingTest {
             info.duration = 3600000;
             loading.bind(info, "Fallback");
             TextView copy = ReflectionHelpers.getField(loading, "episode");
-            assertEquals("Verified series tagline", copy.getText().toString());
+            // 0.157: an episode shows its own line rather than the series tagline.
+            assertEquals("Season 2 · Episode 1", copy.getText().toString());
             assertEquals(View.VISIBLE, copy.getVisibility());
-            info.scraperShowId = "987124";
+            info.scraperEpisodeName = "The Long Field";
             loading.bind(info, "Fallback");
-            assertEquals("", copy.getText().toString());
-            assertEquals(View.GONE, copy.getVisibility());
+            assertEquals("Season 2 · Episode 1 · The Long Field", copy.getText().toString());
             loading.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
             loading.layout(0, 0, 960, 540);
