@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -104,6 +106,8 @@ public class Delete {
     }
 
     public void completeSystemDelete(final List<Uri> uris, final boolean isSuccess, final int operationKind, final long deletedFileSize) {
+        Diagnostics.event("delete_android_answer", "success", isSuccess, "files", uris == null ? 0 : uris.size(),
+                          "kind", operationKind);
         if (log.isDebugEnabled()) log.debug("completeSystemDelete: isSuccess {}, kind {}, deletedFileSize {}, count {}", isSuccess, operationKind, deletedFileSize, uris==null?0:uris.size());
         if (uris == null || uris.isEmpty()) {
             return;
@@ -133,6 +137,7 @@ public class Delete {
     }
 
     public synchronized void deleteOK(Uri fileUri) {
+        Diagnostics.event("delete_done", "scheme", fileUri == null ? "" : fileUri.getScheme());
         counter--;
         if (log.isDebugEnabled()) log.debug("deleteOK: {} counter {}", sourceKind(fileUri), counter);
         if (counter == 0) {
@@ -182,6 +187,7 @@ public class Delete {
     }
 
     public synchronized void deleteNOK(Uri fileUri) {
+        Diagnostics.event("delete_failed", "scheme", fileUri == null ? "" : fileUri.getScheme());
         if (firstFailure == null) firstFailure = fileUri;
         counter--;
         if (log.isDebugEnabled()) log.debug("deleteNOK: {} counter {}", sourceKind(fileUri), counter);
@@ -285,6 +291,8 @@ public class Delete {
     }
 
     public void startDeleteProcess(final Uri fileUri){
+        // Each delete step is logged (0.157 plan item 26); only the kind of source, never the path.
+        Diagnostics.event("delete_started", "scheme", fileUri == null ? "" : fileUri.getScheme());
         if (log.isDebugEnabled()) log.debug("startDeleteProcess: {}", sourceKind(fileUri));
         synchronized(this) { counter = 1; firstFailure = null; } // one fileUri
         new Thread(){
