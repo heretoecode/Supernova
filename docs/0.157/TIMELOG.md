@@ -21,3 +21,4 @@ All times local. Coding time only; waiting for the owner or for a blocked build 
 Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of coding before the limit is reached.
 | 15 Nov 18:22 | Fifth build failed after 10 minutes (compile stage). Meanwhile: Issues Digest out, picture in picture out, All files access asked once. |
 | 15 Nov 18:48 | Owner asked whether finished: no; reading the fifth build's failure report. |
+| 15 Nov 18:55 | Fifth build's cause: one line lost in an edit (compile error). Fixed; sixth build started 18:55. One MediaLib scan test failed by timing (passed in build 4, nothing changed); watched. |

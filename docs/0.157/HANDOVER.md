@@ -32,9 +32,11 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   nothing SAFE, only UNSURE. NOVA's hidden grid needs proof per route (see that report) before removal.
 
 ## In flight
-- Conformance run 4 (15 Nov 12:54) compiled and failed with 10 of 2,145 tests; all ten are fixed (`34d07ab`).
-  Run 5 (43745440241) was started 15 Nov 18:12 on everything up to then, including the second session's work. Check it; on
-  failure run `report-test-failures.yml` with `run_id`, read the last 120 lines of its job log, fix, re-run.
+- Run 4 (12:54): compiled, 10 of 2,145 app tests failing, all fixed. Run 5 (18:12): compile error from a dropped line
+  in `PreviewPages.java`, fixed in `428a53a`. **Run 6 started 15 Nov 18:55** on everything so far. Check it; on
+  failure run `report-test-failures.yml` with `run_id` and read the last 60–120 lines of its job log.
+- `NetworkScanLedgerTest.cancelledWorkerWaitingForProviderGateCannotPerformLateScan` (MediaLib) failed once in run 5
+  and passed in run 4 with the same patches: timing-sensitive. If it fails again, make its wait deterministic.
 
 ## Not done yet
 - **Dead connection still scanned** (diagnostics 14 Nov, finding 3): the source list is chosen inside MediaLib's
