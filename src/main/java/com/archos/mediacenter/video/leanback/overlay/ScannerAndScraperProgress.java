@@ -175,6 +175,18 @@ public class ScannerAndScraperProgress {
         }
     };
 
+    /** The progress group shows only when both the general and the status visibility are VISIBLE. */
+    private void updateVisibility() {
+        if (log.isTraceEnabled())
+            log.trace("updateVisibility: (0 visible, 8 gone) mGeneralVisibility {}, mStatusVisibility {}",
+                mGeneralVisibility, mStatusVisibility);
+        if ((mGeneralVisibility == View.VISIBLE) && (mStatusVisibility == View.VISIBLE)) {
+            mProgressGroup.setVisibility(View.VISIBLE);
+        } else {
+            mProgressGroup.setVisibility(View.GONE);
+        }
+    }
+
     /** update the counter TextView and badge */
     private long diagnosticSampleAt;
 
