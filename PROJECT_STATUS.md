@@ -50,6 +50,13 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   [`docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md`](docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md).
 - Older Preview-era files and early planning: [`docs/archive/`](docs/archive/README.md).
 
+### 0.157 coding (started 15 Nov 2026)
+- Done so far: diagnostics of 14 Nov read (`docs/0.157/DIAGNOSTICS_2026-11-14.md`); Codex's 0.157 work merged
+  (`5a4a05d26`); seek previews fixed at the cause (MediaLib `61e306d1`, null headers) and the hidden Settings switch
+  shown (`b35c19701`). Not yet built: **GitHub Actions is disabled on the repository**, so no conformance run is
+  possible until the owner re-enables it. `main` still to bring up to date (needs the owner's yes).
+- Build order and batches: `docs/0.157/VERSION_PLAN.md` (end).
+
 ### Where things stand (14 Nov 2026, end of the design phase)
 - Every redesign is designed and approved. Waiting for the owner's yes: portrait cast cards and the 0.157 release
   notes style (`docs/design/proposals/0157-checks/01`).
