@@ -349,6 +349,8 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         case "playmode":
             title = R.string.pref_play_mode_title;
             break;
+        case "skipmode":
+            return skipModes();
         default:
             return Collections.emptyList();
         }
@@ -360,6 +362,48 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
             out.add(
                 new PlaybackSubtitlePanel.Choice(plain(item), item.isChecked(), item.isEnabled(), item::previewClick));
         return out;
+    }
+
+    /** Intros and credits share one choice; recaps and previews keep their own settings. */
+    static final com.archos.mediacenter.utils.introdb.IntroSegments.Type[] SKIP_TYPES = {
+        com.archos.mediacenter.utils.introdb.IntroSegments.Type.INTRO,
+        com.archos.mediacenter.utils.introdb.IntroSegments.Type.OUTRO,
+        com.archos.mediacenter.utils.introdb.IntroSegments.Type.CREDITS
+    };
+
+    /** "Skip intros and credits: Off · Show button · Automatic" (owner, 6 Nov 2026; Playback tab). */
+    private List<PlaybackSubtitlePanel.Choice> skipModes() {
+        android.content.SharedPreferences prefs =
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(owner);
+        SegmentSkippingPolicy.Mode current = SegmentSkippingPolicy.mode(prefs, SKIP_TYPES[0]);
+        int chosen = skipChoice(current);
+        String[] labels = {"Off", "Show button", "Automatic"};
+        SegmentSkippingPolicy.Mode[] modes = {
+            SegmentSkippingPolicy.Mode.NORMAL, SegmentSkippingPolicy.Mode.PROMPT, SegmentSkippingPolicy.Mode.AUTO
+        };
+        List<PlaybackSubtitlePanel.Choice> out = new ArrayList<>();
+        for (int i = 0; i < labels.length; i++) {
+            SegmentSkippingPolicy.Mode mode = modes[i];
+            out.add(new PlaybackSubtitlePanel.Choice(labels[i], i == chosen, true, () -> {
+                android.content.SharedPreferences.Editor edit = prefs.edit();
+                for (com.archos.mediacenter.utils.introdb.IntroSegments.Type type : SKIP_TYPES)
+                    edit.putString(SegmentSkippingPolicy.key(type), mode.name());
+                edit.apply();
+            }));
+        }
+        return out;
+    }
+
+    /** Off for "play normally", Show button for the prompt, Automatic for automatic or smart skipping. */
+    static int skipChoice(SegmentSkippingPolicy.Mode mode) {
+        switch (mode) {
+        case NORMAL:
+            return 0;
+        case PROMPT:
+            return 1;
+        default:
+            return 2;
+        }
     }
 
     /**

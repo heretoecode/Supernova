@@ -323,8 +323,9 @@ public class PreviewPlaybackMenusTest {
         assertTrue(full.isChecked());
         assertEquals("Fullscreen", value(tagged("playback.row.format")));
         assertEquals("Single", value(tagged("playback.row.playmode")));
-        tagged("playback.row.skip").performClick();
-        assertTrue(skip.isChecked());
+        // 0.157: one lasting choice, Off · Show button · Automatic, instead of the per-session switch.
+        assertNotNull(tagged("playback.row.skipmode"));
+        assertNull(tagged("playback.row.skip"));
         tagged("playback.row.pip").performClick();
         assertEquals(1, pip[0]);
     }

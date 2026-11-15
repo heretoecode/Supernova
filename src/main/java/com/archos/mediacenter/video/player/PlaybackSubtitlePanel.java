@@ -780,7 +780,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             }
         }
         boolean playback =
-            backend.speed() != null || !backend.choices("playmode").isEmpty() || backend.option("skip") != null;
+            backend.speed() != null || !backend.choices("playmode").isEmpty() || backend.option("skip") != null
+            || !backend.choices("skipmode").isEmpty();
         if (!playback)
             return;
         section("PLAYBACK", !picture);
@@ -801,7 +802,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         if (backend.limitsAvailable())
             sleepAndStillWatching();
         choiceStepper("playmode", "repeat", "Play Mode");
-        option("skip", "skip", "Skip Intros & Credits");
+        if (!backend.choices("skipmode").isEmpty())
+            choiceStepper("skipmode", "skip", "Skip Intros & Credits");
+        else
+            option("skip", "skip", "Skip Intros & Credits");
     }
 
     /** Approved mock-up {@code suggestions/06}: remember this episode's choices for the whole series. */
