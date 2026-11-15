@@ -1200,6 +1200,25 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             return true;
         });
 
+        // Sort titles rebuild by themselves when "Ignore The and A" changes; the manual row goes (owner, 14 Nov 2026).
+        Preference ignoreArticles = findPreference(KEY_SORT_IGNORE_ARTICLES);
+        if (ignoreArticles != null) {
+            ignoreArticles.setOnPreferenceChangeListener((preference, value) -> {
+                android.content.Context app = getContext() == null ? null : getContext().getApplicationContext();
+                if (app != null) {
+                    // Posted, so the rebuild starts after the new value has been saved.
+                    new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> new Thread(() -> {
+                        try {
+                            ScraperTables.recreateSortNames(VideoDb.get(app));
+                        } catch (Exception e) {
+                            log.error("recreateSortNames failed", e);
+                        }
+                    }, "SortTitles").start());
+                }
+                return true;
+            });
+        }
+        findPreference(getString(R.string.recreate_sort_titles_prefkey)).setVisible(false);
         findPreference(getString(R.string.recreate_sort_titles_prefkey)).setOnPreferenceClickListener(preference -> {
             Toast.makeText(getActivity(), R.string.recreate_sort_titles_in_progress, Toast.LENGTH_SHORT).show();
             new Thread(() -> {
