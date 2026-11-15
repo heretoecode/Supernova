@@ -78,6 +78,7 @@ public class LargeLogicalBackupTest
     @Test public void actualExporterRetainsEveryMatchAndPreviousBackupForOwnersDefaultSelection() throws Exception
     {
         Context context = RuntimeEnvironment.getApplication();
+        context.deleteDatabase("media-v64.db");
         context.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(context))
         {

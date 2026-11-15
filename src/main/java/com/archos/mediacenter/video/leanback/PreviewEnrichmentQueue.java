@@ -202,20 +202,29 @@ public final class PreviewEnrichmentQueue {
     }
 
     private static void drain(Context app) {
-        SQLiteDatabase db = store(app).getWritableDatabase();
+        SQLiteDatabase db;
         String key, kind;
         long id;
         int stage, seasonCursor;
-        try (Cursor cursor = nextJob(db, scope(app), System.currentTimeMillis())) {
-            if (!cursor.moveToFirst()) {
-                waitForRetry(app, db);
-                return;
+        try {
+            db = store(app).getWritableDatabase();
+            try (Cursor cursor = nextJob(db, scope(app), System.currentTimeMillis())) {
+                if (!cursor.moveToFirst()) {
+                    waitForRetry(app, db);
+                    return;
+                }
+                key = cursor.getString(0);
+                kind = cursor.getString(1);
+                id = cursor.getLong(2);
+                stage = cursor.getInt(3);
+                seasonCursor = cursor.getInt(4);
             }
-            key = cursor.getString(0);
-            kind = cursor.getString(1);
-            id = cursor.getLong(2);
-            stage = cursor.getInt(3);
-            seasonCursor = cursor.getInt(4);
+        } catch (RuntimeException unavailable) {
+            // Admission failed before the per-job finally could release this owner.
+            draining = false;
+            Diagnostics.error("metadata_queue_unavailable", unavailable);
+            retry = WORK.schedule(() -> start(app), 30, TimeUnit.SECONDS);
+            return;
         }
         long started = SystemClock.elapsedRealtime();
         String operation = Diagnostics.operation("metadata_package");

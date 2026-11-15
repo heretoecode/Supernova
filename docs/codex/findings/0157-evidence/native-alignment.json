@@ -1,0 +1,28 @@
+[
+  {
+    "target": "aarch64-linux-android23",
+    "result": "pass",
+    "atomic_alignment_warnings": 0
+  },
+  {
+    "target": "armv7a-linux-androideabi23",
+    "result": "pass",
+    "atomic_alignment_warnings": 0
+  },
+  {
+    "target": "i686-linux-android23",
+    "result": "pass",
+    "atomic_alignment_warnings": 0
+  },
+  {
+    "target": "x86_64-linux-android23",
+    "result": "pass",
+    "atomic_alignment_warnings": 0
+  },
+  {
+    "target": "i686-linux-android23",
+    "baseline": "seek-and-frame-evidence patch before alignment follow-up",
+    "result": "expected failure",
+    "evidence": "new ABI alignment assertions reject old four-byte-aligned structures"
+  }
+]

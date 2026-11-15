@@ -1315,3 +1315,28 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - Wanted, not urgent; the owner wants time to think of more settings and improvements. Everything decided so far is
   gathered in `docs/0.158/MEDIA_TRANSFERS.md`, with open questions. Files in 0.157 is built without the Transfers tab
   (hidden until 0.158, per "hidden when not relevant").
+
+## Codex delivery records (merged 15 Nov 2026)
+## Engine/data delivery record (6 Nov 2026)
+
+Continuation code `151341d18`, audits `9ac693f14`, branch `codex/0157-2026-11-06`; 349 host regressions pass.
+This is a non-visual source delivery, not a release or new owner decision. The single report remains
+`docs/codex/reports/2026-11-06-0157.md`, with all item dispositions, eight patch registrations and the native
+archive/conformance/Shield acceptance gates. No legacy deletion is approved or performed; no 0.156 fix is authored.
+
+
+### Engine/data Part B handoff (7 Nov 2026)
+
+Part B source `e3589f047`, 66 passing host regressions and API/diagnosis notes are recorded in the same
+`docs/codex/reports/2026-11-06-0157.md`. This records delivery, not a new owner decision or release. PiP needs the
+source-owned screen removal; the actual 6 November pause report and Marshals data are still required for those
+specific diagnoses. Native archive/full conformance/Shield acceptance remain separate gates. No 0.156 fix authored.
+
+### Engine/data Part C source handoff (8 Nov 2026)
+
+Source through `c359a5c3b`, latest source merged at `ceb128fdc`; 37 host regression executions pass. Same report
+`docs/codex/reports/2026-11-06-0157.md` records all C items, API contracts and limits. This is not a new owner
+approval or a release. Explicit spin-off/sequence/franchise links now back differently named series families; the
+FixMatchRepository post-commit hook needs full production compilation. Screens must adopt the APIs. The actual
+pause/company evidence and Shield/native acceptance remain outstanding; native-next was not started because C
+requires it last after those prerequisites. No legacy removal or native patch registration.

@@ -133,6 +133,17 @@ public final class StreamingRepository
         return PreferenceManager.getDefaultSharedPreferences(c);
     }
 
+    /** Main-thread-safe feature flag, also used to hide Search's streaming help line. */
+    public static boolean enabled(Context context)
+    {
+        return prefs(context).getBoolean(ENABLED, false);
+    }
+
+    private static Availability noAvailability()
+    {
+        return new Availability(Collections.emptyList(), "");
+    }
+
     public static String country(Context c)
     {
         String country = prefs(c).getString(COUNTRY, "IE");
@@ -159,15 +170,18 @@ public final class StreamingRepository
     {
         if (!(kind.equals("movie") || kind.equals("tv")) || id <= 0 ||
             !(Arrays
-                  .asList("", "videos", "recommendations", "credits", "images", "external_ids", "release_dates",
-                          "content_ratings", "alternative_titles")
+                  .asList("", "videos", "recommendations", "similar", "credits", "images", "external_ids",
+                          "release_dates", "content_ratings", "alternative_titles")
                   .contains(section) ||
               kind.equals("tv") && (section.matches("season/[0-9]{1,4}") ||
                                     section.matches("season/[0-9]{1,4}/episode/[0-9]{1,4}/external_ids"))))
             throw new IOException("Invalid metadata request");
-        return PreviewMetadataCache.load(
+        JSONObject result = PreviewMetadataCache.load(
             context, kind, id, section,
             () -> api(context, kind + "/" + id + (section.isEmpty() ? "" : "/" + section), null));
+        if ("release_dates".equals(section) || "content_ratings".equals(section))
+            com.archos.mediacenter.video.metadata.AgeCertificates.remember(context, kind, id, result);
+        return result;
     }
 
     /** TMDB user reviews, existing application API access only. Bounded pages; no account flow. */
@@ -203,12 +217,59 @@ public final class StreamingRepository
     public static JSONObject matchSearch(Context context, String path, Map<String, String> parameters,
                                          OkHttpClient client) throws Exception
     {
-        if (!path.matches("(?:search/(?:movie|tv)|(?:movie|tv)/[1-9][0-9]{0,9}|find/tt[0-9]{7,10})") ||
+        if (!path.matches("(?:search/(?:movie|tv)|(?:movie|tv)/[1-9][0-9]{0,9}|" +
+                          "find/(?:tt[0-9]{7,10}|[1-9][0-9]{0,9}))") ||
             !Set.of("query", "external_source").containsAll(parameters.keySet()))
         {
             throw new IOException("Invalid match search");
         }
         return api(context, path, null, 0, parameters, client);
+    }
+
+    /** Worker-only library-gated discovery gateway. No arbitrary URLs or user credentials. */
+    public static JSONObject libraryDiscovery(Context context, String path, Map<String, String> parameters,
+                                               OkHttpClient client) throws Exception
+    {
+        if (!path.matches("(?:search/tv|(?:movie|tv)/[1-9][0-9]{0,9}(?:/credits)?|" +
+                          "collection/[1-9][0-9]{0,9}|person/[1-9][0-9]{0,9}/combined_credits)") ||
+            !Set.of("query").containsAll(parameters.keySet()))
+            throw new IOException("Invalid library discovery request");
+        return api(context, path, null, 0, parameters, client);
+    }
+
+    /** Public Trakt title discovery only: no account token, arbitrary URL or personal history. Worker-only. */
+    public static JSONArray traktDiscovery(Context context, String path, OkHttpClient client) throws Exception
+    {
+        if (!path.matches("(?:search/(?:trakt|tmdb)/[1-9][0-9]{0,9}|" +
+                          "(?:movies|shows)/[a-z0-9]+(?:-[a-z0-9]+)*(?:/related)?)"))
+            throw new IOException("Invalid related-title request");
+        Request request = new Request.Builder().url("https://api.trakt.tv/" + path)
+            .header("trakt-api-version", "2")
+            .header("trakt-api-key", context.getString(R.string.trakt_api_key)).build();
+        // A redirect must never carry the application credential to another origin.
+        try (Response response = client.newBuilder().followRedirects(false).followSslRedirects(false).build()
+                 .newCall(request).execute())
+        {
+            if (!response.isSuccessful() || response.body() == null)
+                throw new IOException("Related-title service unavailable");
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            try (InputStream input = response.body().byteStream())
+            {
+                byte[] chunk = new byte[8192];
+                int count;
+                while ((count = input.read(chunk)) != -1)
+                {
+                    if (Thread.currentThread().isInterrupted() || buffer.size() + count > 2 * 1024 * 1024)
+                        throw new IOException("Related-title read stopped");
+                    buffer.write(chunk, 0, count);
+                }
+            }
+            String body = buffer.toString(StandardCharsets.UTF_8.name()).trim();
+            if (body.startsWith("["))
+                return new JSONArray(body);
+            return new JSONArray().put(new JSONObject().put(path.startsWith("movies/") ? "movie" : "show",
+                                                            new JSONObject(body)));
+        }
     }
 
     private static JSONObject api(Context context, String path, String country, int page,
@@ -324,7 +385,7 @@ public final class StreamingRepository
                 throw new IOException("Invalid review page");
             return;
         }
-        if ("recommendations".equals(section))
+        if ("recommendations".equals(section) || "similar".equals(section))
         {
             if (value.optJSONArray("results") == null)
                 throw new IOException("Missing recommendations");
@@ -526,6 +587,15 @@ public final class StreamingRepository
 
     public static Availability load(Context context, String kind, long id, String country, int season) throws Exception
     {
+        return load(context, kind, id, country, season, HTTP);
+    }
+
+    /** Worker-only availability with caller-owned transport cancellation; the master switch still applies. */
+    public static Availability load(Context context, String kind, long id, String country, int season,
+                                    OkHttpClient client) throws Exception
+    {
+        if (!enabled(context))
+            return noAvailability();
         Diagnostics.event("provider_metadata_lookup", "media_kind", kind, "season", season);
         if (!("movie".equals(kind) || "tv".equals(kind)) || id <= 0)
             throw new IOException("Missing title ID");
@@ -545,9 +615,10 @@ public final class StreamingRepository
             }
             return persisted;
         }
-        JSONObject response = api(
-            context,
-            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
+        JSONObject response = availabilityRequest(context,
+            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", client);
+        if (!enabled(context))
+            return noAvailability();
         Availability availability = parseAvailability(response, country);
         synchronized (CACHE)
         {
@@ -571,9 +642,38 @@ public final class StreamingRepository
         return availability;
     }
 
+    private static JSONObject availabilityRequest(Context context, String path, OkHttpClient base) throws Exception
+    {
+        java.util.concurrent.atomic.AtomicReference<okhttp3.Call> active =
+            new java.util.concurrent.atomic.AtomicReference<>();
+        SharedPreferences.OnSharedPreferenceChangeListener listener = (preferences, key) -> {
+            if (ENABLED.equals(key) && !enabled(context) && active.get() != null)
+                active.get().cancel();
+        };
+        SharedPreferences preferences = prefs(context);
+        preferences.registerOnSharedPreferenceChangeListener(listener);
+        try
+        {
+            OkHttpClient.Builder builder = base.newBuilder();
+            builder.interceptors().add(0, chain -> {
+                active.set(chain.call());
+                if (!enabled(context))
+                    chain.call().cancel();
+                return chain.proceed(chain.request());
+            });
+            return api(context, path, null, 0, Collections.emptyMap(), builder.build());
+        }
+        finally
+        {
+            preferences.unregisterOnSharedPreferenceChangeListener(listener);
+        }
+    }
+
     /** Disk-only availability; null means unknown/stale, not known unavailable. */
     public static Availability cachedAvailability(Context context, String kind, long id, String country, int season)
     {
+        if (!enabled(context))
+            return noAvailability();
         String key = kind + ":" + id + ":" + country + ":" + season;
         SharedPreferences preferences = prefs(context);
         long age = System.currentTimeMillis() - preferences.getLong("streaming_known_at:" + key, 0);
@@ -598,6 +698,8 @@ public final class StreamingRepository
     /** Only fresh, successfully returned availability is eligible; unknown is not a match. */
     public static boolean knownOn(Context context, String kind, long id, String provider)
     {
+        if (!enabled(context))
+            return false;
         String key = kind + ":" + id + ":" + country(context) + ":-1";
         if (id <= 0 || System.currentTimeMillis() - prefs(context).getLong("streaming_known_at:" + key, 0) >= TTL)
             return false;
@@ -638,6 +740,8 @@ public final class StreamingRepository
     public static String titleLink(Context context, String kind, long id, String country, Availability availability,
                                    int providerId)
     {
+        if (!enabled(context))
+            return "";
         if (!availability.offers.isEmpty() && isTmdbWatchUrl(availability.watchUrl, kind, id))
         {
             try
@@ -741,7 +845,7 @@ public final class StreamingRepository
     public static String episodeLink(Context c, long showId, int season, int episode, Availability availability,
                                      int provider)
     {
-        if (!exactEpisodeAvailability(availability, showId, season, episode))
+        if (!enabled(c) || !exactEpisodeAvailability(availability, showId, season, episode))
             return "";
         String link = titleLink(c, "tv", showId, country(c), availability, provider);
         return safeWebUrl(link) ? resolveTitleUrl(link) : availability.watchUrl;

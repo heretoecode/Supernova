@@ -1,0 +1,626 @@
+[
+  {
+    "coordinate": "com.google.zxing:core:3.5.3",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "3.5.4",
+    "metadata": "https://repo.maven.apache.org/maven2/com/google/zxing/core/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.uwetrottmann.tmdb2:tmdb-java:2.13.0",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "2.13.0",
+    "metadata": "https://repo.maven.apache.org/maven2/com/uwetrottmann/tmdb2/tmdb-java/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.bouncycastle:bcprov-jdk18on:1.86",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.86",
+    "metadata": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcprov-jdk18on/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.lifecycle:lifecycle-process:2.11.0",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "2.11.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-process/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.android.tools:desugar_jdk_libs_nio:2.1.5",
+    "usage": [
+      "app:coreLibraryDesugaring",
+      "MediaLib:coreLibraryDesugaring",
+      "FileCore:coreLibraryDesugaring"
+    ],
+    "latest": "2.1.5",
+    "metadata": "https://dl.google.com/dl/android/maven2/com/android/tools/desugar_jdk_libs_nio/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.jakewharton.threetenabp:threetenabp:1.4.9",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation",
+      "FileCore:implementation"
+    ],
+    "latest": "1.4.9",
+    "metadata": "https://repo.maven.apache.org/maven2/com/jakewharton/threetenabp/threetenabp/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.squareup.picasso:picasso:2.8",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "2.8",
+    "metadata": "https://repo.maven.apache.org/maven2/com/squareup/picasso/picasso/maven-metadata.xml",
+    "osv_ids": [],
+    "metadata_caveat": "Maven latest/release sorts 2.71828 after 2.8; POM Last-Modified dates show 2.8 is newer.",
+    "release_dates_utc": {
+      "2.8": "2020-08-10 04:50:30",
+      "2.71828": "2018-03-07 16:00:37"
+    }
+  },
+  {
+    "coordinate": "androidx.tvprovider:tvprovider:1.1.0",
+    "usage": [
+      "app:implementation",
+      "app:implementation"
+    ],
+    "latest": "1.1.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/tvprovider/tvprovider/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.media:media:1.8.0",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "1.8.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/media/media/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.core:core:1.19.1",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "1.19.1",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/core/core/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.legacy:legacy-support-core-utils:1.0.0",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "1.0.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/legacy/legacy-support-core-utils/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.legacy:legacy-support-core-ui:1.0.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.0.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/legacy/legacy-support-core-ui/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.fragment:fragment:1.9.1",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "1.9.1",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/fragment/fragment/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.recyclerview:recyclerview:1.4.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.4.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/recyclerview/recyclerview/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.cardview:cardview:1.0.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.0.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/cardview/cardview/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.palette:palette:1.0.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.1.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/palette/palette/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.appcompat:appcompat:1.8.0",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation",
+      "FileCore:implementation"
+    ],
+    "latest": "1.8.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/appcompat/appcompat/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.browser:browser:1.10.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.10.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/browser/browser/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.preference:preference:1.2.1",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation",
+      "FileCore:implementation"
+    ],
+    "latest": "1.2.1",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/preference/preference/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.ksoichiro:android-observablescrollview:1.6.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.google.android.material:material:1.14.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.14.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/com/google/android/material/material/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.leanback:leanback:1.2.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.2.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/leanback/leanback/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.leanback:leanback-preference:1.2.0",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "1.2.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/leanback/leanback-preference/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.squareup.okhttp3:logging-interceptor:5.5.1",
+    "usage": [
+      "app:implementation",
+      "MediaLib:implementation",
+      "FileCore:implementation"
+    ],
+    "latest": "5.5.1",
+    "metadata": "https://repo.maven.apache.org/maven2/com/squareup/okhttp3/logging-interceptor/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.tony19:logback-android:3.0.0",
+    "usage": [
+      "app:implementation",
+      "FileCore:implementation"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "io.sentry:sentry-android:8.61.1",
+    "usage": [
+      "app:implementation"
+    ],
+    "latest": "8.63.0",
+    "metadata": "https://repo.maven.apache.org/maven2/io/sentry/sentry-android/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "io.sentry:sentry:8.61.1",
+    "usage": [
+      "app:implementation",
+      "FileCore:implementation"
+    ],
+    "latest": "8.63.0",
+    "metadata": "https://repo.maven.apache.org/maven2/io/sentry/sentry/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "junit:junit:4.13.2",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:androidTestImplementation",
+      "MediaLib:testImplementation",
+      "FileCore:testImplementation",
+      "FileCore:androidTestImplementation"
+    ],
+    "latest": "4.13.2",
+    "metadata": "https://repo.maven.apache.org/maven2/junit/junit/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.mockito:mockito-core:5.24.0",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:testImplementation"
+    ],
+    "latest": "5.24.0",
+    "metadata": "https://repo.maven.apache.org/maven2/org/mockito/mockito-core/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.robolectric:robolectric:4.17",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:testImplementation",
+      "FileCore:testImplementation"
+    ],
+    "latest": "4.17",
+    "metadata": "https://repo.maven.apache.org/maven2/org/robolectric/robolectric/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.squareup.okhttp3:mockwebserver:5.5.1",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:testImplementation",
+      "FileCore:testImplementation"
+    ],
+    "latest": "5.5.1",
+    "metadata": "https://repo.maven.apache.org/maven2/com/squareup/okhttp3/mockwebserver/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.test:core:1.7.0",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:androidTestImplementation",
+      "MediaLib:testImplementation",
+      "FileCore:testImplementation",
+      "FileCore:androidTestImplementation"
+    ],
+    "latest": "1.7.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/test/core/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.slf4j:slf4j-api:2.0.20",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:testImplementation",
+      "FileCore:implementation"
+    ],
+    "latest": "2.0.20",
+    "metadata": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "ch.qos.logback:logback-classic:1.6.6",
+    "usage": [
+      "app:testImplementation",
+      "FileCore:testImplementation"
+    ],
+    "latest": "1.6.6",
+    "metadata": "https://repo.maven.apache.org/maven2/ch/qos/logback/logback-classic/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "javax.servlet:javax.servlet-api:4.0.1",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "4.0.1",
+    "metadata": "https://repo.maven.apache.org/maven2/javax/servlet/javax.servlet-api/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.eclipse.jetty:jetty-client:9.4.58.v20250814",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "12.1.14",
+    "metadata": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-client/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.eclipse.jetty:jetty-server:9.4.58.v20250814",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "12.1.14",
+    "metadata": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-server/maven-metadata.xml",
+    "osv_ids": [
+      "GHSA-7p3p-8qv8-m2vh"
+    ]
+  },
+  {
+    "coordinate": "org.eclipse.jetty:jetty-servlet:9.4.58.v20250814",
+    "usage": [
+      "app:testImplementation",
+      "MediaLib:implementation"
+    ],
+    "latest": "11.0.26",
+    "metadata": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-servlet/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.eclipse.jetty:jetty-security:9.4.58.v20250814",
+    "usage": [
+      "app:testImplementation"
+    ],
+    "latest": "12.1.14",
+    "metadata": "https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-security/maven-metadata.xml",
+    "osv_ids": [
+      "GHSA-2fvj-hgj9-j2gr"
+    ]
+  },
+  {
+    "coordinate": "org.apache.httpcomponents.core5:httpcore5:5.4.4",
+    "usage": [
+      "MediaLib:implementation"
+    ],
+    "latest": "5.4.4",
+    "metadata": "https://repo.maven.apache.org/maven2/org/apache/httpcomponents/core5/httpcore5/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.json:json:20260814",
+    "usage": [
+      "MediaLib:implementation"
+    ],
+    "latest": "20260814",
+    "metadata": "https://repo.maven.apache.org/maven2/org/json/json/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.uwetrottmann.trakt5:trakt-java:6.21.0",
+    "usage": [
+      "MediaLib:implementation"
+    ],
+    "latest": "6.22.0",
+    "metadata": "https://repo.maven.apache.org/maven2/com/uwetrottmann/trakt5/trakt-java/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2",
+    "usage": [
+      "MediaLib:api"
+    ],
+    "latest": "1.0.2",
+    "metadata": "https://repo.maven.apache.org/maven2/org/apache/oltu/oauth2/org.apache.oltu.oauth2.client/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "commons-codec:commons-codec:1.23.0",
+    "usage": [
+      "MediaLib:implementation"
+    ],
+    "latest": "1.23.0",
+    "metadata": "https://repo.maven.apache.org/maven2/commons-codec/commons-codec/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.apache.commons:commons-text:1.15.0",
+    "usage": [
+      "MediaLib:implementation"
+    ],
+    "latest": "1.15.0",
+    "metadata": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-text/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.nova-video-player.jupnp:org.jupnp:3.0.5-nova3",
+    "usage": [
+      "MediaLib:api"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.nova-video-player.jupnp:org.jupnp.support:3.0.5-nova3",
+    "usage": [
+      "MediaLib:api"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.nova-video-player.jupnp:org.jupnp.android:3.0.5-nova3",
+    "usage": [
+      "MediaLib:api"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "io.sentry:sentry:8.61.0",
+    "usage": [
+      "MediaLib:implementation"
+    ],
+    "latest": "8.63.0",
+    "metadata": "https://repo.maven.apache.org/maven2/io/sentry/sentry/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.test:runner:1.7.0",
+    "usage": [
+      "MediaLib:androidTestImplementation",
+      "FileCore:androidTestImplementation"
+    ],
+    "latest": "1.7.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/test/runner/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "androidx.test.ext:junit:1.3.0",
+    "usage": [
+      "MediaLib:androidTestImplementation",
+      "FileCore:androidTestImplementation"
+    ],
+    "latest": "1.3.0",
+    "metadata": "https://dl.google.com/dl/android/maven2/androidx/test/ext/junit/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.nova-video-player:sardine-android:v0.9-nova",
+    "usage": [
+      "MediaLib:testImplementation",
+      "FileCore:implementation"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "ch.qos.logback:logback-classic:1.6.5",
+    "usage": [
+      "MediaLib:testImplementation"
+    ],
+    "latest": "1.6.6",
+    "metadata": "https://repo.maven.apache.org/maven2/ch/qos/logback/logback-classic/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.slf4j:slf4j-api:1.7.36",
+    "usage": [
+      "FileCore:api"
+    ],
+    "latest": "2.0.20",
+    "metadata": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.bouncycastle:bcprov-jdk18on:1.81",
+    "usage": [
+      "FileCore:api"
+    ],
+    "latest": "1.86",
+    "metadata": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcprov-jdk18on/maven-metadata.xml",
+    "osv_ids": [
+      "GHSA-574f-3g2m-x479",
+      "GHSA-9pwp-9qqc-pr26",
+      "GHSA-c3fc-8qff-9hwx",
+      "GHSA-p93r-85wp-75v3",
+      "GHSA-qp49-qgx5-5m26"
+    ]
+  },
+  {
+    "coordinate": "com.github.nova-video-player:jcifs-ng:v2.1.11-nova12",
+    "usage": [
+      "FileCore:api"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.nova-video-player:jsch-mwiede:jsch-2.28.7-readahead3",
+    "usage": [
+      "FileCore:api"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "commons-net:commons-net:3.13.0",
+    "usage": [
+      "FileCore:implementation"
+    ],
+    "latest": "3.13.0",
+    "metadata": "https://repo.maven.apache.org/maven2/commons-net/commons-net/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.github.nova-video-player:smbj:v0.15.0-nova2",
+    "usage": [
+      "FileCore:implementation"
+    ],
+    "latest": "Fork: compare upstream source/tags separately",
+    "advisories": "Not indexed under fork coordinate; inherited vulnerabilities need source review",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.hierynomus:sshj:0.41.2",
+    "usage": [
+      "FileCore:implementation"
+    ],
+    "latest": "0.41.2",
+    "metadata": "https://repo.maven.apache.org/maven2/com/hierynomus/sshj/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "org.bouncycastle:bcpkix-jdk18on:1.86",
+    "usage": [
+      "FileCore:implementation"
+    ],
+    "latest": "1.86",
+    "metadata": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcpkix-jdk18on/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "oro:oro:2.0.8",
+    "usage": [
+      "FileCore:implementation"
+    ],
+    "latest": "2.0.8",
+    "metadata": "https://repo.maven.apache.org/maven2/oro/oro/maven-metadata.xml",
+    "osv_ids": []
+  },
+  {
+    "coordinate": "com.squareup.okhttp3:okhttp-tls:5.5.1",
+    "usage": [
+      "FileCore:testImplementation"
+    ],
+    "latest": "5.5.1",
+    "metadata": "https://repo.maven.apache.org/maven2/com/squareup/okhttp3/okhttp-tls/maven-metadata.xml",
+    "osv_ids": []
+  }
+]

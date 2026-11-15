@@ -142,7 +142,15 @@ public class DiagnosticDetailTest
                         .put("idle_ms", 61000)
                         .put("recovery_ms", 120)
                         .put("result", "ready"));
+        records.add(new JSONObject().put("event", "transport_operation").put("open_ns", 123)
+                        .put("window_bytes", 456).put("explicit_retries", 1));
+        records.add(new JSONObject().put("event", "playback_frame_metrics").put("native_available", false)
+                        .put("late_dropped_frames", -1).put("measurement_quality", "NATIVE_OUTPUT_SUBMISSION"));
         String result = DiagnosticExpandedSummary.build(records);
+        assertTrue(result.contains("open_ns=123"));
+        assertTrue(result.contains("window_bytes=456"));
+        assertTrue(result.contains("explicit_retries=1"));
+        assertTrue(result.contains("late_dropped_frames=-1"));
         for (String area : new String[] {"Thumbnails", "Playback", "Network", "Scans", "Metadata", "Backup and restore",
                                          "UI", "Settings", "Process exits"})
             assertTrue(result.contains(area));

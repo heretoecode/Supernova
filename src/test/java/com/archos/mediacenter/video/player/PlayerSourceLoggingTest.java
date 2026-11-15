@@ -2,6 +2,10 @@ package com.archos.mediacenter.video.player;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.ContentResolver;
+import android.database.MatrixCursor;
+import com.archos.mediaprovider.video.VideoStore;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -42,6 +46,8 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 
@@ -104,11 +110,36 @@ public class PlayerSourceLoggingTest {
         }
     }
 
+    @Test public void providerOwnershipResolutionRunsOnTheSourceWorkerAndKeepsTheOriginalOpenUri() throws Exception {
+        Context app = RuntimeEnvironment.getApplication();
+        ContentResolver resolver = mock(ContentResolver.class);
+        AtomicReference<Thread> queried = new AtomicReference<>();
+        when(resolver.query(any(Uri.class), any(String[].class), nullable(String.class), nullable(String[].class),
+                            nullable(String.class))).thenAnswer(call -> {
+            queried.set(Thread.currentThread());
+            MatrixCursor row = new MatrixCursor(new String[] {"_data"});
+            row.addRow(new Object[] {"smb://nas/relocated.mkv"});
+            return row;
+        });
+        Context context = new ContextWrapper(app) {
+            @Override public ContentResolver getContentResolver() {
+                return resolver;
+            }
+        };
+        openSourceUnchanged(Uri.withAppendedPath(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, "31"), context);
+        assertTrue(queried.get() != null);
+        assertFalse(Thread.currentThread() == queried.get());
+    }
+
     private void openSourceUnchanged(Uri uri) throws Exception {
-        Context context = RuntimeEnvironment.getApplication();
+        openSourceUnchanged(uri, RuntimeEnvironment.getApplication());
+    }
+
+    private void openSourceUnchanged(Uri uri, Context context) throws Exception {
         // Avoid constructing the JNI renderer; keep setVideoURI/openVideo and the
         // source worker real, mocking only the prior session and native boundary.
         Player player = mock(Player.class, CALLS_REAL_METHODS);
+        ReflectionHelpers.setField(player, "seekLoading", new SeekLoadingSignal());
         IMediaPlayer media = mock(IMediaPlayer.class);
         Handler handler = new Handler(Looper.getMainLooper());
         ReflectionHelpers.setField(player, "mContext", context);

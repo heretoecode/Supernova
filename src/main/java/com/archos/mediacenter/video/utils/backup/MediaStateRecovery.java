@@ -65,7 +65,8 @@ public final class MediaStateRecovery {
                             integer(row.get("value"), 0);
                         key = row.getString("kind") + ":" + id;
                     } else {
-                        if (row.length() != 3 || !row.has("value")
+                        if (row.length() != (row.has("personal") ? 4 : 3) ||
+                            row.has("personal") && !(row.get("personal") instanceof Boolean) || !row.has("value")
                             || !row.isNull("value") && !(row.get("value") instanceof Boolean)
                             || !(row.get("guard") instanceof String) || !row.getString("guard").matches("[a-f0-9]{64}"))
                             throw new JSONException("Invalid hidden recovery fields");
@@ -111,11 +112,20 @@ public final class MediaStateRecovery {
                     }
                 }
             }
+        boolean personalColumn = false;
+        if (hidden)
+            try (Cursor columns = database.rawQuery("PRAGMA table_info(files)", null))
+            {
+                while (columns.moveToNext())
+                    personalColumn |= columns.getString(1).equals(
+                        com.archos.mediaprovider.video.PersonalVideoActions.COLUMN);
+            }
         if (hidden)
             try (Cursor rows = database.query(VideoOpenHelper.FILES_TABLE_NAME,
                      new String[] {
                          "_id", HIDDEN, "_data", VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE,
-                         VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID
+                         VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID,
+                         personalColumn ? com.archos.mediaprovider.video.PersonalVideoActions.COLUMN : "0 AS personal"
                      },
                      "media_type = ?", new String[] {
                          "3"
@@ -139,11 +149,14 @@ public final class MediaStateRecovery {
                     } catch (NoSuchAlgorithmException unavailable) {
                         throw new IOException("Media identity validation unavailable", unavailable);
                     }
-                    hiddenRows.put(new JSONObject()
+                    JSONObject hiddenRow = new JSONObject()
                             .put("id", id)
                             .put(
                                 "value", value == JSONObject.NULL ? JSONObject.NULL : ((Number) value).longValue() == 1)
-                            .put("guard", guard.toString()));
+                            .put("guard", guard.toString());
+                    if (personalColumn)
+                        hiddenRow.put("personal", rows.getInt(5) == 1);
+                    hiddenRows.put(hiddenRow);
                 }
             }
         JSONObject result = new JSONObject()
@@ -222,6 +235,14 @@ public final class MediaStateRecovery {
             if (value == null)
                 throw new JSONException("Missing receiving hidden target");
             row.put("value", value);
+            Boolean personal = prepared.personal.get(row.getLong("id"));
+            if (personal != null)
+            {
+                if (!row.has("personal") && personal)
+                    throw new JSONException("Receiving personal-video extension is unavailable");
+                if (row.has("personal"))
+                    row.put("personal", personal);
+            }
         }
         validate(after);
         return after;
@@ -257,7 +278,10 @@ public final class MediaStateRecovery {
             if (!guard.isNull(category)) {
                 JSONArray rows = guard.getJSONArray(category);
                 for (int i = 0; i < rows.length(); i++)
+                {
                     rows.getJSONObject(i).remove("value");
+                    rows.getJSONObject(i).remove("personal");
+                }
             }
         if (guard.getInt("schema") == 2)
             guard.put("playlists", JSONObject.NULL);
@@ -303,6 +327,18 @@ public final class MediaStateRecovery {
                 database.beginTransaction();
                 JSONObject current = capture(database, !image.isNull("pins"), !image.isNull("hidden"),
                     image.getInt("schema") == 2 && !image.isNull("playlists"));
+                if (!image.isNull("hidden") && !current.isNull("hidden"))
+                {
+                    Map<Long, Boolean> personalScope = new HashMap<>();
+                    JSONArray original = image.getJSONArray("hidden");
+                    for (int i = 0; i < original.length(); i++)
+                        personalScope.put(original.getJSONObject(i).getLong("id"),
+                                          original.getJSONObject(i).has("personal"));
+                    JSONArray receiving = current.getJSONArray("hidden");
+                    for (int i = 0; i < receiving.length(); i++)
+                        if (!personalScope.getOrDefault(receiving.getJSONObject(i).getLong("id"), false))
+                            receiving.getJSONObject(i).remove("personal");
+                }
                 if (canonical == null) {
                     if (!(recovery ? guards(current).toString().equals(guards(image).toString())
                                    : current.toString().equals(image.toString())))
@@ -345,6 +381,9 @@ public final class MediaStateRecovery {
                             value.put(column, row.getLong("value"));
                         else
                             value.put(column, row.getBoolean("value") ? 1 : 0);
+                        if (category.equals("hidden") && row.has("personal"))
+                            value.put(com.archos.mediaprovider.video.PersonalVideoActions.COLUMN,
+                                      row.getBoolean("personal") ? 1 : 0);
                         String table = category.equals("hidden") ? VideoOpenHelper.FILES_TABLE_NAME
                             : row.getString("kind").equals("MOVIE") ? ScraperTables.MOVIE_TABLE_NAME
                                                                     : ScraperTables.SHOW_TABLE_NAME;
@@ -353,6 +392,9 @@ public final class MediaStateRecovery {
                         })
                             != 1)
                             throw new IOException("Media restore target unavailable");
+                        if (category.equals("hidden") && row.has("personal"))
+                            com.archos.mediaprovider.video.PersonalVideoActions.advanceRevision(
+                                database, row.getLong("id"));
                     }
                 }
             if (image.getInt("schema") == 2 && !image.isNull("playlists"))

@@ -37,11 +37,13 @@ public final class LogicalBackupCatalog
     public final List<Video> physical;
     public final List<PortablePinnedTitles.Title> pins;
     public final Map<Long, Boolean> hidden;
+    public final Set<Long> personal;
     public final Map<Long, PortableSavedPlaylists.Definition> playlists;
     public final Map<Long, PortableTitlePlayback.State> titlePlayback;
     public final Map<Long, PortableMediaMatches.Match> matches;
     private LogicalBackupCatalog(Snapshot snapshot, List<Video> physical, List<PortablePinnedTitles.Title> pins,
-                                 Map<Long, Boolean> hidden, Map<Long, PortableSavedPlaylists.Definition> playlists,
+                                 Map<Long, Boolean> hidden, Set<Long> personal,
+                                 Map<Long, PortableSavedPlaylists.Definition> playlists,
                                  Map<Long, PortableTitlePlayback.State> titlePlayback,
                                  Map<Long, PortableMediaMatches.Match> matches)
     {
@@ -49,6 +51,7 @@ public final class LogicalBackupCatalog
         this.physical = Collections.unmodifiableList(physical);
         this.pins = pins;
         this.hidden = hidden;
+        this.personal = Set.copyOf(personal);
         this.playlists = playlists;
         this.titlePlayback = titlePlayback;
         this.matches = matches;
@@ -81,6 +84,7 @@ public final class LogicalBackupCatalog
         File file = VideoOpenHelper.getDatabaseFile(context);
         if (!file.exists())
             return new LogicalBackupCatalog(snapshot, physical, Collections.emptyList(), Collections.emptyMap(),
+                                            Set.of(),
                                             Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
         try (SQLiteDatabase database = SQLiteDatabase.openDatabase(file.getPath(), null, SQLiteDatabase.OPEN_READONLY))
         {
@@ -158,6 +162,7 @@ public final class LogicalBackupCatalog
                 Map<Long, Boolean> hidden = PortableHiddenItems.read(database);
                 return new LogicalBackupCatalog(
                     snapshot, physical, pins, hidden,
+                    com.archos.mediaprovider.video.PersonalVideoActions.read(database),
                     playlists ? PortableSavedPlaylists.read(database) : Collections.emptyMap(),
                     titlePlayback ? PortableTitlePlayback.read(database) : Collections.emptyMap(),
                     matches ? PortableMediaMatches.read(database) : Collections.emptyMap());

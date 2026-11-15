@@ -160,6 +160,7 @@ public class PortableTitlePlaybackTest {
     @Test
     public void nativeNoneSentinelIsExportedAsIntentRatherThanAnAmbiguousReceivingIndex() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
+        context.deleteDatabase("media-v64.db");
         context.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(context)) {
             var db = helper.getWritableDatabase();
@@ -213,6 +214,7 @@ public class PortableTitlePlaybackTest {
     public void putioPlaybackAssociationsHaveNoNativeOrPublicExportWhileReceivingRowsRemainUntouched()
         throws Exception {
         Context context = RuntimeEnvironment.getApplication();
+        context.deleteDatabase("media-v64.db");
         context.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(context)) {
             var db = helper.getWritableDatabase();

@@ -21,6 +21,7 @@ public class MediaMatchDependencyTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
             var db = helper.getWritableDatabase();

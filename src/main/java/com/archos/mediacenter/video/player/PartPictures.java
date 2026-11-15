@@ -30,6 +30,11 @@ public final class PartPictures implements AutoCloseable
 
     private final List<Picture> pictures;
     private boolean closed;
+    private final FrameSource source;
+    private final Consumer<Picture> ready;
+    private int next;
+    private int inFlight;
+    private boolean pumping;
 
     public PartPictures(PlaybackParts parts, Bitmap episodeStill, FrameSource source, Consumer<Picture> ready)
     {
@@ -39,19 +44,37 @@ public final class PartPictures implements AutoCloseable
             rows.add(new Picture(part, episodeStill));
         }
         pictures = Collections.unmodifiableList(rows);
-        for (Picture picture : pictures)
-        {
-            source.frameAt(picture.positionMs, bitmap -> {
-                synchronized (this)
-                {
-                    if (closed || bitmap == null)
-                    {
-                        return;
+        this.source = source;
+        this.ready = ready;
+        requestMore();
+    }
+
+    /** Small batches ensure long timelines do not overflow the thumbnail engine's bounded queue. */
+    private synchronized void requestMore()
+    {
+        if (pumping)
+            return;
+        pumping = true;
+        try {
+            while (!closed && inFlight < 4 && next < pictures.size()) {
+                Picture picture = pictures.get(next++);
+                inFlight++;
+                source.frameAt(picture.positionMs, bitmap -> {
+                    synchronized (PartPictures.this) {
+                        inFlight--;
+                        try {
+                            if (!closed && bitmap != null) {
+                                picture.bitmap = bitmap;
+                                ready.accept(picture);
+                            }
+                        } finally {
+                            requestMore();
+                        }
                     }
-                    picture.bitmap = bitmap;
-                    ready.accept(picture);
-                }
-            });
+                });
+            }
+        } finally {
+            pumping = false;
         }
     }
 

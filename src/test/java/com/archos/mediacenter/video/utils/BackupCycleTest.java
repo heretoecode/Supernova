@@ -92,7 +92,7 @@ public class BackupCycleTest {
         preferences.edit().putString("preview_home_rows41", "changed").commit();
         SafeBackup.restore(context, staged);
         try (SQLiteDatabase restored = SQLiteDatabase.openDatabase(
-                 context.getDatabasePath("media.db").getPath(), null, SQLiteDatabase.OPEN_READONLY);
+                 VideoOpenHelper.getDatabaseFile(context).getPath(), null, SQLiteDatabase.OPEN_READONLY);
             Cursor row = restored.rawQuery("SELECT _id,_data,Archos_bookmark FROM files WHERE _id=77", null)) {
             assertTrue(row.moveToFirst());
             assertEquals(77, row.getLong(0));

@@ -23,7 +23,7 @@ final class PlayerStripSource implements PlayerPartsStrip.Source
         VideoMetadata metadata = player.getVideoMetadata();
         List<PlaybackChapters.Chapter> embedded =
             metadata == null ? Collections.emptyList() : metadata.getChapters();
-        return activity.previewParts(embedded, player.getDuration());
+        return activity.previewParts(embedded, player.getDuration()).numbered();
     }
 
     @Override
@@ -53,7 +53,7 @@ final class PlayerStripSource implements PlayerPartsStrip.Source
     public PartPictures.FrameSource frames()
     {
         PlayerService service = PlayerService.sPlayerService;
-        return service == null ? null : service.seekThumbnails();
+        return service == null ? null : service.partFrameSource();
     }
 
     @Override

@@ -45,7 +45,7 @@ public final class MissingFilesRepository
             this.stored = stored;
             id = stored.id();
             size = stored.size();
-            this.title = title == null || title.isBlank() ? "Unknown title" : title;
+            this.title = title == null || title.trim().isEmpty() ? "Unknown title" : title;
             this.source = source == null ? null : source.root;
             sourceName = source == null ? "Source unavailable" : source.label;
             String path = path(stored.path());
@@ -158,14 +158,31 @@ public final class MissingFilesRepository
     /** Complete the search before mutating; ambiguous/no matches return false and change nothing. */
     public static boolean findAgain(Context context, MissingFile row, BooleanSupplier cancelled) throws Exception
     {
+        return findAgain(context, row, false, cancelled, ignored -> {});
+    }
+
+    public record SearchProgress(long checked, int foldersRemaining)
+    {
+    }
+
+    /** Worker-only; all sources must finish before a globally unique replacement is committed. */
+    public static boolean findAgain(Context context, MissingFile row, boolean everywhere,
+                                    BooleanSupplier cancelled, java.util.function.Consumer<SearchProgress> progress)
+        throws Exception
+    {
+        List<Uri> roots = new ArrayList<>();
+        if (row.source != null)
+            roots.add(row.source);
+        if (everywhere)
+            for (Source source : sources(context))
+                if (!roots.contains(source.root))
+                    roots.add(source.root);
         try (ScanIoScope scope = new ScanIoScope(60, TimeUnit.SECONDS))
         {
-            Uri candidate = MissingFileSearch.unique(row.source, row.oldFileName, row.size, folder -> {
+            Uri candidate = MissingFileSearch.unique(roots, row.oldFileName, row.size, folder -> {
                 ScanIoScope.checkpoint();
-                MetaFile2 directory = MetaFileFactoryWithUpnp.getMetaFileForUrl(folder);
-                if (directory == null || !directory.isDirectory())
-                    throw new IOException("Source folder is unavailable");
-                List<MetaFile2> files = directory.getRawListerInstance().getFileList();
+                List<MetaFile2> files = com.archos.mediacenter.video.player.FileListingOwner.directory(
+                    context, folder, cancelled);
                 if (files == null)
                     throw new IOException("Source listing is unavailable");
                 List<MissingFileSearch.FileEntry> entries = new ArrayList<>();
@@ -180,15 +197,24 @@ public final class MissingFilesRepository
                             new MissingFileSearch.FileEntry(uri, file.getName(), file.length(), file.isDirectory()));
                 }
                 return entries;
-            }, cancelled);
+            }, cancelled, value -> progress.accept(new SearchProgress(value.checked(), value.foldersRemaining())));
             if (candidate == null)
                 return false;
             ScanIoScope.checkpoint();
-            MetaFile2 file = MetaFileFactoryWithUpnp.getMetaFileForUrl(candidate);
+            MetaFile2 file = com.archos.mediacenter.video.player.FileListingOwner.inspect(
+                context, candidate, cancelled);
             if (cancelled.getAsBoolean() || file == null || !file.isFile() || file.length() != row.size)
                 throw new IOException("Replacement changed during search");
-            String replacement = row.stored.path().startsWith("/") ? candidate.getPath() : candidate.toString();
-            boolean changed = MissingMediaActions.relink(context, row.stored, row.source, replacement);
+            String replacement = row.stored.path().startsWith("/") && "file".equals(candidate.getScheme())
+                ? candidate.getPath() : candidate.toString();
+            Uri targetRoot = null;
+            for (Uri root : roots)
+                if (SupernovaLibraryPolicy.contains(SupernovaLibraryPolicy.canonical(root),
+                                                     SupernovaLibraryPolicy.canonical(candidate)))
+                    targetRoot = root;
+            boolean changed = everywhere
+                ? MissingMediaActions.relinkAcrossSources(context, row.stored, row.source, targetRoot, replacement)
+                : MissingMediaActions.relink(context, row.stored, row.source, replacement);
             if (changed)
                 PreviewLibraryLoader.invalidateHistoryCache(context);
             return changed;

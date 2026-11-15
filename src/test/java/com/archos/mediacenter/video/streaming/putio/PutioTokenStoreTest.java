@@ -23,7 +23,7 @@ import static org.junit.Assert.fail;
 
 /** Checks put.io token encryption, fresh initialization vectors and rejection of tampered credentials. */
 @RunWith(RobolectricTestRunner.class)
-@Config(application = Application.class, sdk = 28)
+@Config(application = Application.class, sdk = {23, 28, 30})
 public class PutioTokenStoreTest
 {
     @Rule public TemporaryFolder temporary = new TemporaryFolder();

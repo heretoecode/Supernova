@@ -34,6 +34,7 @@ public class MediaMatchJournalTest {
     @Before
     public void setup() throws Exception {
         fixture.setup();
+        fixture.app.deleteDatabase("media-v64.db");
         fixture.app.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(fixture.app)) {
             var db = helper.getWritableDatabase();

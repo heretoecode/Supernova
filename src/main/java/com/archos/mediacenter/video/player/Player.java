@@ -62,7 +62,7 @@ import com.archos.medialib.IMediaPlayer;
 import com.archos.medialib.LibAvos;
 import com.archos.medialib.MediaFactory;
 import com.archos.medialib.MediaMetadata;
-import com.archos.mediaprovider.ArchosMediaCommon;
+import com.archos.medialib.AvosMediaPlayer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -98,6 +98,14 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private Uri mSaveUri;
     private Map<String, String> mExtraMap;
     private int mDuration;
+    private final SeekLoadingSignal seekLoading = new SeekLoadingSignal();
+    private java.util.List<PlaybackChapters.Chapter> seekChapters = java.util.List.of();
+
+    public SeekLoadingSignal seekLoading()
+    {
+        return seekLoading;
+    }
+
 
     // all possible internal states
     private static final int STATE_ERROR = -1;
@@ -133,6 +141,18 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private int mSurfaceWidth;
     private int mSurfaceHeight;
     private IMediaPlayer mMediaPlayer;
+
+    /** Main-thread snapshot. JNI takes a nonblocking lifecycle lease; null means unknown. */
+    public long[] nativeFrameMetrics()
+    {
+        return mMediaPlayer instanceof AvosMediaPlayer ? ((AvosMediaPlayer)mMediaPlayer).frameMetrics() : null;
+    }
+
+    public String initializedNativeDecoder()
+    {
+        return mMediaPlayer instanceof AvosMediaPlayer ? ((AvosMediaPlayer)mMediaPlayer).initializedDecoder() : null;
+    }
+
     private volatile int mOpenGeneration;
     private boolean mSessionPrepared;
     private boolean mRestoringSession;
@@ -153,7 +173,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private boolean mCanPause;
     private boolean mCanSeekBack;
     private boolean mCanSeekForward;
-    private boolean mIsLocalVideo;
+    private volatile boolean mIsLocalVideo;
 
     private boolean mWaitForNewRate;
     private final int NUMBER_RETRIES = 5;
@@ -696,6 +716,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
 
     private void reset()
     {
+        seekLoading.reset();
+        seekChapters = java.util.List.of();
         mVideoWidth = 0;
         mVideoHeight = 0;
         mVideoAspect = 1.0f;
@@ -727,6 +749,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         mSurfaceHolder = null;
         mVideoTexture = null;
         mForceSoftwareDecoding = forceSoftwareDecoding;
+        seekLoading.reset();
         mMediaPlayer = null;
         mUri = null;
 
@@ -838,26 +861,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         // SubtitleEngine setters below are skipped).
         applySubtitleFontSettings();
 
-        String scheme = mUri.getScheme();
-        mIsLocalVideo = false;
-        if (scheme == null || scheme.equals("file"))
-        {
-            mIsLocalVideo = true;
-        }
-        else
-        {
-            if (scheme.equals("content"))
-            {
-                try
-                {
-                    if (Integer.parseInt(FileUtils.getName(mUri)) <= ArchosMediaCommon.SCANNED_ID_OFFSET)
-                        mIsLocalVideo = true;
-                }
-                catch (NumberFormatException e)
-                {
-                }
-            }
-        }
+        mIsLocalVideo = PlaybackSourceKind.localBeforeResolution(mUri);
 
         if (uri.getPath() != null)
         {
@@ -960,6 +964,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         mHandler.removeCallbacks(mPreparedAsync);
         mHandler.removeCallbacks(mRefreshRateCheckerAsync);
         IMediaPlayer old = mMediaPlayer;
+        seekLoading.reset();
         mMediaPlayer = null; // callbacks from this instance are now obsolete
         mCurrentState = STATE_IDLE;
         mMetadataReady = false;
@@ -1147,6 +1152,9 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
                 // Back/Stop or opening another video invalidates this request, not shared startup.
                 if (generation != mOpenGeneration)
                     return;
+                final boolean localSource = PlaybackSourceKind.isLocal(mContext, uri);
+                if (generation != mOpenGeneration)
+                    return;
                 if (headers != null)
                     player.setDataSource(mContext, uri, headers);
                 else
@@ -1154,6 +1162,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
                 mHandler.post(() -> {
                     if (generation != mOpenGeneration || player != mMediaPlayer)
                         return;
+                    mIsLocalVideo = localSource;
                     try
                     {
                         if (mSurfaceHolder != null && mSurfaceHolder.getSurface().isValid())
@@ -1618,8 +1627,23 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             {
                 mPlayerListener.onSeekStart(msec);
             }
-            mMediaPlayer.seekTo(msec);
-            mIsBusy = true;
+            int pictureToken = seekLoading.begin(mMediaPlayer, msec, seekChapters);
+            try
+            {
+                boolean tracked = pictureToken > 0 && mMediaPlayer instanceof AvosMediaPlayer &&
+                    ((AvosMediaPlayer)mMediaPlayer).seekToTracked(msec, pictureToken);
+                if (!tracked)
+                {
+                    seekLoading.result(mMediaPlayer, pictureToken, SeekLoadingSignal.State.UNAVAILABLE);
+                    mMediaPlayer.seekTo(msec);
+                }
+                mIsBusy = true;
+            }
+            catch (RuntimeException failed)
+            {
+                seekLoading.result(mMediaPlayer, pictureToken, SeekLoadingSignal.State.FAILED);
+                throw failed;
+            }
         }
         else
         {
@@ -1875,6 +1899,9 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         MediaMetadata data = mp.getMediaMetadata(IMediaPlayer.METADATA_ALL, IMediaPlayer.BYPASS_METADATA_FILTER);
         if (data != null)
         {
+            long chapterDuration = data.has(IMediaPlayer.METADATA_KEY_DURATION)
+                ? data.getInt(IMediaPlayer.METADATA_KEY_DURATION) : mDuration;
+            seekChapters = PlaybackChapters.read(data, chapterDuration);
             if (data.has(IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK))
             {
                 mHasAudio = data.getInt(IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK) > 0;
@@ -2127,6 +2154,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     {
         if (mp != mMediaPlayer)
             return;
+        seekLoading.reset();
         Diagnostics.event("playback_completed", "state", mCurrentState, "position_ms", getCurrentPosition(),
                           "duration_ms", getDuration());
         mCurrentState = STATE_PLAYBACK_COMPLETED;
@@ -2235,6 +2263,13 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             log.debug("onInfo: {} {}", what, extra);
         switch (what)
         {
+        case AvosMediaPlayer.MEDIA_INFO_SEEK_PICTURE_READY:
+            seekLoading.result(mp, extra, SeekLoadingSignal.State.READY);
+            playbackOutput();
+            return true;
+        case AvosMediaPlayer.MEDIA_INFO_SEEK_PICTURE_FAILED:
+            seekLoading.result(mp, extra, SeekLoadingSignal.State.FAILED);
+            return true;
         case 3: // Android MEDIA_INFO_VIDEO_RENDERING_START, also forwarded by compatible backends.
             if (mp == mMediaPlayer)
                 playbackOutput();
@@ -2294,6 +2329,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
 
     public boolean onError(IMediaPlayer mp, int errorCode, int errorQualCode, String msg)
     {
+        if (mp == mMediaPlayer)
+            seekLoading.reset();
         if (mp != mMediaPlayer)
             return true;
         if (networkReconnect != null)

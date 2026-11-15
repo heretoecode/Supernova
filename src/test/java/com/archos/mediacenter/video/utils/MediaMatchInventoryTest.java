@@ -39,6 +39,7 @@ public class MediaMatchInventoryTest
     @Before public void setup()
     {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         PreferenceManager.getDefaultSharedPreferences(app)
             .edit()

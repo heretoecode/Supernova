@@ -1,0 +1,259 @@
+diff --git a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+--- a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
++++ b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+@@ -392,6 +392,16 @@
+         return id;
+     }
+ 
++    /** Worker-only compare-and-delete used after the undo window. No network/file delete is involved. */
++    public boolean deleteShortcut(Context context, long id, String expectedUri)
++    {
++        try (DatabaseHelper helper = new DatabaseHelper(context))
++        {
++            return helper.getWritableDatabase().delete(mDatabaseTable, KEY_ROWID + "=? AND " + KEY_PATH + "=?",
++                new String[] {Long.toString(id), expectedUri}) == 1;
++        }
++    }
++
+     public boolean deleteShortcut(Context context, String uri)
+     {
+         // Delete the shortcut stored in the provided row
+diff --git a/src/com/archos/mediaprovider/video/SavedConnectionRemoval.java b/src/com/archos/mediaprovider/video/SavedConnectionRemoval.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/SavedConnectionRemoval.java
+@@ -0,0 +1,157 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.net.Uri;
++import androidx.preference.PreferenceManager;
++import com.archos.mediacenter.utils.ShortcutDbAdapter;
++import java.io.IOException;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.UUID;
++import java.util.concurrent.Executors;
++import java.util.concurrent.ScheduledExecutorService;
++import java.util.concurrent.TimeUnit;
++import org.json.JSONArray;
++import org.json.JSONObject;
++
++/** Worker-only durable removal window. Removes a saved shortcut, never a file or a remote folder. */
++public final class SavedConnectionRemoval
++{
++    private static final String KEY = "supernova_connection_removals_v1";
++    private static final long WINDOW_MS = 10000;
++    private static final ScheduledExecutorService WORK = Executors.newSingleThreadScheduledExecutor(task -> {
++        Thread thread = new Thread(task, "SavedConnectionRemoval");
++        thread.setDaemon(true);
++        return thread;
++    });
++
++    public record Ticket(String undoToken, long expiresUtcMs)
++    {
++    }
++
++    public static synchronized Ticket remove(Context context, long shortcutId) throws Exception
++    {
++        Context app = context.getApplicationContext();
++        for (ShortcutDbAdapter.Shortcut shortcut : ShortcutDbAdapter.VIDEO.readCopiedShortcuts(app))
++        {
++            if (shortcut.getID() == null || shortcut.getID() != shortcutId)
++                continue;
++            List<JSONObject> pending = read(app);
++            for (JSONObject row : pending)
++                if (row.getLong("id") == shortcutId)
++                    return new Ticket(row.getString("token"), row.getLong("expires"));
++            if (pending.size() >= 1000)
++                throw new IOException("Too many pending connection removals");
++            String token = UUID.randomUUID().toString();
++            long expires = System.currentTimeMillis() + WINDOW_MS;
++            pending.add(new JSONObject().put("id", shortcutId).put("uri", shortcut.getUri())
++                .put("token", token).put("expires", expires));
++            write(app, pending);
++            resume(app);
++            return new Ticket(token, expires);
++        }
++        throw new IOException("Saved connection no longer exists");
++    }
++
++    public static synchronized boolean undo(Context context, String token) throws Exception
++    {
++        List<JSONObject> pending = read(context);
++        boolean removed = pending.removeIf(row -> token != null && token.equals(row.optString("token")) &&
++                                                     System.currentTimeMillis() < row.optLong("expires"));
++        if (removed)
++            write(context, pending);
++        return removed;
++    }
++
++    /** Include pending removals in neither connection lists nor scheduled scans. Call on the inventory worker. */
++    public static synchronized boolean pending(Context context, Uri root)
++    {
++        try
++        {
++            String key = SupernovaLibraryPolicy.canonical(root);
++            for (JSONObject row : read(context))
++                if (key.equals(SupernovaLibraryPolicy.canonical(Uri.parse(row.getString("uri")))))
++                    return true;
++        }
++        catch (Exception invalid)
++        {
++            // Do not delete anything on malformed journal input. Existing saved sources remain usable.
++        }
++        return false;
++    }
++
++    /** Main-thread safe startup hook: schedules worker-only recovery of deadlines saved before process death. */
++    public static void resume(Context context)
++    {
++        Context app = context.getApplicationContext();
++        WORK.execute(() -> reap(app));
++    }
++
++    private static synchronized void reap(Context context)
++    {
++        try
++        {
++            List<JSONObject> pending = read(context);
++            List<JSONObject> retained = new ArrayList<>();
++            long now = System.currentTimeMillis();
++            long next = Long.MAX_VALUE;
++            for (JSONObject row : pending)
++            {
++                long deadline = row.getLong("expires");
++                if (deadline > now + WINDOW_MS)
++                {
++                    // Clock rollback or a restart cannot turn the short undo window into a permanent tombstone.
++                    deadline = now + WINDOW_MS;
++                    row.put("expires", deadline);
++                }
++                if (deadline <= now)
++                {
++                    ShortcutDbAdapter.VIDEO.deleteShortcut(context, row.getLong("id"), row.getString("uri"));
++                }
++                else
++                {
++                    retained.add(row);
++                    next = Math.min(next, Math.min(WINDOW_MS, deadline - now));
++                }
++            }
++            write(context, retained);
++            if (!retained.isEmpty())
++                WORK.schedule(() -> reap(context), Math.max(1, next), TimeUnit.MILLISECONDS);
++        }
++        catch (Exception unavailable)
++        {
++            // Retain the durable journal on database/storage failure and retry on the worker.
++            WORK.schedule(() -> reap(context), 30, TimeUnit.SECONDS);
++        }
++    }
++
++    private static List<JSONObject> read(Context context) throws Exception
++    {
++        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
++        JSONArray rows = new JSONArray(prefs.getString(KEY, "[]"));
++        if (rows.length() > 1000)
++            throw new IOException("Removal journal is too large");
++        List<JSONObject> result = new ArrayList<>();
++        for (int i = 0; i < rows.length(); i++)
++        {
++            JSONObject row = rows.getJSONObject(i);
++            if (row.getLong("id") <= 0 || row.getString("uri").length() > 4096 ||
++                !row.getString("token").matches("[a-f0-9-]{36}"))
++                throw new IOException("Invalid removal journal");
++            result.add(row);
++        }
++        return result;
++    }
++
++    private static void write(Context context, List<JSONObject> pending) throws IOException
++    {
++        if (!PreferenceManager.getDefaultSharedPreferences(context).edit()
++                .putString(KEY, new JSONArray(pending).toString()).commit())
++            throw new IOException("Connection removal could not be saved");
++    }
++
++    private SavedConnectionRemoval()
++    {
++    }
++}
+diff --git a/test/java/com/archos/mediaprovider/video/SavedConnectionRemovalTest.java b/test/java/com/archos/mediaprovider/video/SavedConnectionRemovalTest.java
+new file mode 100644
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/SavedConnectionRemovalTest.java
+@@ -0,0 +1,72 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++import android.app.Application;
++import android.content.Context;
++import android.net.Uri;
++import androidx.preference.PreferenceManager;
++import com.archos.mediacenter.utils.ShortcutDbAdapter;
++import org.json.JSONArray;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++import org.robolectric.annotation.SQLiteMode;
++import org.robolectric.util.ReflectionHelpers;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++@SQLiteMode(SQLiteMode.Mode.NATIVE)
++public class SavedConnectionRemovalTest
++{
++    private ShortcutDbAdapter.Shortcut source(Context context)
++    {
++        var source = new ShortcutDbAdapter.Shortcut("Films", "webdavs://server/Films");
++        assertTrue(ShortcutDbAdapter.VIDEO.addShortcut(context, source));
++        return source;
++    }
++
++    @Test public void pendingRemovalHidesTheSourceAndUndoRestoresWithoutRecreatingIt() throws Exception
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        var source = source(app);
++        var ticket = SavedConnectionRemoval.remove(app, source.getID());
++        assertTrue(SavedConnectionRemoval.pending(app, Uri.parse(source.getUri())));
++        assertTrue(ShortcutDbAdapter.VIDEO.readCopiedShortcuts(app).stream()
++            .anyMatch(row -> row.getID().equals(source.getID())));
++        assertTrue(SavedConnectionRemoval.undo(app, ticket.undoToken()));
++        assertFalse(SavedConnectionRemoval.pending(app, Uri.parse(source.getUri())));
++        assertFalse(SavedConnectionRemoval.undo(app, ticket.undoToken()));
++    }
++
++    @Test public void expiredJournalIsReapedOnRecoveryAndCannotBeUndone() throws Exception
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        var source = source(app);
++        var ticket = SavedConnectionRemoval.remove(app, source.getID());
++        var prefs = PreferenceManager.getDefaultSharedPreferences(app);
++        synchronized (SavedConnectionRemoval.class)
++        {
++            JSONArray journal = new JSONArray(prefs.getString("supernova_connection_removals_v1", "[]"));
++            journal.getJSONObject(0).put("expires", 0);
++            prefs.edit().putString("supernova_connection_removals_v1", journal.toString()).commit();
++        }
++        assertFalse(SavedConnectionRemoval.undo(app, ticket.undoToken()));
++        ReflectionHelpers.callStaticMethod(SavedConnectionRemoval.class, "reap",
++            ReflectionHelpers.ClassParameter.from(Context.class, app));
++        assertFalse(ShortcutDbAdapter.VIDEO.readCopiedShortcuts(app).stream()
++            .anyMatch(row -> row.getID().equals(source.getID())));
++        assertFalse(SavedConnectionRemoval.pending(app, Uri.parse(source.getUri())));
++    }
++
++    @Test public void compareDeleteCannotRemoveAReusedIdAtAnotherAddress()
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        var source = source(app);
++        assertFalse(ShortcutDbAdapter.VIDEO.deleteShortcut(app, source.getID(), "webdavs://different/Films"));
++        assertTrue(ShortcutDbAdapter.VIDEO.readCopiedShortcuts(app).stream()
++            .anyMatch(row -> row.getID().equals(source.getID())));
++    }
++}

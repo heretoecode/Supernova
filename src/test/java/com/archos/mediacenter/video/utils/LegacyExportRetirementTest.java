@@ -29,6 +29,7 @@ public class LegacyExportRetirementTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         app.deleteDatabase(BookmarkStoreRecovery.DATABASE);
         PreferenceManager.getDefaultSharedPreferences(app)

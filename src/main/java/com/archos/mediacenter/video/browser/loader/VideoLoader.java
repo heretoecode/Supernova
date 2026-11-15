@@ -247,10 +247,10 @@ public abstract class VideoLoader extends CursorLoader implements CompatAndSDKCu
 
     @Override
     public String getSelection() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(com.archos.mediaprovider.video.PersonalVideoActions.VISIBLE);
 
         if (LoaderUtils.mustHideUserHiddenObjects()) {
-            sb.append(LoaderUtils.HIDE_USER_HIDDEN_FILTER);
+            sb.append(" AND ").append(LoaderUtils.HIDE_USER_HIDDEN_FILTER);
         }
 
         if (LoaderUtils.mustHideWatchedVideo()||mForceHideVideos) {

@@ -24,6 +24,7 @@ public class PortableSavedPlaylistsTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
@@ -119,6 +120,7 @@ public class PortableSavedPlaylistsTest {
     public void unknownDefinitionAndMembershipStatusesIncludingWideIntegerOverflowFail() throws Exception {
         for (String column : List.of("definition", "member"))
             for (long value : List.of(5L, -1L, 4294967296L)) {
+                app.deleteDatabase("media-v64.db");
                 app.deleteDatabase("media.db");
                 try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
                     var db = helper.getWritableDatabase();
@@ -149,6 +151,7 @@ public class PortableSavedPlaylistsTest {
         }, new long[] {
             2147483648L, -1
         })) {
+            app.deleteDatabase("media-v64.db");
             app.deleteDatabase("media.db");
             try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
                 var db = helper.getWritableDatabase();

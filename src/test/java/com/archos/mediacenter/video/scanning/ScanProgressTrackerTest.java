@@ -125,4 +125,18 @@ public class ScanProgressTrackerTest
         assertEquals(ScanProgress.Failure.BUSY, tracker.current().failure);
         assertEquals("A scan was already running", tracker.current().failureReason());
     }
+    @Test public void runningSignalAndOutcomesFollowActualTerminalEvents()
+    {
+        event("signal", "usb", "started", 0, 10, 0);
+        assertTrue(ScanActivitySignal.LIBRARY.running());
+        assertEquals(ScanProgress.Outcome.RUNNING, tracker.current().outcome());
+        event("signal", "usb", "cancelled", 2, 10, 5);
+        assertFalse(ScanActivitySignal.LIBRARY.running());
+        assertEquals(ScanProgress.Outcome.STOPPED, tracker.current().outcome());
+        event("next", "usb", "started", 0, 10, 10);
+        event("next", "usb", "complete", 10, 10, 15);
+        assertFalse(ScanActivitySignal.LIBRARY.running());
+        assertEquals(ScanProgress.Outcome.FINISHED, finished.get(finished.size() - 1).outcome());
+    }
+
 }

@@ -24,6 +24,7 @@ public class PlaylistStateRecoveryTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
             var db = helper.getWritableDatabase();
@@ -151,6 +152,7 @@ public class PlaylistStateRecoveryTest {
 
     @Test
     public void newDeviceKeepsWholeLogicalDefinitionsPendingUntilNativeMediaStoreExists() throws Exception {
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         var prepared = PlaylistStateRecovery.prepare(PlaylistStateRecovery.empty(), payload(), false);
         assertEquals(1, prepared.unresolved);

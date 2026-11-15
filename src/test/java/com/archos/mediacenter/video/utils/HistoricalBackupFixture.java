@@ -150,7 +150,7 @@ public final class HistoricalBackupFixture extends ContextWrapper {
             addVersionToZip(zos, dbVersion);
 
             // Export media database
-            File dbFile = getDatabasePath(DATABASE_NAME);
+            File dbFile = VideoOpenHelper.getDatabaseFile(this);
             if (dbFile.exists()) {
                 if (log.isDebugEnabled())
                     log.debug("exportMediaLibrary: exporting media database");
@@ -211,7 +211,8 @@ public final class HistoricalBackupFixture extends ContextWrapper {
                 DATABASE_NAME, CREDENTIALS_DB_NAME, SHORTCUTS_DB_NAME,
                      SHORTCUTS2_DB_NAME, "putio-associations.db"
             }) {
-                File dbFile = getDatabasePath(database);
+                File dbFile = database.equals(DATABASE_NAME) ? VideoOpenHelper.getDatabaseFile(this)
+                    : getDatabasePath(database);
                 if (dbFile.exists()) {
                     if (log.isDebugEnabled())
                         log.debug("flushDatabaseWAL: opening database for WAL checkpoint");

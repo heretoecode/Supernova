@@ -1,0 +1,626 @@
+diff --git a/Include/frame_observation.h b/Include/frame_observation.h
+new file mode 100644
+--- /dev/null
++++ b/Include/frame_observation.h
+@@ -0,0 +1,44 @@
++#ifndef FRAME_OBSERVATION_H
++#define FRAME_OBSERVATION_H
++#include <stdint.h>
++#include <stddef.h>
++
++/* These are output submissions and internal drops, never compositor presentation timestamps. */
++typedef struct {
++    uint64_t accepted, late, stale, early, last_submit_ns;
++    int64_t scheduled_phase_ms;
++    uint32_t coverage, decoder_revision;
++    char decoder[128];
++} FRAME_OBSERVATION;
++
++static inline void frame_observation_increment(uint64_t *counter)
++{
++    __atomic_add_fetch(counter, 1, __ATOMIC_RELAXED);
++}
++
++static inline void frame_observation_decoder(FRAME_OBSERVATION *value, const char *name)
++{
++    __atomic_add_fetch(&value->decoder_revision, 1, __ATOMIC_ACQ_REL);
++    size_t i = 0;
++    for (; i < sizeof(value->decoder) - 1 && name && name[i]; i++)
++        __atomic_store_n(&value->decoder[i], name[i], __ATOMIC_RELAXED);
++    __atomic_store_n(&value->decoder[i], 0, __ATOMIC_RELAXED);
++    __atomic_add_fetch(&value->decoder_revision, 1, __ATOMIC_RELEASE);
++}
++
++static inline void frame_observation_name(FRAME_OBSERVATION *value, char *name, size_t capacity)
++{
++    if (!capacity) return;
++    name[0] = 0;
++    /* Bounded snapshot: a concurrent decoder replacement yields unknown, never a partial invented name. */
++    uint32_t before = __atomic_load_n(&value->decoder_revision, __ATOMIC_ACQUIRE);
++    if (before & 1) return;
++    size_t i = 0;
++    for (; i < capacity - 1 && i < sizeof(value->decoder); i++) {
++        name[i] = __atomic_load_n(&value->decoder[i], __ATOMIC_RELAXED);
++        if (!name[i]) break;
++    }
++    name[i < capacity ? i : capacity - 1] = 0;
++    if (before != __atomic_load_n(&value->decoder_revision, __ATOMIC_ACQUIRE)) name[0] = 0;
++}
++#endif
+diff --git a/Include/seek_picture.h b/Include/seek_picture.h
+new file mode 100644
+--- /dev/null
++++ b/Include/seek_picture.h
+@@ -0,0 +1,32 @@
++#ifndef SUPERNOVA_SEEK_PICTURE_H
++#define SUPERNOVA_SEEK_PICTURE_H
++#include <stdint.h>
++
++/* A token belongs to one requested seek. Only its bound output epoch may end it. */
++typedef struct seek_picture_gate {
++    uint64_t ticket;
++} SEEK_PICTURE_GATE;
++
++static inline void seek_picture_arm(SEEK_PICTURE_GATE *gate, uint32_t token)
++{
++    __atomic_store_n(&gate->ticket, token ? ((uint64_t)token << 32) | UINT32_MAX : 0, __ATOMIC_RELEASE);
++}
++
++static inline void seek_picture_bind(SEEK_PICTURE_GATE *gate, uint32_t epoch)
++{
++    uint64_t old = __atomic_load_n(&gate->ticket, __ATOMIC_ACQUIRE);
++    if (old && (uint32_t)old == UINT32_MAX) {
++        uint64_t bound = (old & UINT64_C(0xffffffff00000000)) | epoch;
++        __atomic_compare_exchange_n(&gate->ticket, &old, bound, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE);
++    }
++}
++
++static inline uint32_t seek_picture_take(SEEK_PICTURE_GATE *gate, uint32_t epoch)
++{
++    uint64_t old = __atomic_load_n(&gate->ticket, __ATOMIC_ACQUIRE);
++    if (!old || (uint32_t)old == UINT32_MAX || (uint32_t)old != epoch)
++        return 0;
++    return __atomic_compare_exchange_n(&gate->ticket, &old, 0, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
++        ? (uint32_t)(old >> 32) : 0;
++}
++#endif
+diff --git a/Include/stream.h b/Include/stream.h
+--- a/Include/stream.h
++++ b/Include/stream.h
+@@ -16,6 +16,8 @@
+ 
+ #ifndef _STREAM_H
+ #define _STREAM_H
++#include "seek_picture.h"
++#include "frame_observation.h"
+ 
+ #include "av.h"
+ #include "frame_q.h"
+@@ -510,6 +512,7 @@
+ 	STREAM_VIDEO_PROPS_CHANGED,
+ 	STREAM_SUB_PROPS_CHANGED,
+ 	STREAM_DECODER_CHANGED,
++    STREAM_SEEK_PICTURE_READY,
+ } STREAM_MESSAGE;
+ 
+ typedef enum {
+@@ -941,6 +944,9 @@
+ 	int		speed;
+ 	int		seek_paused;
+ 	int 		seek_epoch;
++    FRAME_OBSERVATION frame_observation;
++    SEEK_PICTURE_GATE seek_picture;
++    uint32_t seek_picture_notified_token;
+ 	int		muted;
+ 
+ 	int		sync_audio;
+@@ -1280,6 +1286,7 @@
+ void 	stream_set_aspect_ratio( STREAM *s, int aspect_n, int aspect_d );
+ void 	stream_set_max_video_dimensions( STREAM *s, int max_width, int max_height );
+ void	stream_set_audio_max_channels( STREAM *s, int max_channels );
++void stream_seek_picture_ready(struct STREAM *s, int epoch);
+ void 	stream_set_message_cb( STREAM *s, STREAM_MESSAGE_CB message_cb );
+ void 	stream_set_ask_audio( STREAM *s, STREAM_ASK_AUDIO ask );
+ void 	stream_set_ask_video( STREAM *s, STREAM_ASK_VIDEO ask );
+diff --git a/Source/avos_mp.c b/Source/avos_mp.c
+--- a/Source/avos_mp.c
++++ b/Source/avos_mp.c
+@@ -134,6 +134,7 @@
+ int avos_mp_video_pause(avos_mp_t *mp, avos_mp_video_t *video);
+ int avos_mp_video_isplaying(avos_mp_t *mp, avos_mp_video_t *video, int *ret);
+ int avos_mp_video_seek(avos_mp_t *mp, avos_mp_video_t *video, uint32_t msec);
++int avos_mp_video_seek_tracked(avos_mp_t *mp, avos_mp_video_t *video, uint32_t msec, uint32_t token);
+ void avos_mp_video_supersede_seek_preview(avos_mp_video_t *video);
+ int avos_mp_video_getpos(avos_mp_t *mp, avos_mp_video_t *video, uint32_t *ret);
+ int avos_mp_video_getduration(avos_mp_t *mp, avos_mp_video_t *video, uint32_t *ret);
+@@ -733,7 +734,10 @@
+ 				break;
+ 			}
+ 			case ASYNC_CMD_SEEK:
+-				avos_mp_seek_common(mp, command.arg);
++                if (command.arg2 > 0 && mp->type == TYPE_VID && mp->media)
++                    avos_mp_video_seek_tracked(mp, mp->media, command.arg, (uint32_t)command.arg2);
++                else
++                    avos_mp_seek_common(mp, command.arg);
+ 				break;
+ 			case ASYNC_CMD_START:
+ 			case ASYNC_CMD_PAUSE: {
+@@ -808,7 +812,7 @@
+ 	return running;
+ }
+ 
+-static int async_cmd_add(avos_mp_t *mp, int id, int arg)
++static int async_cmd_add_picture(avos_mp_t *mp, int id, int arg, int token)
+ {
+ 	pthread_mutex_lock(&mp->async.mtx);
+ 	if ((mp->async.closing && id != ASYNC_CMD_WAIT && id != ASYNC_CMD_EXIT) ||
+@@ -846,9 +850,15 @@
+ 	}
+ 	mp->async.next_cmd.id = id;
+ 	mp->async.next_cmd.arg = arg;
++    mp->async.next_cmd.arg2 = token;
+ 	pthread_cond_broadcast(&mp->async.cond);
+ 	pthread_mutex_unlock(&mp->async.mtx);
+ 	return AVOS_ERR_OK;
++}
++
++static int async_cmd_add(avos_mp_t *mp, int id, int arg)
++{
++    return async_cmd_add_picture(mp, id, arg, 0);
+ }
+ 
+ static int async_cmd_set_transport(avos_mp_t *mp, int command)
+@@ -1236,6 +1246,22 @@
+ 	return ret;
+ }
+ 
++int avos_mp_video_frame_metrics(avos_mp_video_t *video, avos_frame_metrics_t *metrics);
++
++static int avos_mp_frame_metrics(avos_mp_t *mp, avos_frame_metrics_t *metrics)
++{
++    MP_MEDIA_TRY_GUARD(mp);
++    if (!media_guard || !metrics || mp->type != TYPE_VID) return AVOS_ERR;
++    return avos_mp_video_frame_metrics(mp->media, metrics);
++}
++
++static int avos_mp_seek_async_tracked(avos_mp_t *mp, uint32_t msec, uint32_t token)
++{
++    if (!token || token > INT32_MAX || mp->type != TYPE_VID)
++        return AVOS_ERR;
++    return async_cmd_add_picture(mp, ASYNC_CMD_SEEK, msec, (int)token);
++}
++
+ static int avos_mp_seek_async(avos_mp_t *mp, uint32_t msec)
+ {
+ 	MPLOGV();
+@@ -1415,6 +1441,8 @@
+ 	.isplaying = avos_mp_isplaying,
+ 	.seek = avos_mp_seek,
+ 	.seek_async = avos_mp_seek_async,
++    .seek_async_tracked = avos_mp_seek_async_tracked,
++    .frame_metrics = avos_mp_frame_metrics,
+ 	.setstarttime = avos_mp_setstarttime,
+ 	.getpos = avos_mp_getpos,
+ 	.getduration = avos_mp_getduration,
+diff --git a/Source/avos_mp_video.c b/Source/avos_mp_video.c
+--- a/Source/avos_mp_video.c
++++ b/Source/avos_mp_video.c
+@@ -174,6 +174,10 @@
+ 
+ 	DBG MPLOG("%d", message);
+ 	switch (message) {
++    case STREAM_SEEK_PICTURE_READY:
++        avos_mp_sendevent(mp, MEDIA_INFO, MEDIA_INFO_SEEK_PICTURE_READY,
++            (int)__atomic_load_n(&s->seek_picture_notified_token, __ATOMIC_ACQUIRE));
++        break;
+ 	case STREAM_VIDEO_PROPS_CHANGED:
+ 		vp = &video->s->av.video[0];
+ 		if (video->aspect_n != vp->aspect_n || video->aspect_d != vp->aspect_d) {
+@@ -453,17 +457,33 @@
+ 	return AVOS_ERR_OK;
+ }
+ 
+-int avos_mp_video_seek(avos_mp_t *mp, avos_mp_video_t *video, uint32_t pos)
+-{
++int avos_mp_video_seek_tracked(avos_mp_t *mp, avos_mp_video_t *video, uint32_t pos, uint32_t token)
++{
++    if (!video || !video->s || !video->s->video || !video->s->video->valid) {
++        if (token)
++            avos_mp_sendevent(mp, MEDIA_INFO, MEDIA_INFO_SEEK_PICTURE_FAILED, (int)token);
++        return AVOS_ERR;
++    }
++    seek_picture_arm(&video->s->seek_picture, token);
++    int result = 1;
+ 	if (is_stream_seekable(mp, video)) {
+ 		int wind_start, stream_total = 0, dir;
+ 
+ 		wind_start = stream_get_current_pos(video->s, &stream_total);
+ 		dir = pos >= wind_start ? STREAM_SEEK_FORWARD : STREAM_SEEK_BACKWARD;
+ 		serprintf("avos_mp_video:avos_mp_video_seek current_pos=%d to pos=%d direction=%d\n", wind_start, pos, dir);
+-		stream_seek_pos(video->s, pos, dir, STREAM_SEEK_RELAXED );
+-	}
+-	return AVOS_ERR_OK;
++        result = stream_seek_pos(video->s, pos, dir, STREAM_SEEK_RELAXED);
++    }
++    if (result && token) {
++        seek_picture_arm(&video->s->seek_picture, 0);
++        avos_mp_sendevent(mp, MEDIA_INFO, MEDIA_INFO_SEEK_PICTURE_FAILED, (int)token);
++    }
++    return result ? AVOS_ERR : AVOS_ERR_OK;
++}
++
++int avos_mp_video_seek(avos_mp_t *mp, avos_mp_video_t *video, uint32_t pos)
++{
++    return avos_mp_video_seek_tracked(mp, video, pos, 0);
+ }
+ 
+ void avos_mp_video_supersede_seek_preview(avos_mp_video_t *video)
+@@ -584,3 +604,20 @@
+ {
+ 	return stream_set_av_speed(video->s, speed) == 0 ? AVOS_ERR_OK : AVOS_ERR;
+ }
++
++int avos_mp_video_frame_metrics(avos_mp_video_t *video, avos_frame_metrics_t *metrics)
++{
++    if (!video || !video->s) return AVOS_ERR;
++    FRAME_OBSERVATION *value = &video->s->frame_observation;
++    metrics->values[0] = 1;
++    metrics->values[1] = 16 | __atomic_load_n(&value->coverage, __ATOMIC_ACQUIRE);
++    metrics->values[2] = __atomic_load_n(&value->accepted, __ATOMIC_RELAXED);
++    metrics->values[3] = __atomic_load_n(&value->late, __ATOMIC_RELAXED);
++    metrics->values[4] = __atomic_load_n(&value->stale, __ATOMIC_RELAXED);
++    metrics->values[5] = __atomic_load_n(&value->early, __ATOMIC_RELAXED);
++    metrics->values[6] = __atomic_load_n(&value->last_submit_ns, __ATOMIC_RELAXED);
++    metrics->values[7] = __atomic_load_n(&value->scheduled_phase_ms, __ATOMIC_RELAXED);
++    metrics->values[8] = 0; /* Physical display timestamp / measured hardware A/V drift unavailable. */
++    frame_observation_name(value, metrics->initialized_decoder, sizeof(metrics->initialized_decoder));
++    return AVOS_ERR_OK;
++}
+diff --git a/Source/codec_sfdec2.c b/Source/codec_sfdec2.c
+--- a/Source/codec_sfdec2.c
++++ b/Source/codec_sfdec2.c
+@@ -2004,6 +2004,7 @@
+ 				f = frame_q_get(&p->locked.venc_q);
+ 				consumed = 1;
+ 				stale_epoch_drop = 1;
++                frame_observation_increment(&s->frame_observation.stale);
+ 				DBGSI serprintf("android_sync: stale epoch frame drop f_time=%d frame_epoch=%d seek_epoch=%d\n",
+ 					f->time, f->epoch, s->seek_epoch);
+ 				break;
+@@ -2060,6 +2061,7 @@
+ 				f = frame_q_get(&p->locked.venc_q);
+ 				consumed = 1;
+ 				stale_epoch_drop = 1;
++                frame_observation_increment(&s->frame_observation.stale);
+ 				break;
+ 			}
+ 			if (passthrough && p->speed_cadence.enabled)
+@@ -2079,6 +2081,7 @@
+ 				f = frame_q_get(&p->locked.venc_q);
+ 				consumed = 1;
+ 				stale_epoch_drop = 1;
++                frame_observation_increment(&s->frame_observation.stale);
+ 				break;
+ 			}
+ 			int mode2_dynamic_active = passthrough == 2 ?
+@@ -2209,6 +2212,7 @@
+ 					goto endloop;
+ 				}
+ 				p->dropped++;
++                if (s) frame_observation_increment(&s->frame_observation.late);
+ 				// Keep flush from invalidating the MediaCodec buffer while the
+ 				// timeout path releases it outside the queue lock.
+ 				add_state_l(p, THREAD_STATE_RENDERING);
+@@ -2608,6 +2612,7 @@
+ 				// Drop/release buffer immediately without rendering to catch up
+ 				render_error = sfdec_buf_render(p->sfdec, (sfbuf_t *)f->android_handle, 0, 0, 0);
+ 				p->dropped++;
++                if (s) frame_observation_increment(&s->frame_observation.late);
+ 				DBGSI serprintf("android_sync: late frame drop f_time=%d lateness=%lldms dropped=%d\n",
+ 					f->time, lateness_ns / 1000000LL, p->dropped);
+ 			} else {
+@@ -2617,6 +2622,16 @@
+ 				render_error = sfdec_buf_render(p->sfdec, (sfbuf_t *)f->android_handle, 1, 0, render_ts_ns);
+ 				presented = !render_error;
+ 				if (presented) {
++                    stream_seek_picture_ready(s, f->epoch);
++                    if (s) {
++                        __atomic_store_n(&s->frame_observation.last_submit_ns, now_ns, __ATOMIC_RELAXED);
++                        if (diag_ref_ms >= 0 && diag_heard >= 0) {
++                            int64_t phase = (int64_t)f->time - diag_heard -
++                                (render_ts_ns / NSEC_PER_MSEC - diag_ref_ms) + diag_user_delay;
++                            __atomic_store_n(&s->frame_observation.scheduled_phase_ms, phase, __ATOMIC_RELAXED);
++                            __atomic_fetch_or(&s->frame_observation.coverage, 8, __ATOMIC_RELEASE);
++                        }
++                    }
+ 					// Count successful submissions independently of logging. A gap
+ 					// in this sequence identifies missing diagnostic records.
+ 					p->render_submit_seq++;
+@@ -3055,6 +3070,12 @@
+ 			sfdec_codec, flags, decoder_name ? decoder_name : "(default)");
+ 		goto next_decoder_candidate;
+ 	}
++
++    STREAM *observed_stream = dec->ctx;
++    if (observed_stream) {
++        frame_observation_decoder(&observed_stream->frame_observation, decoder_name);
++        __atomic_fetch_or(&observed_stream->frame_observation.coverage, 7, __ATOMIC_RELEASE);
++    }
+ 
+ 	if (decoder_name) {
+ 		afree((void *)decoder_name);
+diff --git a/Source/stream_sink_video_android.c b/Source/stream_sink_video_android.c
+--- a/Source/stream_sink_video_android.c
++++ b/Source/stream_sink_video_android.c
+@@ -194,6 +194,7 @@
+ 				LOG("WARNING: frame(%d): android_buffer_queue failed",frame->index);
+ 				goto endloop;
+ 			}
++            stream_seek_picture_ready(s, frame->epoch);
+ 			p->frames_state[frame->index] = FRAME_STATE_QUEUED;
+ 			p->frames_num_owned--;
+ 		}
+@@ -267,6 +268,7 @@
+ 		}
+ 		venc_frame->time      = user_frame->time;
+ 		venc_frame->blit_time = user_frame->blit_time;
++        venc_frame->epoch = user_frame->epoch;
+ 		venc_frame->ofs_x     = user_frame->ofs_x;
+ 		venc_frame->ofs_y     = user_frame->ofs_y;
+ 		venc_frame->deinterlace = user_frame->deinterlace;
+diff --git a/Source/stream_sink_video_android2.c b/Source/stream_sink_video_android2.c
+--- a/Source/stream_sink_video_android2.c
++++ b/Source/stream_sink_video_android2.c
+@@ -211,6 +211,7 @@
+ 				LOG("WARNING: frame(%d): android_buffer_queue failed",frame->index);
+ 				goto endloop;
+ 			}
++            stream_seek_picture_ready(s, frame->epoch);
+ 			p->frames_state[frame->index] = FRAME_STATE_QUEUED;
+ 			p->frames_num_owned--;
+ 		}
+@@ -339,6 +340,7 @@
+ 		}
+ 		venc_frame->time      = user_frame->time;
+ 		venc_frame->blit_time = user_frame->blit_time;
++        venc_frame->epoch = user_frame->epoch;
+ 		venc_frame->ofs_x     = user_frame->ofs_x;
+ 		venc_frame->ofs_y     = user_frame->ofs_y;
+ 		venc_frame->deinterlace = user_frame->deinterlace;
+diff --git a/Source/stream_sink_video_android3.c b/Source/stream_sink_video_android3.c
+--- a/Source/stream_sink_video_android3.c
++++ b/Source/stream_sink_video_android3.c
+@@ -340,6 +340,7 @@
+ 				if (s) stream_set_error(s, VE_VIDEO_CODEC_ERROR);
+ 			} else {
+ 				p->blit_frames_state[blit_frame->index] = FRAME_STATE_QUEUED;
++                stream_seek_picture_ready(s, frame->epoch);
+ 				p->presentation_end_ms = atime64() + MAX(0, (int64_t)frame->blit_time - _get_time(p)) + MAX(0, frame->duration);
+ 			}
+ 
+diff --git a/Source/stream_video.c b/Source/stream_video.c
+--- a/Source/stream_video.c
++++ b/Source/stream_video.c
+@@ -1840,6 +1840,7 @@
+ 		s->video_drop   = (frame->blit_time == -1);
+ 		if( s->video_sink->put_time ) {
+ 			frames_dropped += s->video_drop;
++        if (s->video_drop) frame_observation_increment(&s->frame_observation.early);
+ 		}
+ 		frame->time = -1;
+ 		if( frame->locked ) {
+@@ -3238,6 +3239,18 @@
+ //	_put_frame_in_sink
+ //
+ // ************************************************************
++
++void stream_seek_picture_ready(STREAM *s, int epoch)
++{
++    if (!s || epoch < 0) return;
++    frame_observation_increment(&s->frame_observation.accepted);
++    __atomic_fetch_or(&s->frame_observation.coverage, 1, __ATOMIC_RELAXED);
++    uint32_t token = seek_picture_take(&s->seek_picture, (uint32_t)epoch);
++    if (token && s->message_cb) {
++        __atomic_store_n(&s->seek_picture_notified_token, token, __ATOMIC_RELEASE);
++        s->message_cb(s, STREAM_SEEK_PICTURE_READY);
++    }
++}
+ 
+ static int _put_frame_in_sink( STREAM *s, VIDEO_FRAME *frame, int time )
+ {
+@@ -3496,6 +3509,7 @@
+ 				int sink_ref_time = stream_sync_anchor_adjust_sink( s,
+ 					-RST_TO_TS_DELTA(s->video->msPerFrame, int) );
+ 				frames_dropped ++;
++                frame_observation_increment(&s->frame_observation.early);
+ 				DBG serprintf("FRAME_DROP: msPerFrame=%d, speed=%.2fx, sink_ref_time=%d\n", 
+ 					RST_TO_TS_DELTA(s->video->msPerFrame, int), audio_interface_get_audio_speed(), sink_ref_time);
+ DBGY serprintf("[-%8d] ", frame->time );
+@@ -4188,6 +4202,7 @@
+ 	if( s->drop > 0 && s->video->format == VIDEO_FORMAT_MJPG ) {
+ 		s->drop --;
+ 		frames_dropped ++;
++                frame_observation_increment(&s->frame_observation.early);
+ 		return 1;
+ 	}
+ 	
+@@ -4197,6 +4212,7 @@
+ 		if( s->drop ) {
+ 			s->drop --;
+ 			frames_B_dropped ++;
++            frame_observation_increment(&s->frame_observation.early);
+ 		}
+ 
+ 		return 1;
+@@ -5289,6 +5305,7 @@
+ 	// output from the previous seek remains distinguishable and can be discarded.
+ 	if( s->video->valid ) {
+ 		s->seek_epoch++;
++        seek_picture_bind(&s->seek_picture, (uint32_t)s->seek_epoch);
+ 	}
+ 	if( s->video_dec) {
+ 		// A newly opened async decoder has no pre-seek frames to discard. Some
+diff --git a/jni/libavosjni/avos_media_player.c b/jni/libavosjni/avos_media_player.c
+--- a/jni/libavosjni/avos_media_player.c
++++ b/jni/libavosjni/avos_media_player.c
+@@ -579,6 +579,14 @@
+     CHECK(avos->seek_async(mp, msec));
+ }
+ 
++jboolean
++Java_com_archos_medialib_AvosMediaPlayer_nativeSeekToTracked(JNIEnv *env, jobject thiz, jint msec, jint token)
++{
++    avos_mp_t *mp __attribute__((cleanup(release_mp_call))) = get_mp_or_throw(env, thiz);
++    if (!mp || token <= 0 || msec < 0) return JNI_FALSE;
++    return avos->seek_async_tracked(mp, (uint32_t)msec, (uint32_t)token) == AVOS_ERR_OK ? JNI_TRUE : JNI_FALSE;
++}
++
+ void
+ Java_com_archos_medialib_AvosMediaPlayer_nativeSetStartTime(JNIEnv *env, jobject thiz, int msec)
+ {
+@@ -779,3 +787,21 @@
+     }
+     (*env)->ReleaseStringUTFChars(env, path, cPath);
+ }
++
++jlongArray Java_com_archos_medialib_AvosMediaPlayer_nativeFrameMetrics(JNIEnv *env, jobject thiz)
++{
++    avos_mp_t *mp __attribute__((cleanup(release_mp_call))) = get_mp_or_throw(env, thiz);
++    avos_frame_metrics_t metrics = {0};
++    if (!mp || avos->frame_metrics(mp, &metrics) != AVOS_ERR_OK) return NULL;
++    jlongArray result = (*env)->NewLongArray(env, 9);
++    if (result) (*env)->SetLongArrayRegion(env, result, 0, 9, (const jlong *)metrics.values);
++    return result;
++}
++
++jstring Java_com_archos_medialib_AvosMediaPlayer_nativeInitializedDecoder(JNIEnv *env, jobject thiz)
++{
++    avos_mp_t *mp __attribute__((cleanup(release_mp_call))) = get_mp_or_throw(env, thiz);
++    avos_frame_metrics_t metrics = {0};
++    if (!mp || avos->frame_metrics(mp, &metrics) != AVOS_ERR_OK || !metrics.initialized_decoder[0]) return NULL;
++    return (*env)->NewStringUTF(env, metrics.initialized_decoder);
++}
+diff --git a/public/avos_mp.h b/public/avos_mp.h
+--- a/public/avos_mp.h
++++ b/public/avos_mp.h
+@@ -27,6 +27,11 @@
+ typedef struct avos_mp avos_mp_t;
+ 
+ typedef void (*avos_mp_event_cb_t) (avos_mp_t *mp, int what, int ext1, int ext2, avos_msg_t *msg /* need to be freed if not NULL */);
++
++typedef struct avos_frame_metrics {
++    uint64_t values[9];
++    char initialized_decoder[128];
++} avos_frame_metrics_t;
+ 
+ typedef struct avos_mp_handle_t {
+ 	avos_mp_t *(*create)	(avos_mp_event_cb_t event_cb);
+@@ -68,6 +73,8 @@
+ 	// destroy interrupts pending work, then waits for retained callers.
+ 	int (*retain)(avos_mp_t *mp);
+ 	void (*release)(avos_mp_t *mp);
++    int (*seek_async_tracked)(avos_mp_t *mp, uint32_t msec, uint32_t token);
++    int (*frame_metrics)(avos_mp_t *mp, avos_frame_metrics_t *metrics);
+ } avos_mp_handle_t;
+ 
+ const avos_mp_handle_t *avos_mp_get_handle();
+@@ -156,6 +163,8 @@
+ 	MEDIA_INFO_AUDIO_TRACK_FAILED = 10002,
+ 	MEDIA_INFO_SUBTITLE_TRACK_APPLIED = 10003,
+ 	MEDIA_INFO_SUBTITLE_TRACK_FAILED = 10004,
++    MEDIA_INFO_SEEK_PICTURE_READY = 10005,
++    MEDIA_INFO_SEEK_PICTURE_FAILED = 10006,
+ };
+ 
+ #if __cplusplus
+diff --git a/test/seek_picture.c b/test/seek_picture.c
+new file mode 100644
+--- /dev/null
++++ b/test/seek_picture.c
+@@ -0,0 +1,61 @@
++#include "seek_picture.h"
++#include "frame_observation.h"
++#include <string.h>
++#include <assert.h>
++#include <pthread.h>
++#include <stdio.h>
++
++static SEEK_PICTURE_GATE gate;
++static int wins;
++static FRAME_OBSERVATION observations;
++static void *output(void *unused)
++{
++    (void)unused;
++    for (int i = 0; i < 100000; i++) frame_observation_increment(&observations.late);
++    if (seek_picture_take(&gate, 12) == 99)
++        __atomic_fetch_add(&wins, 1, __ATOMIC_RELAXED);
++    return NULL;
++}
++
++int main(void)
++{
++    for (unsigned token = 1; token <= 100000; token++) {
++        seek_picture_arm(&gate, token);
++        assert(!seek_picture_take(&gate, 0));
++        assert(!seek_picture_take(&gate, 11));
++        seek_picture_bind(&gate, 12);
++        assert(!seek_picture_take(&gate, 11));
++        assert(seek_picture_take(&gate, 12) == token);
++        assert(!seek_picture_take(&gate, 12));
++    }
++    seek_picture_arm(&gate, 1);
++    seek_picture_bind(&gate, 11);
++    seek_picture_arm(&gate, 2);
++    assert(!seek_picture_take(&gate, 11));
++    seek_picture_bind(&gate, 12);
++    assert(!seek_picture_take(&gate, 11));
++    assert(seek_picture_take(&gate, 12) == 2);
++    seek_picture_arm(&gate, 99);
++    seek_picture_bind(&gate, 12);
++    pthread_t threads[16];
++    for (int i = 0; i < 16; i++) assert(!pthread_create(&threads[i], NULL, output, NULL));
++    for (int i = 0; i < 16; i++) assert(!pthread_join(threads[i], NULL));
++    assert(wins == 1);
++    assert(__atomic_load_n(&observations.late, __ATOMIC_RELAXED) == 1600000);
++    char name[128];
++    frame_observation_decoder(&observations, "confirmed.decoder");
++    frame_observation_name(&observations, name, sizeof(name));
++    assert(!strcmp(name, "confirmed.decoder"));
++    __atomic_add_fetch(&observations.decoder_revision, 1, __ATOMIC_RELEASE);
++    frame_observation_name(&observations, name, sizeof(name));
++    assert(!name[0]);
++    __atomic_add_fetch(&observations.decoder_revision, 1, __ATOMIC_RELEASE);
++    frame_observation_decoder(&observations, NULL);
++    frame_observation_name(&observations, name, sizeof(name));
++    assert(!name[0]);
++    seek_picture_arm(&gate, 0);
++    seek_picture_bind(&gate, 13);
++    assert(!seek_picture_take(&gate, 13));
++    puts("seek picture: generation, epoch and concurrent exactly-once output passed");
++    return 0;
++}
+diff --git a/test/test_seek_picture.py b/test/test_seek_picture.py
+new file mode 100644
+--- /dev/null
++++ b/test/test_seek_picture.py
+@@ -0,0 +1,20 @@
++import pathlib
++import subprocess
++import tempfile
++import unittest
++
++ROOT = pathlib.Path(__file__).resolve().parents[1]
++
++
++class SeekPictureTest(unittest.TestCase):
++    def test_generation_epoch_and_exactly_once_output(self):
++        with tempfile.TemporaryDirectory() as folder:
++            executable = pathlib.Path(folder) / 'seek-picture'
++            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-fsanitize=undefined', '-pthread',
++                            '-I', str(ROOT / 'Include'), str(ROOT / 'test/seek_picture.c'), '-o', str(executable)],
++                           check=True)
++            subprocess.run([str(executable)], check=True)
++
++
++if __name__ == '__main__':
++    unittest.main()

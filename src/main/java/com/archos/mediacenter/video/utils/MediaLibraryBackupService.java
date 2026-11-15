@@ -42,6 +42,7 @@ import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.utils.backup.BackupCategory;
 import com.archos.mediacenter.video.utils.backup.LogicalBackupExporter;
 import com.archos.mediaprovider.VideoDb;
+import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediascraper.MediaScraper;
 
 import java.io.InputStream;
@@ -327,7 +328,7 @@ public class MediaLibraryBackupService extends Service {
         ShortcutDbAdapter.VIDEO.close();
 
         // Delete media database files
-        File dbFile = getDatabasePath(DATABASE_NAME);
+        File dbFile = VideoOpenHelper.getDatabaseFile(this);
         File dbWalFile = new File(dbFile.getAbsolutePath() + "-wal");
         File dbShmFile = new File(dbFile.getAbsolutePath() + "-shm");
 

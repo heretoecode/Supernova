@@ -1,0 +1,55 @@
+diff --git a/Include/seek_picture.h b/Include/seek_picture.h
+--- a/Include/seek_picture.h
++++ b/Include/seek_picture.h
+@@ -4,7 +4,7 @@
+ 
+ /* A token belongs to one requested seek. Only its bound output epoch may end it. */
+ typedef struct seek_picture_gate {
+-    uint64_t ticket;
++    uint64_t ticket __attribute__((aligned(8)));
+ } SEEK_PICTURE_GATE;
+ 
+ static inline void seek_picture_arm(SEEK_PICTURE_GATE *gate, uint32_t token)
+diff --git a/Include/frame_observation.h b/Include/frame_observation.h
+--- a/Include/frame_observation.h
++++ b/Include/frame_observation.h
+@@ -3,15 +3,22 @@
+ #include <stdint.h>
+ #include <stddef.h>
+ 
++typedef uint64_t FRAME_COUNTER __attribute__((aligned(8)));
++typedef int64_t FRAME_PHASE __attribute__((aligned(8)));
++
+ /* These are output submissions and internal drops, never compositor presentation timestamps. */
+ typedef struct {
+-    uint64_t accepted, late, stale, early, last_submit_ns;
+-    int64_t scheduled_phase_ms;
++    FRAME_COUNTER accepted;
++    FRAME_COUNTER late;
++    FRAME_COUNTER stale;
++    FRAME_COUNTER early;
++    FRAME_COUNTER last_submit_ns;
++    FRAME_PHASE scheduled_phase_ms;
+     uint32_t coverage, decoder_revision;
+     char decoder[128];
+ } FRAME_OBSERVATION;
+ 
+-static inline void frame_observation_increment(uint64_t *counter)
++static inline void frame_observation_increment(FRAME_COUNTER *counter)
+ {
+     __atomic_add_fetch(counter, 1, __ATOMIC_RELAXED);
+ }
+diff --git a/test/seek_picture.c b/test/seek_picture.c
+--- a/test/seek_picture.c
++++ b/test/seek_picture.c
+@@ -4,6 +4,10 @@
+ #include <assert.h>
+ #include <pthread.h>
+ #include <stdio.h>
++
++_Static_assert(_Alignof(SEEK_PICTURE_GATE) >= 8, "Seek ticket must support 64-bit atomics on every ABI");
++_Static_assert(_Alignof(FRAME_OBSERVATION) >= 8, "Frame observations must support aligned 64-bit atomics");
++_Static_assert(offsetof(FRAME_OBSERVATION, scheduled_phase_ms) % 8 == 0, "Phase must be 64-bit aligned");
+ 
+ static SEEK_PICTURE_GATE gate;
+ static int wins;

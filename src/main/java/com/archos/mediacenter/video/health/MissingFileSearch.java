@@ -20,14 +20,26 @@ final class MissingFileSearch
     {
         List<FileEntry> list(Uri folder) throws Exception;
     }
+    record Progress(long checked, int foldersRemaining)
+    {
+    }
+
     static Uri unique(Uri root, String name, long size, Listing listing, BooleanSupplier cancelled) throws Exception
     {
-        if (root == null || size < 0)
+        return unique(java.util.Collections.singletonList(root), name, size, listing, cancelled, ignored -> {});
+    }
+
+    static Uri unique(List<Uri> roots, String name, long size, Listing listing, BooleanSupplier cancelled,
+                      java.util.function.Consumer<Progress> progress) throws Exception
+    {
+        if (roots.isEmpty() || roots.stream().anyMatch(java.util.Objects::isNull) || size < 0)
             throw new IOException("Source or file size is unavailable");
-        String scope = SupernovaLibraryPolicy.canonical(root);
+        List<String> scopes = new java.util.ArrayList<>();
+        for (Uri root : roots)
+            scopes.add(SupernovaLibraryPolicy.canonical(root));
         ArrayDeque<Uri> folders = new ArrayDeque<>();
         Set<String> visited = new HashSet<>(), matches = new HashSet<>();
-        folders.add(root);
+        folders.addAll(roots);
         int checked = 0;
         Uri found = null;
         while (!folders.isEmpty())
@@ -45,13 +57,15 @@ final class MissingFileSearch
                 if (++checked > 100000 || cancelled.getAsBoolean() || Thread.currentThread().isInterrupted())
                     throw new IOException("Search did not finish");
                 String key = SupernovaLibraryPolicy.canonical(entry.uri);
-                if (!SupernovaLibraryPolicy.contains(scope, key))
+                if (scopes.stream().noneMatch(scope -> SupernovaLibraryPolicy.contains(scope, key)) ||
+                    !SupernovaLibraryPolicy.contains(SupernovaLibraryPolicy.canonical(folder), key))
                     throw new IOException("Source listing escaped its root");
                 if (entry.folder)
                     folders.add(entry.uri);
                 else if (entry.size == size && name.equals(entry.name) && matches.add(key))
                     found = entry.uri;
             }
+            progress.accept(new Progress(checked, folders.size()));
         }
         return matches.size() == 1 ? found : null;
     }

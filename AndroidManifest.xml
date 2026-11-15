@@ -1108,6 +1108,8 @@
             android:theme="@style/Theme.HelpOverlay" />
 
         <service android:name="com.archos.mediacenter.filecoreextension.upnp2.NovaUpnpService" />
+        <service android:name=".player.NextListingService" android:exported="false" android:process=":next_listing" />
+        <service android:name=".player.NextListingUpnpService" android:exported="false" android:process=":next_listing" />
 
         <service
             android:name=".player.FloatingPlayerService"

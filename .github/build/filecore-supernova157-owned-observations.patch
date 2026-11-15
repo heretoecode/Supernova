@@ -1,0 +1,763 @@
+diff --git a/src/com/archos/filecorelibrary/FileUtils.java b/src/com/archos/filecorelibrary/FileUtils.java
+--- a/src/com/archos/filecorelibrary/FileUtils.java
++++ b/src/com/archos/filecorelibrary/FileUtils.java
+@@ -547,6 +547,15 @@
+     }
+ 
+     // dump database to storage
++    private static volatile java.util.function.BiFunction<Context, String, File> databaseLocator =
++        Context::getDatabasePath;
++
++    /** Optional application storage mapping; applies only to the explicit database export helper. */
++    public static void installDatabaseLocator(java.util.function.BiFunction<Context, String, File> locator)
++    {
++        databaseLocator = locator == null ? Context::getDatabasePath : locator;
++    }
++
+     public static void backupDatabase(Context context, String dbFileName) {
+         try {
+             File sdCard = context.getExternalFilesDir(null);
+@@ -559,7 +568,7 @@
+                 String currentDbPath = String.format(Locale.ROOT, "//data//%s//databases//%s",
+                         packageName, dbFileName);
+                 String backupDbPath = String.format(Locale.ROOT, "%s-%s", packageName, dbFileName);
+-                File currentDb = new File(dataDir, currentDbPath);
++                File currentDb = databaseLocator.apply(context, dbFileName);
+                 File backupDb = new File(sdCard, backupDbPath);
+ 
+                 if (currentDb.exists()) {
+diff --git a/src/com/archos/filecorelibrary/TransportOperationTrace.java b/src/com/archos/filecorelibrary/TransportOperationTrace.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/filecorelibrary/TransportOperationTrace.java
+@@ -0,0 +1,234 @@
++package com.archos.filecorelibrary;
++
++import java.io.FilterInputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.InterruptedIOException;
++import java.net.SocketTimeoutException;
++import java.util.concurrent.atomic.AtomicLong;
++import java.util.function.Consumer;
++import java.util.function.LongSupplier;
++import java.util.function.Function;
++
++/** Optional numeric operation evidence, started before connect. No address or exception text is accepted. */
++public final class TransportOperationTrace implements AutoCloseable
++{
++    public enum Boundary { REQUESTED, OPENED, RESPONSE, RETRY, FIRST_BYTES, WINDOW, EOF, CLOSED, FAILED, TIMEOUT, STOPPED }
++    public record Event(long id, TransportReadObserver.Protocol protocol, Boundary boundary, long elapsedNanos,
++                        long openNanos, long bytes, long calls, long readNanos, int httpStatus, int explicitRetries,
++                        long windowNanos, long windowBytes) {}
++    private static final AtomicLong IDS = new AtomicLong();
++    private static final ThreadLocal<TransportOperationTrace> CURRENT = new ThreadLocal<>();
++    private static volatile Function<TransportReadObserver.Protocol, Consumer<Event>> installed;
++    private final Consumer<Event> sink;
++    private final TransportReadObserver.Protocol protocol;
++    private final LongSupplier clock;
++    private final TransportOperationTrace previous;
++    private final long id = IDS.incrementAndGet();
++    private final long started;
++    private long opened = -1, bytes, calls, readNanos, windowAt, windowBytes;
++    private int status = -1, retries;
++    private boolean handed, terminal, first, eof;
++
++    /** Observer changes affect future operations. A null observer avoids all stream wrapping. */
++    public static void install(Consumer<Event> observer)
++    {
++        installed = observer == null ? null : protocol -> observer;
++    }
++
++    public static void installFactory(Function<TransportReadObserver.Protocol, Consumer<Event>> observer)
++    {
++        installed = observer;
++    }
++
++    public static TransportOperationTrace begin(TransportReadObserver.Protocol protocol)
++    {
++        return new TransportOperationTrace(protocol, System::nanoTime);
++    }
++
++    TransportOperationTrace(TransportReadObserver.Protocol protocol, LongSupplier clock)
++    {
++        this.protocol = protocol;
++        this.clock = clock;
++        Function<TransportReadObserver.Protocol, Consumer<Event>> current = installed;
++        Consumer<Event> selected = null;
++        try
++        {
++            if (current != null)
++                selected = current.apply(protocol);
++        }
++        catch (RuntimeException unavailable)
++        {
++            // Diagnostics cannot prevent an open.
++        }
++        sink = selected;
++        started = clock.getAsLong();
++        previous = CURRENT.get();
++        CURRENT.set(this);
++        emit(Boundary.REQUESTED);
++    }
++
++    /** Exact HTTP response code, including unsuccessful responses; explicit retries exclude library internals. */
++    public static boolean inOperation()
++    {
++        return CURRENT.get() != null;
++    }
++
++    public static void response(int status)
++    {
++        TransportOperationTrace operation = CURRENT.get();
++        if (operation != null)
++        {
++            operation.status = status;
++            operation.emit(Boundary.RESPONSE);
++        }
++    }
++
++    public static void retry()
++    {
++        TransportOperationTrace operation = CURRENT.get();
++        if (operation != null)
++        {
++            operation.retries++;
++            operation.emit(Boundary.RETRY);
++        }
++    }
++
++    public void failed(Throwable failure)
++    {
++        if (terminal)
++            return;
++        terminal = true;
++        emit(failure instanceof SocketTimeoutException ? Boundary.TIMEOUT :
++             failure instanceof InterruptedIOException ? Boundary.STOPPED : Boundary.FAILED);
++    }
++
++    public InputStream observe(InputStream input)
++    {
++        if (input == null)
++        {
++            failed(null);
++            return null;
++        }
++        handed = true;
++        opened = Math.max(0, clock.getAsLong() - started);
++        windowAt = clock.getAsLong();
++        emit(Boundary.OPENED);
++        if (sink == null)
++            return input;
++        return new FilterInputStream(input)
++        {
++            private void result(long before, int count)
++            {
++                calls++;
++                readNanos += Math.max(0, clock.getAsLong() - before);
++                if (count > 0)
++                {
++                    bytes += count;
++                    if (!first)
++                    {
++                        first = true;
++                        emit(Boundary.FIRST_BYTES);
++                    }
++                }
++                long now = clock.getAsLong();
++                if (now - windowAt >= 60_000_000_000L)
++                {
++                    emit(Boundary.WINDOW);
++                    windowAt = now;
++                    windowBytes = bytes;
++                }
++                if (count < 0 && !eof)
++                {
++                    eof = true;
++                    emit(Boundary.EOF);
++                }
++            }
++
++            @Override public int read() throws IOException
++            {
++                long before = clock.getAsLong();
++                try
++                {
++                    int value = in.read();
++                    result(before, value < 0 ? -1 : 1);
++                    return value;
++                }
++                catch (IOException failure)
++                {
++                    calls++;
++                    readNanos += Math.max(0, clock.getAsLong() - before);
++                    failed(failure);
++                    throw failure;
++                }
++            }
++
++            @Override public int read(byte[] buffer, int offset, int length) throws IOException
++            {
++                long before = clock.getAsLong();
++                try
++                {
++                    int count = in.read(buffer, offset, length);
++                    result(before, count);
++                    return count;
++                }
++                catch (IOException failure)
++                {
++                    calls++;
++                    readNanos += Math.max(0, clock.getAsLong() - before);
++                    failed(failure);
++                    throw failure;
++                }
++            }
++
++            @Override public void reset() throws IOException
++            {
++                in.reset();
++                eof = false;
++            }
++
++            @Override public void close() throws IOException
++            {
++                try
++                {
++                    in.close();
++                    if (!terminal)
++                    {
++                        terminal = true;
++                        emit(Boundary.CLOSED);
++                    }
++                }
++                catch (IOException failure)
++                {
++                    failed(failure);
++                    throw failure;
++                }
++            }
++        };
++    }
++
++    private void emit(Boundary boundary)
++    {
++        if (sink == null)
++            return;
++        long now = clock.getAsLong();
++        try
++        {
++            sink.accept(new Event(id, protocol, boundary, Math.max(0, now - started), opened, bytes, calls,
++                                  readNanos, status, retries, opened < 0 ? -1 : Math.max(0, now - windowAt),
++                                  bytes - windowBytes));
++        }
++        catch (RuntimeException unavailable)
++        {
++            // Optional diagnostics must never change transport results.
++        }
++    }
++
++    @Override public void close()
++    {
++        if (CURRENT.get() == this)
++            CURRENT.set(previous);
++        if (!handed && !terminal)
++            failed(null);
++    }
++}
+diff --git a/src/com/archos/filecorelibrary/ftp/FtpFileEditor.java b/src/com/archos/filecorelibrary/ftp/FtpFileEditor.java
+--- a/src/com/archos/filecorelibrary/ftp/FtpFileEditor.java
++++ b/src/com/archos/filecorelibrary/ftp/FtpFileEditor.java
+@@ -27,6 +27,7 @@
+ 
+ import com.archos.filecorelibrary.AuthenticationException;
+ import com.archos.filecorelibrary.TransportReadObserver;
++import com.archos.filecorelibrary.TransportOperationTrace;
+ import com.archos.filecorelibrary.FileEditor;
+ import android.net.Uri;
+ 
+@@ -182,7 +183,25 @@
+     }
+ 
+     @Override
+-    public InputStream getInputStream() throws AuthenticationException, SocketException, IOException {
++    public InputStream getInputStream() throws AuthenticationException, SocketException, IOException
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            "ftps".equalsIgnoreCase(mUri.getScheme()) ?
++                TransportReadObserver.Protocol.FTPS : TransportReadObserver.Protocol.FTP))
++        {
++            try
++            {
++                return operation.observe(observedgetInputStream());
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedgetInputStream() throws AuthenticationException, SocketException, IOException {
+         if (log.isDebugEnabled()) log.debug("getInputStream: {}", mUri.getPath());
+         FTPClient ftp = null;
+         try {
+@@ -206,7 +225,25 @@
+     }
+ 
+     @Override
+-    public InputStream getInputStream(long from) throws Exception {
++    public InputStream getInputStream(long from) throws Exception
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            "ftps".equalsIgnoreCase(mUri.getScheme()) ?
++                TransportReadObserver.Protocol.FTPS : TransportReadObserver.Protocol.FTP))
++        {
++            try
++            {
++                return operation.observe(observedgetInputStream(from));
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedgetInputStream(long from) throws Exception {
+         if (log.isDebugEnabled()) log.debug("getInputStream: {} from {}", mUri.getPath(), from);
+         FTPClient ftp = null;
+         try {
+diff --git a/src/com/archos/filecorelibrary/ftp/Session.java b/src/com/archos/filecorelibrary/ftp/Session.java
+--- a/src/com/archos/filecorelibrary/ftp/Session.java
++++ b/src/com/archos/filecorelibrary/ftp/Session.java
+@@ -169,6 +169,7 @@
+             // Never retry on authentication failure
+             throw e;
+         } catch (IOException e) {
++            com.archos.filecorelibrary.TransportOperationTrace.retry();
+             log.warn("getNewFTPClient: connection to {} failed ({}), retrying once", path, e.getMessage());
+             try {
+                 return connectNewFTPClient(path, mode);
+@@ -249,6 +250,7 @@
+             // Never retry on authentication failure
+             throw e;
+         } catch (IOException e) {
++            com.archos.filecorelibrary.TransportOperationTrace.retry();
+             log.warn("getNewFTPSClient: connection to {} failed ({}), retrying once", path, e.getMessage());
+             try {
+                 return connectNewFTPSClient(path, mode);
+diff --git a/src/com/archos/filecorelibrary/jcifs/JcifsFileEditor.java b/src/com/archos/filecorelibrary/jcifs/JcifsFileEditor.java
+--- a/src/com/archos/filecorelibrary/jcifs/JcifsFileEditor.java
++++ b/src/com/archos/filecorelibrary/jcifs/JcifsFileEditor.java
+@@ -27,6 +27,7 @@
+ import jcifs.smb.SmbFileOutputStream;
+ 
+ import com.archos.filecorelibrary.TransportReadObserver;
++import com.archos.filecorelibrary.TransportOperationTrace;
+ import com.archos.filecorelibrary.FileEditor;
+ import com.archos.filecorelibrary.FileUtils;
+ 
+@@ -66,12 +67,46 @@
+     }
+ 
+     @Override
+-    public InputStream getInputStream() throws IOException {
++    public InputStream getInputStream() throws IOException
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            TransportReadObserver.Protocol.SMB))
++        {
++            try
++            {
++                return operation.observe(observedgetInputStream());
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedgetInputStream() throws IOException {
+         return TransportReadObserver.observe(TransportReadObserver.Protocol.SMB,new SmbFileInputStream(getSmbFile(mUri).smbFile));
+     }
+ 
+     @Override
+-    public InputStream getInputStream(long from) throws Exception {
++    public InputStream getInputStream(long from) throws Exception
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            TransportReadObserver.Protocol.SMB))
++        {
++            try
++            {
++                return operation.observe(observedgetInputStream(from));
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedgetInputStream(long from) throws Exception {
+         InputStream is = new SmbFileInputStream(getSmbFile(mUri).smbFile);
+         is.skip(from);
+         return TransportReadObserver.observe(TransportReadObserver.Protocol.SMB,is);
+diff --git a/src/com/archos/filecorelibrary/sftp/SFTPSession.java b/src/com/archos/filecorelibrary/sftp/SFTPSession.java
+--- a/src/com/archos/filecorelibrary/sftp/SFTPSession.java
++++ b/src/com/archos/filecorelibrary/sftp/SFTPSession.java
+@@ -167,6 +167,7 @@
+                     if (log.isDebugEnabled()) log.debug("getSession: reconnecting stale session for {}", path);
+                     session.connect();
+                 } catch (JSchException e1) {
++                    com.archos.filecorelibrary.TransportOperationTrace.retry();
+                     log.warn("getSession: failed to reconnect stale session for {}, removing and retrying", path, e1);
+                     removeSession(path);
+                     return getSession(path);
+diff --git a/src/com/archos/filecorelibrary/sftp/SftpFileEditor.java b/src/com/archos/filecorelibrary/sftp/SftpFileEditor.java
+--- a/src/com/archos/filecorelibrary/sftp/SftpFileEditor.java
++++ b/src/com/archos/filecorelibrary/sftp/SftpFileEditor.java
+@@ -18,6 +18,7 @@
+ import android.util.Log;
+ 
+ import com.archos.filecorelibrary.TransportReadObserver;
++import com.archos.filecorelibrary.TransportOperationTrace;
+ import com.archos.filecorelibrary.FileEditor;
+ import com.archos.filecorelibrary.OwnedStreams;
+ import com.archos.filecorelibrary.ReadOptions;
+@@ -87,7 +88,24 @@
+         }
+     }
+ 
+-    private InputStream openInputStream(long from, ReadOptions options) throws JSchException, SftpException {
++    private InputStream openInputStream(long from, ReadOptions options) throws JSchException, SftpException
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            TransportReadObserver.Protocol.SFTP))
++        {
++            try
++            {
++                return operation.observe(observedopenInputStream(from, options));
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedopenInputStream(long from, ReadOptions options) throws JSchException, SftpException {
+         if (from < 0) throw new IllegalArgumentException("Negative file offset");
+         Channel channel = SFTPSession.getInstance().getSFTPChannel(mUri);
+         try {
+diff --git a/src/com/archos/filecorelibrary/smbj/SmbjFileEditor.java b/src/com/archos/filecorelibrary/smbj/SmbjFileEditor.java
+--- a/src/com/archos/filecorelibrary/smbj/SmbjFileEditor.java
++++ b/src/com/archos/filecorelibrary/smbj/SmbjFileEditor.java
+@@ -23,6 +23,7 @@
+ import com.archos.environment.ObservableInputStream;
+ import com.archos.environment.ObservableOutputStream;
+ import com.archos.filecorelibrary.TransportReadObserver;
++import com.archos.filecorelibrary.TransportOperationTrace;
+ import com.archos.filecorelibrary.FileEditor;
+ import com.archos.filecorelibrary.ReadOptions;
+ import com.archos.filecorelibrary.OwnedStreams;
+@@ -84,7 +85,24 @@
+         return getInputStream(0, options);
+     }
+ 
+-    @Override public InputStream getInputStream(long from, ReadOptions options) throws Exception {
++    @Override public InputStream getInputStream(long from, ReadOptions options) throws Exception
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            TransportReadObserver.Protocol.SMBJ))
++        {
++            try
++            {
++                return operation.observe(observedgetInputStream(from, options));
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedgetInputStream(long from, ReadOptions options) throws Exception {
+         if (from < 0) throw new IllegalArgumentException("Negative file offset");
+         File file = openReadOnlyFile(requireUtils(), options);
+         try {
+diff --git a/src/com/archos/filecorelibrary/smbj/SmbjUtils.java b/src/com/archos/filecorelibrary/smbj/SmbjUtils.java
+--- a/src/com/archos/filecorelibrary/smbj/SmbjUtils.java
++++ b/src/com/archos/filecorelibrary/smbj/SmbjUtils.java
+@@ -290,6 +290,7 @@
+             lock.readLock().unlock();
+         }
+         if (!isRetryable.test(firstError)) throw firstError;
++        com.archos.filecorelibrary.TransportOperationTrace.retry();
+         log.warn("{}: error (out of credits or transport) for {}, resetting connection and retrying", tag, uri, firstError);
+         // must not hold the read lock while resetting (a thread cannot upgrade its own read lock to
+         // a write lock without releasing it first, that would deadlock waiting on itself)
+diff --git a/src/com/archos/filecorelibrary/sshj/SshjFileEditor.java b/src/com/archos/filecorelibrary/sshj/SshjFileEditor.java
+--- a/src/com/archos/filecorelibrary/sshj/SshjFileEditor.java
++++ b/src/com/archos/filecorelibrary/sshj/SshjFileEditor.java
+@@ -22,6 +22,7 @@
+ 
+ import com.archos.filecorelibrary.AuthenticationException;
+ import com.archos.filecorelibrary.TransportReadObserver;
++import com.archos.filecorelibrary.TransportOperationTrace;
+ import com.archos.filecorelibrary.FileEditor;
+ import com.archos.filecorelibrary.OwnedStreams;
+ import com.archos.filecorelibrary.ReadOptions;
+@@ -64,7 +65,24 @@
+     }
+ 
+     @Override
+-    public InputStream getInputStream(long from, ReadOptions options) throws Exception {
++    public InputStream getInputStream(long from, ReadOptions options) throws Exception
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            TransportReadObserver.Protocol.SSHJ))
++        {
++            try
++            {
++                return operation.observe(observedgetInputStream(from, options));
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedgetInputStream(long from, ReadOptions options) throws Exception {
+         if (from < 0) throw new IllegalArgumentException("Negative file offset");
+         RemoteFile file = SshjUtils.peekInstance().getSFTPClient(mUri).open(getSftpPath(mUri));
+         try {
+diff --git a/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java b/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java
+--- a/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java
++++ b/src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java
+@@ -20,6 +20,7 @@
+ import android.net.Uri;
+ 
+ import com.archos.filecorelibrary.TransportReadObserver;
++import com.archos.filecorelibrary.TransportOperationTrace;
+ import com.archos.filecorelibrary.FileEditor;
+ import com.archos.filecorelibrary.OwnedStreams;
+ import com.archos.filecorelibrary.FileUtils;
+@@ -62,7 +63,25 @@
+     }
+ 
+     @Override
+-    public InputStream getInputStream(long from) throws Exception {
++    public InputStream getInputStream(long from) throws Exception
++    {
++        try (TransportOperationTrace operation = TransportOperationTrace.begin(
++            "webdavs".equalsIgnoreCase(mUri.getScheme()) ?
++                TransportReadObserver.Protocol.WEBDAVS : TransportReadObserver.Protocol.WEBDAV))
++        {
++            try
++            {
++                return operation.observe(observedgetInputStream(from));
++            }
++            catch (Exception | Error failure)
++            {
++                operation.failed(failure);
++                throw failure;
++            }
++        }
++    }
++
++    private InputStream observedgetInputStream(long from) throws Exception {
+         var uri = WebdavFile2.uriToHttp(mUri);
+         if (log.isTraceEnabled()) log.trace("getInputStream: requesting length for {}", uri);
+         var reqBuilder = new Request.Builder()
+@@ -76,6 +95,7 @@
+         var req = reqBuilder.build();
+         var call = mHttpClient.newCall(req);
+         var resp = call.execute();
++        TransportOperationTrace.response(resp.code());
+         try {
+             if (from >= 0) {
+                 if (resp.code() == 416) {
+diff --git a/test/java/com/archos/filecorelibrary/DatabaseLocator157Test.java b/test/java/com/archos/filecorelibrary/DatabaseLocator157Test.java
+new file mode 100644
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/DatabaseLocator157Test.java
+@@ -0,0 +1,43 @@
++package com.archos.filecorelibrary;
++
++import static org.junit.Assert.assertArrayEquals;
++import static org.junit.Assert.assertTrue;
++import android.app.Application;
++import java.io.File;
++import java.nio.charset.StandardCharsets;
++import java.nio.file.Files;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class DatabaseLocator157Test
++{
++    @Test public void legacyLogicalExportNameCopiesTheCurrentStoreAndLeavesTheOriginalSnapshotIntact() throws Exception
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        File old = app.getDatabasePath("media.db");
++        File current = app.getDatabasePath("media-v64.db");
++        assertTrue(current.getParentFile().isDirectory() || current.getParentFile().mkdirs());
++        byte[] latest = "CURRENT_STORE".getBytes(StandardCharsets.US_ASCII);
++        byte[] retained = "ROLLBACK_SNAPSHOT".getBytes(StandardCharsets.US_ASCII);
++        Files.write(current.toPath(), latest);
++        Files.write(old.toPath(), retained);
++        FileUtils.installDatabaseLocator((context, name) -> name.equals("media.db") ? current
++                                                                                  : context.getDatabasePath(name));
++        try
++        {
++            FileUtils.backupDatabase(app, "media.db");
++            File exported = new File(app.getExternalFilesDir(null), app.getPackageName() + "-media.db");
++            assertArrayEquals(latest, Files.readAllBytes(exported.toPath()));
++            assertArrayEquals(retained, Files.readAllBytes(old.toPath()));
++        }
++        finally
++        {
++            FileUtils.installDatabaseLocator(null);
++        }
++    }
++}
+diff --git a/test/java/com/archos/filecorelibrary/TransportOperationTraceTest.java b/test/java/com/archos/filecorelibrary/TransportOperationTraceTest.java
+new file mode 100644
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/TransportOperationTraceTest.java
+@@ -0,0 +1,120 @@
++package com.archos.filecorelibrary;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
++import java.io.ByteArrayInputStream;
++import java.io.InputStream;
++import java.net.SocketTimeoutException;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.concurrent.atomic.AtomicLong;
++import org.junit.After;
++import org.junit.Test;
++
++public class TransportOperationTraceTest
++{
++    @After public void reset()
++    {
++        TransportOperationTrace.install(null);
++    }
++
++    @Test public void preOpenStatusRetryAndActualMinuteDeltasShareOneIdentity() throws Exception
++    {
++        List<TransportOperationTrace.Event> events = new ArrayList<>();
++        TransportOperationTrace.install(events::add);
++        AtomicLong clock = new AtomicLong();
++        InputStream input;
++        try (var operation = new TransportOperationTrace(TransportReadObserver.Protocol.WEBDAVS, clock::get))
++        {
++            TransportOperationTrace.retry();
++            TransportOperationTrace.response(206);
++            clock.set(123_000_000);
++            input = operation.observe(new ByteArrayInputStream(new byte[] {1, 2, 3}));
++        }
++        assertEquals(1, input.read());
++        clock.addAndGet(60_000_000_000L);
++        assertEquals(2, input.read());
++        clock.addAndGet(60_000_000_000L);
++        assertEquals(3, input.read());
++        assertEquals(-1, input.read());
++        assertEquals(-1, input.read());
++        input.close();
++        input.close();
++        var windows = events.stream().filter(e -> e.boundary() == TransportOperationTrace.Boundary.WINDOW).toList();
++        assertEquals(2, windows.size());
++        assertEquals(2, windows.get(0).windowBytes());
++        assertEquals(1, windows.get(1).windowBytes());
++        assertEquals(123_000_000, windows.get(0).openNanos());
++        assertEquals(206, windows.get(0).httpStatus());
++        assertEquals(1, windows.get(0).explicitRetries());
++        assertTrue(events.stream().allMatch(e -> e.id() == events.get(0).id()));
++        assertEquals(1, events.stream().filter(e -> e.boundary() == TransportOperationTrace.Boundary.EOF).count());
++        assertEquals(1, events.stream().filter(e -> e.boundary() == TransportOperationTrace.Boundary.CLOSED).count());
++    }
++
++    @Test public void failedOpenAndReadTimeoutAreTerminalAndObserverFailuresDoNotChangeIo() throws Exception
++    {
++        List<TransportOperationTrace.Event> events = new ArrayList<>();
++        TransportOperationTrace.install(events::add);
++        try (var operation = TransportOperationTrace.begin(TransportReadObserver.Protocol.SFTP))
++        {
++            operation.failed(new SocketTimeoutException("secret must never cross numeric observer"));
++        }
++        assertEquals(2, events.size());
++        assertEquals(-1, events.get(1).openNanos());
++        assertEquals(TransportOperationTrace.Boundary.TIMEOUT, events.get(1).boundary());
++        InputStream failed = new InputStream()
++        {
++            @Override public int read() throws SocketTimeoutException
++            {
++                throw new SocketTimeoutException();
++            }
++        };
++        InputStream observed;
++        try (var operation = TransportOperationTrace.begin(TransportReadObserver.Protocol.SMBJ))
++        {
++            observed = operation.observe(failed);
++        }
++        assertThrows(SocketTimeoutException.class, observed::read);
++        observed.close();
++        assertEquals(1, events.get(events.size() - 1).calls());
++        assertEquals(TransportOperationTrace.Boundary.TIMEOUT, events.get(events.size() - 1).boundary());
++        TransportOperationTrace.install(e -> { throw new IllegalStateException(); });
++        try (var operation = TransportOperationTrace.begin(TransportReadObserver.Protocol.FTP);
++             InputStream safe = operation.observe(new ByteArrayInputStream(new byte[] {42})))
++        {
++            assertEquals(42, safe.read());
++        }
++    }
++
++    @Test public void concurrentNestedOperationsHaveIndependentSinksAndRestoreTheParentScope() throws Exception
++    {
++        List<TransportOperationTrace.Event> first = new ArrayList<>(), second = new ArrayList<>();
++        TransportOperationTrace.install(first::add);
++        try (var parent = TransportOperationTrace.begin(TransportReadObserver.Protocol.FTPS))
++        {
++            TransportOperationTrace.install(second::add);
++            Thread worker = new Thread(() -> {
++                try (var child = TransportOperationTrace.begin(TransportReadObserver.Protocol.SSHJ))
++                {
++                    TransportOperationTrace.retry();
++                    child.failed(null);
++                }
++            });
++            worker.start();
++            worker.join(1000);
++            assertFalse(worker.isAlive());
++            TransportOperationTrace.retry();
++            try (InputStream input = parent.observe(new ByteArrayInputStream(new byte[0])))
++            {
++                assertEquals(-1, input.read());
++            }
++        }
++        assertTrue(first.stream().allMatch(e -> e.protocol() == TransportReadObserver.Protocol.FTPS));
++        assertTrue(second.stream().allMatch(e -> e.protocol() == TransportReadObserver.Protocol.SSHJ));
++        assertEquals(1, first.get(first.size() - 1).explicitRetries());
++        assertEquals(1, second.get(second.size() - 1).explicitRetries());
++    }
++}

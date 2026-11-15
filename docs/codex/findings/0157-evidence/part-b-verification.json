@@ -1,0 +1,201 @@
+{
+  "source_merge": "63d9a40ae",
+  "source_ref": "8bd76e114",
+  "implementation": "e3589f047",
+  "scope": "Part B host regression cohort; not Gradle, full repository suite, APK, linked native archive or Shield acceptance",
+  "java": {
+    "source_target": 17,
+    "compiler": "Zulu 21.0.5",
+    "sdk": "API 37",
+    "all_source_files": 1309,
+    "result": "pass",
+    "warnings": 9,
+    "warning_detail": "eight existing finalize-removal warnings and one source/target module-path option warning",
+    "final_followup": "PlayerEpisodeRepository recompiled separately after its three worker warm-up lines; no file remains uncompiled"
+  },
+  "tests": {
+    "classes": 22,
+    "executions": 66,
+    "results": [
+      {
+        "test_class": "CompanySourceBTest",
+        "executions": 2,
+        "result": "pass",
+        "log_sha256": "dd57a2b9c6a8990a9fe4ce50e069e867998f1c5f44e72005bd59e33f5b8cf1e1"
+      },
+      {
+        "test_class": "DetailsFactsTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "fa33a30f71b4a984e7c51009b4e7aff62b32febf5ff2338ae938a015f887c7d1"
+      },
+      {
+        "test_class": "PlayerEpisodesBTest",
+        "executions": 6,
+        "result": "pass",
+        "log_sha256": "24339813f21e1ed0f3ace8ec18cf691ebb4ca6c6cbf31f1e5254b6b71faede9b"
+      },
+      {
+        "test_class": "AgeCertificatesBTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "f87c5959d92af674eeb8f09b42a4a3102e6f9daf1ae245d7a8ae68db729a81b3"
+      },
+      {
+        "test_class": "SeriesChoicesBTest",
+        "executions": 1,
+        "result": "pass",
+        "log_sha256": "7941de24507942339e1923d54816f2548de4622c569485bd5577b952793b8b88"
+      },
+      {
+        "test_class": "TrackDetailsBTest",
+        "executions": 1,
+        "result": "pass",
+        "log_sha256": "19cd4ef2087336e2ccf89d166a365c6fa3bd67c6009448e65570e6de0c454de9"
+      },
+      {
+        "test_class": "PlaybackLimitsBTest",
+        "executions": 5,
+        "result": "pass",
+        "log_sha256": "fa4258594d968fd169a7e1486af38b8bf32f3749f56b496b2c02b6ec6a3e482c"
+      },
+      {
+        "test_class": "SeekPreviewBTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "ff119918ad0fdbb46d1fc4658b4ca7397608e3f87d86155922b2ba8076b6a9b2"
+      },
+      {
+        "test_class": "PartPicturesBTest",
+        "executions": 5,
+        "result": "pass",
+        "log_sha256": "da6bce23322cd72760d41d2d2538ff154b7ab32260f2b0cc41f30727cd45a3ed"
+      },
+      {
+        "test_class": "SeekThumbnailsTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "feeba19a024a49ee7c7669b63bf9d094e23985539b8f2f0020e52f4c43ae25cc"
+      },
+      {
+        "test_class": "SeekThumbnailPolicyTest",
+        "executions": 2,
+        "result": "pass",
+        "log_sha256": "006f588605e2fd40743412f84cf2fd73e5924a97a41edfb0cb2c43e581669ca5"
+      },
+      {
+        "test_class": "PartPicturesTest",
+        "executions": 1,
+        "result": "pass",
+        "log_sha256": "e022b7213e75c606878dbdd999a6cd8e57890746454edbf040ae32bcc7439235"
+      },
+      {
+        "test_class": "PlaybackPartsTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "0473cf8074368a16a15633cbc0453d30c2e4fb5804a6ff3ec8baab922da3f5fb"
+      },
+      {
+        "test_class": "PlaybackLimitsTest",
+        "executions": 2,
+        "result": "pass",
+        "log_sha256": "323b30a930bbbfd10db371b965b7d470186dffe228215bc0d44e7b2a84fcf30a"
+      },
+      {
+        "test_class": "SeriesTrackChoicesTest",
+        "executions": 1,
+        "result": "pass",
+        "log_sha256": "20b1a6304400893808d5d742d1c5b7b232cfce8408e89ae55f42154cd3df6570"
+      },
+      {
+        "test_class": "PlaybackEpisodesTest",
+        "executions": 1,
+        "result": "pass",
+        "log_sha256": "d9add32b491c1fa44b6ae8bb917f6dbbd46c22a20864a79524c8dbfac838a8b1"
+      },
+      {
+        "test_class": "NextListingOwnershipTest",
+        "executions": 5,
+        "result": "pass",
+        "log_sha256": "e620e25fefc2df8c2506005daaa0f7a4528fb0d6a6f4b374204a785a027bfb42"
+      },
+      {
+        "test_class": "SeekLoadingSignalTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "0473cf8074368a16a15633cbc0453d30c2e4fb5804a6ff3ec8baab922da3f5fb"
+      },
+      {
+        "test_class": "PlaybackOwnership157Test",
+        "executions": 5,
+        "result": "pass",
+        "log_sha256": "d78ae29f18796e6e4e5749ea9ae33698893eb0b1416d30aa342993f1c5a119ba"
+      },
+      {
+        "test_class": "PlayerSourceLoggingTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "c4ebf4ace06c8271f7c43a3eb4b3f7950ddaf2aa96cb315e3e1b930f740fc514"
+      },
+      {
+        "test_class": "PlaybackRouteRecoveryTest",
+        "executions": 5,
+        "result": "pass",
+        "log_sha256": "a1d9db114685a8c830daa11a96d15c329ef05d7146d140848aebe61e60765333"
+      },
+      {
+        "test_class": "DiscoveryGatewayTest",
+        "executions": 3,
+        "result": "pass",
+        "log_sha256": "3a6ce223f40f02c82d966170c73e20beadb979771efd7fec04d0849d88719240"
+      }
+    ],
+    "followup": "22-class final cohort plus the added worker-thread regression; episode repository recompiled and its six regressions rerun after warm-up change. Counted once."
+  },
+  "negative_controls": [
+    {
+      "baseline": "63d9a40ae",
+      "production_class": "SeekThumbnails",
+      "test": "SeekPreviewBTest",
+      "method": "localScrubCacheMissRequestsTheLatestPositionInsteadOfOnlyReadingDisk",
+      "expected_failures": 1,
+      "exit": 1
+    },
+    {
+      "baseline": "63d9a40ae",
+      "production_class": "SeekThumbnails",
+      "test": "SeekPreviewBTest",
+      "method": "putioScrubCacheMissUsesTheSameOwnedExtractionPipeline",
+      "expected_failures": 1,
+      "exit": 1
+    },
+    {
+      "baseline": "63d9a40ae",
+      "production_class": "PlayerStripSource",
+      "test": "PartPicturesBTest",
+      "method": "adapterKeepsAPreStartupFrameSourceAndSuppliesTheNumberedTimeline",
+      "expected_failures": 1,
+      "exit": 1
+    },
+    {
+      "baseline": "63d9a40ae",
+      "production_class": "PlayerService",
+      "test": "PlayerEpisodesBTest",
+      "method": "emptyHomeCacheDoesNotPreventTheServiceFromSupplyingSeasonEpisodes",
+      "expected_failures": 1,
+      "exit": 1
+    },
+    {
+      "baseline": "44ca1df79",
+      "production_class": "PlayerEpisodeRepository",
+      "test": "PlayerEpisodesBTest",
+      "method": "firstMainThreadProjectionDoesNotEnumerateCapabilities",
+      "expected_failures": 1,
+      "exit": 1
+    }
+  ],
+  "layout": "two tests pass",
+  "patch_registrations": "none added/replaced/unregistered in Part B; previous eight hashes retained",
+  "device": "not run",
+  "native_archive": "not built/reviewed/published"
+}

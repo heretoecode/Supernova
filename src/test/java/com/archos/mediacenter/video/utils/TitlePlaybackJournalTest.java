@@ -30,6 +30,7 @@ public class TitlePlaybackJournalTest {
     @Before
     public void setup() throws Exception {
         fixture.setup();
+        fixture.app.deleteDatabase("media-v64.db");
         fixture.app.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(fixture.app)) {
             var db = helper.getWritableDatabase();
@@ -172,6 +173,7 @@ public class TitlePlaybackJournalTest {
     @Test
     public void newDeviceKeepsExactPendingSchemaTwoWithoutCreatingNativeMediaStore() throws Exception {
         JSONObject payload = payload();
+        fixture.app.deleteDatabase("media-v64.db");
         fixture.app.deleteDatabase("media.db");
         var plan = fixture.transaction.prepare(Map.of(BackupCategory.TITLE_PLAYBACK, payload), null,
             new PortablePhysicalReferences(fixture.app, List.of()));
@@ -211,6 +213,7 @@ public class TitlePlaybackJournalTest {
     @Test
     public void pendingReconciliationWaitsForIndexThenAddsOnlyResolvedChoiceAndIsIdempotent() throws Exception {
         JSONObject source = payload();
+        fixture.app.deleteDatabase("media-v64.db");
         fixture.app.deleteDatabase("media.db");
         fixture.transaction.apply(fixture.transaction.prepare(Map.of(BackupCategory.TITLE_PLAYBACK, source), null,
                                       new PortablePhysicalReferences(fixture.app, List.of())),

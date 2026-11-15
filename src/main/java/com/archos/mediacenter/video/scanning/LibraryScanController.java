@@ -86,6 +86,7 @@ public final class LibraryScanController
             application.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
         else
             application.registerReceiver(receiver, filter);
+        com.archos.mediaprovider.video.SavedConnectionRemoval.resume(app);
         refreshSourceNames();
     }
 

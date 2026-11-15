@@ -853,13 +853,27 @@ public final class Diagnostics
                 Diagnostics.error(event, failure, fields);
         } : null);
         TransportReadObserver.install(enabled ? protocol -> {
-            if (!enabled)
+            if (!enabled || com.archos.filecorelibrary.TransportOperationTrace.inOperation())
                 return null;
             final String session = playback, id = PROCESS + ":read:" + SEQUENCE.incrementAndGet();
             DiagnosticTransportMetrics metrics =
                 new DiagnosticTransportMetrics(id, session, protocol.name(), Diagnostics::event);
-            return (boundary, bytes, calls, nanos,
-                    elapsed) -> metrics.boundary(boundary.name(), bytes, calls, nanos, elapsed);
+            return (boundary, bytes, calls, nanos, elapsed) ->
+                metrics.boundary(boundary.name(), bytes, calls, nanos, elapsed);
+        } : null);
+        com.archos.filecorelibrary.TransportOperationTrace.installFactory(enabled ? protocol -> {
+            final String session = playback;
+            return observation -> {
+                if (enabled)
+                    event("transport_read", "schema", 3, "stream_id", PROCESS + ":read:" + observation.id(),
+                          "playback_session", session, "source", observation.protocol().name(), "boundary",
+                          observation.boundary().name(), "elapsed_ns", observation.elapsedNanos(), "open_ns",
+                          observation.openNanos(), "bytes", observation.bytes(), "read_calls", observation.calls(),
+                          "read_ns", observation.readNanos(), "http_status", observation.httpStatus(),
+                          "explicit_retries", observation.explicitRetries(), "retry_coverage", "EXPLICIT_RECONNECTS",
+                          "window_ns", observation.windowNanos(), "window_bytes", observation.windowBytes(),
+                          "coverage", "JAVA_STREAM_READS_ONLY", "operation_coverage", "JAVA_EDITOR_OPEN_AND_READ");
+            };
         } : null);
     }
 

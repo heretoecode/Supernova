@@ -28,6 +28,7 @@ public class PlaylistSyncPolicyTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         // Exercise real provider query code; avoid unrelated receiver/network lifecycle startup.
         provider = spy(new VideoProvider());

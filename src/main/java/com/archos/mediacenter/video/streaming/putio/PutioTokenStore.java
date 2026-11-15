@@ -1,7 +1,6 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.content.Context;
-import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.AtomicFile;
@@ -44,8 +43,6 @@ public final class PutioTokenStore
     }
     private static SecretKey deviceKey(boolean create) throws Exception
     {
-        if (Build.VERSION.SDK_INT < 23)
-            throw new GeneralSecurityException("Secure provider storage unavailable");
         KeyStore store = KeyStore.getInstance("AndroidKeyStore");
         store.load(null);
         if (store.containsAlias(ALIAS))

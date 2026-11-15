@@ -1,0 +1,292 @@
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -152,60 +152,67 @@
+                       (countStart == 0 ? State.INITIAL_IMPORT : State.REGULAR_IMPORT));
+         ImportState.VIDEO.setState(countStart == 0 ? State.INITIAL_IMPORT : State.REGULAR_IMPORT);
+ 
+-        String state = Environment.getExternalStorageState();
+-        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
+-        {
+-            ensureSdCardPath();
+-            LocalReconciliationResult reconciliation;
+-            int copy;
+-            if (countStart == 0)
+-            {
+-                // Keep the paged importer for an empty database: every MediaStore row is new and
+-                // retaining the complete dataset for reconciliation would waste memory.
+-                reconciliation = new LocalReconciliationResult();
+-                copy = copyData(mCr, null);
+-            }
+-            else
+-            {
+-                ReconciliationSnapshot snapshot = loadMountedStorageSnapshot(mCr, getMountedStorageLocations());
+-                if (snapshot.complete)
+-                {
+-                    reconciliation = reconcileStorageSnapshot(mCr, snapshot, mContext);
+-                    copy = copySnapshotData(mCr, snapshot, null);
+-                }
+-                else
+-                {
+-                    log.warn("doFullImport: reconciliation snapshot incomplete; using paged importer");
++        try
++        {
++            String state = Environment.getExternalStorageState();
++            if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
++            {
++                ensureSdCardPath();
++                LocalReconciliationResult reconciliation;
++                int copy;
++                if (countStart == 0)
++                {
++                    // Keep the paged importer for an empty database: every MediaStore row is new and
++                    // retaining the complete dataset for reconciliation would waste memory.
+                     reconciliation = new LocalReconciliationResult();
+                     copy = copyData(mCr, null);
+                 }
+-            }
+-            // External storage is available, proceed with your operation
+-            // delete everything that was not replaced, ! only if it is on primary local storage !
+-            String existingFiles = getRemoteIdList(mCr);
+-            int del = reconciliation.removed;
+-            updateVolumeHiddenStates(existingFiles);
+-            int countEnd = getLocalCount(mCr);
+-            log.info("full import +:" + copy + " ~:" + reconciliation.updated + " -:" + del + " " + countStart + "=>" +
+-                     countEnd);
+-            PreviewLocalImportTrace.reconciled(copy, reconciliation.updated, reconciliation.removed);
++                else
++                {
++                    ReconciliationSnapshot snapshot = loadMountedStorageSnapshot(mCr, getMountedStorageLocations());
++                    if (snapshot.complete)
++                    {
++                        reconciliation = reconcileStorageSnapshot(mCr, snapshot, mContext);
++                        copy = copySnapshotData(mCr, snapshot, null);
++                    }
++                    else
++                    {
++                        log.warn("doFullImport: reconciliation snapshot incomplete; using paged importer");
++                        reconciliation = new LocalReconciliationResult();
++                        copy = copyData(mCr, null);
++                    }
++                }
++                // External storage is available, proceed with your operation
++                // delete everything that was not replaced, ! only if it is on primary local storage !
++                String existingFiles = getRemoteIdList(mCr);
++                int del = reconciliation.removed;
++                updateVolumeHiddenStates(existingFiles);
++                int countEnd = getLocalCount(mCr);
++                log.info("full import +:" + copy + " ~:" + reconciliation.updated + " -:" + del + " " +
++                         countStart + "=>" + countEnd);
++                PreviewLocalImportTrace.reconciled(copy, reconciliation.updated, reconciliation.removed);
++                ImportState.VIDEO.setDeleting(false);
++                // then trigger scan of new data
++                doScan(mCr, mContext, mBlackList);
++                // ...
++            }
++            else
++            {
++                // External storage is not available, handle this situation
++                log.error("doFullImport: external storage (volume: 'external_primary') is not available");
++                PreviewLocalImportTrace.problem("doFullImport",
++                                                new IllegalStateException("Import stage did not complete"));
++            }
++        }
++        finally
++        {
+             ImportState.VIDEO.setDeleting(false);
+-            // then trigger scan of new data
+-            doScan(mCr, mContext, mBlackList);
+-            // ...
+-        }
+-        else
+-        {
+-            // External storage is not available, handle this situation
+-            log.error("doFullImport: external storage (volume: 'external_primary') is not available");
+-            PreviewLocalImportTrace.problem("doFullImport", new IllegalStateException("Import stage did not complete"));
+-        }
+-        ImportState.VIDEO.setDeleting(false);
+-        ImportState.VIDEO.setNumberOfFilesRemainingToDelete(0);
+-        ImportState.VIDEO.setRemainingCount(0);
+-        ImportState.VIDEO.setState(State.IDLE);
+-        if (log.isDebugEnabled())
+-            log.debug("doFullImport: ImportState.VIDEO.setState(State.IDLE)");
++            ImportState.VIDEO.setNumberOfFilesRemainingToDelete(0);
++            ImportState.VIDEO.setRemainingCount(0);
++            ImportState.VIDEO.setState(State.IDLE);
++            if (log.isDebugEnabled())
++                log.debug("doFullImport: ImportState.VIDEO.setState(State.IDLE)");
++        }
+     }
+ 
+     public void doIncrementalImport()
+@@ -217,55 +224,60 @@
+             log.debug("doIncrementalImport: ImportState.VIDEO.setState {}",
+                       (countStart == 0 ? State.INITIAL_IMPORT : State.REGULAR_IMPORT));
+ 
+-        String state = Environment.getExternalStorageState();
+-        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
+-        {
+-            ensureSdCardPath();
+-            // Capture the old maximum before remapping; a remapped high id must not cause
+-            // copyData to skip lower new MediaStore ids from the same import pass.
+-            String maxLocal = getMaxId(mCr);
+-            ReconciliationSnapshot snapshot = loadMountedStorageSnapshot(mCr, getMountedStorageLocations());
+-            LocalReconciliationResult reconciliation;
+-            int copy;
+-            // Copy only MediaStore ids newer than the maximum captured before reconciliation.
+-            if (snapshot.complete)
+-            {
+-                reconciliation = reconcileStorageSnapshot(mCr, snapshot, mContext);
+-                copy = copySnapshotData(mCr, snapshot, maxLocal);
++        try
++        {
++            String state = Environment.getExternalStorageState();
++            if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
++            {
++                ensureSdCardPath();
++                // Capture the old maximum before remapping; a remapped high id must not cause
++                // copyData to skip lower new MediaStore ids from the same import pass.
++                String maxLocal = getMaxId(mCr);
++                ReconciliationSnapshot snapshot = loadMountedStorageSnapshot(mCr, getMountedStorageLocations());
++                LocalReconciliationResult reconciliation;
++                int copy;
++                // Copy only MediaStore ids newer than the maximum captured before reconciliation.
++                if (snapshot.complete)
++                {
++                    reconciliation = reconcileStorageSnapshot(mCr, snapshot, mContext);
++                    copy = copySnapshotData(mCr, snapshot, maxLocal);
++                }
++                else
++                {
++                    log.warn("doIncrementalImport: reconciliation snapshot incomplete; using paged importer");
++                    reconciliation = new LocalReconciliationResult();
++                    copy = copyData(mCr, maxLocal);
++                }
++                String existingFiles = getRemoteIdList(mCr);
++                int del = 0;
++                updateVolumeHiddenStates(existingFiles);
++
++                del = reconciliation.removed;
++                int countEnd = getLocalCount(mCr);
++                log.info("part import +:" + copy + " ~:" + reconciliation.updated + " -:" + del + " " +
++                         countStart + "=>" + countEnd);
++                PreviewLocalImportTrace.reconciled(copy, reconciliation.updated, reconciliation.removed);
++                ImportState.VIDEO.setDeleting(false);
++                // then trigger scan of new data
++                doScan(mCr, mContext, mBlackList);
+             }
+             else
+             {
+-                log.warn("doIncrementalImport: reconciliation snapshot incomplete; using paged importer");
+-                reconciliation = new LocalReconciliationResult();
+-                copy = copyData(mCr, maxLocal);
+-            }
+-            String existingFiles = getRemoteIdList(mCr);
+-            int del = 0;
+-            updateVolumeHiddenStates(existingFiles);
+-
+-            del = reconciliation.removed;
+-            int countEnd = getLocalCount(mCr);
+-            log.info("part import +:" + copy + " ~:" + reconciliation.updated + " -:" + del + " " + countStart + "=>" +
+-                     countEnd);
+-            PreviewLocalImportTrace.reconciled(copy, reconciliation.updated, reconciliation.removed);
++                // External storage is not available, handle this situation
++                log.error("doIncrementalImport: external storage (volume: 'external_primary') is not available");
++                PreviewLocalImportTrace.problem("doIncrementalImport",
++                                                new IllegalStateException("Import stage did not complete"));
++            }
++        }
++        finally
++        {
+             ImportState.VIDEO.setDeleting(false);
+-            // then trigger scan of new data
+-            doScan(mCr, mContext, mBlackList);
+-        }
+-        else
+-        {
+-            // External storage is not available, handle this situation
+-            log.error("doIncrementalImport: external storage (volume: 'external_primary') is not available");
+-            PreviewLocalImportTrace.problem("doIncrementalImport",
+-                                            new IllegalStateException("Import stage did not complete"));
+-        }
+-
+-        ImportState.VIDEO.setDeleting(false);
+-        ImportState.VIDEO.setNumberOfFilesRemainingToDelete(0);
+-        ImportState.VIDEO.setRemainingCount(0);
+-        ImportState.VIDEO.setState(State.IDLE);
+-        if (log.isDebugEnabled())
+-            log.debug("doIncrementalImport: ImportState.VIDEO.setState(State.IDLE)");
++            ImportState.VIDEO.setNumberOfFilesRemainingToDelete(0);
++            ImportState.VIDEO.setRemainingCount(0);
++            ImportState.VIDEO.setState(State.IDLE);
++            if (log.isDebugEnabled())
++                log.debug("doIncrementalImport: ImportState.VIDEO.setState(State.IDLE)");
++        }
+     }
+ 
+     static final class LocalReconciliationResult
+diff --git a/test/java/com/archos/mediaprovider/video/LocalImportFailureStateTest.java b/test/java/com/archos/mediaprovider/video/LocalImportFailureStateTest.java
+new file mode 100644
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/LocalImportFailureStateTest.java
+@@ -0,0 +1,60 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
++import static org.mockito.Mockito.CALLS_REAL_METHODS;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++import android.app.Application;
++import android.content.Context;
++import android.content.ContentResolver;
++import android.os.Environment;
++import com.archos.mediaprovider.ImportState;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++import org.robolectric.shadows.ShadowEnvironment;
++import org.robolectric.util.ReflectionHelpers;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class LocalImportFailureStateTest
++{
++    private void failsAndResets(boolean full)
++    {
++        Context context = mock(Context.class);
++        when(context.getExternalFilesDir(null)).thenThrow(new IllegalStateException("Storage disappeared"));
++        VideoStoreImportImpl importer = mock(VideoStoreImportImpl.class, CALLS_REAL_METHODS);
++        ReflectionHelpers.setField(importer, "mContext", context);
++        ReflectionHelpers.setField(importer, "mCr", mock(ContentResolver.class));
++        ReflectionHelpers.setStaticField(VideoStoreImportImpl.class, "sdCardPath", "");
++        ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
++        ImportState.VIDEO.setDeleting(true);
++        ImportState.VIDEO.setNumberOfFilesRemainingToDelete(3);
++        ImportState.VIDEO.setRemainingCount(10);
++        IllegalStateException failure = assertThrows(IllegalStateException.class, () -> {
++            if (full)
++                importer.doFullImport();
++            else
++                importer.doIncrementalImport();
++        });
++        assertEquals("Storage disappeared", failure.getMessage());
++        assertFalse(ImportState.VIDEO.isInitialImport());
++        assertFalse(ImportState.VIDEO.isRegularImport());
++        assertFalse(ImportState.VIDEO.isDeleting());
++        assertEquals(0, ImportState.VIDEO.getNumberOfFilesRemainingToImport());
++        assertEquals(0, ImportState.VIDEO.getNumberOfFilesRemainingToDelete());
++    }
++
++    @Test public void fullImportFailureAlwaysReleasesTheBusyState()
++    {
++        failsAndResets(true);
++    }
++
++    @Test public void incrementalImportFailureAlwaysReleasesTheBusyState()
++    {
++        failsAndResets(false);
++    }
++}

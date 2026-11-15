@@ -27,6 +27,7 @@ public class PortableMediaMatchesTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
@@ -95,6 +96,7 @@ public class PortableMediaMatchesTest {
         for (String mutation : List.of("UPDATE files SET ArchosMediaScraper_id=999 WHERE _id=10",
                  "UPDATE files SET ArchosMediaScraper_type=99 WHERE _id=10",
                  "UPDATE MOVIE SET m_online_id=2147483648 WHERE _id=100")) {
+            app.deleteDatabase("media-v64.db");
             app.deleteDatabase("media.db");
             seed();
             try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
@@ -123,6 +125,7 @@ public class PortableMediaMatchesTest {
         assertSame(target, prepared.associations.get(10L));
         assertFalse(prepared.pending.contains("PRIVATE"));
         assertFalse(app.getDatabasePath("media.db").exists());
+        assertFalse(app.getDatabasePath("media-v64.db").exists());
     }
 
     @Test

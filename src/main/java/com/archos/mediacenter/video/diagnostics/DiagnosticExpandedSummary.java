@@ -120,7 +120,8 @@ final class DiagnosticExpandedSummary
     {
         String event = record.optString("event");
         if (!(event.endsWith("_summary") || event.startsWith("backup_") || event.contains("decoder") ||
-              event.equals("transport_read") || event.equals("metadata_network_outcome") ||
+              event.equals("transport_read") || event.equals("transport_operation") ||
+              event.equals("playback_frame_metrics") || event.equals("metadata_network_outcome") ||
               event.equals("metadata_request_result") || event.equals("metadata_semantic_failed") ||
               event.equals("stream_reconnect") || event.equals("configuration_changed") ||
               event.equals("memory_trim") || event.equals("screen_open") || event.contains("process_exit") ||
@@ -151,6 +152,18 @@ final class DiagnosticExpandedSummary
                                         "source",
                                         "boundary",
                                         "throughput_bytes_per_second",
+                                        "open_ns",
+                                        "explicit_retries",
+                                        "window_ns",
+                                        "window_bytes",
+                                        "native_available",
+                                        "accepted_output_frames",
+                                        "late_dropped_frames",
+                                        "stale_seek_frames",
+                                        "early_dropped_frames",
+                                        "scheduled_audio_video_phase_ms",
+                                        "initialized_decoder",
+                                        "measurement_quality",
                                         "stage",
                                         "category",
                                         "rows",

@@ -38,4 +38,16 @@ public class HourlyScanDefaultsTest
         PreviewAutoScanPolicy.initialise(app);
         assertEquals(7200000, prefs.getInt(NetworkAutoRefresh.AUTO_RESCAN_PERIOD, -1));
     }
+    @Test public void removedTwelveHourChoiceMigratesWithoutChangingTheOpenSwitch()
+    {
+        Application app = RuntimeEnvironment.getApplication();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
+        prefs.edit().putBoolean("try_new_ui", true).putBoolean("supernova_onboarding_complete", true)
+            .putBoolean("auto_rescan_on_app_restart", false)
+            .putInt(NetworkAutoRefresh.AUTO_RESCAN_PERIOD, 12 * 3600000).commit();
+        PreviewAutoScanPolicy.initialise(app);
+        assertEquals(6 * 3600000, prefs.getInt(NetworkAutoRefresh.AUTO_RESCAN_PERIOD, 0));
+        assertFalse(prefs.getBoolean("auto_rescan_on_app_restart", true));
+    }
+
 }
