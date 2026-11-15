@@ -65,9 +65,10 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   Genres (`SharedMetadata`); episode title line "Season 2 · Episode 8 · Title".
 
 ## In flight
-- Run 6 (18:50): 2 of 2,150 failing, both fixed in `966daae` (Player chapter list in test doubles; MediaLib
-  `NetworkScanLedgerTest` scanner had no files folder, so the scan lock failed: new registered patch
-  `medialib-supernova157-ledger-test.patch`). **Run 7 started 15 Nov 19:23** on everything up to `966daae`.
+- Builds so far: 4 (10 failing tests), 5 (compile error), 6 (2 failing), 7 (3 failing; fixed in `2afbc9e`).
+  **Build 8 (43774031993) started 15 Nov 23:17** on everything up to `2afbc9e`, including all the evening's work
+  (Files page, top bar, Details pieces). Plain JUnit tests must not touch classes with Android static set-up
+  (`SupernovaStyle`, `Diagnostics`, views, drawables): use Robolectric for those.
 - To read the exact MediaLib code the build uses: add a worktree of `aos-MediaLib` at the pinned revision
   (`prepare-supernova155-workspace.py`) and `git apply` the MediaLib patches from the lock file in order.
 

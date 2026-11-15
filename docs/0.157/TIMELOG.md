@@ -31,3 +31,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 19:23–19:41 | While build 7 runs: top-bar signal slot, pill retired, Files rename, shared tab row, new Files page (three tabs, wired behind a switch), artwork edge on cards. |
 | 15 Nov 19:50–23:16 | **Not working: the session stopped** (about 3½ hours). Build 7 had failed meanwhile. |
 | 15 Nov 23:16– | Resumed. |
+| 15 Nov 23:16–23:18 | Build 7: 3 failing tests, fixed; build 8 started 23:17. |
