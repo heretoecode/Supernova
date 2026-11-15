@@ -48,7 +48,7 @@ public final class StreamingPreferences {
         country = new ListPreference(context);
         country.setKey(StreamingRepository.COUNTRY);
         country.setTitle(R.string.streaming_country);
-        country.setDefaultValue("IE");
+        country.setDefaultValue(StreamingRepository.country(context));
         country.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
         List<String> codes = new ArrayList<>(Arrays.asList(Locale.getISOCountries()));
         codes.sort(Comparator.comparing(code -> new Locale("", code).getDisplayCountry()));

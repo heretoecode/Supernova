@@ -144,10 +144,43 @@ public final class StreamingRepository
         return new Availability(Collections.emptyList(), "");
     }
 
+    /** Used only when neither the owner nor the device names a country. */
+    static final String FALLBACK_COUNTRY = "US";
+
     public static String country(Context c)
     {
-        String country = prefs(c).getString(COUNTRY, "IE");
-        return country != null && country.matches("[A-Z]{2}") ? country : "IE";
+        String country = prefs(c).getString(COUNTRY, null);
+        if (country != null && country.matches("[A-Z]{2}"))
+        {
+            return country;
+        }
+        return defaultCountry(prefs(c).getAll().keySet(), Locale.getDefault().getCountry());
+    }
+
+    /**
+     * Where to Watch region when none was chosen (0.157: from the device). Services already saved under exactly one
+     * country keep that country, so nobody's choices vanish when the default changes.
+     */
+    static String defaultCountry(Set<String> savedKeys, String deviceCountry)
+    {
+        Set<String> saved = new HashSet<>();
+        for (String key : savedKeys)
+        {
+            if (key.startsWith(PROVIDERS) && key.length() == PROVIDERS.length() + 2)
+            {
+                saved.add(key.substring(PROVIDERS.length()));
+            }
+        }
+        if (saved.size() == 1)
+        {
+            String only = saved.iterator().next();
+            if (only.matches("[A-Z]{2}"))
+            {
+                return only;
+            }
+        }
+        String device = deviceCountry == null ? "" : deviceCountry.toUpperCase(Locale.ROOT);
+        return device.matches("[A-Z]{2}") ? device : FALLBACK_COUNTRY;
     }
 
     public static Set<String> selected(Context c)
