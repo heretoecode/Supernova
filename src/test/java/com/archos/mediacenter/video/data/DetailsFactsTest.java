@@ -17,7 +17,7 @@ import org.junit.Test;
 @Config(application = Application.class, sdk = 30)
 public class DetailsFactsTest
 {
-    @Test public void seriesUsesEpisodeRuntimeAndHasNoFinancialFieldsOrForeignAliases()
+    @Test public void seriesUsesEpisodeRuntimeAndHasNoFinancialFieldsOrForeignAliases() throws Exception
     {
         JSONObject details = new JSONObject().put("id", 12).put("name", "Marshals")
             .put("budget", 200).put("revenue", 500)
@@ -34,7 +34,7 @@ public class DetailsFactsTest
         assertEquals(List.of("Correct"), facts.companies());
     }
 
-    @Test public void wrongTitleEnvelopeIsRejectedAndUnknownValuesRemainExplicit()
+    @Test public void wrongTitleEnvelopeIsRejectedAndUnknownValuesRemainExplicit() throws Exception
     {
         JSONObject title = new JSONObject().put("id", 1).put("title", "A");
         assertThrows(IllegalArgumentException.class,
@@ -44,7 +44,7 @@ public class DetailsFactsTest
         assertEquals(-1, facts.budget());
     }
 
-    @Test public void tabPlanIsCompleteBeforeAnyContentIsFetched()
+    @Test public void tabPlanIsCompleteBeforeAnyContentIsFetched() throws Exception
     {
         assertEquals(List.of(DetailsFacts.Tab.DETAILS, DetailsFacts.Tab.EXTRAS, DetailsFacts.Tab.RELATED),
                      DetailsFacts.tabs(false));

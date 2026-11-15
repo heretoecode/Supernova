@@ -19,7 +19,7 @@ import org.junit.Test;
 @Config(application = Application.class, sdk = 30)
 public class ForgivingMatchSearchTest
 {
-    private static JSONObject movie(long id, String title)
+    private static JSONObject movie(long id, String title) throws Exception
     {
         return new JSONObject().put("id", id).put("title", title);
     }
@@ -27,7 +27,7 @@ public class ForgivingMatchSearchTest
     private static ForgivingMatchSearch.Gateway gateway(List<String> calls, JSONObject... rows)
     {
         return new ForgivingMatchSearch.Gateway() {
-            @Override public JSONObject tmdb(String path, Map<String, String> parameters)
+            @Override public JSONObject tmdb(String path, Map<String, String> parameters) throws Exception
             {
                 calls.add(path + parameters);
                 if (path.startsWith("find/"))
@@ -38,7 +38,7 @@ public class ForgivingMatchSearchTest
                 return new JSONObject().put("results", new JSONArray(List.of(rows)));
             }
 
-            @Override public JSONArray trakt(String path)
+            @Override public JSONArray trakt(String path) throws Exception
             {
                 calls.add(path);
                 return new JSONArray().put(new JSONObject().put("movie",
@@ -47,7 +47,7 @@ public class ForgivingMatchSearchTest
         };
     }
 
-    @Test public void articleCasePunctuationAndOriginalTitleRankAheadOfProviderOrder()
+    @Test public void articleCasePunctuationAndOriginalTitleRankAheadOfProviderOrder() throws Exception
     {
         var results = ForgivingMatchSearch.search("THE u.n.c.l.e.", "movie", gateway(new ArrayList<>(),
             movie(1, "Other"), movie(2, "Translated").put("original_title", "U N C L E")), () -> false);
@@ -57,7 +57,7 @@ public class ForgivingMatchSearchTest
         assertFalse(results.get(1).bestMatch());
     }
 
-    @Test public void allIdentifiersReachTheCorrectReadOnlyProvider()
+    @Test public void allIdentifiersReachTheCorrectReadOnlyProvider() throws Exception
     {
         for (String query : List.of("tt1234567", "tvdb:123", "tmdb:movie:12", "12", "trakt:123", "trakt:movie:dune"))
         {
@@ -69,7 +69,7 @@ public class ForgivingMatchSearchTest
         }
     }
 
-    @Test public void retryIsBoundedAndSingleLetterErrorsRankAboveUnrelatedTitles()
+    @Test public void retryIsBoundedAndSingleLetterErrorsRankAboveUnrelatedTitles() throws Exception
     {
         List<String> calls = new ArrayList<>();
         var result = ForgivingMatchSearch.search("Conclavf", "movie",
@@ -80,7 +80,7 @@ public class ForgivingMatchSearchTest
         assertTrue(ForgivingMatchSearch.variants("U.N.C.L.E.").contains("uncle"));
     }
 
-    @Test public void offlineAndCancelledReturnNoneWithoutMutationOrFurtherRequests()
+    @Test public void offlineAndCancelledReturnNoneWithoutMutationOrFurtherRequests() throws Exception
     {
         List<String> calls = new ArrayList<>();
         assertTrue(ForgivingMatchSearch.search("Dune", "movie", gateway(calls, movie(1, "Dune")),

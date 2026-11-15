@@ -17,7 +17,7 @@ import org.junit.Test;
 @Config(application = Application.class, sdk = 30)
 public class RelatedTitlesTest
 {
-    @Test public void mergeKeepsLibraryFirstAndOnlyVerifiedServicesWithStableIds()
+    @Test public void mergeKeepsLibraryFirstAndOnlyVerifiedServicesWithStableIds() throws Exception
     {
         RelatedTitles.Sources sources = new RelatedTitles.Sources() {
             @Override public JSONArray recommendations() throws Exception

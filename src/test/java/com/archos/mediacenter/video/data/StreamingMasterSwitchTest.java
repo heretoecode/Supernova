@@ -81,18 +81,18 @@ public class StreamingMasterSwitchTest
         }
     }
 
-    @Test public void offDoesNotCallRelatedAvailabilityAndRetainsLocalRecommendations()
+    @Test public void offDoesNotCallRelatedAvailabilityAndRetainsLocalRecommendations() throws Exception
     {
         RelatedTitles.Sources sources = new RelatedTitles.Sources() {
-            @Override public JSONArray recommendations()
+            @Override public JSONArray recommendations() throws Exception
             {
                 return new JSONArray().put(new JSONObject().put("id", 2)).put(new JSONObject().put("id", 3));
             }
-            @Override public JSONArray similar()
+            @Override public JSONArray similar() throws Exception
             {
                 return new JSONArray();
             }
-            @Override public JSONArray traktRelated()
+            @Override public JSONArray traktRelated() throws Exception
             {
                 return new JSONArray();
             }
