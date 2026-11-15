@@ -443,7 +443,8 @@ public final class FilesPage extends LinearLayout
                       connection.name,
                       ConnectionLine.second(scheme, connection.reachable, connection.videos, connection.lastSeenMs,
                                             now),
-                      ConnectionLine.pill(connection.reachable), actions);
+                      // Unknown until reachability is wired: no pill rather than a "Checking…" that never ends.
+                      connection.reachable == null ? null : ConnectionLine.pill(connection.reachable), actions);
         }
         row(column, "plus", "Add a connection", "Computer, NAS, WebDAV, SFTP or FTP", null,
             () -> {
@@ -483,7 +484,7 @@ public final class FilesPage extends LinearLayout
         row.setFocusableInTouchMode(true);
         int pad = SupernovaStyle.dp(context, 20);
         row.setPadding(pad, 0, SupernovaStyle.dp(context, 10), 0);
-        row.setContentDescription(name + ", " + pill);
+        row.setContentDescription(pill == null ? name : name + ", " + pill);
         TextView mark = new TextView(context);
         PreviewIcon.apply(mark, icon, 16);
         row.addView(mark, new LayoutParams(SupernovaStyle.dp(context, 36), -2));
@@ -494,8 +495,9 @@ public final class FilesPage extends LinearLayout
         words.addView(title);
         words.addView(second);
         row.addView(words, new LayoutParams(0, -2, 1));
-        TextView status = text(pill, 13.5f, Color.WHITE);
+        TextView status = text(pill == null ? "" : pill, 13.5f, Color.WHITE);
         status.setGravity(Gravity.CENTER);
+        status.setVisibility(pill == null ? INVISIBLE : VISIBLE);
         row.addView(status, new LayoutParams(SupernovaStyle.dp(context, 95), SupernovaStyle.dp(context, 22)));
         row.addView(new View(context), new LayoutParams(0, 1, 0.4f));
         List<TextView> buttons = new java.util.ArrayList<>();
@@ -506,7 +508,7 @@ public final class FilesPage extends LinearLayout
             title.setTextColor(ink);
             second.setTextColor(inside ? SupernovaStyle.FOCUS_TEXT : SECOND_LINE);
             status.setTextColor(ink);
-            status.setBackground(outline(ink));
+            status.setBackground(pill == null ? null : outline(ink));
             mark.setTextColor(ink);
             SupernovaStyle.tintIcons(mark);
             for (TextView button : buttons)
