@@ -14,6 +14,8 @@ All times local. Coding time only; waiting for the owner or for a blocked build 
 | 15 Nov 07:37– | Resumed: failure report extended to show compile errors; fixes; Recently Added; the minute-by-minute scan cause (failed scans never counted as done) with the 15-minute rule; third build started 07:39. Scan timer skips quietly in the background; memory by kind and page in diagnostics. |
 | 15 Nov 07:42–12:52 | **Not working: the 5-hour usage limit was reached again** (about 5 hours waiting). The third build had failed at 07:51. |
 | 15 Nov 12:52–12:58 | Resumed: test fix, fourth build started 12:54, handover note written for a fresh session. |
-| 15 Nov 13:00– | New session takes over from the handover note. Fourth build still running. Meanwhile: chapter names in the time bubble, stuck scanning pill, reopen where you were, focus after standby, held Down. |
+| 15 Nov 13:00–13:10 | New session takes over from the handover note. Fourth build still running. Meanwhile: chapter names in the time bubble, stuck scanning pill, reopen where you were, focus after standby, held Down. |
+| 15 Nov 13:10–18:10 | **Not working: the session stopped** (about 5 hours; usage limit or a restart of the session). |
+| 15 Nov 18:10– | Resumed. |
 
 Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of coding before the limit is reached.
