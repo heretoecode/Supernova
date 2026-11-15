@@ -1906,6 +1906,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             edge.setStroke(Math.max(1, Math.round(density)), SupernovaStyle.GLASS_EDGE);
             picture.setBackground(edge);
             picture.setClipToOutline(true);
+            // The artwork edge, as on every picture in the app (RULES §14).
+            picture.setForeground(new com.archos.mediacenter.video.leanback.ArtworkEdge(mContext, 8, false));
             parent.addView(picture, new FrameLayout.LayoutParams(width, height, Gravity.TOP | Gravity.START));
         }
         picture.setImageBitmap(frame);
