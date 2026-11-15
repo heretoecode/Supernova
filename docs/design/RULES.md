@@ -255,7 +255,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   subtitles search, everything. Any change or fix is made once, in it, and applies everywhere (owner, 12 Nov). No
   screen builds its own keyboard or its own keyboard focus handling.
 - Layout: number row always shown; lower-case QWERTY; `/` after L; `. @` after M; Shift; `#+=` opens the symbols
-  page (ABC returns); bottom row `#+=` · Voice · Space · Delete · Clear. Forms add Done · Cancel; Search does not.
+  page (ABC returns); bottom row `#+=` · Voice · Space · Delete · Clear · Phone. Forms add Done · Cancel; Search does
+  not. **Phone** opens Android's keyboard on the same box so the phone app can type or paste (owner, 14 Nov; §36);
+  Back or Done returns to these keys. **Password boxes have a show/hide eye** beside the box (owner, 14 Nov).
 - **Focus starts on T** (the most common first letter of film and series titles).
 - **Focus stays on the key you pressed,** however fast you type. Results arriving or the page refreshing never take
   it away (Fix match bug, §27).

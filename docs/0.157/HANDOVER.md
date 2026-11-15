@@ -41,7 +41,8 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   and gains automatic search above 12 items (`ChoiceListSearch`, keyboard beside the list via
   `PreviewTextInput.showLive`); group headings centred on a line in Title Case (`SupernovaStyle.groupHeading`).
   Still to do in R0: Selected A–Z with the glide for multi-choice lists, stacking (list over panel), menu icons/ticks
-  audit, focus-and-path on tabs, artwork edge, move gesture, password eye and phone paste on the keyboard.
+  audit, focus-and-path on tabs, artwork edge, move gesture. Keyboard: Phone key and password eye done (Shield check with the phone app
+  needed; if the phone app appears without Android's keyboard showing, the key could go).
 
 ## In flight
 - Run 4 (12:54): compiled, 10 of 2,145 app tests failing, all fixed. Run 5 (18:12): compile error from a dropped line
