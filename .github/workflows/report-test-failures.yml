@@ -33,6 +33,20 @@ jobs:
           path: evidence
           run-id: ${{ steps.run.outputs.id }}
           github-token: ${{ github.token }}
+      - name: Print compile errors only
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          for path in sorted(pathlib.Path('evidence').rglob('*conformance.log')):
+              lines=path.read_text(errors='replace').splitlines()
+              count=0
+              for i,line in enumerate(lines):
+                  if ' error: ' in line or line.rstrip().endswith('FAILED'):
+                      count+=1
+                      print('::error::'+line.strip()[:400])
+                      for extra in lines[i+1:i+5]: print('    '+extra[:300])
+              print(f'{count} compile error or failed-task lines in {path.name}')
+          PY
       - name: Print failing tests only
         run: |
           python3 - <<'PY'
