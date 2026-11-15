@@ -40,7 +40,7 @@ const cols = [
     ['Features', ['Media Transfers, all of it: copy, checks, resilience, delete after copy, per-series “Bring new '
       + 'episodes”, schedule (docs/0.158/MEDIA_TRANSFERS.md)']],
   ]],
-  ['Later / someday', [
+  ['Parked', [
     ['To discuss', ['Release notes: proper notes for every version (0.156 has two vague lines)']],
     ['Planned', ['Newer NOVA engine stack, as its own version', 'Make the repository private; private Releases page',
       '“Going public” checklist (history, titles, privacy, diagnostics cut back)', 'Supernova’s own TMDB key']],

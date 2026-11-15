@@ -1,6 +1,9 @@
-# To revisit later
+# Parked
 
-Ideas and decisions the owner wants to come back to. Check this list when planning each release.
+Everything parked: ideas and decisions not assigned to any version (the roadmap's **Parked** column). When the owner
+says "park that", it goes here. When something the owner raises matches a parked idea (e.g. colour changes → Themes,
+another person's history → Profiles), it is added to that idea's notes here, so each idea builds up over time.
+Check this list when planning each release.
 Gathered 4 Nov 2026 from this session and the older registers (`docs/Future Development/`, `docs/design/PARKED_FUTURE.md`,
 `docs/archive/early-planning/project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md`, `docs/design/CODEX_WORK_QUEUE_2026-10-27.md`).
 Items already built or scheduled are left out (see the bottom of this file).
@@ -47,7 +50,7 @@ Items already built or scheduled are left out (see the bottom of this file).
 | ID | Idea | Where it stands |
 |---|---|---|
 | FD-004 | Shield Home / Android TV launcher channels (rows on the Shield home screen) | Parked; which rows, consent and on/off controls undecided |
-| FD-011 | Profiles (separate history, Continue Watching, settings per person) | Parked |
+| FD-011 | Profiles (separate history, Continue Watching, settings per person) | Parked; discussion below (15 Nov) |
 | FD-013 | Discovery / Coming Soon page | Parked; Home must not become advertising |
 | FD-016 | Person pages (cast and crew filmographies) | Parked |
 | FD-017 | More than one custom Library Page | Parked; check the current limit when revisiting |
@@ -167,3 +170,20 @@ Removed in 0.157: the owner has never needed it and finds it awkward in other ap
 0.156 had fixed its subtitles and return to full screen (release item 15), so that code is the starting point if it
 is ever wanted back.
 
+
+## Profiles: the owner's use case (15 Nov 2026, discussion)
+- Mostly one person; sometimes watching with a partner; the partner has some titles the owner would not watch.
+- Three kinds of titles: **mine, my partner's, shared**. None walled off: being on one profile must never block
+  watching something together, or reaching the shared titles.
+- Today's folders are just TV and Movies; a partner folder could be added later.
+- Claude's first thoughts: separate the two jobs profiles usually lump together:
+  1. **Whose progress is recorded** (history, Continue Watching, watched ticks, recommendations): per person.
+  2. **What is shown first** (Home rows, library pages): leaning towards each person's titles plus shared, but
+     nothing hidden: everything stays reachable (Search, a filter), no locked libraries.
+- Titles get an owner from their folder (Mine / Partner / Shared), changeable per title.
+- **"Watching together"**: a third choice beside the two people ("Who's watching: Me · Partner · Together"). Together
+  records progress for both people (an episode watched together is ticked for both) and keeps its own Continue
+  Watching for shows you only watch as a pair.
+- Switching should be one press from the top bar, never a full sign-in.
+- Open questions: does Together need its own progress, or just tick both people? Should the partner's titles appear
+  on the owner's Home at all, or only through Search and a filter? PIN or no PIN (probably none)?

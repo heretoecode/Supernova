@@ -22,7 +22,10 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 4. `docs/0.155/OWNER_NOTES.md` — the owner's reports, numbered, with each decision and approval.
 5. GitHub Issues (milestone `0.156`, labels below) — one issue per item.
 6. `docs/codex/HANDOVER.md` and `docs/codex/HANDS_OFF.txt` — what Codex is doing and which files are whose.
-7. `docs/REVISIT_LATER.md` — parked ideas and decisions deferred by the owner.
+7. `docs/REVISIT_LATER.md` — **Parked**: every idea not assigned to a version (the roadmap's Parked column). "Park
+   that" adds to it; anything the owner raises that matches a parked idea is added to that idea's notes.
+8. `docs/0.157/board/version-board.png` (script beside it) — the **roadmap**: Undecided · 0.157 · 0.158 · Parked. Keep it
+   current whenever something moves.
 
 ## How the owner works
 
