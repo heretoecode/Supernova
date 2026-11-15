@@ -1072,10 +1072,10 @@ public final class PreviewMoviePage extends ScrollView {
                         break;
                     }
         }
+        // Title line under the logo, the same as the player (owner, 12 Nov 2026; notes §29):
+        // "Season 2" or "Season 2 · Episode 8 · We Don't Talk Anymore".
         context.setText(seasonNumber >= 0 ? "Season " + seasonNumber
-                        : selectedEpisode == null
-                            ? ""
-                            : "S" + selectedEpisode.getSeasonNumber() + " E" + selectedEpisode.getEpisodeNumber());
+                        : selectedEpisode == null ? "" : episodeTitleLine(selectedEpisode));
         context.setVisibility(selectedEpisode == null && seasonNumber < 0 ? GONE : VISIBLE);
         int year = movie instanceof Movie ? ((Movie)movie).getYear() : show != null ? show.getYear() : 0;
         if (selectedEpisode != null)
@@ -1609,6 +1609,12 @@ public final class PreviewMoviePage extends ScrollView {
                     return (Action)item;
             }
         return null;
+    }
+
+    static String episodeTitleLine(Episode episode) {
+        String line = "Season " + episode.getSeasonNumber() + " · Episode " + episode.getEpisodeNumber();
+        String name = episode.getEpisodeName();
+        return name == null || name.trim().isEmpty() ? line : line + " · " + name.trim();
     }
 
     private void pill(String value) {
