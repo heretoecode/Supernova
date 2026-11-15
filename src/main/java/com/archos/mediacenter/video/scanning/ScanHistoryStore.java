@@ -6,10 +6,17 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Worker-owned bounded history. The published immutable list can be read without disk access. */
+/**
+ * Worker-owned bounded history. The published immutable list can be read without disk access.
+ * Scans finish in more than one process, so every write holds a file lock and starts from what is on disk; a file
+ * that cannot be read is reported once and set aside, so the next scan starts a clean history.
+ */
 final class ScanHistoryStore
 {
     private static final int VERSION = 1;
@@ -29,8 +36,24 @@ final class ScanHistoryStore
 
     void load() throws IOException
     {
+        try
+        {
+            List<ScanProgress> loaded = read();
+            if (loaded != null)
+                recent = loaded;
+        }
+        catch (IOException unreadable)
+        {
+            setAside();
+            throw unreadable;
+        }
+    }
+
+    /** Null when there is no history yet. */
+    private List<ScanProgress> read() throws IOException
+    {
         if (!file.getBaseFile().exists() && !new File(file.getBaseFile() + ".bak").exists())
-            return;
+            return null;
         try (DataInputStream input = new DataInputStream(file.openRead()))
         {
             if (input.readInt() != VERSION)
@@ -61,7 +84,7 @@ final class ScanHistoryStore
             }
             if (input.read() != -1)
                 throw new IOException("Trailing scan history data");
-            recent = List.copyOf(loaded);
+            return List.copyOf(loaded);
         }
     }
 
@@ -69,7 +92,44 @@ final class ScanHistoryStore
     {
         if (value.running)
             throw new IllegalArgumentException("Only finished scans belong in history");
-        List<ScanProgress> next = new ArrayList<>(recent);
+        File lockLocation = new File(file.getBaseFile().getPath() + ".lock");
+        try (RandomAccessFile lockFile = new RandomAccessFile(lockLocation, "rw");
+             FileChannel channel = lockFile.getChannel();
+             FileLock lock = channel.lock())
+        {
+            write(value, current());
+        }
+    }
+
+    /** What is on disk now (another process may have added to it), or the published list when unreadable. */
+    private List<ScanProgress> current()
+    {
+        try
+        {
+            List<ScanProgress> onDisk = read();
+            if (onDisk != null)
+                return onDisk;
+        }
+        catch (IOException unreadable)
+        {
+            setAside();
+        }
+        return recent;
+    }
+
+    private void setAside()
+    {
+        File base = file.getBaseFile();
+        File aside = new File(base.getPath() + ".unreadable");
+        if (aside.exists() && !aside.delete())
+            return;
+        if (base.exists() && !base.renameTo(aside))
+            file.delete();
+    }
+
+    private void write(ScanProgress value, List<ScanProgress> previous) throws IOException
+    {
+        List<ScanProgress> next = new ArrayList<>(previous);
         next.add(0, value);
         if (next.size() > LIMIT)
             next.subList(LIMIT, next.size()).clear();

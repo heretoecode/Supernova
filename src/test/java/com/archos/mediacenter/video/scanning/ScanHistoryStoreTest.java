@@ -67,4 +67,35 @@ public class ScanHistoryStoreTest
         assertThrows(IOException.class, store::load);
         assertEquals("job-1", store.recent().get(0).batchId);
     }
+
+    @Test public void unreadableHistoryIsSetAsideSoTheNextScanStartsClean() throws Exception
+    {
+        File location = temporary.newFile();
+        try (FileOutputStream corrupt = new FileOutputStream(location))
+        {
+            corrupt.write(new byte[] {0, 0, 0, 1, 0, 0, 0, 1, 0, 9});
+        }
+        ScanHistoryStore store = new ScanHistoryStore(location);
+        assertThrows(IOException.class, store::load);
+        store.append(row(2, ScanProgress.Failure.NONE));
+        ScanHistoryStore restarted = new ScanHistoryStore(location);
+        restarted.load();
+        assertEquals(1, restarted.recent().size());
+        assertEquals("job-2", restarted.recent().get(0).batchId);
+    }
+
+    @Test public void scansFinishedInTwoProcessesAreBothKept() throws Exception
+    {
+        File location = temporary.newFile();
+        assertTrue(location.delete());
+        ScanHistoryStore first = new ScanHistoryStore(location);
+        ScanHistoryStore second = new ScanHistoryStore(location);
+        first.append(row(1, ScanProgress.Failure.NONE));
+        second.append(row(2, ScanProgress.Failure.NONE));
+        ScanHistoryStore restarted = new ScanHistoryStore(location);
+        restarted.load();
+        assertEquals(2, restarted.recent().size());
+        assertEquals("job-2", restarted.recent().get(0).batchId);
+        assertEquals("job-1", restarted.recent().get(1).batchId);
+    }
 }
