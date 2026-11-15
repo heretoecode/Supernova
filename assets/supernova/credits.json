@@ -1829,14 +1829,14 @@
     {
       "id": "module:MediaLib",
       "name": "MediaLib",
-      "version": "61e306d1c7ac33cec1cbe877fdbfb8453c33bfd0",
+      "version": "5758074049bc153ac4967b4ecd21886469270076",
       "licence": "Apache-2.0",
       "url": "https://github.com/heretoecode/aos-MediaLib",
       "role": "Library, scraper and media database.",
       "source": ".github/build/nova-ci.xml",
       "text_asset": "foundation/legal/nova-archos-and-local-modules.txt",
       "text_sha256": "a30bcc79b65b3c1c15c9828dcca9ed194424411ecf25989fec567fb422225d2d",
-      "licence_source": "https://github.com/heretoecode/aos-MediaLib/blob/61e306d1c7ac33cec1cbe877fdbfb8453c33bfd0/LICENSE.txt"
+      "licence_source": "https://github.com/heretoecode/aos-MediaLib/blob/5758074049bc153ac4967b4ecd21886469270076/LICENSE.txt"
     },
     {
       "id": "module:FileCoreLibrary",

@@ -240,6 +240,60 @@
       "module": "FileCoreLibrary",
       "path": ".github/build/filecore-supernova156-screen-connections.patch",
       "sha256": "59f4830cac8e56c562ea01755c77b0c54db9754aa2940d37cc2d8e7e0e3ca2b9"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-connection-removal.patch",
+      "sha256": "8fb99c247ab76b6c3f00db99b97e0b37ccc00310c8fa4271092b263ac4420cc4"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-source-scan.patch",
+      "sha256": "a40f354c7365ef8deb11598fc13d79d13e9ab69257d779df26dd5fa936f8de95"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-find-everywhere.patch",
+      "sha256": "b07040e60af48e5c5d435decb6e7a89cd63cc6ca2d9ef55436e742866c49b743"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-import-state.patch",
+      "sha256": "db3bd001612ab39a08efe26c8341f3f1c7253a338ab2ea895de5cbfd709826fb"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-library-ownership.patch",
+      "sha256": "1c7a67b9efb5c2f81c338cf33a9375f5147d569717b98409f5d9a1bd9ff46b7f"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova157-owned-observations.patch",
+      "sha256": "0769ed88d3c9dcfbd629adfced121aee3ca761f1586b4ba8af362cbe330039bb"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-retriever-headers.patch",
+      "sha256": "74bd7ffac20e122d5bfdb8b3add3f0cf497f2714c1e894bad7840bcec6daee3c"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-nova665.patch",
+      "sha256": "88e75042b8819d32fdb54c943b23d5b812beb601ed516596f4ce95b212cc097a"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova157-nova665.patch",
+      "sha256": "b2841db1729fdeb5964bc5f4904569e24102aee005029193a1d6a221963e3793"
     }
   ],
   "supernova155": {
@@ -247,5 +301,8 @@
   },
   "supernova156": {
     "note": "0.156: Codex Parts A-D and B17a MediaLib/FileCore changes, applied in hand-back order (docs/codex/HANDOVER.md); verified to apply cleanly on the pinned sources 5 Nov 2026."
+  },
+  "supernova157": {
+    "note": "0.157: Codex continuation patches (six Java registrations from docs/codex/reports/2026-11-06-0157.md, in its order), then the seek-preview retriever fix and the TV-relevant NOVA 6.6.5+ changes (matching by file name, SMB share credentials, Trakt list paging and 64-bit ids, messenger folders; Samba discovery start result, network initialisation priority). Not carried: import notification change, Dolby Vision colour-fallback metadata key (clashes with this engine's keys), dependency bumps. The two native avos 0.157 patches wait for a new reviewed engine archive."
   }
 }

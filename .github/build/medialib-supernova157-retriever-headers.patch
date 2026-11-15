@@ -1,0 +1,47 @@
+diff --git a/src/com/archos/medialib/AndroidMediaMetadataRetriever.java b/src/com/archos/medialib/AndroidMediaMetadataRetriever.java
+index 4d17b14..db13ace 100644
+--- a/src/com/archos/medialib/AndroidMediaMetadataRetriever.java
++++ b/src/com/archos/medialib/AndroidMediaMetadataRetriever.java
+@@ -21,6 +21,7 @@ import android.net.Uri;
+ import android.os.Build;
+ import java.io.FileDescriptor;
+ import java.io.IOException;
++import java.util.Collections;
+ import java.util.Map;
+ 
+ /** Platform sync-frame extraction through the existing per-retriever FileCore/UPnP stream proxy. */
+@@ -101,12 +102,33 @@ public class AndroidMediaMetadataRetriever implements IMediaMetadataRetriever
+                 replaceProxy(Proxy.setDataSource(Uri.parse(uri), this, headers));
+             else
+             {
+-                mRetriever.setDataSource(uri, headers);
++                setPlatformSource(uri, headers);
+                 replaceProxy(null);
+             }
+         }
+     }
+ 
++    /**
++     * Android's URL form dereferences the headers map, and its path form is the only one that opens a plain file.
++     * Callers (the streaming proxies, the path overload) pass no headers, which made every seek preview fail with
++     * "Map.size() on a null object reference".
++     */
++    private void setPlatformSource(String uri, Map<String, String> headers)
++    {
++        if (headers != null)
++        {
++            mRetriever.setDataSource(uri, headers);
++            return;
++        }
++        String scheme = Uri.parse(uri).getScheme();
++        if (scheme == null || "file".equalsIgnoreCase(scheme))
++        {
++            mRetriever.setDataSource("file".equalsIgnoreCase(scheme) ? Uri.parse(uri).getPath() : uri);
++            return;
++        }
++        mRetriever.setDataSource(uri, Collections.<String, String>emptyMap());
++    }
++
+     public void setDataSource(FileDescriptor descriptor, long offset, long length)
+     {
+         synchronized (sourceLock)

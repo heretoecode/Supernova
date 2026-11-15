@@ -1,0 +1,770 @@
+diff --git a/src/com/archos/mediacenter/utils/trakt/Trakt.java b/src/com/archos/mediacenter/utils/trakt/Trakt.java
+index 2fad034..7a5b611 100644
+--- a/src/com/archos/mediacenter/utils/trakt/Trakt.java
++++ b/src/com/archos/mediacenter/utils/trakt/Trakt.java
+@@ -36,7 +36,7 @@ import com.uwetrottmann.trakt5.entities.BaseMovie;
+ import com.uwetrottmann.trakt5.entities.BaseShow;
+ import com.uwetrottmann.trakt5.entities.EpisodeIds;
+ import com.uwetrottmann.trakt5.entities.HistoryEntry;
+-import com.uwetrottmann.trakt5.entities.LastActivities;
++import com.uwetrottmann.trakt5.entities.LastActivities2;
+ import com.uwetrottmann.trakt5.entities.ListEntry;
+ import com.uwetrottmann.trakt5.entities.MovieIds;
+ import com.uwetrottmann.trakt5.entities.PlaybackResponse;
+@@ -958,10 +958,9 @@ public class Trakt {
+         return handleRet(null, null, result, ObjectType.MOVIES);
+     }
+ 
+-    @SuppressWarnings("deprecation") // Trakt v2 lastActivities API
+     public Result getLastActivity(int trial) {
+         if (log.isDebugEnabled()) log.debug("getLastActivity");
+-        LastActivities ret = exec(mTraktV2.sync().lastActivities());
++        LastActivities2 ret = exec(mTraktV2.sync().lastActivities2());
+         if(ret == null)
+             return handleRet(null, mLastExecException != null ? mLastExecException : new Exception(), null, ObjectType.NULL);
+         return handleRet(null, null, ret, ObjectType.LAST_ACTIVITY);
+@@ -994,16 +993,22 @@ public class Trakt {
+          */
+     }
+ 
+-    @SuppressWarnings("deprecation") // Trakt v2 users().lists API
+     public Result getLists(int trial) {
+         if (log.isDebugEnabled()) log.debug("getLists");
+-        List<TraktList> lists = exec(mTraktV2.users().lists(UserSlug.ME));
+-        if (lists == null)
+-            return handleRet(null, mLastExecException != null ? mLastExecException : new Exception(), null, ObjectType.NULL);
+-        return handleRet(null, null, lists, ObjectType.LIST);
++        List<TraktList> result = new ArrayList<>();
++        int page = 1;
++        while (true) {
++            List<TraktList> pageData = exec(mTraktV2.users().lists(UserSlug.ME, page, PAGE_LIMIT, null));
++            if (pageData == null)
++                return handleRet(null, mLastExecException != null ? mLastExecException : new Exception(), null, ObjectType.NULL);
++            result.addAll(pageData);
++            if (pageData.size() < PAGE_LIMIT) break;
++            page++;
++        }
++        return handleRet(null, null, result, ObjectType.LIST);
+     }
+ 
+-    public Result getListContent(int trial, int listId) {
++    public Result getListContent(int trial, long listId) {
+         if (log.isDebugEnabled()) log.debug("getListContent");
+         List<ListEntry> result = new ArrayList<>();
+         String id = String.valueOf(listId);
+@@ -1019,7 +1024,7 @@ public class Trakt {
+         return handleRet(null, null, result, ObjectType.LIST);
+     }
+ 
+-    public Result removeVideoFromList(int trial, int listId, ListEntry onlineItem) {
++    public Result removeVideoFromList(int trial, long listId, ListEntry onlineItem) {
+         if (log.isDebugEnabled()) log.debug("removeVideoFromLit");
+         SyncItems syncItems = new SyncItems();
+         if(onlineItem.episode!=null) {
+@@ -1040,7 +1045,7 @@ public class Trakt {
+             return handleRet(null, mLastExecException != null ? mLastExecException : new Exception(), null, ObjectType.NULL);
+     }
+ 
+-    public Result addVideoToList(int trial, int listId, VideoStore.VideoList.VideoItem videoItem) {
++    public Result addVideoToList(int trial, long listId, VideoStore.VideoList.VideoItem videoItem) {
+         if (log.isDebugEnabled()) log.debug("addVideoToList");
+         SyncResponse ret = null;
+         if (videoItem.episodeId > 0) {
+diff --git a/src/com/archos/mediacenter/utils/trakt/TraktService.java b/src/com/archos/mediacenter/utils/trakt/TraktService.java
+index 933b9b8..1cc62c9 100644
+--- a/src/com/archos/mediacenter/utils/trakt/TraktService.java
++++ b/src/com/archos/mediacenter/utils/trakt/TraktService.java
+@@ -57,7 +57,7 @@ import com.uwetrottmann.trakt5.entities.BaseShow;
+ import com.uwetrottmann.trakt5.entities.EpisodeIds;
+ import com.uwetrottmann.trakt5.entities.GenericProgress;
+ import com.uwetrottmann.trakt5.entities.HistoryEntry;
+-import com.uwetrottmann.trakt5.entities.LastActivities;
++import com.uwetrottmann.trakt5.entities.LastActivities2;
+ import com.uwetrottmann.trakt5.entities.ListEntry;
+ import com.uwetrottmann.trakt5.entities.MovieIds;
+ import com.uwetrottmann.trakt5.entities.PlaybackResponse;
+@@ -1579,7 +1579,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+         if (log.isDebugEnabled()) log.debug("getFlagsFromTraktLastActivity: getLastActivity input is flag={}, movieTime={}, showTime={}", flag, movieTime, showTime);
+         if (result != null && result.status == Trakt.Status.SUCCESS &&
+                 result.objType == Trakt.Result.ObjectType.LAST_ACTIVITY) {
+-            LastActivities lastActivity = (LastActivities) result.obj;
++            LastActivities2 lastActivity = (LastActivities2) result.obj;
+             if (log.isDebugEnabled()) log.debug("lastActivity: movie: {} vs {}", lastActivity.movies.watched_at.toEpochSecond(), movieTime);
+             if (lastActivity.movies.watched_at.toEpochSecond()> movieTime) { // new fully watched videos more recent than last sync movies
+                 if (log.isDebugEnabled()) log.debug("getFlagsFromTraktLastActivity: new activity watched on movies on trakt side detected");
+@@ -1852,7 +1852,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+             int syncStatusCol = cursor.getColumnIndex(VideoStore.List.Columns.SYNC_STATUS);
+             int idCol = cursor.getColumnIndex(VideoStore.List.Columns.ID);
+             while(cursor.moveToNext()){
+-                localLists.add(new VideoStore.List.ListObj(cursor.getInt(idCol), cursor.getString(titleCol), cursor.getInt(traktIdCol), cursor.getInt(syncStatusCol)));
++                localLists.add(new VideoStore.List.ListObj(cursor.getInt(idCol), cursor.getString(titleCol), cursor.getLong(traktIdCol), cursor.getInt(syncStatusCol)));
+             }
+         }
+         cursor.close();
+@@ -1951,7 +1951,7 @@ public class TraktService extends Service implements DefaultLifecycleObserver {
+             int listIdCol = cursor.getColumnIndex(VideoStore.List.Columns.ID);
+             int syncStatusCol = cursor.getColumnIndex(VideoStore.List.Columns.SYNC_STATUS);
+             while(cursor.moveToNext()){
+-                int traktId = cursor.getInt(traktIdCol);
++                long traktId = cursor.getLong(traktIdCol);
+                 int localId = cursor.getInt(listIdCol);
+                 if(traktId>0){
+                     Uri listUri = VideoStore.List.getListUri(localId);
+diff --git a/src/com/archos/mediaprovider/IMediaRetrieverService.aidl b/src/com/archos/mediaprovider/IMediaRetrieverService.aidl
+index 5ec526b..967c0e1 100644
+--- a/src/com/archos/mediaprovider/IMediaRetrieverService.aidl
++++ b/src/com/archos/mediaprovider/IMediaRetrieverService.aidl
+@@ -19,4 +19,5 @@ import com.archos.medialib.MediaMetadata;
+ interface IMediaRetrieverService
+ {
+     com.archos.medialib.MediaMetadata getMetadata(String path);
++    com.archos.medialib.MediaMetadata getMetadataWithNameResolution(String path, String shareName, String shareIp);
+ }
+diff --git a/src/com/archos/mediaprovider/MediaRetrieverService.java b/src/com/archos/mediaprovider/MediaRetrieverService.java
+index 3c3fbd0..0cae551 100644
+--- a/src/com/archos/mediaprovider/MediaRetrieverService.java
++++ b/src/com/archos/mediaprovider/MediaRetrieverService.java
+@@ -22,6 +22,7 @@ import android.os.Looper;
+ import android.os.Message;
+ import android.util.Log;
+ 
++import com.archos.filecorelibrary.samba.SambaDiscovery;
+ import com.archos.medialib.IMediaMetadataRetriever;
+ import com.archos.medialib.MediaFactory;
+ import com.archos.medialib.MediaMetadata;
+@@ -65,6 +66,14 @@ public class MediaRetrieverService extends Service {
+         public MediaMetadata getMetadata(String path) {
+             return MediaRetrieverService.this.getMetadata(path);
+         }
++
++        public MediaMetadata getMetadataWithNameResolution(String path, String shareName, String shareIp) {
++            // This process does not run Samba discovery (see CustomApplication). Register the
++            // mapping provided by the main process so the original share-name URI can still be
++            // resolved to an IP internally, while credentials keep matching that same URI.
++            SambaDiscovery.registerShareNameIP(shareName, shareIp);
++            return MediaRetrieverService.this.getMetadata(path);
++        }
+     };
+ 
+     @Override
+diff --git a/src/com/archos/mediaprovider/MediaRetrieverServiceClient.java b/src/com/archos/mediaprovider/MediaRetrieverServiceClient.java
+index 1720075..df5cb30 100644
+--- a/src/com/archos/mediaprovider/MediaRetrieverServiceClient.java
++++ b/src/com/archos/mediaprovider/MediaRetrieverServiceClient.java
+@@ -121,6 +121,15 @@ public class MediaRetrieverServiceClient {
+      */
+     public MediaMetadata getMetadata(String path) throws InterruptedException,
+             ServiceManagementException, RemoteException {
++        return getMetadata(path, null, null);
++    }
++
++    /**
++     * Same as {@link #getMetadata(String)} but passes a share name -> IP mapping to the service
++     * so the original URI (and therefore its credentials) is preserved.
++     */
++    public MediaMetadata getMetadata(String path, String shareName, String shareIp)
++            throws InterruptedException, ServiceManagementException, RemoteException {
+ 
+         // this method can not be called from the main thread or it would ANR
+         assertWorkerThread();
+@@ -155,6 +164,9 @@ public class MediaRetrieverServiceClient {
+             // there is still a chance that we're calling the method while we unbind from the
+             // service. No idea what exactly happens then.
+             try {
++                if (shareName != null && shareIp != null) {
++                    return delegate.getMetadataWithNameResolution(path, shareName, shareIp);
++                }
+                 return delegate.getMetadata(path);
+             } catch (RemoteException e) {
+                 if (DBG) Log.d(TAG, "getMetadata KILLED service");
+diff --git a/src/com/archos/mediaprovider/video/Blacklist.java b/src/com/archos/mediaprovider/video/Blacklist.java
+index f4ef691..5bf1a09 100644
+--- a/src/com/archos/mediaprovider/video/Blacklist.java
++++ b/src/com/archos/mediaprovider/video/Blacklist.java
+@@ -66,17 +66,25 @@ public class Blacklist {
+     };
+ 
+     private static final String[] BLACKLISTED_CAM_DIRS = {
+-            "/com.whatsapp", "/WhatsApp", "/Android/media/com.whatsapp",
++            "/Telegram", "/Android/media/org.telegram.messenger",
++            "/com.whatsapp", "/WhatsApp", "/Android/media/com.whatsapp", "/Android/media/com.whatsapp.w4b",
++            "/Android/media/com.instagram.android",
++            "/Android/media/com.Slack",
++            "/Android/media/org.thunderdog.challegram",
++            "/Android/media/com.snapchat.android",
++            "/Android/media/com.facebook.katana", "/Android/media/com.facebook.orca",
++            "/Android/media/com.twitter.android", "/Android/media/com.discord",
++            "/Android/media/com.viber.voip", "/viber",
+             "/Android/data",
+             //"/Android/data/org.courville.nova",
+             "/DCIM", "/Camera",
+             "/GooglePlus",
+             "/Allo", "/Pictures",
+-            "/Snapchat", "/Telegram",
++            "/Snapchat",
+             "/com.facebook.katana",
+             "/com.facebook.orca",
+             "/Movies/Instagram", "/Movies/Messenger",
+-            "/Movies/Twitter", "/tencent",
++            "/Movies/Twitter", "/tencent", "/Tencent",
+             "/Android/media/com.zhiliaoapp.musically",
+             "/tiktok",
+             "/DCIM/TikTok",
+diff --git a/src/com/archos/mediaprovider/video/VideoStore.java b/src/com/archos/mediaprovider/video/VideoStore.java
+index 3cb9a9e..d422cd2 100644
+--- a/src/com/archos/mediaprovider/video/VideoStore.java
++++ b/src/com/archos/mediaprovider/video/VideoStore.java
+@@ -692,15 +692,15 @@ public final class VideoStore {
+ 
+         public static class ListObj {
+             public String title;
+-            public int traktId;
++            public long traktId;
+             public int syncStatus = SyncStatus.STATUS_NOT_SYNC;
+             public int id;
+ 
+-            public ListObj(String title, int traktId, int syncStatus){
++            public ListObj(String title, long traktId, int syncStatus){
+                 this(-1, title, traktId, syncStatus);
+             }
+ 
+-            public ListObj(int id, String title, int traktId, int syncStatus){
++            public ListObj(int id, String title, long traktId, int syncStatus){
+                 this.id = id;
+                 this.title = title;
+                 this.traktId = traktId;
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+index 861aeae..d51b63e 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -36,6 +36,7 @@ import android.text.TextUtils;
+ 
+ import com.archos.filecorelibrary.ExtStorageManager;
+ import com.archos.filecorelibrary.FileEditor;
++import com.archos.filecorelibrary.samba.SambaDiscovery;
+ import com.archos.mediacenter.filecoreextension.upnp2.FileEditorFactoryWithUpnp;
+ import com.archos.mediacenter.utils.trakt.TraktService;
+ import com.archos.medialib.IMediaMetadataRetriever;
+@@ -1619,11 +1620,20 @@ public class VideoStoreImportImpl
+     private MediaMetadata getMetadata(String path)
+         throws RemoteException, InterruptedException, MediaRetrieverServiceClient.ServiceManagementException
+     {
++        String shareName = null;
++        String shareIp = null;
+         if (path.startsWith("file://"))
+         {
+             path = path.substring("file://".length()); //we need to remove "file://"
+-        }
+-        return mMediaRetrieverServiceClient.getMetadata(path);
++        } else if (path.startsWith("smb://")) {
++            // MediaRetrieverService runs in the :scanner process, which does not run Samba
++            // discovery anymore. Pass the mapping separately: the service registers it in its
++            // own resolver, while the original share-name URI keeps matching its credentials.
++            Uri uri = Uri.parse(path);
++            shareName = uri.getHost();
++            shareIp = SambaDiscovery.getIpFromShareName(shareName);
++        }
++        return mMediaRetrieverServiceClient.getMetadata(path, shareName, shareIp);
+     }
+ 
+     /** creates ContentValues via MediaRetrieverService, can't be null */
+diff --git a/src/com/archos/mediascraper/AutoScrapeService.java b/src/com/archos/mediascraper/AutoScrapeService.java
+index 0369bf2..f415e6b 100644
+--- a/src/com/archos/mediascraper/AutoScrapeService.java
++++ b/src/com/archos/mediascraper/AutoScrapeService.java
+@@ -1192,9 +1192,6 @@ public class AutoScrapeService extends Service implements DefaultLifecycleObserv
+                                     cursor.getString(cursor.getColumnIndexOrThrow(VideoStore.MediaColumns.TITLE));
+                                 Uri fileUri = Uri.parse(
+                                     cursor.getString(cursor.getColumnIndexOrThrow(VideoStore.MediaColumns.DATA)));
+-                                Uri scrapUri = title == null || title.isEmpty() || title.equalsIgnoreCase("null")
+-                                                   ? fileUri
+-                                                   : Uri.parse("/" + title + ".mp4");
+ 
+                                 //This get the info to reparse for UPNP, and grab the correct details.
+                                 boolean reparseInfo = fileUri.toString().toLowerCase().startsWith("upnp");
+@@ -1365,8 +1362,11 @@ public class AutoScrapeService extends Service implements DefaultLifecycleObserv
+                                     {
+                                         if (log.isTraceEnabled())
+                                             log.trace("startScraping: searching online " + title);
+-                                        SearchInfo searchInfo =
+-                                            SearchPreprocessor.instance().parseFileBased(fileUri, scrapUri);
++                                        // The file name and folder identify the video; the title stored inside
++                                        // the file (often an episode or localised title) is only a fallback for
++                                        // meaningless names. Trusting it first caused wrong matches.
++                                        SearchInfo searchInfo = SearchPreprocessor.instance()
++                                            .parseFileBasedWithTitleFallback(fileUri, title);
+                                         if (reparseInfo)
+                                             searchInfo.setForceReParse(true);
+                                         Scraper scraper = new Scraper(AutoScrapeService.this);
+diff --git a/src/com/archos/mediascraper/preprocess/MovieDefaultMatcher.java b/src/com/archos/mediascraper/preprocess/MovieDefaultMatcher.java
+index 29bbddd..4c2b952 100644
+--- a/src/com/archos/mediascraper/preprocess/MovieDefaultMatcher.java
++++ b/src/com/archos/mediascraper/preprocess/MovieDefaultMatcher.java
+@@ -25,7 +25,6 @@ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ 
+ import java.util.Calendar;
+-import java.util.regex.Pattern;
+ 
+ import static com.archos.mediascraper.preprocess.ParseUtils.BRACKETS;
+ import static com.archos.mediascraper.preprocess.ParseUtils.extractYearAnywhere;
+@@ -73,11 +72,9 @@ class MovieDefaultMatcher implements InputMatcher {
+         return getMatch(userInput, file);
+     }
+ 
+-    private static final Pattern KNOWN_EXTENSIONS = Pattern.compile("\\.(mkv|avi|mp4|mov|wmv|flv|mpg|mpeg|vob|asf|divx|f4v|ts|m2ts|m4v|webm|ogv|3gp)$", Pattern.CASE_INSENSITIVE);
+-
+     private static SearchInfo getMatch(String input, Uri file) {
+         // Strip known video extensions (input may still have one from getUserInputMatch or tests)
+-        String name = KNOWN_EXTENSIONS.matcher(input).replaceFirst("");
++        String name = ParseUtils.stripVideoExtension(input);
+         if (log.isDebugEnabled()) log.debug("getMatch input: {}", name);
+         final int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+ 
+diff --git a/src/com/archos/mediascraper/preprocess/ParseUtils.java b/src/com/archos/mediascraper/preprocess/ParseUtils.java
+index 4df26c1..73fcd6b 100644
+--- a/src/com/archos/mediascraper/preprocess/ParseUtils.java
++++ b/src/com/archos/mediascraper/preprocess/ParseUtils.java
+@@ -35,6 +35,22 @@ public class ParseUtils {
+ 
+     private static final Logger log = LoggerFactory.getLogger(ParseUtils.class);
+ 
++    // Scraper title suffixes, shared by filename detection and title cleanup. This is not
++    // the broader playback/MIME registry or the list of release-name garbage tokens.
++    private static final Pattern VIDEO_EXTENSION = Pattern.compile(
++            "\\.(mkv|avi|mp4|mov|wmv|flv|mpg|mpeg|vob|asf|divx|f4v|ts|m2ts|m4v|webm|ogv|3gp)$",
++            Pattern.CASE_INSENSITIVE);
++
++    static boolean hasVideoExtension(String name) {
++        if (name == null) return false;
++        Matcher matcher = VIDEO_EXTENSION.matcher(name);
++        return matcher.find() && matcher.start() > 0 && matcher.end() == name.length();
++    }
++
++    static String stripVideoExtension(String name) {
++        return VIDEO_EXTENSION.matcher(name).replaceFirst("");
++    }
++
+     /* ( whitespace | punctuation)+, matches dots, spaces, brackets etc */
+     private static final String NON_CHARACTER_SEPARATOR = "[\\s\\p{Punct}&&[^']]+";
+     private static final Pattern MULTI_NON_CHARACTER_PATTERN = Pattern.compile(NON_CHARACTER_SEPARATOR);
+diff --git a/src/com/archos/mediascraper/preprocess/SearchInfo.java b/src/com/archos/mediascraper/preprocess/SearchInfo.java
+index 1c07db6..725e062 100644
+--- a/src/com/archos/mediascraper/preprocess/SearchInfo.java
++++ b/src/com/archos/mediascraper/preprocess/SearchInfo.java
+@@ -48,6 +48,12 @@ public abstract class SearchInfo {
+      * produces confident-looking wrong results (see MediaLib/doc/scraper_improvements.md).
+      */
+     public boolean skipScraping = false;
++    /**
++     * Set by {@link SearchPreprocessor} when the winning matcher was the catch-all
++     * {@code MovieDefaultMatcher} (or no matcher matched at all). This also includes readable
++     * movie names; it is not by itself evidence that a metadata-title retry is appropriate.
++     */
++    private boolean mFallbackMatch = false;
+     private Uri mOriginalUri = null;
+ 
+     /** package private so outside can't construct these */
+@@ -66,6 +72,18 @@ public abstract class SearchInfo {
+ 
+     }
+ 
++    final void setFallbackMatch(boolean fallbackMatch) {
++        mFallbackMatch = fallbackMatch;
++    }
++
++    /**
++     * @return true when the parse only reached the catch-all default matcher, i.e. the input had
++     * no recognizable TV-show or scene movie structure.
++     */
++    public final boolean isFallbackMatch() {
++        return mFallbackMatch;
++    }
++
+     protected final String getUserInput() {
+         return mUserInput;
+     }
+diff --git a/src/com/archos/mediascraper/preprocess/SearchPreprocessor.java b/src/com/archos/mediascraper/preprocess/SearchPreprocessor.java
+index c009efe..d29f284 100644
+--- a/src/com/archos/mediascraper/preprocess/SearchPreprocessor.java
++++ b/src/com/archos/mediascraper/preprocess/SearchPreprocessor.java
+@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.Locale;
++import java.util.regex.Pattern;
+ 
+ public class SearchPreprocessor {
+     private static final Logger log = LoggerFactory.getLogger(SearchPreprocessor.class);
+@@ -60,8 +62,16 @@ public class SearchPreprocessor {
+      * @return Either {@link MovieSearchInfo} or {@link TvShowSearchInfo}
+      */
+     public SearchInfo parseFileBased(Uri uri, Uri simplifiedUri) {
++        return parseFileBased(uri, simplifiedUri, false);
++    }
++
++    private SearchInfo parseFileBased(Uri uri, Uri simplifiedUri, boolean obfuscatedName) {
+         String candidate = FileUtils.getFileNameWithoutExtension(uri);
+         for (InputMatcher matcher : PARSERS) {
++            // UUID fragments such as "-e29" can look like episode markers. Still allow
++            // release-folder/movie-folder detection, which does not depend on the basename.
++            if (obfuscatedName && (matcher == TvShowMatcher.instance()
++                    || matcher instanceof TvShowPathMatcher || matcher instanceof MovieSceneMatcher)) continue;
+             if (log.isDebugEnabled()) log.debug("parseFileBased: trying parser {} for {} derived from uri {} and simplifiedUri {}",
+                     matcher.getMatcherName(), candidate,
+                     (uri != null) ? uri.getPath() : null,
+@@ -78,6 +88,7 @@ public class SearchPreprocessor {
+                 if (log.isDebugEnabled()) log.debug("parseFileBased: result from {} for {} -> {}",
+                         matcher.getMatcherName(), candidate, result.getSearchSuggestion());
+                 result = reParseInfo(result);
++                result.setFallbackMatch(matcher instanceof MovieDefaultMatcher);
+                 if (ParseUtils.isNonScrapableFolder(uri) || ParseUtils.isNonScrapableFolder(simplifiedUri)) {
+                     if (log.isDebugEnabled()) log.debug("parseFileBased: {} is in a bonus/extras folder, marking skipScraping", candidate);
+                     result.skipScraping = true;
+@@ -87,7 +98,80 @@ public class SearchPreprocessor {
+         }
+         // default to something - should not happen
+         log.error("parseFileBased: parse error, no matcher for {}", candidate);
+-        return new MovieSearchInfo(uri, candidate, null);
++        MovieSearchInfo fallback = new MovieSearchInfo(uri, candidate, null);
++        fallback.setFallbackMatch(true);
++        return fallback;
++    }
++
++    /**
++     * Parses a file preferring its real name/path (the release name) over the stored metadata
++     * title, which may be a localized on-screen title rather than a release name (issue #1987).
++     * <p>
++     * A default movie match is not evidence of an unusable filename: ordinary movie names
++     * also reach that matcher. Only recognizable obfuscated names may fall back to metadata.
++     * UPNP object IDs and content URIs without a video filename use the title directly.
++     *
++     * @param fileUri       the real file URI, must not be null
++     * @param metadataTitle the embedded/stored title, may be null or empty
++     */
++    public SearchInfo parseFileBasedWithTitleFallback(Uri fileUri, String metadataTitle) {
++        if (fileUri == null) throw new IllegalArgumentException("fileUri must not be null");
++        String title = metadataTitle == null ? "" : metadataTitle.trim();
++        boolean hasTitle = !title.isEmpty() && !title.equalsIgnoreCase("null");
++        String scheme = fileUri.getScheme();
++        boolean content = "content".equalsIgnoreCase(scheme);
++        boolean upnp = scheme != null && scheme.toLowerCase(Locale.ROOT).startsWith("upnp");
++        String name = FileUtils.getName(fileUri);
++        // A SAF document ID may contain an entire decoded path in its last URI segment.
++        if (content) name = FileUtils.getName(name);
++        boolean opaque = upnp || (content && !ParseUtils.hasVideoExtension(name));
++
++        SearchInfo result;
++        if (opaque) {
++            result = parseTitle(fileUri, hasTitle ? title : name);
++        } else {
++            String stem = FileUtils.stripExtensionFromName(name);
++            boolean obfuscatedName = isObfuscatedName(stem);
++            // Do not feed provider IDs to the folder matchers, which expect filesystem paths.
++            if (content && obfuscatedName) {
++                result = MovieDefaultMatcher.instance().getUserInputMatch(stem, fileUri);
++                result.setFallbackMatch(true);
++            } else {
++                result = content ? parseTitle(fileUri, stem)
++                        : parseFileBased(fileUri, null, obfuscatedName);
++            }
++            if (hasTitle && result.isFallbackMatch() && obfuscatedName) {
++                SearchInfo fallback = parseTitle(fileUri, title);
++                if (!fallback.getSearchSuggestion().isEmpty()) result = fallback;
++            }
++        }
++        result.setOriginalUri(fileUri);
++        result.skipScraping |= ParseUtils.isNonScrapableFolder(fileUri);
++        return result;
++    }
++
++    private static final Pattern OBFUSCATED_NAME = Pattern.compile(
++            "(?i)(?:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"
++                    + "|(?=[a-f0-9]*[a-f])(?=[a-f0-9]*[0-9])[a-f0-9]{8,}"
++                    + "|[a-f0-9]{16,})");
++
++    private static boolean isObfuscatedName(String name) {
++        // Intentionally conservative: short/numeric titles (e.g. 1917) and readable words win.
++        return name.trim().isEmpty() || OBFUSCATED_NAME.matcher(name).matches();
++    }
++
++    private SearchInfo parseTitle(Uri fileUri, String title) {
++        // Parse text directly: '/', '?', '#' and '%' must never become URI syntax, and
++        // SearchInfo.getFile() must continue to identify the actual media file.
++        for (InputMatcher matcher : PARSERS) {
++            if (matcher instanceof MovieVerbatimMatcher || !matcher.matchesUserInput(title)) continue;
++            SearchInfo result = matcher.getUserInputMatch(title, fileUri);
++            if (result != null) {
++                result.setFallbackMatch(matcher instanceof MovieDefaultMatcher);
++                return result;
++            }
++        }
++        throw new IllegalStateException("MovieDefaultMatcher must accept every title");
+     }
+ 
+     /**
+@@ -127,6 +211,9 @@ public class SearchPreprocessor {
+                         continue; // Try next matcher instead of crashing
+                     }
+                     if (log.isDebugEnabled()) log.debug("re-parse result from {}", matcher.getMatcherName());
++                    result.skipScraping = info.skipScraping;
++                    result.setOriginalUri(info.getOriginalUri());
++                    result.setFallbackMatch(matcher instanceof MovieDefaultMatcher);
+                     return result;
+                 }
+             }
+diff --git a/test/java/com/archos/mediascraper/preprocess/MetadataTitleFallbackTest.java b/test/java/com/archos/mediascraper/preprocess/MetadataTitleFallbackTest.java
+new file mode 100644
+index 0000000..b106c46
+--- /dev/null
++++ b/test/java/com/archos/mediascraper/preprocess/MetadataTitleFallbackTest.java
+@@ -0,0 +1,248 @@
++// Copyright 2026 Courville Software
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package com.archos.mediascraper.preprocess;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import android.net.Uri;
++
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++/**
++ * Covers issue #1987: the scrape identity must come from the real file name/path (release name)
++ * rather than the stored metadata title, which may be a localized on-screen title. The metadata
++ * title is only a fallback for cryptic file names and for UPNP/content URIs without a real name.
++ */
++@RunWith(RobolectricTestRunner.class)
++@Config(sdk = 33)
++public class MetadataTitleFallbackTest {
++
++    private static final String RELEASE_FILE =
++            "file:///storage/emulated/0/Download/Ted.Lasso.S04E01.MULTi.1080p.WEB.H265-GL0P-small.mkv";
++
++    @Test
++    public void releaseFileNameWinsOverEpisodeMetadataTitle() {
++        SearchInfo info = SearchPreprocessor.instance()
++                .parseFileBasedWithTitleFallback(Uri.parse(RELEASE_FILE), "Chez soi");
++        assertTrue("release file name should identify a TV show", info.isTvShow());
++        TvShowSearchInfo tv = (TvShowSearchInfo) info;
++        assertEquals("Ted Lasso", tv.getShowName());
++        assertEquals(4, tv.getSeason());
++        assertEquals(1, tv.getEpisode());
++    }
++
++    @Test
++    public void folderShowIdentificationHandlesCrypticFileName() {
++        Uri uri = Uri.parse("file:///storage/emulated/0/Download/Ted.Lasso.S04E01.MULTi.1080p.WEB.H265-GL0P/a1b2c3d4.mkv");
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, "Chez soi");
++        assertTrue("release folder name should identify the TV show", info.isTvShow());
++        TvShowSearchInfo tv = (TvShowSearchInfo) info;
++        assertEquals("Ted Lasso", tv.getShowName());
++        assertEquals(4, tv.getSeason());
++        assertEquals(1, tv.getEpisode());
++    }
++
++    @Test
++    public void crypticFileNameFallsBackToMetadataTitle() {
++        Uri uri = Uri.parse("file:///storage/emulated/0/Download/a1b2c3d4.mkv");
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, "Ted Lasso S04E01");
++        assertTrue("metadata title should be used when the file name is cryptic", info.isTvShow());
++        TvShowSearchInfo tv = (TvShowSearchInfo) info;
++        assertEquals("Ted Lasso", tv.getShowName());
++        assertEquals(4, tv.getSeason());
++        assertEquals(1, tv.getEpisode());
++    }
++
++    @Test
++    public void opaqueContentUriUsesMetadataTitle() {
++        Uri uri = Uri.parse("content://media/external/video/media/123");
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, "Ted Lasso S04E01");
++        assertTrue("content URIs have no real file name and must use the metadata title", info.isTvShow());
++        TvShowSearchInfo tv = (TvShowSearchInfo) info;
++        assertEquals("Ted Lasso", tv.getShowName());
++        assertEquals(4, tv.getSeason());
++        assertEquals(1, tv.getEpisode());
++    }
++
++    @Test
++    public void fallbackFlagReflectsCatchAllMatcher() {
++        SearchInfo release = SearchPreprocessor.instance().parseFileBased(Uri.parse(RELEASE_FILE), null);
++        assertFalse("a structured release name is not a fallback match", release.isFallbackMatch());
++
++        SearchInfo cryptic = SearchPreprocessor.instance()
++                .parseFileBased(Uri.parse("file:///storage/emulated/0/Download/a1b2c3d4.mkv"), null);
++        assertTrue("a cryptic file name reaches the catch-all matcher", cryptic.isFallbackMatch());
++    }
++
++    @Test
++    public void readableMovieNamesWinEvenWithDefaultMatcher() {
++        for (String name : new String[] {"Arrival", "Arrival (2016)", "1917", "Amélie", "THX1138"}) {
++            Uri uri = Uri.parse("file:///Movies/" + name + ".mkv");
++            SearchInfo expected = SearchPreprocessor.instance().parseFileBased(uri, null);
++            SearchInfo actual = SearchPreprocessor.instance()
++                    .parseFileBasedWithTitleFallback(uri, "Ted Lasso S04E01");
++            assertFalse(name, actual.isTvShow());
++            assertEquals(name, expected.getSearchSuggestion(), actual.getSearchSuggestion());
++        }
++    }
++
++    @Test
++    public void structuredMovieAndDvdFoldersWinOverMetadata() {
++        for (String path : new String[] {"Arrival.2016.1080p.mkv",
++                "Arrival (2016)/a1b2c3d4.mkv", "Arrival (2016)/VIDEO_TS/VTS_01_1.VOB"}) {
++            Uri uri = Uri.parse("smb://server/Movies/" + path);
++            SearchInfo info = SearchPreprocessor.instance()
++                    .parseFileBasedWithTitleFallback(uri, "Ted Lasso S04E01");
++            assertFalse(path, info.isTvShow());
++            assertEquals(path, "Arrival", ((MovieSearchInfo) info).getName());
++            assertEquals(path, "2016", ((MovieSearchInfo) info).getYear());
++        }
++    }
++
++    @Test
++    public void seasonAndEpisodePathWinsOverMetadata() {
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(
++                Uri.parse("smb://server/Shows/Ted Lasso/Season 4/Episode 1.mkv"), "Chez soi");
++        assertTrue(info.isTvShow());
++        assertEquals("Ted Lasso", ((TvShowSearchInfo) info).getShowName());
++        assertEquals(4, ((TvShowSearchInfo) info).getSeason());
++        assertEquals(1, ((TvShowSearchInfo) info).getEpisode());
++    }
++
++    @Test
++    public void hashAndUuidNamesUseMovieMetadata() {
++        for (String name : new String[] {"a1b2c3d4", "abcdefabcdefabcdef",
++                "550e8400-e29b-41d4-a716-446655440000"}) {
++            Uri uri = Uri.parse("file:///Movies/" + name + ".mkv");
++            SearchInfo info = SearchPreprocessor.instance()
++                    .parseFileBasedWithTitleFallback(uri, "Arrival (2016)");
++            assertEquals(name, "Arrival", ((MovieSearchInfo) info).getName());
++            assertEquals(name, "2016", ((MovieSearchInfo) info).getYear());
++            assertEquals(uri, info.getFile());
++            assertEquals(uri, info.getOriginalUri());
++        }
++    }
++
++    @Test
++    public void uuidEpisodeLikeFragmentsDoNotOverrideReleaseFolder() {
++        Uri uri = Uri.parse("file:///Shows/Ted.Lasso.S04E01/550e8400-e29b-41d4-a716-446655440000.mkv");
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, "Arrival");
++        assertTrue(info.isTvShow());
++        assertEquals("Ted Lasso", ((TvShowSearchInfo) info).getShowName());
++        assertEquals(1, ((TvShowSearchInfo) info).getEpisode());
++    }
++
++    @Test
++    public void contentUuidEpisodeLikeFragmentsUseMetadata() {
++        Uri uri = Uri.parse("content://provider/video/550e8400-e29b-41d4-a716-446655440000.mkv");
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, "Arrival");
++        assertFalse(info.isTvShow());
++        assertEquals("Arrival", info.getSearchSuggestion());
++        assertEquals(uri, info.getFile());
++    }
++
++    @Test
++    public void missingAndSentinelTitlesKeepFilename() {
++        for (String title : new String[] {null, "", "  \t", "null", " NULL "}) {
++            Uri uri = Uri.parse("file:///Movies/a1b2c3d4.mkv");
++            SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, title);
++            assertEquals("a1b2c3d4", info.getSearchSuggestion());
++            assertEquals(uri, info.getFile());
++        }
++    }
++
++    @Test
++    public void titlePunctuationIsTextAndCannotCreateExtrasFolder() {
++        Uri uri = Uri.parse("file:///Movies/a1b2c3d4.mkv");
++        for (String title : new String[] {"Who? Am I", "Bonus/Arrival", "Film #1", "100% Amélie"}) {
++            SearchInfo expected = MovieDefaultMatcher.instance().getUserInputMatch(title, uri);
++            SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, title);
++            assertEquals(title, expected.getSearchSuggestion(), info.getSearchSuggestion());
++            assertFalse(title, info.skipScraping);
++            assertEquals(uri, info.getFile());
++        }
++    }
++
++    @Test
++    public void contentFilenameWinsOverMetadata() {
++        for (String path : new String[] {
++                "content://provider/videos/Arrival.mkv",
++                "content://com.android.externalstorage.documents/document/primary%3AMovies%2FArrival.mkv"}) {
++            Uri uri = Uri.parse(path);
++            SearchInfo info = SearchPreprocessor.instance()
++                    .parseFileBasedWithTitleFallback(uri, "Ted Lasso S04E01");
++            assertFalse(info.isTvShow());
++            assertEquals("Arrival", info.getSearchSuggestion());
++            assertEquals(uri, info.getFile());
++        }
++    }
++
++    @Test
++    public void contentEpisodeFilenameWinsOverMetadata() {
++        Uri uri = Uri.parse("content://com.android.externalstorage.documents/document/"
++                + "primary%3ADownload%2FTed.Lasso.S04E01.mkv");
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, "Chez soi");
++        assertTrue(info.isTvShow());
++        assertEquals("Ted Lasso", ((TvShowSearchInfo) info).getShowName());
++        assertEquals(uri, info.getFile());
++    }
++
++    @Test
++    public void opaqueUrisKeepRealFileAndOriginalUriWhenReparsed() {
++        for (String path : new String[] {"content://media/external/video/media/123",
++                "upnp://server/123", "UPNP-AV://server/123"}) {
++            Uri uri = Uri.parse(path);
++            SearchInfo info = SearchPreprocessor.instance()
++                    .parseFileBasedWithTitleFallback(uri, " Ted Lasso S04E01 ");
++            assertTrue(info.isTvShow());
++            info.setForceReParse(true);
++            info = SearchPreprocessor.instance().reParseInfo(info);
++            assertTrue(info.isTvShow());
++            assertEquals(uri, info.getFile());
++            assertEquals(uri, info.getOriginalUri());
++        }
++    }
++
++    @Test
++    public void opaqueUriWithoutTitleStillReturnsBestEffort() {
++        Uri uri = Uri.parse("content://media/external/video/media/123");
++        SearchInfo info = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(uri, null);
++        assertEquals("123", info.getSearchSuggestion());
++        assertEquals(uri, info.getFile());
++    }
++
++    @Test
++    public void extrasExclusionSurvivesTitleFallbackAndReparse() {
++        Uri uri = Uri.parse("file:///Movies/Extras/a1b2c3d4.mkv");
++        SearchInfo info = SearchPreprocessor.instance()
++                .parseFileBasedWithTitleFallback(uri, "Ted Lasso S04E01");
++        assertTrue(info.skipScraping);
++        info.setUserInput("Arrival");
++        info = SearchPreprocessor.instance().reParseInfo(info);
++        assertTrue(info.skipScraping);
++        assertEquals(uri, info.getFile());
++        assertEquals(uri, info.getOriginalUri());
++    }
++
++    @Test(expected = IllegalArgumentException.class)
++    public void nullFileIsRejectedEvenWithTitle() {
++        SearchPreprocessor.instance().parseFileBasedWithTitleFallback(null, "Arrival");
++    }
++}
