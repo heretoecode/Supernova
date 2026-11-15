@@ -431,6 +431,14 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
         mPreviewPages.setArtworkListener(mNavigation::setArtwork);
         mPreviewPages.setScrollOffsetListener(mNavigation::setScrollOffset);
+        // Reopen where the owner was when Android ended the app, unless a page was asked for by name.
+        ReopenMemory.Place reopen = requireActivity().getIntent().hasExtra("preview_tab")
+            ? null
+            : ReopenMemory.load(requireContext());
+        if (reopen != null)
+        {
+            mActiveTab = reopen.tab;
+        }
         int requestedTab = requireActivity().getIntent().getIntExtra("preview_tab", mActiveTab);
         if (requestedTab >= 0 && requestedTab < 4) {
             mActiveTab = requestedTab;
@@ -438,6 +446,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             mNavigation.selectTab(requestedTab);
             mNavigation.setEmbeddedScanStatus(requestedTab == 3);
         }
+        mPreviewPages.reopenAt(reopen);
         requireActivity().getIntent().removeExtra("preview_tab");
         FrameLayout composed = new FrameLayout(requireContext());
         composed.addView(mNavigation, new FrameLayout.LayoutParams(-1, -1));
@@ -1024,6 +1033,18 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     public void onPause() {
         super.onPause();
         mOverlay.pause();
+        if (mTopNavigation && mPreviewPages != null)
+        {
+            // Leaving with Back starts on Home next time; otherwise remember the page and the focused item.
+            if (requireActivity().isFinishing())
+            {
+                ReopenMemory.clear(requireContext());
+            }
+            else
+            {
+                ReopenMemory.save(requireContext(), mPreviewPages.reopenPlace());
+            }
+        }
         mScannerBoxRefreshHandler.removeCallbacks(mRefreshBoxesAfterScannerQuietPeriod);
 
         // be sure to reload loaders and iconBoxes in onResume after an onPause

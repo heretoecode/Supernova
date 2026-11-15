@@ -660,7 +660,10 @@ public final class PreviewPages extends FrameLayout {
     public void onWindowFocusChanged(boolean focused) {
         super.onWindowFocusChanged(focused);
         if (focused)
+        {
             startHeroClock();
+            post(this::recoverLostFocus);
+        }
         else {
             heroOwnsHorizontal = false;
             heroClock.suspend();
@@ -675,7 +678,71 @@ public final class PreviewPages extends FrameLayout {
         }
     }
 
-    private Runnable ready = () -> {
+    private boolean reopenPending;
+    private int reopenAttempts;
+
+    /** The place to save for reopening: the current page's focused item, if any. */
+    public ReopenMemory.Place reopenPlace() {
+        rememberFocus();
+        FocusAnchor anchor = anchors[tab];
+        if (anchor == null)
+        {
+            return new ReopenMemory.Place(tab, null, null, 0, 0);
+        }
+        return new ReopenMemory.Place(tab, anchor.cell, anchor.child, anchor.position, anchor.inner);
+    }
+
+    /** Call after setTab: focus returns to this item once the page has its content. */
+    public void reopenAt(ReopenMemory.Place place) {
+        if (place == null || place.tab != tab || place.cell == null)
+        {
+            return;
+        }
+        FocusAnchor anchor = new FocusAnchor();
+        anchor.cell = place.cell;
+        anchor.child = place.child;
+        anchor.position = Math.max(0, place.position);
+        anchor.inner = Math.max(0, place.inner);
+        anchors[tab] = anchor;
+        reopenPending = true;
+        reopenAttempts = 0;
+        if (loaded)
+        {
+            post(this::finishReopen);
+        }
+    }
+
+    private void finishReopen() {
+        if (!reopenPending)
+        {
+            return;
+        }
+        if (!hasComposedContent() && reopenAttempts++ < 60)
+        {
+            postOnAnimation(this::finishReopen);
+            return;
+        }
+        reopenPending = false;
+        if (anchors[tab] == null || !isShown())
+        {
+            return;
+        }
+        Diagnostics.event("focus_reopened", "page", "library_tab_" + tab);
+        requestFocus();
+    }
+
+    /** After standby the window can come back with nothing focused: return to the remembered card. */
+    private void recoverLostFocus() {
+        if (!isShown() || !hasWindowFocus() || getRootView().findFocus() != null || cells.isEmpty())
+        {
+            return;
+        }
+        Diagnostics.event("focus_recovered", "page", "library_tab_" + tab, "had_anchor", anchors[tab] != null);
+        list.requestFocus();
+        restoreFocus();
+    }
+
+
     };
     private final Runnable prioritiseVisible = this::prioritiseVisibleEntries;
 
@@ -1212,6 +1279,7 @@ public final class PreviewPages extends FrameLayout {
             postDelayed(this::requestDiscovery, 750);
         }
         post(ready);
+        post(this::finishReopen);
     }
 
     private static void keepOrder(List<Entry> old, List<Entry> current) {
