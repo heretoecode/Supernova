@@ -18,7 +18,7 @@ import android.app.Activity;
 import android.view.WindowManager;
 
 import com.archos.mediacenter.video.browser.FileManagerService;
-import com.archos.mediaprovider.ImportState;
+import com.archos.mediacenter.video.leanback.overlay.LocalImportActivity;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.NetworkScannerReceiver;
 
@@ -38,12 +38,12 @@ public class ActiveOperationMonitor {
     public static boolean isOperationActive() {
         boolean isScanning = NetworkScannerReceiver.isScannerWorking();
         boolean isScraping = LoaderUtils.getScrapeInProgress();
-        boolean isInitialImport = ImportState.VIDEO.isInitialImport();
-        boolean isRegularImport = ImportState.VIDEO.isRegularImport();
+        // A stuck import must not keep the screen awake for ever.
+        boolean isLocalImport = LocalImportActivity.moving();
         boolean isFileCopy = FileManagerService.fileManagerService != null
                 && FileManagerService.fileManagerService.isPastingInProgress();
 
-        return isScanning || isScraping || isInitialImport || isRegularImport || isFileCopy;
+        return isScanning || isScraping || isLocalImport || isFileCopy;
     }
 
     /**

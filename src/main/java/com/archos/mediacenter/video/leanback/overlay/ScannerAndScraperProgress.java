@@ -158,7 +158,7 @@ public class ScannerAndScraperProgress {
         public void run() {
             boolean scanningOnGoing = NetworkScannerReceiver.isScannerWorking() || LoaderUtils.getScrapeInProgress()
                 || AutoScrapeService.isNfoExportInProgress()
-                || AllCollectionScrapeService.isCollectionScrapeInProgress() || localImportMoving();
+                || AllCollectionScrapeService.isCollectionScrapeInProgress() || LocalImportActivity.moving();
             mStatusVisibility = scanningOnGoing ? View.VISIBLE : View.GONE;
             if (log.isTraceEnabled())
                 log.trace(
@@ -174,32 +174,6 @@ public class ScannerAndScraperProgress {
             mRepeatHandler.postDelayed(this, REPEAT_PERIOD_MS);
         }
     };
-
-    /** A local import counts only while it moves: one stuck for three minutes no longer holds the pill up. */
-    private static final StalledWorkWatch LOCAL_IMPORT_WATCH = new StalledWorkWatch(3 * 60 * 1000L);
-
-    private static boolean localImportMoving() {
-        boolean importing = ImportState.VIDEO.isInitialImport() || ImportState.VIDEO.isRegularImport();
-        String progress = ImportState.VIDEO.getNumberOfFilesRemainingToImport() + "/"
-            + ImportState.VIDEO.getNumberOfFilesRemainingToDelete() + "/" + ImportState.VIDEO.isDeleting();
-        boolean stalled = LOCAL_IMPORT_WATCH.stalled(importing, progress, SystemClock.elapsedRealtime());
-        if (stalled && LOCAL_IMPORT_WATCH.firstReport()) {
-            Diagnostics.event("local_import_stalled", "progress", progress);
-        }
-        return importing && !stalled;
-    }
-
- Both mGeneralVisibility and mStatusVisibility must be VISIBLE for the view to be visible */
-    private void updateVisibility() {
-        if (log.isTraceEnabled())
-            log.trace("updateVisibility: (0 visible, 8 gone) mGeneralVisibility {}, mStatusVisibility {}",
-                mGeneralVisibility, mStatusVisibility);
-        if ((mGeneralVisibility == View.VISIBLE) && (mStatusVisibility == View.VISIBLE)) {
-            mProgressGroup.setVisibility(View.VISIBLE);
-        } else {
-            mProgressGroup.setVisibility(View.GONE);
-        }
-    }
 
     /** update the counter TextView and badge */
     private long diagnosticSampleAt;
@@ -227,7 +201,7 @@ public class ScannerAndScraperProgress {
                 count = NetworkScannerServiceVideo.getFilesFoundCount();
             }
             textColor = mScannerTextColor;
-        } else if (localImportMoving()) {
+        } else if (LocalImportActivity.moving()) {
             if (ImportState.VIDEO.isDeleting()) {
                 badge = mBadgeDomainLocal + ":" + mBadgeOpDelete;
                 count = ImportState.VIDEO.getNumberOfFilesRemainingToDelete();
@@ -254,7 +228,7 @@ public class ScannerAndScraperProgress {
             if (NetworkScannerReceiver.isScannerWorking())
                 badge =
                     NetworkScannerServiceVideo.isDeleting() ? "Updating network library…" : "Scanning network library…";
-            else if (localImportMoving())
+            else if (LocalImportActivity.moving())
                 badge = ImportState.VIDEO.isDeleting() ? "Updating local library…" : "Scanning local library…";
             else if (AutoScrapeService.isNfoExportInProgress())
                 badge = "Exporting metadata…";
