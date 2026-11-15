@@ -1015,7 +1015,7 @@ public class SubtitleManager
         }
     }
 
-    /** Claude shows the returned sample bitmap while this gate suppresses the selected real track. */
+    /** The panel shows the returned sample bitmap while this gate suppresses the selected real track. */
     public void setAppearancePreview(boolean shown)
     {
         mAppearancePreview = shown;

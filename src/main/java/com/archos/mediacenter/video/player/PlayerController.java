@@ -1673,7 +1673,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         setStrip(partsStrip);
     }
 
-    /** Claude's remote scheme calls this while the timeline bar has focus. */
+    /** The remote scheme calls this while the timeline bar has focus. */
     public boolean handleBarPlayPause(KeyEvent event)
     {
         return barPlayPauseKeys.handle(event, this::doPauseResume);
