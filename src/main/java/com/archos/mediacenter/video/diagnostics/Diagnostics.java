@@ -240,6 +240,19 @@ public final class Diagnostics
         uiFocus = viewId(activity.getCurrentFocus());
     }
 
+    private static long memoryStat(Debug.MemoryInfo memory, String name)
+    {
+        try
+        {
+            String value = memory.getMemoryStat(name);
+            return value == null ? -1 : Long.parseLong(value);
+        }
+        catch (RuntimeException unavailable)
+        {
+            return -1;
+        }
+    }
+
     /** Only structural, developer-owned labels belong here; never titles, queries or paths. */
     public static synchronized void uiState(String page, String category, String mode, String sort, String filters,
                                             long media)
@@ -1168,9 +1181,14 @@ public final class Diagnostics
             {
                 Debug.MemoryInfo memory = new Debug.MemoryInfo();
                 Debug.getMemoryInfo(memory);
+                // Where the memory is, and on which page (0.157: the process reached about 750 MB).
                 event("performance_trend", "samples", trendSamples, "heap_min", heapMin, "heap_max", heapMax,
                       "heap_average", heapTotal / trendSamples, "native_max", nativeMax, "pss_kb", memory.getTotalPss(),
-                      "gc_count", Debug.getRuntimeStat("art.gc.gc-count"), "classification",
+                      "java_kb", memoryStat(memory, "summary.java-heap"), "native_kb",
+                      memoryStat(memory, "summary.native-heap"), "graphics_kb", memoryStat(memory, "summary.graphics"),
+                      "code_kb", memoryStat(memory, "summary.code"), "other_kb",
+                      memoryStat(memory, "summary.private-other"), "page", uiPage, "page_mode", uiMode, "foreground",
+                      foreground, "gc_count", Debug.getRuntimeStat("art.gc.gc-count"), "classification",
                       "observed_trend_not_leak_diagnosis");
                 heapMin = Long.MAX_VALUE;
                 heapMax = heapTotal = nativeMax = 0;
