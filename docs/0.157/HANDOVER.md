@@ -67,7 +67,8 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 - Step 10 (Player) started, Playback Settings: Stop playing at (clock times; `stopLabels`), Play mode Stop after
   this · Play next · Repeat this · Repeat all (`SubtitlePlaybackBackend.playModes`), Skip intros and credits Off ·
   Show button · Automatic (`skipModes`), Still watching? with episodes and time (`StillWatchingChoices`, uses
-  the existing idle-minutes setting). Still to do: the rest of R5 (title block, Preparing playback, seek preview card, skip button in the
+  the existing idle-minutes setting); Preparing playback episode line and age badge (`PreviewPlaybackLoading`).
+  Still to do: the rest of R5 (title block, seek preview card, skip button in the
   control row, track names and pills, subtitle lists stacked on the panel).
 
 ## In flight

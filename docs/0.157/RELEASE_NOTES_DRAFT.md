@@ -29,6 +29,7 @@ coded is listed; it still needs a green build and the owner's Shield test before
 - Episodes show "Season 2 · Episode 8 · Title" under the logo, as in the player
 
 ## Player
+- Preparing playback shows the episode as "Season 2 · Episode 8 · Title" and the age rating
 - Seek previews now work on Put.io and local files
 - Stop playing at: pick a clock time, or the end of the episode or film
 - Still watching? can ask after a number of episodes or after a few hours
@@ -52,8 +53,8 @@ coded is listed; it still needs a green build and the owner's Shield test before
 
 ## Settings
 - Keep diagnostics for 1, 2 or 4 weeks
+- Diagnostics record each step of deleting a file
 - Issues Digest is gone: diagnostics are automatic
 
 ## Not in the draft yet (planned for 0.157, not coded)
-The new Files page itself (built, switched off until finished), memory savings, Preparing playback, the new player
-controls, subtitles ready ahead of time, the dead-connection fix, the move gesture everywhere.
+The new Files page itself (built, switched off until finished), memory savings, the new player controls, subtitles ready ahead of time, the dead-connection fix, the move gesture everywhere.
