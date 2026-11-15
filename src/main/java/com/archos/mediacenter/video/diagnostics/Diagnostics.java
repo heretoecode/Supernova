@@ -54,6 +54,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -403,6 +404,7 @@ public final class Diagnostics
         enabled = PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY, defaultEnabled());
         installTransportReads();
         PreferenceManager.getDefaultSharedPreferences(app).getString(LEVEL, "qa");
+        keepMs = keepWeeks(PreferenceManager.getDefaultSharedPreferences(app).getAll().get(KEEP_WEEKS)) * WEEK_MS;
         if (!heartbeatInstalled)
         {
             heartbeatInstalled = true;
@@ -1096,10 +1098,26 @@ public final class Diagnostics
         }
     }
 
+    /** Keep diagnostics for 1, 2 or 4 weeks (owner, 8 Nov 2026; default 2). */
+    public static final String KEEP_WEEKS = "supernova_diagnostic_keep_weeks";
+    private static final long WEEK_MS = 7L * 24 * 60 * 60 * 1000;
+    private static volatile long keepMs = 2 * WEEK_MS;
+
+    /** "1", "2" or "4"; anything else means the default of two weeks. */
+    static int keepWeeks(Object saved)
+    {
+        String value = saved == null ? "" : saved.toString();
+        if (value.equals("1") || value.equals("4"))
+            return Integer.parseInt(value);
+        return 2;
+    }
+
     private static final SharedPreferences.OnSharedPreferenceChangeListener CONFIG = (prefs, key) ->
     {
         if (LEVEL.equals(key))
             prefs.getString(LEVEL, "qa");
+        if (KEEP_WEEKS.equals(key))
+            keepMs = keepWeeks(prefs.getAll().get(KEEP_WEEKS)) * WEEK_MS;
         if (key != null && !key.startsWith("supernova_diagnostic_session"))
             event("configuration_changed", "setting", key, "value",
                   DiagnosticRedactor.settingValue(key, prefs.getAll().get(key)));
@@ -1656,6 +1674,17 @@ public final class Diagnostics
     private static void trimStorage(File dir, long budget) throws IOException
     {
         List<RetentionSnapshot.Entry> files = RetentionSnapshot.oldestFirst(DiagnosticArchive.files(dir));
+        long oldest = System.currentTimeMillis() - keepMs;
+        List<RetentionSnapshot.Entry> kept = new ArrayList<>();
+        for (RetentionSnapshot.Entry entry : files)
+        {
+            // Older than the chosen weeks: removed by age; a file that cannot be removed now is tried next time.
+            if (entry.modified > 0 && entry.modified < oldest && entry.file.delete())
+                RETENTION_PRUNED_BYTES.addAndGet(entry.bytes);
+            else
+                kept.add(entry);
+        }
+        files = kept;
         long total = 0;
         for (RetentionSnapshot.Entry entry : files)
             total += entry.bytes;

@@ -326,6 +326,18 @@ public final class PreviewSettings {
             confirmClearDiagnostics(fragment);
             return true;
         });
+        ListPreference keep = new ListPreference(fragment.requireContext());
+        keep.setKey(Diagnostics.KEEP_WEEKS);
+        keep.setTitle("Keep diagnostics for");
+        keep.setEntries(new String[] {
+            "1 week", "2 weeks", "4 weeks"
+        });
+        keep.setEntryValues(new String[] {
+            "1", "2", "4"
+        });
+        keep.setDefaultValue("2");
+        keep.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+        categories.get("Advanced").addPreference(keep);
         categories.get("Advanced").addPreference(clearDiagnostics);
         for (String label : new String[] {
             "Report a Problem", "Show Latest Reference"
@@ -489,7 +501,7 @@ public final class PreviewSettings {
             advanced.addPreference(diagnosticGroup);
             for (String key : new String[] {
                 Diagnostics.KEY,
-                 DIAGNOSTIC_CLEAR, "preview_diagnostic_Report a Problem",
+                 Diagnostics.KEEP_WEEKS, DIAGNOSTIC_CLEAR, "preview_diagnostic_Report a Problem",
                  "preview_diagnostic_Show Latest Reference",
                  "export_diagnostic_report"
             })
