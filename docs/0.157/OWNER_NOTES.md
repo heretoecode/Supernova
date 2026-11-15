@@ -1301,7 +1301,12 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - **Claude:** NOVA 6.6.5's MediaLib change "scraper: prefer file name/path over metadata title" (9 Nov) fits these
   exactly: when a video file carries its own title inside it, the scraper trusted that over the folder and file name.
   Proposed: bring just that matching fix into 0.157 (small, and it is the biggest cause of wrong data), then re-check
-  matches on Library Care without touching manual fixes. The rest of NOVA 6.6.5+ stays in 0.158. Awaiting the owner.
+  matches on Library Care without touching manual fixes.
+- **Checked (15 Nov):** NOVA's commit 57ead4cf: the file name and folder now identify a video; the title stored inside
+  the file is used only for meaningless names. Its own test is a Ted Lasso episode whose inside title (the episode
+  name) sent the old code to the wrong match: the same pattern as the owner's examples.
+- **Decided (owner, 15 Nov): bring all of NOVA 6.6.5 and later into 0.157** (app, MediaLib, FileCoreLibrary, native
+  libdovi), TV-relevant parts as listed in §35. Any further scanner work afterwards is a separate job.
 - **Own TMDB key (later):** Supernova uses the TMDB key built into NOVA. TMDB's terms tie a key to one application, so
   before Supernova is shared or made public it needs its own key (and TMDB's required credit, already in About ›
   Credits). Added to REVISIT_LATER and the roadmap's Later column.

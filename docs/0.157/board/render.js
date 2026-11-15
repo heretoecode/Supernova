@@ -9,8 +9,6 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 
 const cols = [
   ['Undecided', [
-    ['Waiting for your yes', ['Bring NOVA’s “match by file name” fix forward into 0.157 (wrong matches, e.g. '
-      + 'Father Ted)']],
     ['Settled', ['Codex: not for now; Claude does it all, Codex only if needed', 'Portrait cast cards and release '
       + 'notes approved']],
   ]],
@@ -21,7 +19,9 @@ const cols = [
       'Details: four kinds, new tabs, metadata row, full description, artwork picker, More menu, portrait cast and crew',
       'Player: Preparing playback, title block, seek preview, centre ring, skip button, Playback tab, track names, '
       + 'subtitle lists, Experimental translate']],
-    ['Engine', ['Merge Codex’s 13 finished items', 'Seek loading signal (Codex built it; merge and test)']],
+    ['Engine and NOVA', ['NOVA 6.6.5 and later, all of it: match by file name (the wrong matches), Samba fixes, '
+      + 'software-decoding notice, picture-subtitle height, Trakt', 'Then re-check matches on Library Care',
+      'Merge Codex’s 13 finished items', 'Seek loading signal (Codex built it; merge and test)']],
     ['Old NOVA out', ['Hidden grid and hidden screens', 'Picture in picture, Issue digest', 'All files access once '
       + '(no Android screens)']],
     ['Speed and reliability', ['Memory (about 750 MB today)', 'No page rebuild every minute during scans',
@@ -40,8 +40,6 @@ const cols = [
       + 'Filters, Sort, Columns, list view, Customise page, empty pages, + page, episode counts)', 'Settings (seven tabs, Backup and Restore, Diagnostics, About)', 'Onboarding (on Home, Start fresh '
       + '/ Restore, smart steps)', 'Search (library first, On your services, recent searches)']],
     ['Features', ['Media Transfers part two: per-series “Bring new episodes”', 'Media Transfers schedule']],
-    ['Engine and NOVA', ['NOVA 6.6.5 and later, the TV parts: matching by file name, Samba fixes, software-decoding '
-      + 'notice, picture-subtitle height, Trakt']],
   ]],
   ['Later / someday', [
     ['To discuss', ['Release notes: proper notes for every version (0.156 has two vague lines)']],
