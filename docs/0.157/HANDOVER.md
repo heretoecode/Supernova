@@ -31,9 +31,15 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 - The SAFE clean-out list does not exist yet: Codex's report (`docs/codex/findings/legacy-cleanup-candidates.md`) found
   nothing SAFE, only UNSURE. NOVA's hidden grid needs proof per route (see that report) before removal.
 
+- R8 (new mark): **loading ring** redrawn as the mark (`foundation/DoubleRingDrawable`, used by the scan pill, Files,
+  Home genre picker, playback loading); **icon, banner and splash** replaced (`design/brand-mark/`: run
+  `export-mark.js` with Roboto, then `export-mark.py`). Not yet: the splash's ring spinning (it is a still picture),
+  and the ring in the Files top-bar slot (comes with Files, step 8). `tools/export_foundation_branding.py` is the old
+  glowing-ring export: do not run it.
+
 ## In flight
 - Run 4 (12:54): compiled, 10 of 2,145 app tests failing, all fixed. Run 5 (18:12): compile error from a dropped line
-  in `PreviewPages.java`, fixed in `428a53a`. **Run 6 started 15 Nov 18:55** on everything so far. Check it; on
+  in `PreviewPages.java`, fixed in `428a53a`. **Run 6 (43748969765) started 15 Nov 18:50** on everything so far. Check it; on
   failure run `report-test-failures.yml` with `run_id` and read the last 60–120 lines of its job log.
 - `NetworkScanLedgerTest.cancelledWorkerWaitingForProviderGateCannotPerformLateScan` (MediaLib) failed once in run 5
   and passed in run 4 with the same patches: timing-sensitive. If it fails again, make its wait deterministic.
