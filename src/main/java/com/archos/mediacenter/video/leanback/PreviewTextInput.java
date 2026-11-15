@@ -72,7 +72,11 @@ public final class PreviewTextInput {
             input.setHintTextColor(0xff8197a8);
         }
         input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(limit)});
-        panel.addView(input, new LinearLayout.LayoutParams(-1, KeyboardInput.compactHeight(c)));
+        if (secret) {
+            panel.addView(withEye(c, input), new LinearLayout.LayoutParams(-1, KeyboardInput.compactHeight(c)));
+        } else {
+            panel.addView(input, new LinearLayout.LayoutParams(-1, KeyboardInput.compactHeight(c)));
+        }
         input.setSelection(input.length());
         PreviewKeyboard keyboard = new PreviewKeyboard(c, input, null);
         panel.addView(keyboard);
@@ -176,6 +180,33 @@ public final class PreviewTextInput {
         });
         keyboard.focusLastKey();
         return d;
+    }
+
+    /** A password box with the show/hide eye beside it, so a pasted password can be checked (owner, 14 Nov 2026). */
+    private static View withEye(Context c, EditText input) {
+        LinearLayout row = new LinearLayout(c);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.addView(input, new LinearLayout.LayoutParams(0, -1, 1));
+        TextView eye = new TextView(c);
+        eye.setGravity(Gravity.CENTER);
+        eye.setFocusable(true);
+        eye.setBackground(PreviewDialog.focus(c));
+        Diagnostics.semantic(eye, "keyboard.password.eye");
+        showPassword(eye, input, false);
+        eye.setOnClickListener(v -> showPassword(eye, input, input.getTransformationMethod() != null));
+        int size = KeyboardInput.compactHeight(c);
+        LinearLayout.LayoutParams eyeSize = new LinearLayout.LayoutParams(size, size);
+        eyeSize.leftMargin = dp(c, 8);
+        row.addView(eye, eyeSize);
+        return row;
+    }
+
+    private static void showPassword(TextView eye, EditText input, boolean shown) {
+        int caret = input.getSelectionEnd();
+        input.setTransformationMethod(shown ? null : PasswordTransformationMethod.getInstance());
+        input.setSelection(Math.max(0, Math.min(caret, input.length())));
+        PreviewIcon.apply(eye, shown ? "eye-off" : "eye", 18);
+        eye.setContentDescription(shown ? "Hide password" : "Show password");
     }
 
     private static int dp(Context c, int n) {

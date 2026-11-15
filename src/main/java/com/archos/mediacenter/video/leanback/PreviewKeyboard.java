@@ -102,6 +102,12 @@ public final class PreviewKeyboard extends LinearLayout {
         bottom.add(space);
         bottom.add(delete);
         bottom.add(action(last, "Clear", "Clear", 1.6f, () -> input.setText("")));
+        if (input instanceof KeyboardInput) {
+            // Lets the phone app type or paste into this box (0.157 notes §36).
+            TextView phone = action(last, "Phone", "Phone", 1.6f, this::openPhoneKeyboard);
+            phone.setContentDescription("Phone keyboard: type or paste from the phone app");
+            bottom.add(phone);
+        }
         doneLine = line();
         doneRow.add(action(doneLine, "Done", "Done", 1f, () -> {
             if (confirm != null)
@@ -118,6 +124,12 @@ public final class PreviewKeyboard extends LinearLayout {
     }
 
     // ---- host API -------------------------------------------------------------------------------------------
+
+    private void openPhoneKeyboard() {
+        if (input instanceof KeyboardInput) {
+            ((KeyboardInput) input).startSystemSession(this::focusLastKey);
+        }
+    }
 
     public void setActions(Runnable select, Runnable dismiss) {
         confirm = select;
