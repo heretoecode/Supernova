@@ -1499,6 +1499,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         supportedRefreshRates = refreshRates;
     }
 
+    static final String PREVIEW_AUTO_SCAN_ATTEMPT = "supernova_auto_scan_attempt_ms";
+    static final long PREVIEW_AUTO_SCAN_REST_MS = 15 * 60 * 1000L;
     private long previewRefreshAt, previewRefreshRequestedWallTime;
     private boolean previewHasForegrounded;
     private String previewForegroundTrigger = "startup";
@@ -1522,8 +1524,16 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 "foreground due-check: startup=" + previewScanOnReturn + " periodMs=" + period
                     + " lastScan=" + prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN, 0)
                     + " busy=" + NetworkScannerServiceVideo.isScannerAlive());
-            boolean due = previewScanOnReturn && NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)
-                || period > 0 && now - prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN, 0) >= period;
+            // Owner rule (0.157 notes 23.4): no automatic scan within 15 minutes of the last one, finished or not.
+            // A scan that failed never updated the last-scan time, so it was retried every minute all day.
+            long lastScan = prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN, 0);
+            long lastAttempt = prefs.getLong(PREVIEW_AUTO_SCAN_ATTEMPT, 0);
+            long sinceLast = now - Math.max(lastScan, lastAttempt);
+            boolean rested = sinceLast < 0 || sinceLast >= PREVIEW_AUTO_SCAN_REST_MS;
+            boolean due = rested && (previewScanOnReturn && NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)
+                || period > 0 && now - lastScan >= period);
+            if (previewScanOnReturn && !rested)
+                previewScanOnReturn = false;
             if (due
                 && (NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(CustomApplication.this)
                     || NetworkState.isNetworkConnected(CustomApplication.this))
@@ -1532,6 +1542,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 && (previewRefreshAt == 0 || SystemClock.elapsedRealtime() - previewRefreshAt >= 60000)) {
                 previewRefreshAt = SystemClock.elapsedRealtime();
                 previewRefreshRequestedWallTime = now;
+                prefs.edit().putLong(PREVIEW_AUTO_SCAN_ATTEMPT, now).apply();
                 Log.i("SupernovaScan", "Requesting configured automatic indexed-source scan");
                 PreviewLibraryScan.requestNetwork(
                     CustomApplication.this, previewScanOnReturn ? previewForegroundTrigger : "scheduled");
