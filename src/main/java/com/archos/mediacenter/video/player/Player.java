@@ -99,16 +99,16 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private Map<String, String> mExtraMap;
     private int mDuration;
     // Created on first use: test doubles of Player skip field initialisers.
-    private SeekLoadingSignal seekLoadingSignal;
+    private SeekLoadingSignal seekLoading;
     private java.util.List<PlaybackChapters.Chapter> seekChapters = java.util.List.of();
 
     public synchronized SeekLoadingSignal seekLoading()
     {
-        if (seekLoadingSignal == null)
+        if (seekLoading == null)
         {
-            seekLoadingSignal = new SeekLoadingSignal();
+            seekLoading = new SeekLoadingSignal();
         }
-        return seekLoadingSignal;
+        return seekLoading;
     }
 
 
