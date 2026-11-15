@@ -86,6 +86,8 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public String language = "", studio = "", collection = "";
         public String secondary = "";
         public boolean active;
+        /** Played at all (any episode, for a series): such a title has left Recently Added. */
+        public boolean started;
         public long playedAt;
         public String sortTitle = "";
         public String releaseDate = "";
@@ -220,6 +222,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 groups.computeIfAbsent(e.show, k -> new ArrayList<>()).add(e);
                 s.episodes.add(e);
             } else {
+                e.started = v.getResumeMs() > 0 || v.getLastPlayed() > 0 || watched(v);
                 s.recent.add(e);
                 if (v instanceof Movie) {
                     s.movies.add(e);
@@ -240,6 +243,11 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             Entry grouped = new Entry(recent.media, newest, recent.show, recent.genres);
             grouped.onlineId = recent.onlineId;
             grouped.releaseDate = recent.releaseDate;
+            for (Entry episode : group) {
+                Video played = (Video) episode.media;
+                if (played.getResumeMs() > 0 || played.getLastPlayed() > 0 || watched(played))
+                    grouped.started = true;
+            }
             s.recent.add(grouped);
             if (n != null) {
                 if (PreviewSeriesJourney.resumable((Video) n.media)) {

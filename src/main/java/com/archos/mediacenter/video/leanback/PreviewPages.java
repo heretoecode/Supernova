@@ -1594,7 +1594,7 @@ public final class PreviewPages extends FrameLayout {
                     break;
                 case "recent":
                     for (Entry e : snapshot.recent)
-                        if (!continuingKeys.contains(e.key()) && entries.size() < 50)
+                        if (!e.started && !continuingKeys.contains(e.key()) && entries.size() < 50)
                             entries.add(e);
                     break;
                 case "trending":
