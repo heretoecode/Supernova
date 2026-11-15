@@ -49,11 +49,11 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   `Diagnostics.KEEP_WEEKS`, pruned by age in `trimStorage`).
 
 ## In flight
-- Run 4 (12:54): compiled, 10 of 2,145 app tests failing, all fixed. Run 5 (18:12): compile error from a dropped line
-  in `PreviewPages.java`, fixed in `428a53a`. **Run 6 (43748969765) started 15 Nov 18:50** on everything so far. Check it; on
-  failure run `report-test-failures.yml` with `run_id` and read the last 60–120 lines of its job log.
-- `NetworkScanLedgerTest.cancelledWorkerWaitingForProviderGateCannotPerformLateScan` (MediaLib) failed once in run 5
-  and passed in run 4 with the same patches: timing-sensitive. If it fails again, make its wait deterministic.
+- Run 6 (18:50): 2 of 2,150 failing, both fixed in `966daae` (Player chapter list in test doubles; MediaLib
+  `NetworkScanLedgerTest` scanner had no files folder, so the scan lock failed: new registered patch
+  `medialib-supernova157-ledger-test.patch`). **Run 7 started 15 Nov ~19:33** on everything up to `966daae`.
+- To read the exact MediaLib code the build uses: add a worktree of `aos-MediaLib` at the pinned revision
+  (`prepare-supernova155-workspace.py`) and `git apply` the MediaLib patches from the lock file in order.
 
 ## Not done yet
 - **Dead connection still scanned** (diagnostics 14 Nov, finding 3): the source list is chosen inside MediaLib's
