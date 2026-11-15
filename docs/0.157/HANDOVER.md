@@ -41,8 +41,8 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   and gains automatic search above 12 items (`ChoiceListSearch`, keyboard beside the list via
   `PreviewTextInput.showLive`); group headings centred on a line in Title Case (`SupernovaStyle.groupHeading`).
   Also done: shared tab row `PageTabs` (focus and path), the artwork edge `ArtworkEdge` on every card (thick ring
-  and 440 px when focused), Selected A–Z with the glide. Still to do in R0: stacking (list over panel), menu
-  icons/ticks audit, the move gesture, focus and path on the top bar. Keyboard: Phone key and password eye done (Shield check with the phone app
+  and 440 px when focused), Selected A–Z with the glide. Stacking look (`PreviewDialog.stackLook`) and focus and path on
+  the top bar (`TopNavigation.refreshPath`) done. Still to do in R0: menu icons/ticks audit, the move gesture app-wide. Keyboard: Phone key and password eye done (Shield check with the phone app
   needed; if the phone app appears without Android's keyboard showing, the key could go).
 
 - Step 11 (data), started: Where to Watch region from the device when none was chosen (services already saved
@@ -59,6 +59,9 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   (Network142*, NextQaUi*) to the new page; then switch it on by default. Transfers waits (0.158).
   Also done for Files: the top-bar signal slot (`TopBarSignal`), the old floating pill retired, "Network & Files"
   renamed "Files".
+
+- Step 9 (Details) started: portrait cast and crew cards (`PersonInitials`, `ArtworkEdge`); tab renamed Episodes
+  in the master order Details · Episodes · Extras · More Like This.
 
 ## In flight
 - Run 6 (18:50): 2 of 2,150 failing, both fixed in `966daae` (Player chapter list in test doubles; MediaLib
