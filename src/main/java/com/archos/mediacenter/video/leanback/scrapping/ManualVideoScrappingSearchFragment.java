@@ -79,9 +79,8 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         mVideo = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
             ? getActivity().getIntent().getSerializableExtra(ManualVideoScrappingActivity.EXTRA_VIDEO, Video.class)
             : (Video) getActivity().getIntent().getSerializableExtra(ManualVideoScrappingActivity.EXTRA_VIDEO);
-        mSearchInfo = SearchPreprocessor.instance().parseFileBased(mVideo.getUri(),
-            mVideo.getName() != null && !mVideo.getName().isEmpty() ? Uri.parse("/" + mVideo.getName())
-                                                                    : mVideo.getUri());
+        // The file name and folder identify the video; the stored title is only a fallback (NOVA 2e3baca).
+        mSearchInfo = SearchPreprocessor.instance().parseFileBasedWithTitleFallback(mVideo.getUri(), mVideo.getName());
         previewEpisode = mVideo instanceof Episode
             && PreferenceManager.getDefaultSharedPreferences(requireContext())
                    .getBoolean("try_new_ui", false);
