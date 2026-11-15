@@ -2863,10 +2863,15 @@ public final class PreviewPages extends FrameLayout {
             final com.archos.mediacenter.video.leanback.files.FilesPage page = filesPage;
             final Context app = getContext().getApplicationContext();
             if (networkSearch == null) {
-                networkSearch = com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.start(
-                    app, page::post,
-                    snapshot -> page.setFound(
-                        com.archos.mediacenter.video.leanback.files.FilesPageData.found(snapshot)));
+                try {
+                    networkSearch = com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.start(
+                        app, page::post,
+                        snapshot -> page.setFound(
+                            com.archos.mediacenter.video.leanback.files.FilesPageData.found(snapshot)));
+                } catch (RuntimeException unavailable) {
+                    // No network search on this device: the section simply does not appear.
+                    Diagnostics.error("files_network_search_unavailable", unavailable);
+                }
             }
             new Thread(() -> {
                 int unreadable = com.archos.mediacenter.video.leanback.files.FilesPageData.unreadable(app);
