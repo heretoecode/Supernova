@@ -460,6 +460,8 @@ public final class PreviewMoviePage extends ScrollView {
         return super.computeScrollDeltaToGetChildRectOnScreen(safe);
     }
 
+    public static final long TAB_SETTLE_MS = 8000;
+
     private void rebuildTabs() {
         View oldFocus = tabBar.findFocus();
         Object focusedTag = oldFocus == null ? null : oldFocus.getTag();
@@ -469,9 +471,14 @@ public final class PreviewMoviePage extends ScrollView {
         labels.add("Details");
         if (show != null || "tv".equals(remoteKind))
             labels.add("Episodes");
-        if (hasPlayableExtras())
+        // Tabs never pop in (RULES §4): while the title's data is still arriving the whole set is drawn; a tab
+        // that is still empty once it has had time to load hides (the rest close up).
+        boolean settling = enrichment == null && SystemClock.elapsedRealtime() - openedAt < TAB_SETTLE_MS;
+        if (settling)
+            postDelayed(this::rebuildTabs, TAB_SETTLE_MS);
+        if (hasPlayableExtras() || settling)
             labels.add("Extras");
-        if (!landscapeCards.isEmpty())
+        if (!landscapeCards.isEmpty() || settling)
             labels.add("More Like This");
         boolean unchanged = labels.size() == sectionTabs.size();
         for (int i = 0; unchanged && i < labels.size(); i++)

@@ -367,6 +367,9 @@ public class PreviewMoviePageTest {
             ViewGroup hero = (ViewGroup)body.getChildAt(0);
             assertNotNull("Card and connected section frame are retained",
                           page.findViewWithTag("details.connected.frame"));
+            // 0.157: the full tab set shows while data arrives; empty tabs hide once it has had time to load.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(PreviewMoviePage.TAB_SETTLE_MS + 100));
             assertNull(PreviewPagesTest.findText(page, "See All"));
             assertNull(PreviewPagesTest.findText(page, "Fixture Person 10"));
             assertNotNull(PreviewPagesTest.findText(page, "Fixture Person 8"));
