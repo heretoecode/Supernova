@@ -526,24 +526,65 @@ public final class SupernovaStyle {
     // ---- menus ---------------------------------------------------------------------------------
 
     /** A group heading followed on the same line by a thin line spanning the rest of the menu. */
+    /** Group heading text size: 28 px at 1080p, a little larger than rows' second lines (RULES §10). */
+    public static final float GROUP_HEADING_SP = 14f;
+
+    /**
+     * A group heading in a menu or side panel: the words centred on a thin line ("——— Files & Media ———"), in Title
+     * Case (owner, 12 Nov 2026; RULES §10). The caller's size is kept only if it is larger than the rule's.
+     */
     public static View groupHeading(Context c, String title, float textSizeSp) {
         LinearLayout heading = new LinearLayout(c);
         heading.setGravity(Gravity.CENTER_VERTICAL);
         heading.setFocusable(false);
         heading.setPadding(dp(c, ROW_INSET_DP), dp(c, 6), dp(c, ROW_INSET_DP), dp(c, 2));
+        heading.addView(headingLine(c), headingLineSize(c, false));
         TextView label = new TextView(c);
-        label.setText(title);
-        label.setTextSize(textSizeSp);
+        label.setText(titleCase(title));
+        label.setTextSize(Math.max(textSizeSp, GROUP_HEADING_SP));
         label.setTextColor(HEADING);
         label.setSingleLine(true);
         heading.addView(label);
-        View line = new View(c);
-        line.setBackgroundColor(HEADING_LINE);
-        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(0, Math.max(1, dp(c, .75f)), 1);
-        size.leftMargin = dp(c, 7);
-        heading.addView(line, size);
+        heading.addView(headingLine(c), headingLineSize(c, true));
+        heading.setContentDescription(titleCase(title));
         heading.setTag("menu.heading");
         return heading;
+    }
+
+    private static View headingLine(Context c) {
+        View line = new View(c);
+        line.setBackgroundColor(HEADING_LINE);
+        return line;
+    }
+
+    private static LinearLayout.LayoutParams headingLineSize(Context c, boolean afterText) {
+        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(0, Math.max(1, dp(c, .75f)), 1);
+        if (afterText) {
+            size.leftMargin = dp(c, 10);
+        } else {
+            size.rightMargin = dp(c, 10);
+        }
+        return size;
+    }
+
+    /** Each word starts with a capital ("files & media" becomes "Files & Media"); the rest is kept, so "TV" stays. */
+    public static String titleCase(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        StringBuilder out = new StringBuilder(text.length());
+        boolean start = true;
+        for (int n = 0; n < text.length(); n++) {
+            char ch = text.charAt(n);
+            if (Character.isLetter(ch)) {
+                out.append(start ? Character.toUpperCase(ch) : ch);
+                start = false;
+            } else {
+                out.append(ch);
+                start = Character.isWhitespace(ch) || ch == '-' || ch == '/';
+            }
+        }
+        return out.toString();
     }
 
     /**

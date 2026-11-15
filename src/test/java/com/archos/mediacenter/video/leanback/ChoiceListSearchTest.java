@@ -44,4 +44,12 @@ public class ChoiceListSearchTest
         assertTrue(ChoiceListSearch.matches("United Kingdom", " "));
         assertFalse(ChoiceListSearch.matches("France", "kin"));
     }
+
+    @Test
+    public void groupHeadingsUseTitleCaseAndKeepCapitals()
+    {
+        assertEquals("Files & Media", SupernovaStyle.titleCase("files & media"));
+        assertEquals("Audio And Subtitles", SupernovaStyle.titleCase("Audio and subtitles"));
+        assertEquals("TV Shows", SupernovaStyle.titleCase("TV shows"));
+    }
 }
