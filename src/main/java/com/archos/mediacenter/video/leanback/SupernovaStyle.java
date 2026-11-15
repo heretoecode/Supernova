@@ -29,8 +29,8 @@ public final class SupernovaStyle {
     }
 
     // ---- tokens --------------------------------------------------------------------------------
-    /** Glass: charcoal at 97% opacity (0.154; was navy). Text behind a panel must not be readable. */
-    public static final int GLASS = 0xF716181C;
+    /** Glass: charcoal at 95% for every pop-up, menu and side panel (owner, 13 Nov 2026; RULES §11). */
+    public static final int GLASS = 0xF216181C;
     public static final int GLASS_EDGE = 0x38FFFFFF;
     /** Resting button: black at 72%. */
     public static final int BUTTON_REST = 0xB8000000;

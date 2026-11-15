@@ -13,8 +13,8 @@ import java.util.function.Consumer;
 
 /** Shared Find a Match presentation; native search and accepted-save handlers stay in the fragment. */
 public final class PreviewMatchSearch extends LinearLayout {
-    /** Side panels: #16181C at 90% (global look, owner 5 Nov 2026). */
-    static final int PANEL = 0xE616181C;
+    /** Side panels use the one shared panel value (RULES §11). */
+    static final int PANEL = SupernovaStyle.GLASS;
     static final int PANEL_WIDTH_DP = 440;
     private final EditText input;
     private final PreviewKeyboard keyboard;
