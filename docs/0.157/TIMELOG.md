@@ -28,3 +28,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 19:04–19:13 | While build 6 runs: choice-list search, Selected A–Z, menu headings, keyboard Phone key and password eye, region from device, diagnostics retention. |
 | 15 Nov 19:19 | Owner: keep working while builds run. Carrying on. |
 | 15 Nov 19:19–19:23 | Build 6: 2 failing tests (one was the MediaLib test I had wrongly called flaky; real cause found). Fixed; build 7 started. |
+| 15 Nov 19:23–19:41 | While build 7 runs: top-bar signal slot, pill retired, Files rename, shared tab row, new Files page (three tabs, wired behind a switch), artwork edge on cards. |

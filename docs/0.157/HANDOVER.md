@@ -40,8 +40,9 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 - R0 started: one panel value (95%, `SupernovaStyle.GLASS`); the shared choice list (`PreviewDialog.choose`) uses it
   and gains automatic search above 12 items (`ChoiceListSearch`, keyboard beside the list via
   `PreviewTextInput.showLive`); group headings centred on a line in Title Case (`SupernovaStyle.groupHeading`).
-  Still to do in R0: Selected A–Z with the glide for multi-choice lists, stacking (list over panel), menu icons/ticks
-  audit, focus-and-path on tabs, artwork edge, move gesture. Keyboard: Phone key and password eye done (Shield check with the phone app
+  Also done: shared tab row `PageTabs` (focus and path), the artwork edge `ArtworkEdge` on every card (thick ring
+  and 440 px when focused), Selected A–Z with the glide. Still to do in R0: stacking (list over panel), menu
+  icons/ticks audit, the move gesture, focus and path on the top bar. Keyboard: Phone key and password eye done (Shield check with the phone app
   needed; if the phone app appears without Android's keyboard showing, the key could go).
 
 - Step 11 (data), started: Where to Watch region from the device when none was chosen (services already saved
