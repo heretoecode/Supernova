@@ -1635,30 +1635,22 @@ public final class PreviewMoviePage extends ScrollView {
         cell.setFocusable(false);
         cell.setTag("person:" + name + ":" + role);
         cell.setContentDescription(name + ", " + role);
-        ImageView portrait = new AppCompatImageView(getContext()) {
-            private final Path circle = new Path();
-            @Override
-            public void draw(Canvas canvas) {
-                int saved = canvas.save();
-                circle.reset();
-                circle.addOval(0, 0, getWidth(), getHeight(), Path.Direction.CW);
-                canvas.clipPath(circle);
-                super.draw(canvas);
-                canvas.restoreToCount(saved);
-            }
-        };
-        portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);
+        // Portrait cards, 2:3 like TMDB's photos, rounded with the artwork edge; initials when there is no photo
+        // (owner, 14 Nov 2026; details-background/21). Never circles.
+        ImageView portrait = new AppCompatImageView(getContext());
+        portrait.setImageDrawable(new PersonInitials(name));
         portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        portrait.setBackground(new ColorDrawable(0xff1d2936));
+        portrait.setBackground(new ColorDrawable(0xff2a2d33));
         portrait.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
-                outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), dp(4));
             }
         });
         portrait.setClipToOutline(true);
+        portrait.setForeground(new com.archos.mediacenter.video.leanback.ArtworkEdge(getContext(), 4, false));
         portraits.put(name, portrait);
-        cell.addView(portrait, new LinearLayout.LayoutParams(dp(34), dp(34)));
+        cell.addView(portrait, new LinearLayout.LayoutParams(dp(40), dp(60)));
         for (String value : new String[] {name, safe(role)}) {
             TextView text = text(value, 9);
             text.setGravity(Gravity.CENTER);
@@ -1716,8 +1708,8 @@ public final class PreviewMoviePage extends ScrollView {
                             .load(uri)
                             .fit()
                             .centerCrop()
-                            .placeholder(com.archos.mediacenter.video.R.drawable.preview_person)
-                            .error(com.archos.mediacenter.video.R.drawable.preview_person),
+                            .placeholder(new PersonInitials(name))
+                            .error(new PersonInitials(name)),
                         true);
                 }
             }
