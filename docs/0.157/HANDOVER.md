@@ -48,6 +48,14 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   under one country keep it; `StreamingRepository.defaultCountry`); Keep diagnostics for 1/2/4 weeks (default 2,
   `Diagnostics.KEEP_WEEKS`, pruned by age in `trimStorage`).
 
+- Step 8 (Files) started as a new, self-contained page: `leanback/files/FilesPage` (tabs via the shared
+  `PageTabs`, summary facts `FilesSummary`), Library Care tab with Library Health rows (`LibraryCareCounts`, opens
+  `LibraryHealthActivity`), Scanning: Scan one source (`setSources`) and Recent scans (`RecentScanLine`). Not yet
+  shown in the app: This Device and Connections tabs still to build, then swap it in for the old Files page in
+  `PreviewPages.networkLayout` (feed it the snapshot, `librarySources`, last scan time). Transfers waits (0.158).
+  Also done for Files: the top-bar signal slot (`TopBarSignal`), the old floating pill retired, "Network & Files"
+  renamed "Files".
+
 ## In flight
 - Run 6 (18:50): 2 of 2,150 failing, both fixed in `966daae` (Player chapter list in test doubles; MediaLib
   `NetworkScanLedgerTest` scanner had no files folder, so the scan lock failed: new registered patch

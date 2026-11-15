@@ -23,13 +23,14 @@ import java.util.List;
 
 /**
  * The redesigned Files page (owner, 6–12 Nov 2026; mock-ups network-files-tabs/33–44; RULES): plain charcoal, tabs
- * This Device · Connections · Library Care · Transfers with the open tab's facts on the right. Built up tab by tab;
+ * This Device · Connections · Library Care (Transfers later) with the open tab's facts on the right. Built up tab by tab;
  * it replaces the old Files page once every tab is in (see docs/0.157/HANDOVER.md).
  */
 public final class FilesPage extends LinearLayout
 {
-    public static final String[] TABS = {"This Device", "Connections", "Library Care", "Transfers"};
-    static final String[] TAB_ICONS = {"tv", "integration", "health", "arrow-down"};
+    // Transfers waits for 0.158 (build order: "Files without Transfers").
+    public static final String[] TABS = {"This Device", "Connections", "Library Care"};
+    static final String[] TAB_ICONS = {"tv", "integration", "health"};
     public static final int LIBRARY_CARE = 2;
 
     static final int SECOND_LINE = 0xFFC9D3E6;
