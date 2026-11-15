@@ -154,7 +154,7 @@ public class Details139AcceptanceTest {
             layout(root);
             View frame = page.findViewWithTag("details.connected.frame");
             Rect stable = bounds(frame);
-            for (String name : List.of("Details", "Extras", "Seasons & Episodes", "More Like This")) {
+            for (String name : List.of("Details", "Episodes", "Extras", "More Like This")) {
                 TextView tab = page.findViewWithTag("section:" + name);
                 assertNotNull(name, tab);
                 tab.requestFocus();

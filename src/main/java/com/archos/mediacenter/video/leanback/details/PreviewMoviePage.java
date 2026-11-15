@@ -465,11 +465,12 @@ public final class PreviewMoviePage extends ScrollView {
         Object focusedTag = oldFocus == null ? null : oldFocus.getTag();
         String selected = activeSection;
         List<String> labels = new ArrayList<>();
+        // One master order, each tab shown or hidden, never moved (owner, 12 Nov 2026; notes §29).
         labels.add("Details");
+        if (show != null || "tv".equals(remoteKind))
+            labels.add("Episodes");
         if (hasPlayableExtras())
             labels.add("Extras");
-        if (show != null || "tv".equals(remoteKind))
-            labels.add("Seasons & Episodes");
         if (!landscapeCards.isEmpty())
             labels.add("More Like This");
         boolean unchanged = labels.size() == sectionTabs.size();
@@ -486,7 +487,7 @@ public final class PreviewMoviePage extends ScrollView {
             PreviewIcon.apply(tab,
                               label.equals("Details")              ? "info"
                               : label.equals("Extras")             ? "play"
-                              : label.equals("Seasons & Episodes") ? "tv"
+                              : label.equals("Episodes") ? "tv"
                                                                    : "recommendation",
                               Math.round(16 * TvLayout.scale(getContext())));
             tab.setTag("section:" + label);
@@ -573,7 +574,7 @@ public final class PreviewMoviePage extends ScrollView {
         lower.requestLayout();
         for (LinearLayout section : new LinearLayout[] {episodes, related, trailers})
             ((View)section.getParent())
-                .setVisibility(label.equals(section == episodes  ? "Seasons & Episodes"
+                .setVisibility(label.equals(section == episodes  ? "Episodes"
                                             : section == related ? "More Like This"
                                                                  : "Extras")
                                    ? VISIBLE
@@ -591,7 +592,7 @@ public final class PreviewMoviePage extends ScrollView {
             scrollTo(0, expandedScrollTarget());
             if (focusRemembered(label))
                 return;
-            if (label.equals("Seasons & Episodes"))
+            if (label.equals("Episodes"))
                 focusNextEpisode();
             else if (label.equals("Extras") && !extraCards.isEmpty())
                 extraCards.get(0).requestFocus();
@@ -2484,7 +2485,7 @@ public final class PreviewMoviePage extends ScrollView {
                                      if (n == 0)
                                          nativeDetails.run();
                                      else {
-                                         showSection("Seasons & Episodes", true);
+                                         showSection("Episodes", true);
                                      }
                                  });
             return;
