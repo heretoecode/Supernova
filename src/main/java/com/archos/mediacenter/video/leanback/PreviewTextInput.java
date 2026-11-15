@@ -110,6 +110,74 @@ public final class PreviewTextInput {
         keyboard.focusLastKey();
     }
 
+    /**
+     * The shared keyboard in its own panel beside a list (RULES §9): every change filters the list at once; Done or
+     * Back closes the panel and leaves the list as filtered.
+     *
+     * @param rightEdge the screen x the panel ends at (the list's left edge less a gap)
+     */
+    public static Dialog showLive(Context c, String prompt, String previous, int rightEdge,
+                                  Consumer<String> changed) {
+        Dialog d = PreviewDialog.create(c);
+        d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        LinearLayout panel = new MenuFoundation.WindowPanel(c);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(c, 20), dp(c, 16), dp(c, 20), dp(c, 16));
+        panel.setBackground(MenuFoundation.surface(c, false));
+        EditText input = new KeyboardInput(c);
+        input.setSingleLine(true);
+        input.setShowSoftInputOnFocus(false);
+        input.setHint(prompt);
+        input.setHintTextColor(0xff8197a8);
+        input.setText(previous);
+        input.setTextSize(16);
+        SupernovaStyle.applyButton(input, SupernovaStyle.Surface.STANDARD);
+        input.setPadding(dp(c, 12), 0, dp(c, 12), 0);
+        panel.addView(input, new LinearLayout.LayoutParams(-1, KeyboardInput.compactHeight(c)));
+        input.setSelection(input.length());
+        input.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence text, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence text, int start, int before, int count) {
+                changed.accept(text.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable text) {
+            }
+        });
+        PreviewKeyboard keyboard = new PreviewKeyboard(c, input, d::dismiss);
+        panel.addView(keyboard);
+        keyboard.useMenuFoundation();
+        keyboard.setDoneRowVisible(false);
+        int width = Math.min(dp(c, 480), Math.max(dp(c, 320), rightEdge - dp(c, 14)));
+        panel.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                      View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        d.setContentView(panel);
+        d.show();
+        Window window = d.getWindow();
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        window.setDimAmount(0f);
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.x = Math.max(dp(c, 14), rightEdge - width);
+        params.y = Math.round(c.getResources().getDisplayMetrics().heightPixels * 56f / 540f);
+        window.setAttributes(params);
+        window.setLayout(width, panel.getMeasuredHeight());
+        d.setOnKeyListener((dialog, code, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN ||
+                event.getUnicodeChar() == 0 && code != KeyEvent.KEYCODE_DEL && code != KeyEvent.KEYCODE_FORWARD_DEL)
+                return false;
+            return input.onKeyDown(code, event);
+        });
+        keyboard.focusLastKey();
+        return d;
+    }
+
     private static int dp(Context c, int n) {
         return PreviewDialog.dp(c, n);
     }

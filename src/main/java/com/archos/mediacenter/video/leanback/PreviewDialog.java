@@ -353,8 +353,8 @@ public final class PreviewDialog {
         panel.setOrientation(android.widget.LinearLayout.VERTICAL);
         int pad = dp(c, 12);
         panel.setPadding(pad, pad, Math.round(pad * 1.2f), pad);
-        // Shared choice list (owner-approved 5 Nov 2026, mock-up suggestions/01): a solid side panel, not glass.
-        panel.setBackground(SupernovaStyle.solidPanel(c));
+        // Shared choice list: the one panel surface, charcoal at 95% with the faint edge (RULES §9, §11).
+        panel.setBackground(SupernovaStyle.glass(c));
         panel.setClipChildren(false);
         panel.setClipToPadding(false);
         // Approved global rule (2 Nov 2026): pop-up menus have no title; the title only names the menu for accessibility.
@@ -374,9 +374,12 @@ public final class PreviewDialog {
         LinearLayout rows = new LinearLayout(c);
         rows.setOrientation(android.widget.LinearLayout.VERTICAL);
         scroll.addView(rows);
+        TextView search = ChoiceListSearch.shown(labels) ? searchRow(c, title) : null;
+        if (search != null)
+            panel.addView(search, new LinearLayout.LayoutParams(-1, dp(c, 37)));
         panel.addView(scroll, new LinearLayout.LayoutParams(-1, -2));
         View initial = null;
-        int height = 60;
+        int height = search == null ? 60 : 97;
         int footerHeight = 0;
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
@@ -483,9 +486,60 @@ public final class PreviewDialog {
         scroll.setLayoutParams(
             new LinearLayout.LayoutParams(-1, Math.max(dp(c, 30), menuHeight - chrome - footerHeight)));
         w.setLayout(width, menuHeight);
+        if (search != null) {
+            final int listLeft = params.x;
+            search.setOnClickListener(v -> {
+                String query = search.getTag() instanceof String ? (String)search.getTag() : "";
+                PreviewTextInput.showLive(c, ChoiceListSearch.prompt(title), query, listLeft - dp(c, 12), typed -> {
+                    search.setTag(typed);
+                    search.setText(typed.trim().isEmpty() ? ChoiceListSearch.prompt(title) : typed);
+                    filterRows(rows, labels, typed);
+                });
+            });
+        }
         if (initial != null)
             initial.requestFocus();
         return d;
+    }
+
+    /** The search line at the top of a long choice list: OK opens the keyboard beside the list. */
+    private static TextView searchRow(Context c, String title) {
+        TextView search = new TextView(c);
+        search.setText(ChoiceListSearch.prompt(title));
+        search.setTag("");
+        search.setTextSize(14);
+        search.setTextColor(Color.WHITE);
+        search.setSingleLine(true);
+        search.setEllipsize(TextUtils.TruncateAt.END);
+        search.setGravity(Gravity.CENTER_VERTICAL);
+        search.setPadding(SupernovaStyle.dp(c, SupernovaStyle.ROW_INSET_DP), 0,
+                          SupernovaStyle.dp(c, SupernovaStyle.ROW_INSET_DP), 0);
+        search.setCompoundDrawablePadding(dp(c, 10));
+        PreviewIcon icon = new PreviewIcon("search");
+        icon.setBounds(0, 0, dp(c, 18), dp(c, 18));
+        search.setCompoundDrawables(icon, null, null, null);
+        search.setBackground(focus(c));
+        search.setFocusable(true);
+        search.setFocusableInTouchMode(true);
+        Diagnostics.semantic(search, "dialog.choice.search");
+        return search;
+    }
+
+    /** Shows only the rows that match; group headings hide while a search is typed. */
+    private static void filterRows(LinearLayout rows, String[] labels, String query) {
+        boolean searching = query != null && !query.trim().isEmpty();
+        for (int n = 0; n < rows.getChildCount(); n++) {
+            View child = rows.getChildAt(n);
+            if (!(child.getTag() instanceof Integer))
+                continue;
+            int index = (Integer)child.getTag();
+            if (index < 0 || index >= labels.length)
+                continue;
+            boolean visible = ChoiceListSearch.heading(labels[index])
+                ? !searching
+                : ChoiceListSearch.matches(labels[index], query);
+            child.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
     }
 
     private static View anchor(Context c) {
