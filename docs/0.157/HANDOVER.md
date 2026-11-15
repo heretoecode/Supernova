@@ -37,6 +37,12 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   and the ring in the Files top-bar slot (comes with Files, step 8). `tools/export_foundation_branding.py` is the old
   glowing-ring export: do not run it.
 
+- R0 started: one panel value (95%, `SupernovaStyle.GLASS`); the shared choice list (`PreviewDialog.choose`) uses it
+  and gains automatic search above 12 items (`ChoiceListSearch`, keyboard beside the list via
+  `PreviewTextInput.showLive`); group headings centred on a line in Title Case (`SupernovaStyle.groupHeading`).
+  Still to do in R0: Selected A–Z with the glide for multi-choice lists, stacking (list over panel), menu icons/ticks
+  audit, focus-and-path on tabs, artwork edge, move gesture, password eye and phone paste on the keyboard.
+
 ## In flight
 - Run 4 (12:54): compiled, 10 of 2,145 app tests failing, all fixed. Run 5 (18:12): compile error from a dropped line
   in `PreviewPages.java`, fixed in `428a53a`. **Run 6 (43748969765) started 15 Nov 18:50** on everything so far. Check it; on
