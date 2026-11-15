@@ -35,4 +35,13 @@ public class DoubleRingTest {
         ring.setVisible(true,false);ring.start();assertTrue(ring.isRunning());
         ring.setCallback(null);ring.run();assertFalse(ring.isRunning());
     }
+    @Test public void smallRingsGetThickerStrokesSoBothStayClear(){
+        assertEquals(6f,DoubleRingDrawable.stroke(6f,100f),.001f);
+        assertEquals(6f*.28f*DoubleRingDrawable.SMALL_STROKE_FACTOR,DoubleRingDrawable.stroke(6f,28f),.001f);
+        assertTrue(DoubleRingDrawable.stroke(5f,28f)>5f*.28f);
+    }
+    @Test public void bothRingsAreOpenArcsOfTheApprovedLength(){
+        assertEquals(280f,DoubleRingDrawable.ARC_DEGREES,.001f);
+        assertEquals(180f,DoubleRingDrawable.INNER_HEAD-DoubleRingDrawable.OUTER_HEAD,.001f);
+    }
 }
