@@ -187,3 +187,25 @@ is ever wanted back.
 - Switching should be one press from the top bar, never a full sign-in.
 - Open questions: does Together need its own progress, or just tick both people? Should the partner's titles appear
   on the owner's Home at all, or only through Search and a filter? PIN or no PIN (probably none)?
+
+### Tags and views instead of profiles (owner, 15 Nov 2026; follows the Profiles discussion above)
+- **Owner's preference: no profiles at all**, one library with access to everything, without being drowned. No
+  separate folders either. Real cases: a show started alone that the partner then wants to watch together; films
+  only for the owner, only for the partner, or for both; rewatchable favourites ("Classics") kept but not wanted in
+  view day to day.
+- **Tags (owner's idea):** long-press a title › Tags: tick existing tags or create one (any name: a person's name,
+  Together, Classics). A series' tag covers its episodes. Tags become a Filters option on library pages.
+- **Many at once:** a select mode (from list view or the long-press menu): OK ticks titles, "Select all" then untick
+  the exceptions, then "Tag 79 titles".
+- **Global view (owner's "master tag"):** one switch that applies everywhere: Home's hero and rows, every library page,
+  Continue Watching. Page filters work on top of it; Home changes only with the global view. Stays set until changed.
+- **Claude's refinements:**
+  - Filters need **hide** as well as **only**: "only Partner", but also "hide Classics". Hiding means very little
+    tagging: tag the few partner titles and Classics, then the owner's view simply hides those two tags; untagged
+    titles count as everyone's.
+  - **Views** = saved sets of tag rules, chosen from a small chip in the top bar ("Viewing: Everything"): e.g. Me
+    (hide Partner, hide Classics), Partner (only Partner or Together), Together (only Together), Everything.
+    Switching is one press; nothing is locked; Search always finds everything.
+  - Limit to accept: one shared history and progress (no per-person Continue Watching); the view keeps the other
+    person's half-watched titles out of sight.
+- Where it could land: with the library pages redesign (0.158) or later; owner to decide.
