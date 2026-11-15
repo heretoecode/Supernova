@@ -169,6 +169,33 @@ public final class FilesPage extends LinearLayout
     private final List<Connection> connections = new java.util.ArrayList<>();
     private ConnectionActions connectionActions;
 
+    /** A device found on the network that is not a connection yet. */
+    public static final class Found
+    {
+        public final String name;
+        public final String line;
+        public final android.net.Uri uri;
+
+        public Found(String name, String line, android.net.Uri uri)
+        {
+            this.name = name;
+            this.line = line;
+            this.uri = uri;
+        }
+    }
+
+    private final List<Found> found = new java.util.ArrayList<>();
+
+    public void setFound(List<Found> latest)
+    {
+        found.clear();
+        found.addAll(latest);
+        if (tabs.openTab() == CONNECTIONS)
+        {
+            show(CONNECTIONS);
+        }
+    }
+
     public void setConnections(List<Connection> latest, ConnectionActions actions)
     {
         connections.clear();
@@ -486,6 +513,20 @@ public final class FilesPage extends LinearLayout
                     connectionActions.add();
                 }
             }, connections.isEmpty());
+        if (found.isEmpty())
+        {
+            return;
+        }
+        heading(column, "Found On Your Network", "search", true);
+        for (Found device : found)
+        {
+            row(column, "integration", device.name, device.line, "Not added yet", () -> {
+                if (connectionActions != null)
+                {
+                    connectionActions.add();
+                }
+            }, false);
+        }
     }
 
     /** A button on a focused row. */

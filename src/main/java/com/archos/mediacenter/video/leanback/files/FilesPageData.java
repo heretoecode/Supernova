@@ -103,6 +103,39 @@ public final class FilesPageData
         }
     }
 
+    /** New devices from the network search (mock-up network-files-tabs/05, "Found on your network"). */
+    public static List<FilesPage.Found> found(com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.Snapshot
+                                                  snapshot)
+    {
+        List<FilesPage.Found> found = new ArrayList<>();
+        if (snapshot == null)
+        {
+            return found;
+        }
+        for (com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.Row row : snapshot.devices())
+        {
+            if (row.membership() != com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.Membership.NEW)
+            {
+                continue;
+            }
+            String line;
+            switch (row.kind())
+            {
+                case SMB_SERVER:
+                    line = "SMB · Shared folders";
+                    break;
+                case MEDIA_SERVER:
+                    line = "UPnP · Media server";
+                    break;
+                default:
+                    line = "Network device";
+                    break;
+            }
+            found.add(new FilesPage.Found(row.name(), line, row.uri()));
+        }
+        return found;
+    }
+
     public static int videoCount(List<Base> media)
     {
         int count = 0;

@@ -77,6 +77,7 @@ public final class PreviewPages extends FrameLayout {
     /** The redesigned Files page (0.157 step 8); false brings back the old page (tests of the old screens). */
     static final String FILES_PAGE_SWITCH = "supernova_files_page";
     private com.archos.mediacenter.video.leanback.files.FilesPage filesPage;
+    private com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.Job networkSearch;
     private List<Box> files = new ArrayList<>();
     private final List<Shortcut> librarySources =
                                                                                           new ArrayList<>(),
@@ -932,6 +933,10 @@ public final class PreviewPages extends FrameLayout {
 
     @Override
     protected void onDetachedFromWindow() {
+        if (networkSearch != null) {
+            networkSearch.close();
+            networkSearch = null;
+        }
         if (getViewTreeObserver().isAlive())
             getViewTreeObserver().removeOnGlobalFocusChangeListener(detailsFocusChanged);
         removeCallbacks(prepareFocusedDetails);
@@ -2857,6 +2862,12 @@ public final class PreviewPages extends FrameLayout {
             container.addView(filesPage, new LinearLayout.LayoutParams(-1, -1));
             final com.archos.mediacenter.video.leanback.files.FilesPage page = filesPage;
             final Context app = getContext().getApplicationContext();
+            if (networkSearch == null) {
+                networkSearch = com.archos.mediacenter.video.connections.NetworkDeviceDiscovery.start(
+                    app, page::post,
+                    snapshot -> page.setFound(
+                        com.archos.mediacenter.video.leanback.files.FilesPageData.found(snapshot)));
+            }
             new Thread(() -> {
                 int unreadable = com.archos.mediacenter.video.leanback.files.FilesPageData.unreadable(app);
                 page.post(() -> page.setUnreadable(unreadable));
