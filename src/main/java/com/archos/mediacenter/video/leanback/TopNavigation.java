@@ -46,6 +46,7 @@ public final class TopNavigation extends LinearLayout {
     private final FrameLayout stage;
     private final boolean scrollingContent;
     private final FrameLayout scanStatus;
+    private TopBarSignal signal;
     private final FrameLayout status;
     private final BooleanSupplier firstRow;
     private TextView selected;
@@ -169,6 +170,13 @@ public final class TopNavigation extends LinearLayout {
             if (i == 3) {
                 View gap = new View(c);
                 group.addView(gap, new LayoutParams(0, 1, 1));
+                // The signal slot left of Files: scan ring, attention dot or nothing (RULES §2).
+                signal = new TopBarSignal(c);
+                signal.setTag("semantic:topnav.signal");
+                LayoutParams slot = new LayoutParams(dp(14), dp(14));
+                slot.gravity = Gravity.CENTER_VERTICAL;
+                slot.rightMargin = dp(2);
+                group.addView(signal, slot);
             }
             group.addView(tab, new LayoutParams(-2, dp(36)));
         }
