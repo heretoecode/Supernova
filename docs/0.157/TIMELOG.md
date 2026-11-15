@@ -29,3 +29,5 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 19:19 | Owner: keep working while builds run. Carrying on. |
 | 15 Nov 19:19–19:23 | Build 6: 2 failing tests (one was the MediaLib test I had wrongly called flaky; real cause found). Fixed; build 7 started. |
 | 15 Nov 19:23–19:41 | While build 7 runs: top-bar signal slot, pill retired, Files rename, shared tab row, new Files page (three tabs, wired behind a switch), artwork edge on cards. |
+| 15 Nov 19:50–23:16 | **Not working: the session stopped** (about 3½ hours). Build 7 had failed meanwhile. |
+| 15 Nov 23:16– | Resumed. |
