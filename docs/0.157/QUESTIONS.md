@@ -7,3 +7,11 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
 2. **New Files page switched on by default** before every Files piece is in (Check matches, Couldn't be read, Found
    on your network, real reachability pills still to come). Recommendation: on, so the Shield test sees it. (Done;
    preference `supernova_files_page` false brings the old page back.)
+3. **NOVA's hidden grid and classic screens (step 6).** Codex's report found nothing provably SAFE to delete (all
+   UNSURE). Removing routes is hard to undo safely. Recommendation: leave for 0.158 with per-route proof. (Skipped.)
+4. **Memory cuts (step 5).** Need the Shield's per-page numbers from a diagnostics export of a 0.157 build.
+   Recommendation: measure on the 0.157 Shield test, cut in 0.158. (Skipped.)
+5. **Backup "Choose" in six groups.** The agreed six (Settings · Library and history · Home rows and pages ·
+   Connections · Accounts · Subtitle fonts) don't match the stored parts: there is no accounts part (logins are never
+   backed up) and no subtitle-fonts part. Recommendation: five groups now (Accounts = service settings), fonts when
+   they can be backed up; with the Settings redesign in 0.158. (Skipped for 0.157.)
