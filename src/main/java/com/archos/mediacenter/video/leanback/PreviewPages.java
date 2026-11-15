@@ -742,7 +742,7 @@ public final class PreviewPages extends FrameLayout {
         restoreFocus();
     }
 
-
+    private Runnable ready = () -> {
     };
     private final Runnable prioritiseVisible = this::prioritiseVisibleEntries;
 
