@@ -17,6 +17,12 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 - Recent scans store; no rebuild on an unchanged snapshot; 15-minute rest for automatic scans; background timer skips
   quietly; Recently Added; Skip button; memory by kind and page in diagnostics.
 
+- 15 Nov, second session (not yet built: they go into the next conformance run): time-bubble chapter names numbered
+  like the strip; "Scanning local library…" pill gives up on an import stuck for 3 minutes (`StalledWorkWatch`,
+  logs `local_import_stalled`); reopen on the page and item you were on when Android ends the app (`ReopenMemory`;
+  Back or a device restart opens Home); focus recovered after standby on the four main pages (`focus_recovered`);
+  held Down/Up on Movies and TV Shows waits for the grid to settle.
+
 ## In flight
 - Conformance run 4 was started 15 Nov about 12:54 (`supernova-0156-conformance.yml`). Check it; on failure run
   `report-test-failures.yml` with `run_id` (prints unique compile errors and failing tests), fix, re-run. The app's own
@@ -24,6 +30,11 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   Recently Added, the Skip prompt, scan scheduling).
 
 ## Not done yet
+- **Dead connection still scanned** (diagnostics 14 Nov, finding 3): the source list is chosen inside MediaLib's
+  scheduler, so skipping a source that fails at root resolution needs a new registered MediaLib patch; the "Not
+  reachable" label arrives with Files (R6). Do both together in step 8.
+- Standby focus on Settings and Search (separate screens) is not covered yet; a stuck local import still keeps the
+  screen awake through `ActiveOperationMonitor` (use `StalledWorkWatch` there too).
 - NOVA app-side: duplicate Samba discovery at start-up (8a1a231), picture-subtitle position and clearance (e13f8a3,
   68e316f; with the Player work). Native: Codex's two avos patches and libdovi need a new engine archive build.
 - Everything from step 5 of the build order on: memory cuts (after Shield numbers), focus restore, old NOVA out,
