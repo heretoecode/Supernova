@@ -22,4 +22,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 18:22 | Fifth build failed after 10 minutes (compile stage). Meanwhile: Issues Digest out, picture in picture out, All files access asked once. |
 | 15 Nov 18:48 | Owner asked whether finished: no; reading the fifth build's failure report. |
 | 15 Nov 18:55 | Fifth build's cause: one line lost in an edit (compile error). Fixed; sixth build started 18:50. One MediaLib scan test failed by timing (passed in build 4, nothing changed); watched. |
-| 15 Nov 18:55–19:10 | While build 6 runs: new loading ring, app icon, banner and splash (the new mark). |
+| 15 Nov 18:50–18:53 | While build 6 runs: new loading ring, app icon, banner and splash (the new mark). |
