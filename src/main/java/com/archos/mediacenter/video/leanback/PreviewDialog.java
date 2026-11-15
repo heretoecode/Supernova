@@ -510,8 +510,10 @@ public final class PreviewDialog {
         params.y = top;
         w.setAttributes(params);
         w.setDimAmount(.35f);
-        scroll.setLayoutParams(
-            new LinearLayout.LayoutParams(-1, Math.max(dp(c, 30), menuHeight - chrome - footerHeight)));
+        // The search line sits above the list, so the list's own area is that much shorter.
+        int searchHeight = search == null ? 0 : dp(c, 37);
+        scroll.setLayoutParams(new LinearLayout.LayoutParams(
+            -1, Math.max(dp(c, 30), menuHeight - chrome - footerHeight - searchHeight)));
         w.setLayout(width, menuHeight);
         if (search != null) {
             final int listLeft = params.x;
