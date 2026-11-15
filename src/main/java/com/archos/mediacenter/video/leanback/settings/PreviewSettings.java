@@ -328,15 +328,13 @@ public final class PreviewSettings {
         });
         categories.get("Advanced").addPreference(clearDiagnostics);
         for (String label : new String[] {
-            "Issues Digest", "Report a Problem", "Show Latest Reference"
+            "Report a Problem", "Show Latest Reference"
         }) {
             Preference item = new Preference(fragment.requireContext());
             item.setKey("preview_diagnostic_" + label);
             item.setTitle(label);
             item.setOnPreferenceClickListener(p -> {
-                if (label.equals("Issues Digest"))
-                    Diagnostics.showDigest(fragment.requireContext());
-                else if (label.equals("Show Latest Reference"))
+                if (label.equals("Show Latest Reference"))
                     Diagnostics.showLatestReference(fragment.requireContext());
                 else
                     Diagnostics.reportProblem(fragment.requireContext());
@@ -491,8 +489,8 @@ public final class PreviewSettings {
             advanced.addPreference(diagnosticGroup);
             for (String key : new String[] {
                 Diagnostics.KEY,
-                 DIAGNOSTIC_CLEAR, "preview_diagnostic_Issues Digest",
-                 "preview_diagnostic_Report a Problem", "preview_diagnostic_Show Latest Reference",
+                 DIAGNOSTIC_CLEAR, "preview_diagnostic_Report a Problem",
+                 "preview_diagnostic_Show Latest Reference",
                  "export_diagnostic_report"
             })
                 move(root, diagnosticGroup, key);

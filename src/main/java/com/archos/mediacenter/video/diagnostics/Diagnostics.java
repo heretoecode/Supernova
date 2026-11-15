@@ -1469,18 +1469,6 @@ public final class Diagnostics
         });
     }
 
-    public static void showDigest(Context c)
-    {
-        WORK.execute(() -> {
-            String digest = summary();
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if (c instanceof Activity && (((Activity)c).isFinishing() || ((Activity)c).isDestroyed()))
-                    return;
-                PreviewDialog.read(c, "Issues Digest", digest);
-            });
-        });
-    }
-
     public static void showLatestReference(Context c)
     {
         SharedPreferences saved = c.getSharedPreferences("supernova_diagnostic_session", Context.MODE_PRIVATE);

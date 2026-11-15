@@ -98,8 +98,7 @@ final class SettingsLayout {
                                        "disable_downmix", "enable_downmix_androidtv", "supernova_pcm_speed_engine",
                                        "stream_buffer_size", "pref_smbj", "pref_smbv2", "pref_smb_resolv",
                                        "pref_smb_disable_tcp_discovery", "pref_smb_disable_udp_discovery",
-                                       "pref_smb_disable_mdns_discovery", "pref_sshj", "codepage",
-                                       "preview_diagnostic_Issues Digest"});
+                                       "pref_smb_disable_mdns_discovery", "pref_sshj", "codepage"});
 
         TAB_LABELS.put("Playback", "General");
         TAB_LABELS.put("Resume & Progress", "Resume");
