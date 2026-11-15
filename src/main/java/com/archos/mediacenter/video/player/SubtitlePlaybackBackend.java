@@ -190,9 +190,37 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     @Override
     public int stillWatchingAfter() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(owner);
-        if (!prefs.getBoolean(PlaybackLimits.KEY_STILL_WATCHING, true))
+        if (!prefs.getBoolean(PlaybackLimits.KEY_STILL_WATCHING, true)
+            || !prefs.getBoolean(PlaybackLimits.KEY_COUNT_EPISODES, true))
             return 0;
         return prefs.getInt(PlaybackLimits.KEY_EPISODES, PlaybackLimits.DEFAULT_EPISODES);
+    }
+
+    @Override
+    public int stillWatchingMinutes() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(owner);
+        if (!prefs.getBoolean(PlaybackLimits.KEY_STILL_WATCHING, true))
+            return 0;
+        return Math.max(0, prefs.getInt(PlaybackLimits.KEY_IDLE_MINUTES, 0));
+    }
+
+    @Override
+    public void setStillWatching(int episodes, int minutes) {
+        boolean enabled = episodes > 0 || minutes > 0;
+        boolean counting = episodes > 0;
+        SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(owner).edit();
+        prefs.putBoolean(PlaybackLimits.KEY_STILL_WATCHING, enabled);
+        prefs.putBoolean(PlaybackLimits.KEY_COUNT_EPISODES, counting);
+        prefs.putInt(PlaybackLimits.KEY_IDLE_MINUTES, counting ? 0 : Math.max(0, minutes));
+        if (counting)
+            prefs.putInt(PlaybackLimits.KEY_EPISODES, episodes);
+        prefs.apply();
+        PlaybackLimits limits = limits();
+        if (limits != null) {
+            limits.configureStillWatching(enabled, counting ? episodes : PlaybackLimits.DEFAULT_EPISODES);
+            limits.configureEpisodeCounting(counting);
+            limits.configureInactivity(counting ? 0 : Math.max(0, minutes) * 60000L);
+        }
     }
 
     @Override

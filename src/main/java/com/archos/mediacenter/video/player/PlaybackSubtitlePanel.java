@@ -143,6 +143,16 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         }
 
         /** "Still watching?" after this many auto-played episodes; 0 is Off. */
+        /** Minutes without the remote before "Still watching?" asks; 0 when it counts episodes or is off. */
+        default int stillWatchingMinutes() {
+            return 0;
+        }
+
+        /** Sets "Still watching?" to a number of episodes or of minutes (one of them 0), or Off (both 0). */
+        default void setStillWatching(int episodes, int minutes) {
+            setStillWatchingAfter(episodes);
+        }
+
         /** Whether an episode is playing (its last choice reads "End of episode", otherwise "End of movie"). */
         default boolean playingEpisode() {
             return true;
@@ -838,7 +848,6 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     static final String[] SLEEP_LABELS = {"Off", "30", "60", "90", "End of episode"};
-    static final int[] STILL_WATCHING_CHOICES = {0, 2, 3, 5};
 
     /**
      * "Stop playing at" (owner, 6 and 12 Nov 2026; replaces Sleep timer): Off, three clock times that roll with the
@@ -899,18 +908,21 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             backend.setSleepChoice(next);
         }));
 
+        // Episodes and time for a TV show, only time for a film (owner, 12 Nov 2026).
         LinearLayout still = row("playback.row.still", "help", "Still watching?");
         TextView after = stepper(still, 150, direction -> {
-            int n = 0;
-            for (int i = 0; i < STILL_WATCHING_CHOICES.length; i++)
-                if (STILL_WATCHING_CHOICES[i] == backend.stillWatchingAfter())
-                    n = i;
-            int next = Math.max(0, Math.min(STILL_WATCHING_CHOICES.length - 1, n + direction));
-            backend.setStillWatchingAfter(STILL_WATCHING_CHOICES[next]);
+            boolean episode = backend.playingEpisode();
+            List<StillWatchingChoices.Choice> options = StillWatchingChoices.options(episode);
+            int n = StillWatchingChoices.index(
+                options, backend.stillWatchingAfter(), backend.stillWatchingMinutes(), episode);
+            StillWatchingChoices.Choice next = options.get(Math.max(0, Math.min(options.size() - 1, n + direction)));
+            backend.setStillWatching(next.episodes, next.minutes);
         });
         bindings.add(() -> {
-            int episodes = backend.stillWatchingAfter();
-            String label = episodes <= 0 ? "Off" : "After " + episodes + " episodes";
+            boolean episode = backend.playingEpisode();
+            List<StillWatchingChoices.Choice> options = StillWatchingChoices.options(episode);
+            String label = options.get(StillWatchingChoices.index(
+                options, backend.stillWatchingAfter(), backend.stillWatchingMinutes(), episode)).label;
             after.setText(label);
             still.setContentDescription("Still watching, " + label);
         });
