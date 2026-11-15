@@ -1310,3 +1310,8 @@ a TV (our fork is heavily changed, so each is carried across by hand, not merged
 - **Own TMDB key (later):** Supernova uses the TMDB key built into NOVA. TMDB's terms tie a key to one application, so
   before Supernova is shared or made public it needs its own key (and TMDB's required credit, already in About ›
   Credits). Added to REVISIT_LATER and the roadmap's Later column.
+
+## 46. Media Transfers moves whole to 0.158 (owner, 15 Nov 2026)
+- Wanted, not urgent; the owner wants time to think of more settings and improvements. Everything decided so far is
+  gathered in `docs/0.158/MEDIA_TRANSFERS.md`, with open questions. Files in 0.157 is built without the Transfers tab
+  (hidden until 0.158, per "hidden when not relevant").

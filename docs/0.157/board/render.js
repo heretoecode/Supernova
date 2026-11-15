@@ -14,8 +14,7 @@ const cols = [
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
-      + 'app, password eye', 'New mark: icon, banner, splash, loading ring', 'Files: Transfers (copy, resilience, '
-      + 'delete after copy), Your Library, Library Care, Fix match page, Scan one source, connections, top-bar ring',
+      + 'app, password eye', 'New mark: icon, banner, splash, loading ring', 'Files: Your Library, Library Care, Fix match page, Scan one source, connections, top-bar ring',
       'Details: four kinds, new tabs, metadata row, full description, artwork picker, More menu, portrait cast and crew',
       'Player: Preparing playback, title block, seek preview, centre ring, skip button, Playback tab, track names, '
       + 'subtitle lists, Experimental translate']],
@@ -39,7 +38,8 @@ const cols = [
     ['Redesigns', ['Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)', 'Library pages (posters, '
       + 'Filters, Sort, Columns, list view, Customise page, empty pages, + page, episode counts)', 'Settings (seven tabs, Backup and Restore, Diagnostics, About)', 'Onboarding (on Home, Start fresh '
       + '/ Restore, smart steps)', 'Search (library first, On your services, recent searches)']],
-    ['Features', ['Media Transfers part two: per-series “Bring new episodes”', 'Media Transfers schedule']],
+    ['Features', ['Media Transfers, all of it: copy, checks, resilience, delete after copy, per-series “Bring new '
+      + 'episodes”, schedule (docs/0.158/MEDIA_TRANSFERS.md)']],
   ]],
   ['Later / someday', [
     ['To discuss', ['Release notes: proper notes for every version (0.156 has two vague lines)']],

@@ -143,6 +143,8 @@ library statistics) arrives with that page; Files is in 0.157, so most do too.
 
 - **NOVA 6.6.5+ back in 0.157 (owner, 15 Nov):** its "match by file name" fix explains the wrong matches, so all of
   NOVA's latest comes in; then re-check matches on Library Care.
+- **Media Transfers: all of it in 0.158 (owner, 15 Nov);** Files in 0.157 without the Transfers tab.
+  Decisions gathered in `docs/0.158/MEDIA_TRANSFERS.md`.
 - **0.157 also gets R3 Details** (owner: the layers on the way to watching first). **R1 Home and R2 library pages: 0.158.**
 - **Redesigns decided (owner, 14 Nov):** 0.157 also gets **R5 Player** (with Preparing playback). **0.158:** R7 Settings
   (its eight tiles were partly redesigned already and work well, unlike Network & Files), R9 onboarding, R4 Search.
