@@ -25,7 +25,7 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 
 ## In flight
 - Conformance run 4 (15 Nov 12:54) compiled and failed with 10 of 2,145 tests; all ten are fixed (`34d07ab`).
-  Run 5 was started 15 Nov about 18:20 on everything up to then, including the second session's work. Check it; on
+  Run 5 (43745440241) was started 15 Nov 18:12 on everything up to then, including the second session's work. Check it; on
   failure run `report-test-failures.yml` with `run_id`, read the last 120 lines of its job log, fix, re-run.
 
 ## Not done yet
