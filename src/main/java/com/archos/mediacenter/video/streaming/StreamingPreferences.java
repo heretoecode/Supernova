@@ -88,10 +88,8 @@ public final class StreamingPreferences {
         Preference attribution = new Preference(context);
         attribution.setTitle("JustWatch");
         attribution.setSummary(R.string.streaming_attribution);
-        attribution.setOnPreferenceClickListener(p -> {
-            StreamingActions.openWeb(fragment.requireActivity(), "https://www.justwatch.com/" + StreamingRepository.country(context).toLowerCase(Locale.ROOT));
-            return true;
-        });
+        // A plain credit line: there is no browser on the TV to open it (owner, 8 Nov 2026).
+        attribution.setSelectable(false);
         add(attribution);
         country.setOnPreferenceChangeListener((p, value) -> {
             StreamingRepository.prefs(context).edit().putString(StreamingRepository.COUNTRY, value.toString()).apply();
