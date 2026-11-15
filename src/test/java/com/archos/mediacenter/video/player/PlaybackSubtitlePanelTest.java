@@ -457,7 +457,7 @@ public class PlaybackSubtitlePanelTest {
         assertSame("No second pop-up", before, ShadowDialog.getLatestDialog());
         assertTrue(panel.pageOpen());
         assertFalse("Tabs hidden on the list page", tagged("playback.tab:1").isShown());
-        assertNotNull(tagged("playback.page.back"));
+        assertFalse("No back header on the list (0.157)", tagged("playback.page.back").isShown());
         View selected = tagged("subtitles.track.1");
         assertTrue("Opens on the current track", selected.hasFocus());
         assertEquals(View.VISIBLE, ((ViewGroup)selected).getChildAt(2).getVisibility());

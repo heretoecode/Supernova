@@ -1194,6 +1194,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             LayoutParams backSize = new LayoutParams(-1, -2);
             backSize.bottomMargin = s(14);
             removeHeaderPage();
+            // No title or back header on a list opened from a row (owner, 13 Nov 2026; fixes 0.156 P6): Back returns.
+            back.setVisibility(GONE);
             addView(back, 1, backSize);
 
             List<Track> tracks = subtitles ? backend.tracks() : backend.audioTracks();
@@ -1219,8 +1221,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             scroll.scrollTo(0, 0);
             if (initial != null)
                 initial.requestFocus();
-            else
-                back.requestFocus();
+            else if (!body.requestFocus())
+                requestFocus();
         } finally {
             building = false;
         }
