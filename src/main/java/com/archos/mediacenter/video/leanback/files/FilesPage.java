@@ -16,6 +16,8 @@ import com.archos.mediacenter.video.leanback.LibraryHealthActivity;
 import com.archos.mediacenter.video.leanback.PageTabs;
 import com.archos.mediacenter.video.leanback.PreviewIcon;
 import com.archos.mediacenter.video.leanback.SupernovaStyle;
+import com.archos.mediacenter.video.scanning.LibraryScanController;
+import com.archos.mediacenter.video.scanning.ScanProgress;
 
 import java.util.List;
 
@@ -120,7 +122,46 @@ public final class FilesPage extends LinearLayout
         row(column, "folder", "Missing files", "In your library but no longer found",
             ready ? LibraryCareCounts.pill(counts.missing, "file", "files") : "Loading…", this::openHealth, true);
         row(column, "search", "Not matched", "Videos without a movie or TV show",
-            ready ? LibraryCareCounts.pill(counts.notMatched, "video", "videos") : "Loading…", this::openHealth, false);
+            ready ? LibraryCareCounts.pill(counts.notMatched, "video", "videos") : "Loading…",
+            this::openHealth, false);
+        recentScans(column);
+    }
+
+    /** The last three scans (approved Recent scans); plain information, so no row lines and no focus. */
+    private void recentScans(LinearLayout column)
+    {
+        heading(column, "Recent Scans", "history", true);
+        List<ScanProgress> scans = LibraryScanController.recentScans();
+        if (scans.isEmpty())
+        {
+            column.addView(text("No scans yet", 13.5f, SECOND_LINE));
+            return;
+        }
+        long now = System.currentTimeMillis();
+        for (int index = 0; index < Math.min(3, scans.size()); index++)
+        {
+            ScanProgress scan = scans.get(index);
+            LinearLayout line = new LinearLayout(getContext());
+            line.setGravity(Gravity.CENTER_VERTICAL);
+            int pad = SupernovaStyle.dp(getContext(), 20);
+            line.setPadding(pad, SupernovaStyle.dp(getContext(), 6), pad, SupernovaStyle.dp(getContext(), 6));
+            TextView mark = new TextView(getContext());
+            PreviewIcon.apply(mark, "scan", 16);
+            line.addView(mark, new LayoutParams(SupernovaStyle.dp(getContext(), 36), -2));
+            LinearLayout words = new LinearLayout(getContext());
+            words.setOrientation(VERTICAL);
+            String name = scan.sourceLabel == null || scan.sourceLabel.isEmpty() ? "Library" : scan.sourceLabel;
+            words.addView(text(name, 16, Color.WHITE));
+            words.addView(text(RecentScanLine.second(scan.outcome(), scan.failureReason(), scan.startedUtcMs, now,
+                                                     scan.checked, scan.added, scan.removed), 13.5f, SECOND_LINE));
+            line.addView(words, new LayoutParams(0, -2, 1));
+            TextView status = text(RecentScanLine.pill(scan.outcome()), 13.5f, Color.WHITE);
+            status.setGravity(Gravity.CENTER);
+            status.setBackground(outline(Color.WHITE));
+            int pillWidth = SupernovaStyle.dp(getContext(), 95);
+            line.addView(status, new LayoutParams(pillWidth, SupernovaStyle.dp(getContext(), 22)));
+            column.addView(line, new LayoutParams(-1, -2));
+        }
     }
 
     private void openHealth()

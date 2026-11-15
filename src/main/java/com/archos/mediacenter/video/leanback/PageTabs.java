@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.function.IntConsumer;
 
 /**
- * The one tab row for pages with tabs (Files first, then Details; RULES §3–4): plain words with icons; the focused tab
- * is the white box; the open tab has a bright underline while the remote is in its content and a dull one otherwise.
+ * The one tab row for pages with tabs (Files first, then Details; RULES §3–4): plain words with icons; the focused
+ * tab is the white box; the open tab has a bright underline while the remote is in its content and a dull one
+ * otherwise.
  * Moving along the tabs switches the page at once; Down goes to the open tab's content.
  */
 public final class PageTabs extends LinearLayout
