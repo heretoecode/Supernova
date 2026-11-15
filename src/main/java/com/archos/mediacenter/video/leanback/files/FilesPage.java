@@ -97,6 +97,40 @@ public final class FilesPage extends LinearLayout
         show(tabs.openTab());
     }
 
+    /** A storage on the This Device tab: this device itself or a USB drive. */
+    public static final class Device
+    {
+        public final String name;
+        /** "SanDisk USB drive"; empty for this device itself. */
+        public final String kind;
+        public final boolean removable;
+        public final long videos;
+        public final long freeBytes;
+        public final long totalBytes;
+
+        public Device(String name, String kind, boolean removable, long videos, long freeBytes, long totalBytes)
+        {
+            this.name = name;
+            this.kind = kind;
+            this.removable = removable;
+            this.videos = videos;
+            this.freeBytes = freeBytes;
+            this.totalBytes = totalBytes;
+        }
+    }
+
+    public static final int THIS_DEVICE = 0;
+    private final List<Device> devices = new java.util.ArrayList<>();
+    private java.util.function.Consumer<Device> openDevice = device -> { };
+
+    public void setDevices(List<Device> latest, java.util.function.Consumer<Device> open)
+    {
+        devices.clear();
+        devices.addAll(latest);
+        openDevice = open;
+        show(tabs.openTab());
+    }
+
     /** A saved connection on the Connections tab. */
     public static final class Connection
     {
@@ -173,6 +207,10 @@ public final class FilesPage extends LinearLayout
         {
             connections(column);
         }
+        else if (tab == THIS_DEVICE)
+        {
+            thisDevice(column);
+        }
     }
 
     private void showSummary()
@@ -181,6 +219,17 @@ public final class FilesPage extends LinearLayout
         int toCheck = counts == null ? 0 : counts.toCheck();
         List<FilesSummary.Fact> facts =
             FilesSummary.facts(videos, toCheck, lastScanMs, System.currentTimeMillis(), scanning);
+        if (tabs.openTab() == THIS_DEVICE)
+        {
+            long free = 0;
+            long deviceVideos = 0;
+            for (Device device : devices)
+            {
+                free += device.freeBytes;
+                deviceVideos += device.videos;
+            }
+            facts = FilesSummary.deviceFacts(devices.size(), deviceVideos, free);
+        }
         if (tabs.openTab() == CONNECTIONS)
         {
             int reachable = 0;
@@ -320,6 +369,55 @@ public final class FilesPage extends LinearLayout
             line.addView(status, new LayoutParams(pillWidth, SupernovaStyle.dp(getContext(), 22)));
             column.addView(line, new LayoutParams(-1, -2));
         }
+    }
+
+    /** Files › This Device (mock-up network-files-tabs/01): one row per storage with a bar for the space used. */
+    private void thisDevice(LinearLayout column)
+    {
+        if (devices.isEmpty())
+        {
+            column.addView(text("Looking for storage…", 13.5f, SECOND_LINE));
+            return;
+        }
+        for (Device device : devices)
+        {
+            row(column, device.removable ? "files" : "tv", device.name,
+                DeviceLine.second(device.kind, device.videos, device.freeBytes, device.totalBytes), null,
+                () -> openDevice.accept(device), column.findViewWithTag("files.row.first") == null);
+            View last = column.getChildAt(column.getChildCount() - 1);
+            if (device.totalBytes > 0 && last instanceof LinearLayout)
+            {
+                addUsageBar((LinearLayout) last, DeviceLine.used(device.freeBytes, device.totalBytes));
+            }
+        }
+    }
+
+    /** The thin bar under a storage row's second line: the share of the drive in use. */
+    private void addUsageBar(LinearLayout row, int usedPerThousand)
+    {
+        LinearLayout words = null;
+        for (int index = 0; index < row.getChildCount(); index++)
+        {
+            if (row.getChildAt(index) instanceof LinearLayout)
+            {
+                words = (LinearLayout) row.getChildAt(index);
+                break;
+            }
+        }
+        if (words == null)
+        {
+            return;
+        }
+        android.widget.ProgressBar bar =
+            new android.widget.ProgressBar(getContext(), null, android.R.attr.progressBarStyleHorizontal);
+        bar.setMax(1000);
+        bar.setProgress(usedPerThousand);
+        bar.setProgressTintList(android.content.res.ColorStateList.valueOf(0xFFDCE3EE));
+        bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0x33FFFFFF));
+        LayoutParams size = new LayoutParams(SupernovaStyle.dp(getContext(), 310), SupernovaStyle.dp(getContext(), 3));
+        size.topMargin = SupernovaStyle.dp(getContext(), 6);
+        words.addView(bar, size);
+        row.getLayoutParams().height = SupernovaStyle.dp(getContext(), 72);
     }
 
     /** Files › Connections (mock-up network-files-tabs/05): your connections, then Add a connection. */

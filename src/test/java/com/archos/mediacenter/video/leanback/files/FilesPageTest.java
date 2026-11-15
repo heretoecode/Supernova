@@ -115,6 +115,24 @@ public class FilesPageTest
         assertEquals("again", done.get(0));
     }
 
+    @Test
+    public void thisDeviceListsStorageAndOpensIt()
+    {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FilesPage page = new FilesPage(activity);
+        activity.setContentView(page);
+        java.util.List<String> opened = new java.util.ArrayList<>();
+        page.setDevices(java.util.List.of(
+            new FilesPage.Device("This device", "", false, 310, 14_200_000_000L, 32_000_000_000L),
+            new FilesPage.Device("Backup drive", "USB drive", true, 1203, 1_100_000_000_000L, 2_000_000_000_000L)),
+            device -> opened.add(device.name));
+        findTabs(page).select(FilesPage.THIS_DEVICE);
+        View first = page.findViewWithTag("files.row.first");
+        assertNotNull(first);
+        first.performClick();
+        assertEquals("This device", opened.get(0));
+    }
+
     private static PageTabs findTabs(View view)
     {
         if (view instanceof PageTabs)

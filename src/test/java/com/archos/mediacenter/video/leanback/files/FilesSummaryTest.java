@@ -45,4 +45,13 @@ public class FilesSummaryTest
         assertEquals("2 Reachable", facts.get(1).text);
         assertEquals("1,416 Videos", facts.get(2).text);
     }
+
+    @Test
+    public void thisDeviceTabFacts()
+    {
+        List<FilesSummary.Fact> facts = FilesSummary.deviceFacts(2, 1513, 1_100_000_000_000L);
+        assertEquals("2 Devices", facts.get(0).text);
+        assertEquals("1,513 Videos", facts.get(1).text);
+        assertEquals("1.1 TB Free", facts.get(2).text);
+    }
 }

@@ -40,6 +40,17 @@ public final class FilesSummary
         return facts;
     }
 
+    /** This Device tab: "2 Devices · 1,513 Videos · 1.1 TB Free" (mock-up network-files-tabs/01). */
+    public static List<Fact> deviceFacts(int devices, long videos, long freeBytes)
+    {
+        List<Fact> facts = new ArrayList<>();
+        facts.add(new Fact("tv", devices + (devices == 1 ? " Device" : " Devices")));
+        facts.add(new Fact("film", NumberFormat.getIntegerInstance(Locale.UK).format(videos)
+            + (videos == 1 ? " Video" : " Videos")));
+        facts.add(new Fact("size", DeviceLine.size(freeBytes) + " Free"));
+        return facts;
+    }
+
     /** Connections tab: "3 Connections · 2 Reachable · 1,416 Videos" (mock-up network-files-tabs/05). */
     public static List<Fact> connectionFacts(int connections, int reachable, int videos)
     {
