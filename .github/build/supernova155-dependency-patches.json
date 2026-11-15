@@ -294,6 +294,12 @@
       "module": "FileCoreLibrary",
       "path": ".github/build/filecore-supernova157-nova665.patch",
       "sha256": "b2841db1729fdeb5964bc5f4904569e24102aee005029193a1d6a221963e3793"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-test-fixes.patch",
+      "sha256": "dc3c8c004842736f6d950bd166ecb5f36386e125cf5c16bd2bcd6090490c1cb0"
     }
   ],
   "supernova155": {

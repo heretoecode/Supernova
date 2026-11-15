@@ -73,8 +73,8 @@ public final class PreviewLibraryScan
                     return;
                 synchronized (PreviewLibraryScan.class)
                 {
-                    boolean fresh = progress.accept(batch, source, next, intent.getIntExtra("checked", 0),
-                                                    intent.getIntExtra("added", 0), intent.getIntExtra("updated", 0));
+                    boolean fresh = progress.accept(batch, source, next, count(intent, "checked"),
+                                                    count(intent, "added"), count(intent, "updated"));
                     if (fresh)
                     {
                         sourcesTotal = -1;
@@ -367,5 +367,14 @@ public final class PreviewLibraryScan
 
     private PreviewLibraryScan()
     {
+    }
+
+    /** Scan events carry their counts as whole numbers of either width. */
+    private static int count(Intent intent, String name)
+    {
+        Object value = intent.getExtras() == null ? null : intent.getExtras().get(name);
+        if (!(value instanceof Number))
+            return 0;
+        return (int) Math.max(0, Math.min(Integer.MAX_VALUE, ((Number) value).longValue()));
     }
 }

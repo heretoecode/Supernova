@@ -1,0 +1,16 @@
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkHistoryCountersTest.java b/test/java/com/archos/mediaprovider/video/NetworkHistoryCountersTest.java
+index d484bc6..44ef9d8 100644
+--- a/test/java/com/archos/mediaprovider/video/NetworkHistoryCountersTest.java
++++ b/test/java/com/archos/mediaprovider/video/NetworkHistoryCountersTest.java
+@@ -22,8 +22,8 @@ public class NetworkHistoryCountersTest
+         NetworkScannerServiceVideo.previewScanEvent(app, Uri.parse("webdavs://example.test/Films"), "complete",
+                                                     "history", 1, 12, 3, 2, 4);
+         Intent event = Shadows.shadowOf(app).getBroadcastIntents().get(0);
+-        assertEquals(4, event.getIntExtra("removed", -1));
+-        assertEquals(3, event.getIntExtra("added", -1));
+-        assertEquals(2, event.getIntExtra("updated", -1));
++        assertEquals(4, event.getLongExtra("removed", -1));
++        assertEquals(3, event.getLongExtra("added", -1));
++        assertEquals(2, event.getLongExtra("updated", -1));
+     }
+ }
