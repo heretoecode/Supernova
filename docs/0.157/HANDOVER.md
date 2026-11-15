@@ -48,11 +48,14 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   under one country keep it; `StreamingRepository.defaultCountry`); Keep diagnostics for 1/2/4 weeks (default 2,
   `Diagnostics.KEEP_WEEKS`, pruned by age in `trimStorage`).
 
-- Step 8 (Files) started as a new, self-contained page: `leanback/files/FilesPage` (tabs via the shared
-  `PageTabs`, summary facts `FilesSummary`), Library Care tab with Library Health rows (`LibraryCareCounts`, opens
-  `LibraryHealthActivity`), Scanning: Scan one source (`setSources`) and Recent scans (`RecentScanLine`). Not yet
-  shown in the app: This Device and Connections tabs still to build, then swap it in for the old Files page in
-  `PreviewPages.networkLayout` (feed it the snapshot, `librarySources`, last scan time). Transfers waits (0.158).
+- Step 8 (Files): a new page, `leanback/files/FilesPage` (tabs via the shared `PageTabs`, summary facts
+  `FilesSummary`). Library Care: Library Health rows (`LibraryCareCounts`, open `LibraryHealthActivity`), Scan one
+  source, Recent scans (`RecentScanLine`). This Device: storage rows with usage bars (`DeviceLine`). Connections:
+  rows with buttons on the focused row (`ConnectionLine`), Add a connection. Wired in `PreviewPages.filesLayout`
+  with data from `FilesPageData`, **behind the preference `supernova_files_page` (default off)**. To finish: real
+  reachability for Connections (Codex's `SavedConnectionReachability` needs drafts from the saved credentials; until
+  then no pill shows), Check matches, Couldn't be read, Found on your network; move the old page's tests
+  (Network142*, NextQaUi*) to the new page; then switch it on by default. Transfers waits (0.158).
   Also done for Files: the top-bar signal slot (`TopBarSignal`), the old floating pill retired, "Network & Files"
   renamed "Files".
 
