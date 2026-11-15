@@ -1948,6 +1948,11 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             // name in the time bubble both come from it.
             long length = Player.sPlayer == null ? 0 : Player.sPlayer.getDuration();
             PlaybackParts parts = ((PlayerActivity)mContext).previewParts(chapters, length);
+            if (parts != null)
+            {
+                // Same numbering as the strip: Recap, Chapter 1, Intro, Chapter 2 (never the file's old numbers).
+                parts = parts.numbered();
+            }
             if (parts != null && parts.parts().size() > 1)
                 chapters = partLines(parts);
             else
