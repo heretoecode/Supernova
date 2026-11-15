@@ -115,7 +115,9 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
 
     @Override
     public List<PlaybackSubtitlePanel.Track> tracks() {
-        return asTracks(subtitleTracks(), true);
+        // No "None" row (owner, 13 Nov 2026): the Subtitles switch turns them off; picking a track turns them on.
+        List<PlaybackSubtitlePanel.Track> tracks = asTracks(subtitleTracks(), true);
+        return tracks.isEmpty() ? tracks : new ArrayList<>(tracks.subList(1, tracks.size()));
     }
 
     @Override

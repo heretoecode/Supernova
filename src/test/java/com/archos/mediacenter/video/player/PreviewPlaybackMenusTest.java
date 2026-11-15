@@ -275,7 +275,7 @@ public class PreviewPlaybackMenusTest {
         PlaybackSubtitlePanelTest.layout(dialog());
         tagged("subtitles.row.track").performClick();
         PlaybackSubtitlePanelTest.layout(dialog());
-        ViewGroup row = (ViewGroup)tagged("subtitles.track.2");
+        ViewGroup row = (ViewGroup)tagged("subtitles.track.1"); // French: no "None" row since 0.157
         row.requestFocus();
         int[] calls = {0};
         menu.clean();

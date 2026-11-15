@@ -704,7 +704,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
         LinearLayout track = row("subtitles.row.track", "list", "Subtitle Track");
         TextView current = stepper(track, 70, direction -> stepTrack(backend.tracks(), direction));
-        bindings.add(() -> bindTrack(track, current, backend.tracks(), "Subtitle Track", "None"));
+        bindings.add(() -> bindTrack(track, current, backend.tracks(), "Subtitle Track", "Off"));
         track.setOnClickListener(v -> openTracks("subtitles"));
 
         LinearLayout download = row("subtitles.row.download", "download", "Download Subtitles");
