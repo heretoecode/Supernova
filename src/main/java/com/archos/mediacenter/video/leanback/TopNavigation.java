@@ -335,6 +335,7 @@ public final class TopNavigation extends LinearLayout {
             boolean focused = tab.isFocused();
             int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
             tab.setTextColor(ink);
+            tab.setAlpha(focused || tab == selected ? 1f : .78f);
             for (Drawable icon : tab.getCompoundDrawables())
                 if (icon != null)
                     icon.setColorFilter(focused
