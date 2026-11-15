@@ -1181,6 +1181,15 @@ public final class PreviewPages extends FrameLayout {
     public void setSnapshot(Snapshot s) {
         if (s == null)
             return;
+        String nextSignature = snapshotSignature(s);
+        if (loaded && nextSignature.equals(snapshotSignature)) {
+            // A scan that changed nothing (e.g. Put.io's frequent checks) must not rebuild or re-lay out the page:
+            // that caused the stalls and the page "jumping" seen in the 13 Nov diagnostics.
+            Diagnostics.event("ui_rebuild_skipped", "surface", tab == 0 ? "home" : "library", "reason",
+                              "unchanged_snapshot");
+            return;
+        }
+        snapshotSignature = nextSignature;
         quietOrder.clear();
         String featuredKey =
             loaded && tab == 0 && featured() != null ? HeroPlaybackEligibility.identity(featured()) : null;
@@ -1727,6 +1736,24 @@ public final class PreviewPages extends FrameLayout {
         removeCallbacks(importRefresh);
         if (loaded && emptyHome() && isAttachedToWindow())
             postDelayed(importRefresh, 1000);
+    }
+
+    private String snapshotSignature = "";
+
+    /** Everything a page shows from a snapshot, so an identical one can be ignored. */
+    private static String snapshotSignature(Snapshot s) {
+        StringBuilder out = new StringBuilder();
+        List<List<Entry>> parts = Arrays.asList(s.featured, s.technical, s.episodes, s.unmatched, s.watched, s.movies,
+            s.shows, s.recent, s.played, s.continuingMovies, s.continuingShows);
+        for (List<Entry> part : parts) {
+            out.append('#').append(part.size());
+            for (Entry e : part) {
+                out.append('\n').append(entrySignature(e));
+                if (e.media instanceof Video)
+                    out.append('|').append(((Video)e.media).getLastPlayed());
+            }
+        }
+        return out.toString();
     }
 
     private static String entrySignature(Entry e) {
