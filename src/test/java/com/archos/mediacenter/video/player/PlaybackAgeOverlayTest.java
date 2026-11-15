@@ -139,17 +139,19 @@ public class PlaybackAgeOverlayTest {
     }
 
     @Test
-    public void tenSecondPlaybackDeadlineIsNotExtendedByRepeatedStartSignals() {
+    public void playbackDeadlineIsNotExtendedByRepeatedStartSignals() {
         var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             PlaybackAgeOverlay view = new PlaybackAgeOverlay(host.get(), null);
             host.get().setContentView(view);
             ReflectionHelpers.setField(view, "classification", "15");
             view.playbackStarted();
-            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(9999));
+            Shadows.shadowOf(Looper.getMainLooper())
+                .idleFor(Duration.ofMillis(PlaybackAgeOverlay.DWELL_MS - 1));
             assertEquals(View.VISIBLE, view.getVisibility());
             view.playbackStarted();
-            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1000));
+            Shadows.shadowOf(Looper.getMainLooper())
+                .idleFor(Duration.ofMillis(2 * PlaybackAgeOverlay.FADE_MS + 1000));
             assertEquals(View.GONE, view.getVisibility());
         } finally {
             host.pause().stop().destroy();
