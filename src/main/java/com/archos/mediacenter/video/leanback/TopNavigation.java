@@ -61,6 +61,7 @@ public final class TopNavigation extends LinearLayout {
         scanStatus = new FrameLayout(c);
         scanStatus.setFocusable(false);
         scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        scanStatus.setVisibility(GONE);
         setOrientation(VERTICAL);
         TvLayout.applyInsets(this);
         setWillNotDraw(false);
@@ -350,12 +351,9 @@ public final class TopNavigation extends LinearLayout {
     @Override
     protected boolean drawChild(Canvas canvas, View child, long time) {
         if (child == stage) {
-            UniversalFileBrowser browser = visibleBrowser(content);
-            if (browser != null) {
-                int visibility = browser.ownsScanStatus() ? GONE : VISIBLE;
-                if (scanStatus.getVisibility() != visibility)
-                    scanStatus.setVisibility(visibility);
-            }
+            // The floating "Scanning…" pill is retired: the top bar's signal slot shows scans (RULES §2).
+            if (scanStatus.getVisibility() != GONE)
+                scanStatus.setVisibility(GONE);
         }
 
         if (child == bar)
@@ -454,7 +452,8 @@ public final class TopNavigation extends LinearLayout {
 
     /** Exactly one visible scan-status owner: the landing panel or this shell. */
     public void setEmbeddedScanStatus(boolean embedded) {
-        scanStatus.setVisibility(embedded ? GONE : VISIBLE);
+        // Kept for callers; the pill no longer shows anywhere under the top bar (the signal slot replaces it).
+        scanStatus.setVisibility(GONE);
     }
 
     public FrameLayout getScanContainer() {
