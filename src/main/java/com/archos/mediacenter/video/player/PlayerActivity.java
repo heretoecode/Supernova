@@ -4435,9 +4435,8 @@ public class PlayerActivity extends AppCompatActivity
     public String previewEpisode()
     {
         return mVideoInfo != null && mVideoInfo.isShow
-            ? String.format(Locale.getDefault(), "Season %d • Episode %d", mVideoInfo.scraperSeasonNr,
-                            mVideoInfo.scraperEpisodeNr) +
-                  (mVideoInfo.scraperEpisodeName == null ? "" : " · " + mVideoInfo.scraperEpisodeName)
+            ? PreviewPlaybackLoading.episodeLine(mVideoInfo.scraperSeasonNr, mVideoInfo.scraperEpisodeNr,
+                                                 mVideoInfo.scraperEpisodeName)
             : "";
     }
 
