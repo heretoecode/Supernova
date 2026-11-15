@@ -1774,12 +1774,18 @@ public final class PreviewMoviePage extends ScrollView {
         long id = remoteDetails != null                        ? remoteId
                   : show != null && show.getShowTags() != null ? show.getShowTags().getOnlineId()
                                                                : 0;
-        for (Map.Entry<Integer, List<PreviewEpisodeChoice>> season :
-             PreviewEpisodeChoice.indexed(locals, enrichment == null ? Collections.emptyMap() : enrichment.episodes)
-                 .entrySet()) {
+        Map<Integer, List<PreviewEpisodeChoice>> indexedSeasons =
+            PreviewEpisodeChoice.indexed(locals, enrichment == null ? Collections.emptyMap() : enrichment.episodes);
+        // A single-season show has no season page: its heading is plain and the episodes are listed here
+        // (owner, 12 Nov 2026; notes §29).
+        int realSeasons = 0;
+        for (Integer number : indexedSeasons.keySet())
+            if (number != null && number > 0)
+                realSeasons++;
+        for (Map.Entry<Integer, List<PreviewEpisodeChoice>> season : indexedSeasons.entrySet()) {
             if (seasonNumber >= 0 && season.getKey() != seasonNumber)
                 continue;
-            if (seasonNumber < 0 && show != null) {
+            if (seasonNumber < 0 && show != null && realSeasons > 1) {
                 TextView seasonInfo =
                     button(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(),
                            ()
