@@ -251,7 +251,38 @@ public final class FilesPage extends LinearLayout
             TextView fact = text(facts.get(index).text, 18, Color.WHITE);
             PreviewIcon.apply(fact, facts.get(index).icon, 16);
             summary.addView(fact);
+            if (index == facts.size() - 1 && "scan".equals(facts.get(index).icon))
+            {
+                scanControl(fact);
+            }
         }
+    }
+
+    private Runnable scanNow = () -> { };
+    private Runnable stopScan = () -> { };
+
+    /** What the tab row's scan control does: OK scans now, or stops the scan that is running. */
+    public void setScanActions(Runnable now, Runnable stop)
+    {
+        scanNow = now;
+        stopScan = stop;
+    }
+
+    /** The last fact is the scan control on every Files tab (owner, 12 Nov 2026): Right from the last tab. */
+    private void scanControl(TextView fact)
+    {
+        int pad = SupernovaStyle.dp(getContext(), 10);
+        fact.setPadding(pad, SupernovaStyle.dp(getContext(), 4), pad, SupernovaStyle.dp(getContext(), 4));
+        fact.setFocusable(true);
+        fact.setFocusableInTouchMode(true);
+        fact.setTag("files.scan.control");
+        fact.setContentDescription(scanning ? "Scanning. Press OK to stop" : fact.getText() + ". Press OK to scan now");
+        fact.setOnClickListener(view -> (scanning ? stopScan : scanNow).run());
+        fact.setOnFocusChangeListener((view, focused) -> {
+            fact.setTextColor(focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE);
+            SupernovaStyle.tintIcons(fact);
+            fact.setBackground(focused ? box(SupernovaStyle.FOCUS_FILL) : null);
+        });
     }
 
     private void libraryCare(LinearLayout column)

@@ -2852,6 +2852,8 @@ public final class PreviewPages extends FrameLayout {
                     else
                         com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
                 });
+            filesPage.setScanActions(() -> PreviewLibraryScan.request(getContext()),
+                                     () -> PreviewLibraryScan.stop(getContext()));
             container.addView(filesPage, new LinearLayout.LayoutParams(-1, -1));
             final com.archos.mediacenter.video.leanback.files.FilesPage page = filesPage;
             final Context app = getContext().getApplicationContext();
