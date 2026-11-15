@@ -300,6 +300,12 @@
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova157-test-fixes.patch",
       "sha256": "dc3c8c004842736f6d950bd166ecb5f36386e125cf5c16bd2bcd6090490c1cb0"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova157-background-rescan.patch",
+      "sha256": "80b23e111047a6e6998802cd2f7cb27dc27b164444ba2bc555191016fa0febca"
     }
   ],
   "supernova155": {

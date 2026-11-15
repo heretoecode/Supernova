@@ -1,0 +1,20 @@
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+index 8aa32fe..205b0bc 100644
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -167,6 +167,15 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+                           String.valueOf(com.archos.mediaprovider.video.NetworkScannerReceiver.isScannerWorking()));
+             return;
+         }
++        // Scans only run while the app is open (VideoStoreImportReceiver refuses them otherwise). Registering sources
++        // here and having each refused was recorded as a failed scan every time the background timer fired.
++        if (!ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(
++                androidx.lifecycle.Lifecycle.State.STARTED))
++        {
++            if (log.isDebugEnabled())
++                log.debug("onReceive: app is not open, leaving the rescan for the next launch");
++            return;
++        }
+         if (log.isDebugEnabled())
+             log.debug("onReceive: received rescan intent");
+         // Use getRescanUris() which opens a local DatabaseHelper, copies results, and closes:
