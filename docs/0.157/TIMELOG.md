@@ -25,3 +25,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 18:50–18:53 | While build 6 runs: new loading ring, app icon, banner and splash (the new mark). |
 | 15 Nov 18:56 | Paused to answer the owner. Build 6 still running. |
 | 15 Nov 19:04 | Resumed. |
+| 15 Nov 19:04–19:22 | While build 6 runs: choice-list search, Selected A–Z, menu headings, keyboard Phone key and password eye, region from device, diagnostics retention. |

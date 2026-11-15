@@ -44,6 +44,10 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   audit, focus-and-path on tabs, artwork edge, move gesture. Keyboard: Phone key and password eye done (Shield check with the phone app
   needed; if the phone app appears without Android's keyboard showing, the key could go).
 
+- Step 11 (data), started: Where to Watch region from the device when none was chosen (services already saved
+  under one country keep it; `StreamingRepository.defaultCountry`); Keep diagnostics for 1/2/4 weeks (default 2,
+  `Diagnostics.KEEP_WEEKS`, pruned by age in `trimStorage`).
+
 ## In flight
 - Run 4 (12:54): compiled, 10 of 2,145 app tests failing, all fixed. Run 5 (18:12): compile error from a dropped line
   in `PreviewPages.java`, fixed in `428a53a`. **Run 6 (43748969765) started 15 Nov 18:50** on everything so far. Check it; on
