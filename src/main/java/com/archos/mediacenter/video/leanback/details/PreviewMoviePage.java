@@ -1830,6 +1830,9 @@ public final class PreviewMoviePage extends ScrollView {
         if (uri == null)
             return "Unknown";
         String scheme = uri.getScheme();
+        String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase(Locale.ROOT);
+        if (host.equals("put.io") || host.endsWith(".put.io"))
+            return "Put.io";
         if (scheme == null || scheme.equals("file") || scheme.equals("content"))
             return "Local storage";
         if (scheme.equals("smb"))
