@@ -61,7 +61,8 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   renamed "Files".
 
 - Step 9 (Details) started: portrait cast and crew cards (`PersonInitials`, `ArtworkEdge`); tab renamed Episodes
-  in the master order Details · Episodes · Extras · More Like This.
+  in the master order Details · Episodes · Extras · More Like This; heroes' metadata row Age rating · Year · Length ·
+  Genres (`SharedMetadata`); episode title line "Season 2 · Episode 8 · Title".
 
 ## In flight
 - Run 6 (18:50): 2 of 2,150 failing, both fixed in `966daae` (Player chapter list in test doubles; MediaLib
