@@ -24,10 +24,9 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   held Down/Up on Movies and TV Shows waits for the grid to settle.
 
 ## In flight
-- Conformance run 4 was started 15 Nov about 12:54 (`supernova-0156-conformance.yml`). Check it; on failure run
-  `report-test-failures.yml` with `run_id` (prints unique compile errors and failing tests), fix, re-run. The app's own
-  unit tests have not yet run on the 0.157 code, so expect some failures (e.g. tests that assumed old behaviour of
-  Recently Added, the Skip prompt, scan scheduling).
+- Conformance run 4 (15 Nov 12:54) compiled and failed with 10 of 2,145 tests; all ten are fixed (`34d07ab`).
+  Run 5 was started 15 Nov about 18:20 on everything up to then, including the second session's work. Check it; on
+  failure run `report-test-failures.yml` with `run_id`, read the last 120 lines of its job log, fix, re-run.
 
 ## Not done yet
 - **Dead connection still scanned** (diagnostics 14 Nov, finding 3): the source list is chosen inside MediaLib's
