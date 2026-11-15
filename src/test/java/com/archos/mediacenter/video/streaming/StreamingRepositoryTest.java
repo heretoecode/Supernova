@@ -148,6 +148,8 @@ public class StreamingRepositoryTest {
     @Test
     public void persistedAvailabilityDistinguishesUnknownEmptyAndStale() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
+        // Where to Watch is off until the owner turns it on; this test is about the stored answers.
+        StreamingRepository.prefs(context).edit().putBoolean(StreamingRepository.ENABLED, true).commit();
         assertNull(StreamingRepository.cachedAvailability(context, "tv", 987, "IE", 1));
         StreamingRepository.prefs(context)
             .edit()

@@ -39,7 +39,11 @@ public class Preview412Test {
     public void providerFilterRequiresFreshCountrySpecificEvidence() {
         Application c = RuntimeEnvironment.getApplication();
         SharedPreferences p = StreamingRepository.prefs(c);
-        p.edit().clear().putString(StreamingRepository.COUNTRY, "IE").commit();
+        p.edit()
+            .clear()
+            .putBoolean(StreamingRepository.ENABLED, true)
+            .putString(StreamingRepository.COUNTRY, "IE")
+            .commit();
         assertFalse(StreamingRepository.knownOn(c, "movie", 42, "8"));
         p.edit()
             .putStringSet("streaming_known:movie:42:IE:-1", Collections.singleton("8"))

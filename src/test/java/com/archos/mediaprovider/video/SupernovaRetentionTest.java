@@ -48,7 +48,11 @@ public class SupernovaRetentionTest {
         var result = VideoStoreImportImpl.reconcileStorageSnapshot(resolver, snapshot, c);
         assertEquals(0, result.removed);
         assertTrue(snapshot.importedIds.contains(77L));
-        verifyNoInteractions(resolver);
+        // Looking up the record's public id is allowed (0.157); nothing may be written or deleted.
+        for (org.mockito.invocation.Invocation call : org.mockito.Mockito.mockingDetails(resolver).getInvocations())
+        {
+            assertEquals("query", call.getMethod().getName());
+        }
         assertTrue(c.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0).contains("media:77"));
         new File(path).createNewFile();
         VideoStoreImportImpl.reconcileStorageSnapshot(resolver, snapshot, c);

@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.archos.environment.ArchosUtils;
 import com.archos.filecorelibrary.RawListerFactory;
 import com.archos.filecorelibrary.webdav.WebdavUtils;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
@@ -27,6 +28,8 @@ public final class NextListingChildMain
     {
         @Test public void realBlockingListing() throws Exception
         {
+            // The build's test task also finds this class; it only means anything inside the fixture process.
+            Assume.assumeTrue(System.getProperty("next.listing.fixture.port") != null);
             Application app = RuntimeEnvironment.getApplication();
             ArchosUtils.setGlobalContext(app);
             WebdavUtils.getInstance(app);

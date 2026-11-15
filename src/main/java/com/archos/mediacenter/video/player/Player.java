@@ -98,12 +98,17 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private Uri mSaveUri;
     private Map<String, String> mExtraMap;
     private int mDuration;
-    private final SeekLoadingSignal seekLoading = new SeekLoadingSignal();
+    // Created on first use: test doubles of Player skip field initialisers.
+    private SeekLoadingSignal seekLoadingSignal;
     private java.util.List<PlaybackChapters.Chapter> seekChapters = java.util.List.of();
 
-    public SeekLoadingSignal seekLoading()
+    public synchronized SeekLoadingSignal seekLoading()
     {
-        return seekLoading;
+        if (seekLoadingSignal == null)
+        {
+            seekLoadingSignal = new SeekLoadingSignal();
+        }
+        return seekLoadingSignal;
     }
 
 
@@ -718,7 +723,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
 
     private void reset()
     {
-        seekLoading.reset();
+        seekLoading().reset();
         seekChapters = java.util.List.of();
         mVideoWidth = 0;
         mVideoHeight = 0;
@@ -751,7 +756,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         mSurfaceHolder = null;
         mVideoTexture = null;
         mForceSoftwareDecoding = forceSoftwareDecoding;
-        seekLoading.reset();
+        seekLoading().reset();
         mMediaPlayer = null;
         mUri = null;
 
@@ -966,7 +971,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         mHandler.removeCallbacks(mPreparedAsync);
         mHandler.removeCallbacks(mRefreshRateCheckerAsync);
         IMediaPlayer old = mMediaPlayer;
-        seekLoading.reset();
+        seekLoading().reset();
         mMediaPlayer = null; // callbacks from this instance are now obsolete
         mCurrentState = STATE_IDLE;
         mMetadataReady = false;
@@ -1631,21 +1636,21 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             {
                 mPlayerListener.onSeekStart(msec);
             }
-            int pictureToken = seekLoading.begin(mMediaPlayer, msec, seekChapters);
+            int pictureToken = seekLoading().begin(mMediaPlayer, msec, seekChapters);
             try
             {
                 boolean tracked = pictureToken > 0 && mMediaPlayer instanceof AvosMediaPlayer &&
                     ((AvosMediaPlayer)mMediaPlayer).seekToTracked(msec, pictureToken);
                 if (!tracked)
                 {
-                    seekLoading.result(mMediaPlayer, pictureToken, SeekLoadingSignal.State.UNAVAILABLE);
+                    seekLoading().result(mMediaPlayer, pictureToken, SeekLoadingSignal.State.UNAVAILABLE);
                     mMediaPlayer.seekTo(msec);
                 }
                 mIsBusy = true;
             }
             catch (RuntimeException failed)
             {
-                seekLoading.result(mMediaPlayer, pictureToken, SeekLoadingSignal.State.FAILED);
+                seekLoading().result(mMediaPlayer, pictureToken, SeekLoadingSignal.State.FAILED);
                 throw failed;
             }
         }
@@ -2159,7 +2164,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     {
         if (mp != mMediaPlayer)
             return;
-        seekLoading.reset();
+        seekLoading().reset();
         Diagnostics.event("playback_completed", "state", mCurrentState, "position_ms", getCurrentPosition(),
                           "duration_ms", getDuration());
         mCurrentState = STATE_PLAYBACK_COMPLETED;
@@ -2269,11 +2274,11 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         switch (what)
         {
         case AvosMediaPlayer.MEDIA_INFO_SEEK_PICTURE_READY:
-            seekLoading.result(mp, extra, SeekLoadingSignal.State.READY);
+            seekLoading().result(mp, extra, SeekLoadingSignal.State.READY);
             playbackOutput();
             return true;
         case AvosMediaPlayer.MEDIA_INFO_SEEK_PICTURE_FAILED:
-            seekLoading.result(mp, extra, SeekLoadingSignal.State.FAILED);
+            seekLoading().result(mp, extra, SeekLoadingSignal.State.FAILED);
             return true;
         case 3: // Android MEDIA_INFO_VIDEO_RENDERING_START, also forwarded by compatible backends.
             if (mp == mMediaPlayer)
@@ -2335,7 +2340,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     public boolean onError(IMediaPlayer mp, int errorCode, int errorQualCode, String msg)
     {
         if (mp == mMediaPlayer)
-            seekLoading.reset();
+            seekLoading().reset();
         if (mp != mMediaPlayer)
             return true;
         if (networkReconnect != null)
