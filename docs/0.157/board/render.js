@@ -9,8 +9,7 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 
 const cols = [
   ['Undecided', [
-    ['Settled', ['Codex: not for now; Claude does it all, Codex only if needed', 'Portrait cast cards and release '
-      + 'notes approved']],
+    ['', ['Nothing undecided. Everything is placed; you can still move anything between columns.']],
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
