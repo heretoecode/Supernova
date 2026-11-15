@@ -23,6 +23,14 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   Back or a device restart opens Home); focus recovered after standby on the four main pages (`focus_recovered`);
   held Down/Up on Movies and TV Shows waits for the grid to settle.
 
+- Old NOVA out (step 6), partly: **Issues Digest** removed from Settings; **picture in picture** no longer offered
+  (menu choice gone, manifest says false; handling kept, see `docs/REVISIT_LATER.md`); **All files access** declared
+  and asked for once (`PermissionChecker`, pref `supernova_all_files_access_asked`; refused → media permissions, no
+  nagging). The request still uses NOVA's own dialog before Android's one-time screen: restyle it with the panels in
+  step 7. Shield check needed: deleting a local file now goes straight through with no Android screen.
+- The SAFE clean-out list does not exist yet: Codex's report (`docs/codex/findings/legacy-cleanup-candidates.md`) found
+  nothing SAFE, only UNSURE. NOVA's hidden grid needs proof per route (see that report) before removal.
+
 ## In flight
 - Conformance run 4 (15 Nov 12:54) compiled and failed with 10 of 2,145 tests; all ten are fixed (`34d07ab`).
   Run 5 (43745440241) was started 15 Nov 18:12 on everything up to then, including the second session's work. Check it; on
