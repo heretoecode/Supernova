@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -17,6 +18,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -84,7 +86,8 @@ public final class TopNavigation extends LinearLayout {
         brand.setPadding(0, 0, 0, 0);
         bar.addView(brand, new LayoutParams(dp(136), -1));
         group = new PreviewFocusRail(c);
-        group.useUnderline();
+        // Focus and path (RULES §3): the tabs show the white box and the underlines themselves.
+        group.drawNothing();
         group.setClipChildren(false);
         group.setClipToPadding(false);
         group.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
@@ -317,6 +320,72 @@ public final class TopNavigation extends LinearLayout {
                 ((PreviewIcon)icon).focus(false, 0);
     }
 
+    private final ViewTreeObserver.OnGlobalFocusChangeListener pathListener = (before, after) -> refreshPath();
+
+    /**
+     * Focus and path on the top bar (owner, 12 Nov 2026; RULES §3): the focused item is the white box with black
+     * text and icon; the open page has a bright underline while the remote is in the page and a dull one while the
+     * remote is elsewhere in the bar.
+     */
+    void refreshPath() {
+        boolean inBar = bar.hasFocus();
+        for (TextView tab : tabs) {
+            if (tab == null)
+                continue;
+            boolean focused = tab.isFocused();
+            int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
+            tab.setTextColor(ink);
+            for (Drawable icon : tab.getCompoundDrawables())
+                if (icon != null)
+                    icon.setColorFilter(focused
+                        ? new android.graphics.PorterDuffColorFilter(ink, android.graphics.PorterDuff.Mode.SRC_IN)
+                        : null);
+            if (focused) {
+                android.graphics.drawable.GradientDrawable box = new android.graphics.drawable.GradientDrawable();
+                box.setColor(SupernovaStyle.FOCUS_FILL);
+                box.setCornerRadius(dp(8));
+                tab.setBackground(box);
+            } else if (tab == selected) {
+                tab.setBackground(new PathUnderline(inBar ? 0x59FFFFFF : 0xFFFFFFFF, dp(2)));
+            } else {
+                tab.setBackground(null);
+            }
+        }
+    }
+
+    /** The underline under the open page in the top bar, inside the tab's padding. */
+    private static final class PathUnderline extends Drawable {
+        private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        private final int height;
+
+        PathUnderline(int colour, int height) {
+            paint.setColor(colour);
+            this.height = Math.max(1, height);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            Rect bounds = getBounds();
+            int inset = Math.round(bounds.width() * 0.08f);
+            canvas.drawRect(bounds.left + inset, bounds.bottom - height, bounds.right - inset, bounds.bottom, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -324,6 +393,8 @@ public final class TopNavigation extends LinearLayout {
             .registerOnSharedPreferenceChangeListener(accentListener);
         for (TextView tab : tabs)
             styleTab(tab);
+        getViewTreeObserver().addOnGlobalFocusChangeListener(pathListener);
+        refreshPath();
     }
 
     private boolean scrolled;
@@ -431,6 +502,7 @@ public final class TopNavigation extends LinearLayout {
             t.setSelected(false);
         selected = tabs[index];
         selected.setSelected(true);
+        refreshPath();
         for (TextView t : tabs)
             t.setAlpha(t == selected ? 1f : .78f);
         if (index >= 3 && index <= 5)
@@ -447,6 +519,7 @@ public final class TopNavigation extends LinearLayout {
             scrimAnimation.cancel();
         scrimAlpha = scrolled ? 255 : 0;
         artwork.release();
+        getViewTreeObserver().removeOnGlobalFocusChangeListener(pathListener);
         super.onDetachedFromWindow();
     }
 

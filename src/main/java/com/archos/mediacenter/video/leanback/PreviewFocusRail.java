@@ -26,6 +26,14 @@ public final class PreviewFocusRail extends LinearLayout {
         moveTo(findFocus());
     }
 
+    private boolean silent;
+
+    /** The host draws focus itself (the top bar's focus and path, RULES §3): the rail draws nothing. */
+    public void drawNothing() {
+        silent = true;
+        invalidate();
+    }
+
     public void useUnderline() {
         underline = true;
         moveTo(findFocus());
@@ -86,7 +94,7 @@ public final class PreviewFocusRail extends LinearLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if (visible) {
+        if (visible && !silent) {
             boundary.setBounds(Math.round(current.left), Math.round(current.top), Math.round(current.right),
                                Math.round(current.bottom));
             if (underline) {
