@@ -69,6 +69,33 @@ public final class FilesPage extends LinearLayout
         tabs.select(LIBRARY_CARE);
     }
 
+    /** A place Supernova scans: this device's folders, or one network connection. */
+    public static final class Source
+    {
+        public final String label;
+        public final android.net.Uri root;
+        public final boolean local;
+
+        public Source(String label, android.net.Uri root, boolean local)
+        {
+            this.label = label;
+            this.root = root;
+            this.local = local;
+        }
+    }
+
+    private final List<Source> sources = new java.util.ArrayList<>();
+    private java.util.function.Consumer<Source> scanOne = source -> { };
+
+    /** The sources for Scan one source, and what scanning one does. */
+    public void setSources(List<Source> latest, java.util.function.Consumer<Source> scan)
+    {
+        sources.clear();
+        sources.addAll(latest);
+        scanOne = scan;
+        show(tabs.openTab());
+    }
+
     /** New figures from the library; the open tab and the summary redraw. */
     public void update(LibraryCareCounts latest, int videoCount, long lastScan, boolean scanRunning)
     {
@@ -124,7 +151,75 @@ public final class FilesPage extends LinearLayout
         row(column, "search", "Not matched", "Videos without a movie or TV show",
             ready ? LibraryCareCounts.pill(counts.notMatched, "video", "videos") : "Loading…",
             this::openHealth, false);
+        scanOneSource(column);
         recentScans(column);
+    }
+
+    /** "Scan one source": the row shows one button per source (mock-up network-files-tabs/39). */
+    private void scanOneSource(LinearLayout column)
+    {
+        heading(column, "Scanning", "scan", true);
+        if (sources.isEmpty())
+        {
+            return;
+        }
+        Context context = getContext();
+        LinearLayout row = new LinearLayout(context);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        int pad = SupernovaStyle.dp(context, 20);
+        row.setPadding(pad, 0, SupernovaStyle.dp(context, 10), 0);
+        row.setTag("files.scan.one");
+        TextView mark = new TextView(context);
+        PreviewIcon.apply(mark, "integration", 16);
+        row.addView(mark, new LayoutParams(SupernovaStyle.dp(context, 36), -2));
+        LinearLayout words = new LinearLayout(context);
+        words.setOrientation(VERTICAL);
+        TextView title = text("Scan one source", 18, Color.WHITE);
+        TextView second = text("Look for new videos in one place only", 13.5f, SECOND_LINE);
+        words.addView(title);
+        words.addView(second);
+        row.addView(words, new LayoutParams(0, -2, 1));
+        List<TextView> buttons = new java.util.ArrayList<>();
+        Runnable restyle = () -> {
+            boolean inside = row.hasFocus();
+            row.setBackground(inside ? box(SupernovaStyle.FOCUS_FILL) : null);
+            int ink = inside ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
+            title.setTextColor(ink);
+            second.setTextColor(inside ? SupernovaStyle.FOCUS_TEXT : SECOND_LINE);
+            mark.setTextColor(ink);
+            SupernovaStyle.tintIcons(mark);
+            for (TextView button : buttons)
+            {
+                boolean focused = button.isFocused();
+                button.setVisibility(inside || buttons.indexOf(button) == 0 ? VISIBLE : INVISIBLE);
+                button.setTextColor(focused ? Color.WHITE : ink);
+                button.setBackground(focused ? box(SupernovaStyle.FOCUS_TEXT) : outline(ink));
+                SupernovaStyle.tintIcons(button);
+            }
+        };
+        for (Source source : sources)
+        {
+            TextView button = text(source.label, 15, Color.WHITE);
+            button.setGravity(Gravity.CENTER);
+            button.setFocusable(true);
+            button.setFocusableInTouchMode(true);
+            int inner = SupernovaStyle.dp(context, 12);
+            button.setPadding(inner, 0, inner, 0);
+            PreviewIcon.apply(button, source.local ? "tv" : "integration", 14);
+            button.setContentDescription("Scan " + source.label);
+            button.setOnClickListener(view -> scanOne.accept(source));
+            button.setOnFocusChangeListener((view, focused) -> restyle.run());
+            LayoutParams size = new LayoutParams(-2, SupernovaStyle.dp(context, 30));
+            size.leftMargin = SupernovaStyle.dp(context, 6);
+            row.addView(button, size);
+            buttons.add(button);
+        }
+        if (column.findViewWithTag("files.row.first") == null)
+        {
+            buttons.get(0).setTag("files.row.first");
+        }
+        restyle.run();
+        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, 64)));
     }
 
     /** The last three scans (approved Recent scans); plain information, so no row lines and no focus. */

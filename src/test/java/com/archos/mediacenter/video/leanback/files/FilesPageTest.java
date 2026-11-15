@@ -38,6 +38,35 @@ public class FilesPageTest
         assertEquals(FilesPage.LIBRARY_CARE, tabs.openTab());
     }
 
+    @Test
+    public void scanOneSourceOffersAButtonPerSource()
+    {
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        FilesPage page = new FilesPage(activity);
+        activity.setContentView(page);
+        java.util.List<FilesPage.Source> scanned = new java.util.ArrayList<>();
+        java.util.List<FilesPage.Source> sources = java.util.List.of(
+            new FilesPage.Source("This device", android.net.Uri.parse("file:///storage/Movies"), true),
+            new FilesPage.Source("Media server", android.net.Uri.parse("smb://server/Films"), false));
+        page.setSources(sources, scanned::add);
+        android.view.ViewGroup row = page.findViewWithTag("files.scan.one");
+        assertNotNull(row);
+        View second = null;
+        int buttons = 0;
+        for (int index = 0; index < row.getChildCount(); index++)
+        {
+            View child = row.getChildAt(index);
+            if (child.isFocusable() && child instanceof android.widget.TextView)
+            {
+                buttons++;
+                second = child;
+            }
+        }
+        assertEquals(2, buttons);
+        second.performClick();
+        assertEquals("Media server", scanned.get(0).label);
+    }
+
     private static PageTabs findTabs(View view)
     {
         if (view instanceof PageTabs)
