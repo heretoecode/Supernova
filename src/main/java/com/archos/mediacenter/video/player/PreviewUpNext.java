@@ -1,4 +1,5 @@
 package com.archos.mediacenter.video.player;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import android.app.Activity;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
@@ -150,8 +151,10 @@ final class PreviewUpNext {
             skipDismissed = false;
         }
         Player player = Player.sPlayer;
+        int position = player == null ? -1 : player.getCurrentPosition();
+        // Inside the part only: rewinding to before it (or passing its end) takes the button away.
         boolean partRunning = skipPart != null && service != null && player != null &&
-            service.segmentSkippingEnabled() && player.getCurrentPosition() < skipPart.target;
+            service.segmentSkippingEnabled() && position >= skipPart.start && position < skipPart.target;
         if (!partRunning) {
             skipPart = null;
             removeSkip();
@@ -227,8 +230,11 @@ final class PreviewUpNext {
 
     private void skip(PlayerService.SegmentPrompt part) {
         Player player = Player.sPlayer;
-        if (part != null && player != null && PlayerService.isSafeAutoSkipTarget(part.target, player.getDuration()))
+        if (part != null && player != null && PlayerService.isSafeAutoSkipTarget(part.target, player.getDuration())) {
+            Diagnostics.event("introdb_skip_used", "mode", "button", "segment", part.type.name(), "target_ms",
+                              part.target);
             player.seekTo((int)part.target);
+        }
         skipPart = null;
         removeSkip();
     }

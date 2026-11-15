@@ -2098,11 +2098,17 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public static final class SegmentPrompt
     {
         public final IntroSegments.Type type;
-        public final long target, expires;
+        public final long start, target, expires;
 
         SegmentPrompt(IntroSegments.Type type, long target)
         {
+            this(type, 0, target);
+        }
+
+        SegmentPrompt(IntroSegments.Type type, long start, long target)
+        {
             this.type = type;
+            this.start = start;
             this.target = target;
             expires = SystemClock.elapsedRealtime() + 5000;
         }
@@ -2677,8 +2683,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 SegmentSkippingPolicy.Mode mode = SegmentSkippingPolicy.mode(mPreferences, type);
                 if (mode == SegmentSkippingPolicy.Mode.PROMPT)
                 {
-                    mLastAutoSkippedEndMs = segment.endMs;
-                    mSegmentPrompt = new SegmentPrompt(type, segment.endMs);
+                    // Asked once per visit: a seek clears this, so rewinding to before the part offers Skip again.
+                    if (segment.endMs == mLastPromptedEndMs)
+                        continue;
+                    mLastPromptedEndMs = segment.endMs;
+                    long start = segment.startMs == null ? 0 : segment.startMs;
+                    mSegmentPrompt = new SegmentPrompt(type, start, segment.endMs);
+                    Diagnostics.event("introdb_skip_offered", "segment", type.name(), "start_ms", start, "target_ms",
+                                      segment.endMs);
                     return;
                 }
                 if (SegmentSkippingPolicy.auto(mode, type, mPlayMode == PLAYMODE_BINGE && mArrivedViaBingeTransition))
