@@ -40,11 +40,14 @@ jobs:
           for path in sorted(pathlib.Path('evidence').rglob('*conformance.log')):
               lines=path.read_text(errors='replace').splitlines()
               count=0
+              seen=set()
               for i,line in enumerate(lines):
-                  if ' error: ' in line or line.rstrip().endswith('FAILED'):
+                  text=line.strip()
+                  if (' error: ' in text or text.endswith('FAILED')) and text not in seen:
+                      seen.add(text)
                       count+=1
-                      print('::error::'+line.strip()[:400])
-                      for extra in lines[i+1:i+5]: print('    '+extra[:300])
+                      print('E| '+text[-330:])
+                      if ' error: ' in text and i+1 < len(lines): print('     '+lines[i+1].strip()[:200])
               print(f'{count} compile error or failed-task lines in {path.name}')
           PY
       - name: Print failing tests only
@@ -62,6 +65,6 @@ jobs:
                       failed+=1
                       text=(node.text or '').strip().splitlines()
                       print(f"::error::{case.get('classname')}.{case.get('name')} [{kind}] {node.get('message','')[:300]}")
-                      for line in text[:25]: print('    '+line)
+                      for line in text[:7]: print('    '+line[:300])
           print(f'{failed} failing of {total} test cases')
           PY
