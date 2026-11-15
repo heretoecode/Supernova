@@ -3525,15 +3525,9 @@ public class PlayerActivity extends AppCompatActivity
             for (int index = mSurfaceController.getMax();
                  index < getResources().getStringArray(R.array.pref_format_mode_entries).length; index++)
                 ((TVMenuItem)tvmFormat.getItem(index)).setDisabled(true);
-            final View vPicInPic;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && TVUtils.isTV(this) &&
-                getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))
-            {
-                tvmFormat.createAndAddSeparator();
-                vPicInPic = tvmFormat.createAndAddTVMenuItem(getString(R.string.picture_in_picture), false, false);
-            }
-            else
-                vPicInPic = null;
+            // Picture in picture was removed in 0.157 (owner, 6 Nov 2026; docs/REVISIT_LATER.md). The choice is no
+            // longer offered and the manifest no longer declares it; the handling below stays so it can return.
+            final View vPicInPic = null;
             tvmFormat.setOnItemClickListener(new View.OnClickListener() {
                 @SuppressWarnings("deprecation") // enterPictureInPictureMode(): API 26+ uses PictureInPictureParams
                 @Override

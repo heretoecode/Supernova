@@ -215,7 +215,7 @@
             android:finishOnTaskLaunch="true"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"
+            android:supportsPictureInPicture="false"
             android:taskAffinity="archos.task.video"
             android:theme="@style/ArchosThemeBlueOverlay">
             <intent-filter>
