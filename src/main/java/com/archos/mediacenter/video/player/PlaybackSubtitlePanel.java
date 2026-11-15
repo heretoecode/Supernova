@@ -143,6 +143,11 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         }
 
         /** "Still watching?" after this many auto-played episodes; 0 is Off. */
+        /** Whether an episode is playing (its last choice reads "End of episode", otherwise "End of movie"). */
+        default boolean playingEpisode() {
+            return true;
+        }
+
         default int stillWatchingAfter() {
             return 0;
         }
@@ -831,9 +836,26 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     static final String[] SLEEP_LABELS = {"Off", "30", "60", "90", "End of episode"};
     static final int[] STILL_WATCHING_CHOICES = {0, 2, 3, 5};
 
+    /**
+     * "Stop playing at" (owner, 6 and 12 Nov 2026; replaces Sleep timer): Off, three clock times that roll with the
+     * clock (now + 30, 60, 90 minutes; a running timer shows its own end time), then End of episode or End of movie.
+     */
+    static String[] stopLabels(long nowMs, int choice, long endsAt, boolean episode) {
+        java.text.DateFormat format = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT);
+        String[] labels = new String[SLEEP_LABELS.length];
+        labels[0] = "Off";
+        int[] minutes = {30, 60, 90};
+        for (int i = 0; i < minutes.length; i++) {
+            long at = choice == i + 1 && endsAt > 0 ? endsAt : nowMs + minutes[i] * 60_000L;
+            labels[i + 1] = format.format(new java.util.Date(at));
+        }
+        labels[4] = episode ? "End of episode" : "End of movie";
+        return labels;
+    }
+
     /** Approved mock-up {@code suggestions/02}: five inline choices and a stepper for the episode count. */
     private void sleepAndStillWatching() {
-        LinearLayout sleep = row("playback.row.sleep", "moon", "Sleep timer");
+        LinearLayout sleep = row("playback.row.sleep", "moon", "Stop playing at");
         LinearLayout box = new LinearLayout(owner);
         box.setGravity(Gravity.CENTER_VERTICAL);
         sleep.addView(box);
@@ -853,12 +875,16 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         body.addView(note);
         bindings.add(() -> {
             int choice = backend.sleepChoice();
-            for (int i = 0; i < texts.length; i++)
+            String[] labels =
+                stopLabels(System.currentTimeMillis(), choice, backend.sleepEndsAt(), backend.playingEpisode());
+            for (int i = 0; i < texts.length; i++) {
+                texts[i].setText(labels[i]);
                 texts[i].setTextColor(choice == i ? VALUE : Color.WHITE);
+            }
             String line = sleepNote(choice, backend.sleepEndsAt());
             note.setText(line);
             note.setVisibility(line.isEmpty() ? GONE : VISIBLE);
-            sleep.setContentDescription("Sleep timer, " + SLEEP_LABELS[choice]);
+            sleep.setContentDescription("Stop playing at, " + labels[choice]);
         });
         sleep.setOnClickListener(v -> {
             backend.setSleepChoice((backend.sleepChoice() + 1) % SLEEP_LABELS.length);

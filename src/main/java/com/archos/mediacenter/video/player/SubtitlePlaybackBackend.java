@@ -162,6 +162,11 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     }
 
     @Override
+    public boolean playingEpisode() {
+        return !(owner instanceof PlayerActivity) || ((PlayerActivity) owner).playingEpisode();
+    }
+
+    @Override
     public int sleepChoice() {
         PlaybackLimits limits = limits();
         return limits == null ? 0 : limits.timer().ordinal();

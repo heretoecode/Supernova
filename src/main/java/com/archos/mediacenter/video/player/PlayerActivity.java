@@ -438,7 +438,12 @@ public class PlayerActivity extends AppCompatActivity
     private int mNewAudioTrack = -1;
     private ChaptersDbPlayback previewChapterSource;
 
-    /** Shared engine data for Claude's bar, cards and time bubble. May be called again as providers complete. */
+    /** Whether the video playing is a TV episode (Playback Settings words "End of episode" or "End of movie"). */
+    public boolean playingEpisode() {
+        return mVideoInfo == null || mVideoInfo.isShow;
+    }
+
+    /** Shared engine data for the seek bar, cards and time bubble. May be called again as providers complete. */
     public PlaybackParts previewParts(List<PlaybackChapters.Chapter> embedded, long duration)
     {
         List<PlaybackChapters.Chapter> external = Collections.emptyList();
