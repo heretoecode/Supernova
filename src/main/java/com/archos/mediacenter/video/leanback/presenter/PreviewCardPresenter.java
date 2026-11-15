@@ -23,7 +23,7 @@ import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.LibraryHealth;
 import com.archos.mediacenter.video.leanback.PreviewAccent;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
-import com.archos.mediacenter.video.leanback.PreviewFocusGlow;
+import com.archos.mediacenter.video.leanback.ArtworkEdge;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
 import com.squareup.picasso.Callback;
@@ -49,6 +49,8 @@ public final class PreviewCardPresenter extends Presenter {
     }
 
     public static final class Card extends BaseCardView {
+        /** 400 to 440 px wide when focused. */
+        public static final float FOCUS_SCALE = 1.1f;
         public final ImageView image;
         final TextView title, subtitle;
         final LinearLayout caption;
@@ -221,11 +223,13 @@ public final class PreviewCardPresenter extends Presenter {
                 Diagnostics.focusedMedia(diagnosticMediaId);
             View unit = getChildAt(0);
             setForeground(null);
-            unit.setForeground(
-                focused ? new PreviewFocusGlow(getContext()) : null);
+            // The artwork edge at rest, the thick white ring when focused (RULES §14).
+            unit.setForeground(new ArtworkEdge(getContext(), 6, focused));
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
             image.setAlpha(1f);
-            unit.animate().scaleX(focused ? 1.08f : 1f).scaleY(focused ? 1.08f : 1f).setDuration(140).start();
+            // One row card size: 400 × 225, focused 440 × 248 (RULES §14).
+            float scale = focused ? FOCUS_SCALE : 1f;
+            unit.animate().scaleX(scale).scaleY(scale).setDuration(140).start();
             title.setTextColor(focused ? Color.WHITE : 0xffc0ccd6);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);

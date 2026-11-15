@@ -303,7 +303,7 @@ public class FoundationHomeRegressionTest {
                 Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(200));
                 assertEquals(1f, item.getScaleX(), .001f);
                 View unit = ((ViewGroup) item).getChildAt(0);
-                assertEquals(1.08f, unit.getScaleX(), .001f);
+                assertEquals(PreviewCardPresenter.Card.FOCUS_SCALE, unit.getScaleX(), .001f);
                 assertSame(unit,
                     ((PreviewCardPresenter.Card) item)
                         .image.getParent());
