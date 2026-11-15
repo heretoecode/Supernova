@@ -31,6 +31,8 @@ coded is listed; it still needs a green build and the owner's Shield test before
 ## Player
 - Preparing playback shows the episode as "Season 2 · Episode 8 · Title" and the age rating
 - Seek previews now work on Put.io and local files
+- Audio tracks read in plain words with tags: Original, Dolby Digital Plus, 5.1
+- The age rating shows for 8 seconds as playback starts
 - Stop playing at: pick a clock time, or the end of the episode or film
 - Still watching? can ask after a number of episodes or after a few hours
 - Play mode: Stop after this · Play next · Repeat this · Repeat all
