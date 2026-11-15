@@ -53,7 +53,7 @@ Items already built or scheduled are left out (see the bottom of this file).
 | FD-011 | Profiles (separate history, Continue Watching, settings per person) | Parked; discussion below (15 Nov) |
 | FD-013 | Discovery / Coming Soon page | Parked; Home must not become advertising |
 | FD-016 | Person pages (cast and crew filmographies) | Parked |
-| FD-017 | More than one custom Library Page | Parked; check the current limit when revisiting |
+| FD-017 | More than one custom Library Page | Parked; check the current limit when revisiting. Owner 15 Nov: maybe a fourth page one day; dropping "SUPERNOVA" from the top bar makes room |
 | FD-018 | Anime-specific metadata and seasons | Concept only |
 | FD-020 | Subtitle presets (saved appearance sets) | Concept only |
 | FD-021 | Playback intelligence (smarter version/track choices) | Concept only; per-series audio/subtitle memory is in 0.156 (in principle) |
@@ -229,3 +229,14 @@ is ever wanted back.
   Bonus: a general tag can feed a Home row or the custom library page (Customise Home › Add a row › Tag: Christmas),
   so the Christmas films appear as a row in December and vanish otherwise.
 - Open: can views use general tags, or users only? Who can create user tags (everyone, or only in Settings)?
+- **Owner, 15 Nov (round 3):** each user picks their own **monochrome icon** (like Netflix/Disney+ profile pictures,
+  but icons); Together defaults to two overlapping people. Tags show on the **Details page**, and Details › More has
+  **Tags** too. Dropping "SUPERNOVA" also leaves room for **more library pages** later (see FD-017).
+- **Claude, round 3:** the user icon picker reuses the approved Customise Home icon grid (one picker app-wide). On
+  Details, tags appear as two Key information rows, **Users** and **Tags** (label/value like every other fact), and the
+  More menu's Tags row shows them as its subtitle. Mock-up `tags-views/02` (v2): top bar without the name, the user
+  switcher icon and its menu; Details › More › Tags; the Tags list stacked on More (Users and Tags groups, New tag).
+- Clarified questions: (a) users are created in one place, "Edit users and views" (name and icon), so the Tags
+  list's Users group has no "New user" and a typo can't create a stray person; general tags can be made anywhere
+  ("New tag"). (b) "Views using general tags" means a user's view may hide or show general tags too (Me hides
+  Classics), not only other users' titles. Claude: yes to both; owner to decide.
