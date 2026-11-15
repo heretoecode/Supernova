@@ -34,3 +34,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 23:16–23:18 | Build 7: 3 failing tests, fixed; build 8 started 23:17. |
 | 15 Nov 23:18–23:25 | While build 8 runs: Playback Settings (Stop playing at, Play mode, Skip intros and credits, Still watching?), AI names out of code comments, release notes draft. |
 | 15 Nov 23:25–23:32 | While build 8 runs: JustWatch line, delete logging, Preparing playback episode line and age badge, age rating 8 s, audio track pills, single-season shows. |
+| 15 Nov 23:47 | Loop mode: working through the rest on my own. New Files page switched on (QUESTIONS.md #2). |

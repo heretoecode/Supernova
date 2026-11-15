@@ -88,6 +88,9 @@ public class PreviewScanLifecycleTest
 
     @Before public void registerReceiverForThisTestApplication()
     {
+        android.content.Context files = org.robolectric.RuntimeEnvironment.getApplication();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(files)
+            .edit().putBoolean("supernova_files_page", false).commit();
         // Robolectric replaces the Application/registered receivers between tests;
         // the production process-wide installation guard otherwise retains the old registration.
         ReflectionHelpers.setStaticField(PreviewLibraryScan.class, "installed", false);

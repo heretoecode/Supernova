@@ -74,7 +74,7 @@ public final class PreviewPages extends FrameLayout {
     private final PageAdapter adapter = new PageAdapter();
     private final Click click;
     private Snapshot snapshot = new Snapshot();
-    /** Shows the redesigned Files page instead of the old one while it is being finished (0.157 step 8). */
+    /** The redesigned Files page (0.157 step 8); false brings back the old page (tests of the old screens). */
     static final String FILES_PAGE_SWITCH = "supernova_files_page";
     private com.archos.mediacenter.video.leanback.files.FilesPage filesPage;
     private List<Box> files = new ArrayList<>();
@@ -2750,7 +2750,7 @@ public final class PreviewPages extends FrameLayout {
 
         private void networkLayout(LinearLayout container) {
             if (tab == 3 && PreferenceManager.getDefaultSharedPreferences(getContext())
-                                .getBoolean(FILES_PAGE_SWITCH, false)) {
+                                .getBoolean(FILES_PAGE_SWITCH, true)) {
                 filesLayout(container);
                 return;
             }

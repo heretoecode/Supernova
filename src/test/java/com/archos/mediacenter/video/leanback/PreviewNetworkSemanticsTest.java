@@ -34,6 +34,9 @@ import static org.junit.Assert.*;
 public class PreviewNetworkSemanticsTest {
     @Before
     public void isolatePreviewTransport() {
+        android.content.Context files = org.robolectric.RuntimeEnvironment.getApplication();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(files)
+            .edit().putBoolean("supernova_files_page", false).commit();
         PreviewAsyncFixtures.offlineTransport();
     }
 

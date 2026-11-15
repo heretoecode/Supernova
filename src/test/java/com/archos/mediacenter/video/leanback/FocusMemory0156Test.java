@@ -20,6 +20,13 @@ import org.robolectric.util.ReflectionHelpers;
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class FocusMemory0156Test
 {
+    @org.junit.Before
+    public void oldFilesPage() {
+        android.content.Context files = org.robolectric.RuntimeEnvironment.getApplication();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(files)
+            .edit().putBoolean("supernova_files_page", false).commit();
+    }
+
     @Test
     public void homeHeroKeepsItsTitleAcrossATabRoundTrip()
     {
