@@ -1129,7 +1129,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             facts.setVisibility(GONE);
             heading.setText("Library Scanning");
             information.setText("Checks your drives and Put.io for new and removed videos. The Scan now tile on "
-                                + "Network & Files starts a scan straight away.");
+                                + "Files starts a scan straight away.");
             actions.removeAllViews();
             int period = NetworkAutoRefresh.getRescanPeriod(getContext());
             contextToggle("Scan automatically", period > 0, () -> {

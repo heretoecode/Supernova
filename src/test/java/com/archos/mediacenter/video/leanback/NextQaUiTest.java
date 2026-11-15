@@ -98,7 +98,7 @@ public class NextQaUiTest {
             Dialog dialog = PreviewDialog.message(host.get(), "Welcome to Supernova",
                 "Add folders from local storage, external drives or network shares. Scanning starts after confirmation.",
                 true, new String[] {
-                    "Network & Files", "Explore Supernova"
+                    "Files", "Explore Supernova"
                 }, 0, n -> {
                 });
             View panel = dialog.findViewById(android.R.id.content);
@@ -156,7 +156,7 @@ public class NextQaUiTest {
             Dialog welcome = PreviewDialog.message(host.get(), "Welcome to Supernova",
                 "Add movies and TV shows from local storage, external drives or network shares. Supernova will only begin scanning once you've selected and confirmed your folders.",
                 true, new String[] {
-                    "Network & Files", "Explore Supernova"
+                    "Files", "Explore Supernova"
                 }, 0, n -> {
                 });
             View root = PreviewHomeVisualTest.measure(welcome);

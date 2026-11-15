@@ -891,7 +891,7 @@
         - Trakt synchronisation</string>
     <string name="dont_show_again">Don\'t show again</string>
 
-    <string name="leanback_browsing" comment="header for network, internal, usb, sdcard">Network &amp; Files</string>
+    <string name="leanback_browsing" comment="header for network, internal, usb, sdcard">Files</string>
 
     <string name="leanback_subtitles_integrated">Integrated</string>
     <string name="leanback_subtitles_external">External</string>

@@ -25,7 +25,7 @@ final class NetworkFilesLayout extends LinearLayout {
         setOrientation(VERTICAL); setClipChildren(false); setClipToPadding(false);
         setPadding(dp(16),dp(7),dp(16),dp(8));
         detach(rail); detach(centre); detach(details);
-        back=SharedThreePanel.accentAction(c,"Network & Files  ‹",()->{});
+        back=SharedThreePanel.accentAction(c,"Files  ‹",()->{});
         back.setTag("network.back");addView(back,new LayoutParams(-1,-2));
         workspace=new FrameLayout(c);surface(workspace,10);workspace.setPadding(dp(10),dp(10),dp(10),dp(10));
         addView(workspace,new LayoutParams(-1,0,1));

@@ -18,7 +18,7 @@ final class PreviewSourceManagement {
             indexed ? Collections.emptyList() : Collections.singletonList(source),
             kind
             -> PreviewDialog.read(
-                activity, "Connect a source", "Open Network & Files to add a connection."));
+                activity, "Connect a source", "Open Files to add a connection."));
         surface.browser().open(source.getUri());
         return surface;
     }

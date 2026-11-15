@@ -1347,7 +1347,7 @@ public final class PreviewPages extends FrameLayout {
                                      render("filters_cleared");
                                  });
         return new EmptyPage(tab == 2 ? "Your library has no TV shows yet." : "Your library has no films yet.",
-                             "Open Network & Files", "network", () -> networkSection(""));
+                             "Open Files", "network", () -> networkSection(""));
     }
 
     private void bindEmptyPage(LinearLayout v, String title, EmptyPage page) {
@@ -1753,7 +1753,7 @@ public final class PreviewPages extends FrameLayout {
             else if (loaded && entries.isEmpty())
                 cells.add(new Cell(NOTICE, "Nothing on this page yet", emptyPage()));
         } else {
-            cells.add(new Cell(NETWORK, "Network & Files", null));
+            cells.add(new Cell(NETWORK, "Files", null));
         }
         if (!loaded && tab > 0 && tab != 3)
             header(tab == 1 ? "Movies" : "TV Shows", false);
@@ -2297,8 +2297,8 @@ public final class PreviewPages extends FrameLayout {
             getContext(), firstRun ? "No Media Details Yet" : "No Details for This Placeholder",
             firstRun
                 ? "Your movies and TV shows will appear here once you've added folders to your library."
-                : "No media is attached to this placeholder. Browse your library or add more folders in Network & Files.",
-            false, new String[] {"Network & Files", "Continue Browsing"}, 0, n -> {
+                : "No media is attached to this placeholder. Browse your library or add more folders in Files.",
+            false, new String[] {"Files", "Continue Browsing"}, 0, n -> {
                 if (n == 0)
                     openNetwork();
             });
@@ -2311,7 +2311,7 @@ public final class PreviewPages extends FrameLayout {
         Dialog dialog = PreviewDialog.message(
             getContext(), "Welcome to Supernova",
             "Add movies and TV shows from local storage, external drives or network shares. Supernova will only begin scanning once you've selected and confirmed your folders.",
-            true, new String[] {"Network & Files", "Explore Supernova"}, 0, n -> {
+            true, new String[] {"Files", "Explore Supernova"}, 0, n -> {
                 preferences.edit().putBoolean("supernova_welcome_dismissed", true).apply();
                 if (n == 0)
                     openNetwork();

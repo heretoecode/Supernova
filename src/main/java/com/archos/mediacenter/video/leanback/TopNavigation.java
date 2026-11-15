@@ -96,7 +96,7 @@ public final class TopNavigation extends LinearLayout {
         rail.setFocusable(false);
         rail.addView(group, new FrameLayout.LayoutParams(-2, -1));
         bar.addView(rail, new LayoutParams(0, -1, 1));
-        String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search", customLabel(c)};
+        String[] labels = {"Home", "Movies", "TV Shows", "Files", "Settings", "Search", customLabel(c)};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
             TextView tab = new TextView(c);
