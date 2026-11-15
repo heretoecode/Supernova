@@ -160,3 +160,22 @@ library statistics) arrives with that page; Files is in 0.157, so most do too.
 - **Later, on its own:** the newer NOVA engine.
 - Why: Files makes 0.157 a big version, so the pages that already work well today (Home, Details, Search) wait one
   version; anything can still be swapped.
+
+## 0.157 build order (started 15 Nov 2026, owner's go-ahead)
+
+Each batch ends committed and pushed; a conformance build runs at the end of each larger batch.
+1. **Start:** read the 14 Nov diagnostics (done: `DIAGNOSTICS_2026-11-14.md`); bring `main` up to date with 0.156
+   (needs the owner's yes to push `main`); version 0.157.
+2. **Codex merge:** check and merge Codex's unmerged 0.157 work (`codex/0157-2026-11-06`), one item at a time.
+3. **NOVA 6.6.5+:** carry the TV-relevant changes across by hand (MediaLib, FileCoreLibrary, app; libdovi in the
+   native build last).
+4. **Quick, high-value fixes:** seek previews (null headers; hidden switch), no rebuild when nothing changed, scan
+   rules, scan history store, dead connections, Recently Added, skip button, chapter names, stuck scanning pill.
+5. **Memory and focus:** measure per page, cut; reopen where you were; focus after standby; held Down.
+6. **Old NOVA out:** SAFE list, hidden grid and screens, picture in picture, Issue digest, All files access once.
+7. **Foundation (R0):** panels, menus, choice list, focus and path, headings, artwork edge, move gesture, the one
+   keyboard with phone paste and the password eye, the new mark and loading ring.
+8. **Files (R6)** without Transfers. 9. **Details (R3)** with portrait cast. 10. **Player (R5)** with Preparing playback.
+11. **Data:** subtitles plan, UK age ratings, reception offline, technical info, calmer hero backdrops, region, sort
+    titles, diagnostics retention, backup groups, licences.
+12. **Release notes, conformance, then the owner's Shield test and (when asked) signing.**
