@@ -60,8 +60,9 @@ public final class SharedMetadata {
 
     public static CharSequence primary(Facts f) {
         SpannableStringBuilder row = new SpannableStringBuilder();
+        // One order everywhere: Age rating · Year · Length · Genres (owner, 12 Nov 2026; notes §29).
         for (String value : new String[] {
-            f.certificate, f.year, f.genres, f.context,
+            f.certificate, f.year, f.context, f.genres,
                  f.rating > 0 && f.rating <= 10 ? String.format(Locale.UK, "TMDB %.1f/10", f.rating) : "",
                  f.rating > 0 && f.rating <= 10 && f.votes > 0 ? votes(f.votes) : ""
         }) {
@@ -111,22 +112,18 @@ public final class SharedMetadata {
     }
 
     /**
-     * Hero card policy, shared by Home and Details (owner, 3 Nov 2026): {@code Year · Genres}, with Details adding
-     * the runtime (films) or seasons (series) next to the year. No age rating, no score and no format badges on
-     * either card; those stay in the Details tab (and the rating in the playback overlay). The lower facts
-     * retain their full data.
+     * Hero card policy, Home and Details alike (owner, 12 Nov 2026; notes §29, replacing 3 Nov): {@code Age rating ·
+     * Year · Length · Genres}, the age rating in a small outlined badge, genres in TMDB's order, three at most;
+     * anything missing is left out. No score and no format badges on either card; those stay in the Details tab.
      */
     public static Facts cardFacts(Facts original, boolean home) {
         Facts facts = original.copy();
         facts.votes = 0;
         facts.rating = 0;
-        facts.certificate = "";
         facts.technical.clear();
         Set<String> genres = PreviewGenres.parse(facts.genres);
         List<String> compact = new ArrayList<>(genres);
         facts.genres = android.text.TextUtils.join(", ", compact.subList(0, Math.min(3, compact.size())));
-        facts.year = home ? facts.year : join(facts.year, facts.context);
-        facts.context = "";
         return facts;
     }
 

@@ -276,7 +276,7 @@ public class Supernova138HomeTest {
         facts.rating = 8.1;
         facts.context = SharedMetadata.join(SharedMetadata.count(1, "Season"), SharedMetadata.count(24, "Episode"));
         assertEquals(
-            "Drama · 1 Season · 24 Episodes · TMDB 8.1/10 · 8.2k votes", SharedMetadata.primary(facts).toString());
+            "1 Season · 24 Episodes · Drama · TMDB 8.1/10 · 8.2k votes", SharedMetadata.primary(facts).toString());
         assertEquals("2h 14m", SharedMetadata.runtime(134));
     }
 }

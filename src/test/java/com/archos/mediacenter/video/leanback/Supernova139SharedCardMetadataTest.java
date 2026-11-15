@@ -47,14 +47,14 @@ public class Supernova139SharedCardMetadataTest {
         assertEquals(0, details.votes);
         assertTrue(home.technical.isEmpty());
         assertTrue("0.154: no format badges on either hero", details.technical.isEmpty());
-        assertEquals("", home.context);
-        assertEquals("2024 · 2h", details.year);
+        assertEquals("2h", home.context);
+        assertEquals("2024", details.year);
         assertEquals(4, PreviewGenres.parse(full.genres).size());
         assertEquals(123456, full.votes);
         assertEquals(1, full.technical.size());
-        // 0.154: no age rating and no score on the hero cards; Details adds the runtime next to the year.
-        assertEquals("2024 · Action, Adventure, Drama", SharedMetadata.primary(home).toString());
-        assertEquals("2024 · 2h · Action, Adventure, Drama", SharedMetadata.primary(details).toString());
+        // 0.157 (notes §29): Age rating · Year · Length · Genres on both cards; no score.
+        assertEquals("15 · 2024 · 2h · Action, Adventure, Drama", SharedMetadata.primary(home).toString());
+        assertEquals("15 · 2024 · 2h · Action, Adventure, Drama", SharedMetadata.primary(details).toString());
         assertEquals(1, full.technical.size());
         assertEquals("15", full.certificate);
     }
