@@ -62,8 +62,8 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 - Build order and batches: `docs/0.157/VERSION_PLAN.md` (end).
 
 ### Where things stand (14 Nov 2026, end of the design phase)
-- Every redesign is designed and approved. Waiting for the owner's yes: portrait cast cards and the 0.157 release
-  notes style (`docs/design/proposals/0157-checks/01`).
+- Every redesign is designed and approved, including the portrait cast cards and the release notes style
+  (owner, 14 Nov; owner notes §43).
 - What goes in which version: `docs/0.157/VERSION_PLAN.md` and the board `docs/0.157/board/version-board.png`.
   0.157 = foundation, Files, Details, Preparing playback, Player and Playback Settings, new mark, and all fixes and
   under-the-bonnet work. 0.158 = Home, library pages, Search, Settings, onboarding, NOVA 6.6.5+, Transfers part two.
