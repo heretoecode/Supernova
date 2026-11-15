@@ -51,7 +51,7 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 ## In flight
 - Run 6 (18:50): 2 of 2,150 failing, both fixed in `966daae` (Player chapter list in test doubles; MediaLib
   `NetworkScanLedgerTest` scanner had no files folder, so the scan lock failed: new registered patch
-  `medialib-supernova157-ledger-test.patch`). **Run 7 started 15 Nov ~19:33** on everything up to `966daae`.
+  `medialib-supernova157-ledger-test.patch`). **Run 7 started 15 Nov 19:23** on everything up to `966daae`.
 - To read the exact MediaLib code the build uses: add a worktree of `aos-MediaLib` at the pinned revision
   (`prepare-supernova155-workspace.py`) and `git apply` the MediaLib patches from the lock file in order.
 
