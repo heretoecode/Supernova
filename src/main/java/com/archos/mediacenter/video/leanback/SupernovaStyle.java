@@ -216,6 +216,28 @@ public final class SupernovaStyle {
      * Makes a TextView's compound icons follow the text colour (white at rest, black on focus).
      * Works for the app's own icon drawables too, which ignore Android's tint lists.
      */
+    /**
+     * Paints a label's icons in the given ink. For a label inside a focusable row (the row has the focus, not the
+     * label), so its icon turns black on the white focus box with the text (0.157 Shield review #20).
+     */
+    public static void inkIcons(TextView view, int ink) {
+        Drawable[] sets = concat(view.getCompoundDrawables(), view.getCompoundDrawablesRelative());
+        for (Drawable d : sets) {
+            if (d == null)
+                continue;
+            Drawable icon = d instanceof StateIcon ? ((StateIcon) d).icon() : d;
+            icon.setColorFilter(new PorterDuffColorFilter(ink, PorterDuff.Mode.SRC_IN));
+        }
+        view.invalidate();
+    }
+
+    private static Drawable[] concat(Drawable[] first, Drawable[] second) {
+        Drawable[] all = new Drawable[first.length + second.length];
+        System.arraycopy(first, 0, all, 0, first.length);
+        System.arraycopy(second, 0, all, first.length, second.length);
+        return all;
+    }
+
     public static void tintIcons(TextView view) {
         // Icons may be attached start/end (relative) or left/right (absolute); the relative getter does not
         // report absolute ones, which left icons such as the Home hero's More Info white on the white box.

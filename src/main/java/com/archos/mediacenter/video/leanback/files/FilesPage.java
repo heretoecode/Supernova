@@ -371,7 +371,7 @@ public final class FilesPage extends LinearLayout
             title.setTextColor(ink);
             second.setTextColor(inside ? SupernovaStyle.FOCUS_TEXT : SECOND_LINE);
             mark.setTextColor(ink);
-            SupernovaStyle.tintIcons(mark);
+            SupernovaStyle.inkIcons(mark, ink);
             for (TextView button : buttons)
             {
                 boolean focused = button.isFocused();
@@ -596,7 +596,7 @@ public final class FilesPage extends LinearLayout
             status.setTextColor(ink);
             status.setBackground(pill == null ? null : outline(ink));
             mark.setTextColor(ink);
-            SupernovaStyle.tintIcons(mark);
+            SupernovaStyle.inkIcons(mark, ink);
             for (TextView button : buttons)
             {
                 boolean focused = button.isFocused();
@@ -868,7 +868,7 @@ public final class FilesPage extends LinearLayout
             status.setBackground(pill == null ? null : outline(ink));
             chevron.setTextColor(ink);
             mark.setTextColor(ink);
-            SupernovaStyle.tintIcons(mark);
+            SupernovaStyle.inkIcons(mark, ink);
             row.setBackground(focused ? box(SupernovaStyle.FOCUS_FILL) : null);
         });
         Object previous = column.getChildCount() == 0 ? null : column.getChildAt(column.getChildCount() - 1).getTag();
