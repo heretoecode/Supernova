@@ -74,3 +74,20 @@ row (replaces its approved place between Audio selection and Audio adjustment).
 Much of the approved 0.157 redesign is not in the build, although the build passed every test: the tests check
 behaviour, not how screens look. Next: an audit of every approved 0.157 design against the code (built, partly,
 not built), then a fix pass that checks real screen renders against the mock-ups before anything is called done.
+
+## Fix progress (Claude, 16 Nov)
+Renders are real Android screens from `preview-renders.yml`, published on branch `previews/claude` (folder `normal/`),
+compared by eye with the named mock-up. ✓ = fixed and checked in a render; … = code changed, render pending.
+- **1** ✓ Settings lists on the shared choice list: search line above 12, flags, tick on the right, no Cancel, Back
+  closes. Render `0157-settings-audio-language-list` vs `choice-list/01`–`03` (render of de2214e).
+- **3 / 18 / 19** ✓ Files: flat charcoal, no Space Black, tab row This Device · Connections · Library Care with the
+  open tab underlined; tabs no longer collapse to one. Render `0157-files-tab-2-content` vs
+  `network-files-tabs/39` (de2214e). … Margins and row height tightened to the mock-up (afb1729), render pending.
+  Your Library / Transfers tab: not yet.
+- **20** ✓ Files rows: icon turns black with the text on the white box (`0157-files-tab-2-content`). … Top bar:
+  regular weight so "Files" is black, not grey (render of de2214e still showed grey).
+- **24** … USB drives get a USB-stick icon (afb1729), render pending.
+- **9 / 10 / 13 / 21** … Playback Settings: underline tab row, centred Title Case headings, white values and tick,
+  chip choices (no bars, no squash), sized to its tab (885 / 1166 px), Playback tab one plain list, For This Series at
+  the bottom of Subtitles and Audio (4f00150), render pending against `player/25`, `27`.
+- **18 (Settings)** … Settings page without its glass panel (999631f), render pending against `settings-flat/01`.

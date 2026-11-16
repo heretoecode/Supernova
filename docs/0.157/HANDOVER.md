@@ -77,7 +77,15 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 - Source: `docs/0.157/REVIEW_0157.md` on `claude/project-discussion-planning-fccq9a` (26 Shield problems; an audit
   adds more). Order: shared pieces first, then pages. Each item is done only when rendered with
   `preview-renders.yml` and compared with its mock-up; note the render beside the item. Sign when all ticked and green.
-- Discussion branch merged in `b45042a`. **Waiting:** REVIEW_0157.md not pushed there yet.
+- Discussion branch merged (REVIEW_0157.md in `1fe324b`). Progress per item: the "Fix progress" section at the end of
+  REVIEW_0157.md. Render test classes: `Review0157RenderTest` (Files in the app frame),
+  `settings/Review0157SettingsRenderTest`; request file `.github/diagnostics/preview-request.json` (pushing it runs
+  `preview-renders.yml`; PNGs land on branch `previews/claude`).
+- Done so far: charcoal page frame (PreviewUtilityBackground), top-bar focus ink, Settings shared list, Settings
+  without panel, Playback Settings rework, Files tab-row fix (PageTabs.TabLine), icon ink (SupernovaStyle.inkIcons),
+  Files margins/row height, USB icon. Next: render check of those, then stacking lists (12/22), Details tab (4/5),
+  seek box (8/23), chapters (14/17), Episodes row (15/16), hero flicker (6), logo pop (7), Fix match page (26),
+  drive browsing (25), Playback series save row for format and skipping.
 
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
 - **Version is 0.157 (157)** since `571224b`; builds now use **`supernova-0157-conformance.yml`** (the 0.156 one

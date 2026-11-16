@@ -1,5 +1,5 @@
 {
- "purpose": "0.157 review: tab row, icon ink, charcoal frame, Settings list, Playback tabs",
+ "purpose": "0.157 review round 3: Files margins, top bar weight, Playback Settings rework, Settings flat",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review0157RenderTest",
   "com.archos.mediacenter.video.player.Playback141RenderTest",

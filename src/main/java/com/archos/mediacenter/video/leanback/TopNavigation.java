@@ -111,7 +111,9 @@ public final class TopNavigation extends LinearLayout {
             tab.setTextColor(Color.WHITE);
             tab.setTextSize(19 * TvLayout.scale(c));
             tab.setGravity(Gravity.CENTER);
-            tab.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+            // Regular weight (mock-ups top-bar, tab-style): the light weight's thin strokes read as grey on the
+            // white focus box (0.157 Shield review #20).
+            tab.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
             if (index == 6) {
                 tab.setMaxWidth(dp(140));
                 tab.setEllipsize(TextUtils.TruncateAt.END);
