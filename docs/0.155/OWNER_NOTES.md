@@ -400,7 +400,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **What "Refresh provider list" did (from the code, `StreamingPreferences`):** clears the cached list and re-downloads
   from TMDb which streaming services exist in the chosen country — which the page already does every time it opens.
 - **Mock-ups (`docs/design/proposals/settings/14`–`15`):** one page, no tabs (one section only). Rows: Show where to
-  watch (switch), Country (flag + name), Your services (their logos; opens a picker), Show first (preferred service).
+  watch (switch), Country (flag + name), Your services (their logos; opens a picker), Show first (preferred service). *(Replaced 16 Nov: see RULES §24, service order.)*
   Footer: "Availability from JustWatch via TMDB · service list updated automatically (today)". **Refresh button
   removed.** `15`: the services picker — search field at the top, tick box + logo per service, sized to its content;
   the separate "Search providers" and "Show all providers" rows are folded into it.
