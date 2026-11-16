@@ -39,4 +39,5 @@ investigating, ask the owner for their existing Supernova research document and 
      and "Add a Trakt list"**, each opening its own panel (option B, `trakt-optB-01`, `-02`): kept to today's design
      rather than a panel whose rows swap. The Trakt panel: The List (List link, On your services "12 of 20" with
      "Netflix 5 · Prime Video 4 · Disney+ 3"), The Row (Row name, Icon, Maximum items), a quiet line, Add row. The link
-     is pasted with the one keyboard's Phone key. Real full-colour logos. Open: logo on every card or only the focused one.
+     is pasted with the one keyboard's Phone key. Real full-colour logos, **on every card** (owner, 16 Nov: same as elsewhere). **Design complete and approved;
+     on the roadmap under Undecided › Ready until it is given a version.**

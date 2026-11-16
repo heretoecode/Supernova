@@ -9,11 +9,12 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 
 const cols = [
   ['Undecided', [
+    ['Ready (designed and approved)', ['A Trakt list as a Home row: only what streams on your services, logo on every '
+      + 'card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)']],
     ['To discuss (owner, 16 Nov)', ['Episodes: OK plays; long-press menu (Play, Show details, Delete episode); '
       + 'deleting one offers earlier episodes of the season, each your choice', 'Network statistics: split by '
-      + 'source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library (not built in 0.157)',
-      'A Trakt list as a Home row, with where each title streams on your services', 'Feature blueprint (research): '
-      + 'pick ideas to take forward (docs/research/FEATURE_BLUEPRINT.md)']],
+      + 'source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library',
+      'Feature blueprint (research): pick ideas to take forward (docs/research/FEATURE_BLUEPRINT.md)']],
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
