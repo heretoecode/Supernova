@@ -74,7 +74,7 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   control row, track names and pills, subtitle lists stacked on the panel).
 
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
-- Build 8 failed on 10 tests (fixed in `9c59963`). **Build 9 (43778002592) started 16 Nov ~00:01** on `9c59963`. On failure:
+- Build 9 failed on 1 test (fixed in `e0cf212`). **Build 10 (43812925327) started 16 Nov 05:50** on `e0cf212` (includes Check matches, skip button in the control row, reachability). On failure:
   `report-test-failures.yml` with `run_id`, read the job log's last ~60 lines, fix, push, re-run.
 - **Next items, in order:** (1) build 8 result → build 9; (2) player HUD layout (R5): title block top left done;
   controls lower, seek preview as a card with time and chapter inside, skip button at the end of the
