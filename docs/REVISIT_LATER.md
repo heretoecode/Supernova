@@ -303,3 +303,8 @@ is ever wanted back.
 - Idea from the Trakt list row: a choice at the top of a panel ("Row from: Your library · Trakt list") swaps the rows
   under it. The owner likes it, but only as an app-wide rule if adopted, not a one-off; today only Customise page's
   Includes hides rows that don't apply. Parked; the Trakt row uses two separate Add rows instead.
+
+## Captions under the player's cards (owner, 16 Nov 2026)
+- The player's Chapters and Episodes rows keep their text inside the card for 0.157 (as approved). Revisit: Home rows
+  and player rows are meant to be the same kind of row, so the caption under the card (Home) may suit both. Needs
+  mock-ups.

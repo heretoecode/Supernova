@@ -74,3 +74,13 @@ row (replaces its approved place between Audio selection and Audio adjustment).
 Much of the approved 0.157 redesign is not in the build, although the build passed every test: the tests check
 behaviour, not how screens look. Next: an audit of every approved 0.157 design against the code (built, partly,
 not built), then a fix pass that checks real screen renders against the mock-ups before anything is called done.
+
+## Owner's answers to QUESTIONS.md #10–#13 (16 Nov)
+- **#12 Track pills on the main Playback Settings page: yes.** Show the chosen track's pills on the Subtitle Track and
+  Audio Track rows (e.g. English · Original · SDH), as in the lists.
+- **#10 Captions on the player's Chapters and Episodes cards: keep as approved** (inside the card) for 0.157. Noted to
+  revisit: Home rows and player rows are meant to be the same kind of row, so captions under the card may suit both
+  (needs mock-ups; `docs/REVISIT_LATER.md`).
+- **#13 Fix match from Details: waiting for the owner's choice** between two mock-ups
+  (`docs/design/proposals/fix-match-from-details/`): 01 on Files › Library Care, 02 over Details with the path
+  Movies › Snowed In › Fix match. Library long-press and Library Care keep going to Files. Leave as built until chosen.
