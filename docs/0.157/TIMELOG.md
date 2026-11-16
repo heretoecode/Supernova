@@ -41,3 +41,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 16 Nov 00:06–05:49 | **Not working: the session stopped** (about 5¾ hours). Build 9 had failed meanwhile. |
 | 16 Nov 05:49– | Resumed. |
 | 16 Nov 05:49–05:51 | Build 9: 1 failing test, fixed; build 10 started. |
+| 16 Nov 05:51–06:01 | Subtitles (next two episodes, full subtitles default, pills), calmer backdrops, skip button row, seek preview card, version 0.157 with 0.156 history evidence, 0.157 build workflow. Signing blocked (QUESTIONS #9). |

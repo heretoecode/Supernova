@@ -74,17 +74,17 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   control row, track names and pills, subtitle lists stacked on the panel).
 
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
-- Build 9 failed on 1 test (fixed in `e0cf212`). **Build 10 (43812925327) started 16 Nov 05:50** on `e0cf212` (includes Check matches, skip button in the control row, reachability). On failure:
-  `report-test-failures.yml` with `run_id`, read the job log's last ~60 lines, fix, push, re-run.
-- **Next items, in order:** (1) build 8 result → build 9; (2) player HUD layout (R5): title block top left done;
-  controls lower, seek preview as a card with time and chapter inside, skip button at the end of the
-  control row with its 10 s bar, chapter row centred; check with `preview-renders.yml`; (3) Files: done except TV shows in Check matches (films only so far; `MatchCheck`); (4) subtitles plan: next two episodes done (`SubtitleDiscovery.nextEpisodes`; fetch starts at playback start);
-  full subtitles for your language on by default, subtitle pills done; Experimental translate not built; (5) calmer hero backdrops: first version done (`BackdropCalm` shade); scoring every TMDB backdrop waits until
-  the owner's own choice can be told apart; (6) version bump to 0.157 (`assets/foundation/release-history.json`, Gradle version,
-  `tools/test_settings_0143_mapping.py` expects 0.156), final release notes from `RELEASE_NOTES_DRAFT.md`;
-  (7) green conformance on the final commit, then sign with `supernova-0156-qa.yml` (owner approved this final
-  build only) and report the APK.
-- Skipped with reasons in `QUESTIONS.md`: hidden NOVA grid, memory cuts, backup groups.
+- **Version is 0.157 (157)** since `571224b`; builds now use **`supernova-0157-conformance.yml`** (the 0.156 one
+  checks for 0.156 and will fail). **Run 43813823463** (0.157 conformance on `571224b`) started 16 Nov 06:00. On
+  failure: `report-test-failures.yml` with `run_id`; log via `curl -sL api.github.com/repos/heretoecode/Supernova/
+  actions/jobs/<job>/logs`; fix, push, dispatch `supernova-0157-conformance.yml` again.
+- **Blocked on the owner: signing** (QUESTIONS.md #9). The signing gate only accepts 0.156; making 0.157 copies is a
+  signing-setup change, refused. When the owner allows it: copy `supernova-0156-qa.yml` and the two
+  `.github/signing/*0156*` files as 0157 (version strings and required classes only), then sign the green run.
+- Build-order items all coded except those skipped in QUESTIONS.md (#3 hidden grid, #4 memory cuts, #5 backup
+  groups, #6 TV in Check matches, #7 Experimental translate, #8 chapter row (not approved)).
+- Release notes: in `assets/foundation/release-history.json` (current 0.157), from `RELEASE_NOTES_DRAFT.md`; About
+  shows "## " lines as group headings.
 - Tests must not touch Android-static classes outside Robolectric. Tests of the old Files screens set
   `supernova_files_page` false.
 
