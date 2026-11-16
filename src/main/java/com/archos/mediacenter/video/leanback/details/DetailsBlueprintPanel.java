@@ -366,7 +366,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         TextView count = text(caption, 11, LABEL, false);
         count.setTag("details.reception.count." + row);
         // Never cut short: on small screens or with large text the caption wraps instead.
-        count.setMaxLines(3);
+        count.setMaxLines(Integer.MAX_VALUE);
         LayoutParams countSize = new LayoutParams(0, -2, 1);
         countSize.leftMargin = dp(8);
         box.addView(count, countSize);
