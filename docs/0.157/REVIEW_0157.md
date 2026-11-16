@@ -46,6 +46,27 @@ decisions (`docs/0.157/OWNER_NOTES.md`, `docs/design/RULES.md`). "Approved" = wh
 17. **Centred chapter row** was approved (Player v11, 13 Nov) but was skipped as "not approved"
     (`QUESTIONS.md` #8).
 
+## From the owner's photos (16 Nov, 10:47)
+18. **Files and Settings are drawn inside the old glass panel on the Space Blue background**, not on flat charcoal.
+19. **The Files tab row is broken:** only one tab shows, as a full-width focused row; Library Care appears sometimes
+    but switches back to This Device as soon as focus moves down. (Approved: a tab row This Device · Connections ·
+    Library Care; moving along the tabs switches the page.)
+20. **Focused items have pale grey text on the white box** (top bar "Files", the Files tab row). Approved: black text
+    and icon on white.
+21. **Playback Settings tabs are big pill buttons**, not the tab row with its underline. Section headings sit on the
+    left ("Subtitle selection ——"); approved: centred on their line, Title Case. Values are blue (English, Medium,
+    Raised 5%, 75%) and the tick in Subtitle track is blue; approved: no blue for values.
+22. **Subtitle track list opens on its own** at the top of the screen; Playback Settings vanishes (see 12).
+23. **Seek time box is the old style** and is cut off at its top ("00:03:59 / Scene 6"); approved: the card with the
+    time over the chapter name. The Chapters / Episodes tab row shows as a small "Chapters" button.
+24. **USB drives show a document icon** on This Device.
+25. **Choosing a drive opens the older three-panel file browser** (Locations · folder list · Information). To check
+    against the approved Files design for browsing a storage.
+- Photos are taken at an angle, so row alignment can't be judged from them; check in screen renders.
+
+**Owner decision (16 Nov):** "For This Series" sits at the **bottom** of both the Subtitles and Audio tabs, as a save
+row (replaces its approved place between Audio selection and Audio adjustment).
+
 ## What this means
 Much of the approved 0.157 redesign is not in the build, although the build passed every test: the tests check
 behaviour, not how screens look. Next: an audit of every approved 0.157 design against the code (built, partly,
