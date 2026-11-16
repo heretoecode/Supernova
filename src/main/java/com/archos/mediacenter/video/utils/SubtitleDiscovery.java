@@ -192,8 +192,15 @@ public final class SubtitleDiscovery {
         offer(c, playing, SubtitleDiscoveryPolicy.PLAYBACK);
         if (library != null
             && PreferenceManager.getDefaultSharedPreferences(c).getBoolean(PREFETCH, true))
-            for (Entry entry : SubtitleDiscoveryPolicy.remainingSeason(c, playing, library.episodes))
+            // The next two episodes only (owner, 0.157 subtitles plan), not the whole season.
+            for (Entry entry : nextEpisodes(SubtitleDiscoveryPolicy.remainingSeason(c, playing, library.episodes)))
                 offer(c, entry, SubtitleDiscoveryPolicy.SEASON);
+    }
+
+    static final int NEXT_EPISODES = 2;
+
+    static List<Entry> nextEpisodes(List<Entry> remaining) {
+        return remaining.size() <= NEXT_EPISODES ? remaining : new ArrayList<>(remaining.subList(0, NEXT_EPISODES));
     }
 
     private static void schedule(Context app, long delay) {

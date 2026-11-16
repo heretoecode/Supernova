@@ -160,6 +160,13 @@ public class SubtitleDiscoveryTest {
     }
 
     @Test
+    public void playbackFetchesOnlyTheNextTwoEpisodes() {
+        List<Entry> remaining = Arrays.asList(episode(1, 3, false), episode(1, 4, false), episode(1, 5, false));
+        assertEquals(remaining.subList(0, 2), SubtitleDiscovery.nextEpisodes(remaining));
+        assertEquals(remaining.subList(0, 1), SubtitleDiscovery.nextEpisodes(remaining.subList(0, 1)));
+    }
+
+    @Test
     public void currentSeasonSkipsKnownMissingFiles() {
         Entry playing = episode(1, 1, false), missing = episode(1, 2, false), next = episode(1, 3, false);
         app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
