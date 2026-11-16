@@ -10,7 +10,7 @@ this file and `docs/REVISIT_LATER.md`.
 - 0.157 coding started 15 Nov (owner's go-ahead). Time is being measured in `docs/0.157/TIMELOG.md`.
 - Codex is not used for now; the owner may bring it back if usage becomes the bottleneck.
 
-## Roadmap (picture: `docs/0.157/board/version-board.png`, script beside it; keep it current)
+## Roadmap (picture: `docs/ROADMAP.md`; keep it current)
 **Undecided:** nothing. The owner may still move items between columns.
 
 **0.157** (`docs/0.157/VERSION_PLAN.md`, sections "0.157 without the redesigns" and "0.157 build order"):
