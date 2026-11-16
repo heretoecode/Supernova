@@ -56,7 +56,10 @@ final class PreviewPlaybackLoading extends FrameLayout {
         addView(labels, labelsParams);
         title = text("", 32);
         title.setTypeface(null, Typeface.BOLD);
-        title.setMaxLines(2);
+        // The logo's space is kept from the start (0.157 Shield review #7): a fixed two-line box, text at its foot,
+        // so nothing below moves when the logo or the full title arrives.
+        title.setLines(2);
+        title.setGravity(android.view.Gravity.BOTTOM | android.view.Gravity.START);
         title.setEllipsize(TextUtils.TruncateAt.END);
         labels.addView(title);
         episode = text("", 16);
