@@ -52,8 +52,9 @@ A section on the Transfers tab, above Where copies go:
   "Waiting for your OK · Transfers". A truly full disk stops with an error.
 - **While you watch** (from the network or this device): Pause · Slow down · Carry on (default Slow down).
 - **Scans** always get priority (no setting).
-- **Full speed hours: 02:00–07:00** (one row, no menu; Left/Right step through Off · 22:00–08:00 · 23:00–07:00 ·
-  00:00–06:00 · 01:00–07:00 · 02:00–07:00; proposed 16 Nov, Custom dropped, awaiting the owner). Between the times copies run flat out; otherwise gently.
+- **Full speed hours** (owner, 16 Nov): one row, five-hour windows only, Left/Right through **Off · 22:00–03:00 ·
+  23:00–04:00 · 00:00–05:00 · 01:00–06:00 · 02:00–07:00** (default 02:00–07:00). Between the times copies run flat out;
+  otherwise gently. Daytime windows and days of the week: parked (`docs/REVISIT_LATER.md`).
   **Technical check:** whether copies can run while the Shield is in standby (may need a keep-awake while copying).
 - **Boost** (replaces "Full speed now"): inline on the focused copying row, **Boost this** (until it is done) · **Boost all**
   (until the queue is empty) · Pause · Cancel (owner, 16 Nov: no menu; `transfers-v5-01`). The row then reads "Boosted: flat out until

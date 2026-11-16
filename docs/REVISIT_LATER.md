@@ -308,3 +308,7 @@ is ever wanted back.
 - The player's Chapters and Episodes rows keep their text inside the card for 0.157 (as approved). Revisit: Home rows
   and player rows are meant to be the same kind of row, so the caption under the card (Home) may suit both. Needs
   mock-ups.
+
+## Transfers: daytime full-speed windows (owner, 16 Nov 2026)
+- Full speed hours offers only overnight five-hour windows for now. Later: daytime windows (nobody home, network free)
+  and perhaps days of the week, as download tools often offer.

@@ -183,6 +183,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
   such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
+- **Small menus fold inline (owner, 16 Nov 2026):** if a menu's choices would add only a button or two to the row that
+  opens it (for example Boost → "This copy · Everything queued" on a row with Pause and Cancel), put them inline on the
+  row instead (Boost this · Boost all · Pause · Cancel), as long as the row stays at about five buttons or fewer. A
+  menu is for longer lists. Check this before drawing any menu.
 - **Opens beside the button or item that opened it** (drops down under a toolbar button), never in a corner (§19; owner,
   13 Nov).
 - **Menus versus side panels (owner, 14 Nov 2026):** the "beside the button" rule is for menus (short pick-lists such
