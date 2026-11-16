@@ -314,15 +314,27 @@ public final class FilesPage extends LinearLayout
 
     private void libraryCare(LinearLayout column)
     {
+        if (matchPage)
+        {
+            matchResults(column);
+            return;
+        }
         heading(column, "Library Health", "health", false);
         boolean ready = counts != null;
         row(column, "folder", "Missing files", "In your library but no longer found",
             ready ? LibraryCareCounts.pill(counts.missing, "file", "files") : "Loading…", this::openHealth, true);
         row(column, "film", "Couldn't be read", "Files Supernova could not open",
-            unreadable < 0 ? "Loading…" : LibraryCareCounts.pill(unreadable, "file", "files"), this::openHealth, false);
+            unreadable < 0 ? "Loading…" : LibraryCareCounts.pill(unreadable, "file", "files"),
+            this::openHealth, false);
         row(column, "search", "Not matched", "Videos without a movie or TV show",
             ready ? LibraryCareCounts.pill(counts.notMatched, "video", "videos") : "Loading…",
             this::openHealth, false);
+        row(column, "done", "Check matches", "Look every title up again; you see the changes first", matchPill(),
+            () -> {
+                matchPage = true;
+                startCheck();
+                refreshMatches();
+            }, false);
         scanOneSource(column);
         recentScans(column);
     }
@@ -634,6 +646,154 @@ public final class FilesPage extends LinearLayout
     }
 
     private int unreadable = -1;
+
+    // ---- Check matches (owner, 12 Nov 2026) --------------------------------------------------------------------
+    private final List<com.archos.mediacenter.video.browser.adapters.object.Base> media = new java.util.ArrayList<>();
+    private final List<MatchCheck.Change> changes = new java.util.ArrayList<>();
+    private volatile boolean checking;
+    private volatile boolean stopCheck;
+    private int checkedSoFar;
+    private long lastCheckMs;
+    private boolean matchPage;
+
+    /** The library the match check looks through. */
+    public void setMedia(List<com.archos.mediacenter.video.browser.adapters.object.Base> latest)
+    {
+        media.clear();
+        media.addAll(latest);
+    }
+
+    private void startCheck()
+    {
+        if (checking)
+        {
+            return;
+        }
+        checking = true;
+        stopCheck = false;
+        checkedSoFar = 0;
+        changes.clear();
+        List<com.archos.mediacenter.video.browser.adapters.object.Base> library = new java.util.ArrayList<>(media);
+        Context app = getContext().getApplicationContext();
+        new Thread(() -> {
+            List<MatchCheck.Change> found = MatchCheck.run(app, library, count -> {
+                if (count % 10 == 0)
+                {
+                    post(() -> {
+                        checkedSoFar = count;
+                        refreshMatches();
+                    });
+                }
+            }, () -> stopCheck);
+            post(() -> {
+                checking = false;
+                lastCheckMs = System.currentTimeMillis();
+                changes.clear();
+                changes.addAll(found);
+                refreshMatches();
+            });
+        }, "CheckMatches").start();
+    }
+
+    private void refreshMatches()
+    {
+        if (tabs.openTab() == LIBRARY_CARE)
+        {
+            show(LIBRARY_CARE);
+        }
+    }
+
+    private String matchPill()
+    {
+        if (checking)
+        {
+            return "Checking " + checkedSoFar + "…";
+        }
+        if (lastCheckMs <= 0)
+        {
+            return "Not run yet";
+        }
+        return "Last: " + new java.text.SimpleDateFormat("d MMM", java.util.Locale.UK).format(new java.util.Date(
+            lastCheckMs));
+    }
+
+    /** The Check matches page: each change old → new with Accept · Keep current · Fix match; Accept all on top. */
+    private void matchResults(LinearLayout column)
+    {
+        TextView crumb = text("Library Care  ›  Check matches", 15, SECOND_LINE);
+        column.addView(crumb);
+        if (checking)
+        {
+            column.addView(text("Looking every film up again… " + checkedSoFar + " checked", 16, Color.WHITE));
+            actionRow(column, "cancel", "Stop checking", "Films checked so far keep their results", null,
+                      java.util.Collections.singletonList(new Action("Stop", "cancel", () -> stopCheck = true)));
+            return;
+        }
+        if (changes.isEmpty())
+        {
+            column.addView(text("Everything looks fine: every film still finds its own match", 16, Color.WHITE));
+            return;
+        }
+        heading(column, changes.size() + (changes.size() == 1 ? " Suggested Change" : " Suggested Changes"),
+                "health", true);
+        actionRow(column, "done", "Accept all", "Use every new match below", null,
+                  java.util.Collections.singletonList(new Action("Accept all", "done", () -> acceptAll())));
+        for (MatchCheck.Change change : new java.util.ArrayList<>(changes))
+        {
+            List<Action> actions = new java.util.ArrayList<>();
+            actions.add(new Action("Accept", "done", () -> accept(change)));
+            actions.add(new Action("Keep current", "cancel", () -> {
+                changes.remove(change);
+                refreshMatches();
+            }));
+            actions.add(new Action("Fix match", "search", () -> getContext().startActivity(
+                new Intent(getContext(), com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity
+                    .class).putExtra(
+                    com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.EXTRA_VIDEO,
+                    change.movie))));
+            String current = change.movie.getName() == null ? "" : change.movie.getName();
+            actionRow(column, "film", current + "  →  " + change.newTitle,
+                      "Found from the file name: " + change.movie.getFilenameNonCryptic(), "Movie", actions);
+        }
+    }
+
+    private void accept(MatchCheck.Change change)
+    {
+        Context app = getContext().getApplicationContext();
+        new Thread(() -> {
+            boolean saved = MatchCheck.accept(app, change);
+            post(() -> {
+                if (saved)
+                {
+                    changes.remove(change);
+                }
+                refreshMatches();
+            });
+        }, "AcceptMatch").start();
+    }
+
+    private void acceptAll()
+    {
+        for (MatchCheck.Change change : new java.util.ArrayList<>(changes))
+        {
+            accept(change);
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(android.view.KeyEvent event)
+    {
+        if (matchPage && event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK)
+        {
+            if (event.getAction() == android.view.KeyEvent.ACTION_UP)
+            {
+                matchPage = false;
+                refreshMatches();
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
 
     /** Files Supernova could not open (MediaLib's read evidence); -1 while it is being counted. */
     public void setUnreadable(int count)
