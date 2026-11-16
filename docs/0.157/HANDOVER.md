@@ -73,7 +73,11 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   row, the rest of R5 (title block, seek preview card, skip button in the
   control row, track names and pills, subtitle lists stacked on the panel).
 
-## Now: fix 0.157 against the approved designs (owner, 16 Nov)
+## Now: 0.157.1 (owner, 16 Nov): 0.157 + the review fixes; code 1571 (codes are version × 10 from now)
+- Build and signing checks accept 0.157.1 (version strings and APK names only). Next: green conformance, then sign
+  with `supernova-0157-qa.yml`; APK `Supernova_0.157.1.apk` in artifact `supernova-0157-signed-qa`.
+
+## Fix 0.157 against the approved designs (owner, 16 Nov)
 - Source: `docs/0.157/REVIEW_0157.md` on `claude/project-discussion-planning-fccq9a` (26 Shield problems; an audit
   adds more). Order: shared pieces first, then pages. Each item is done only when rendered with
   `preview-renders.yml` and compared with its mock-up; note the render beside the item. Sign when all ticked and green.
