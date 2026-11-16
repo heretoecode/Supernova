@@ -1477,6 +1477,23 @@ public final class PreviewMoviePage extends ScrollView {
         reviews.show();
     }
 
+    /** A gentle shade over a backdrop that is too bright behind the text (calmer hero backdrops, first version). */
+    private void calmBackdrop() {
+        Drawable shown = cardArtwork.getDrawable();
+        if (!(shown instanceof android.graphics.drawable.BitmapDrawable))
+            return;
+        android.graphics.Bitmap bitmap = ((android.graphics.drawable.BitmapDrawable)shown).getBitmap();
+        if (bitmap == null || bitmap.isRecycled())
+            return;
+        android.graphics.Bitmap small = android.graphics.Bitmap.createScaledBitmap(bitmap, 96, 54, true);
+        int[] pixels = new int[96 * 54];
+        small.getPixels(pixels, 0, 96, 0, 0, 96, 54);
+        if (small != bitmap)
+            small.recycle();
+        boolean shade = BackdropCalm.needsShade(BackdropCalm.leftBrightness(pixels, 96, 54));
+        cardArtwork.setColorFilter(shade ? 0x40000000 : 0, android.graphics.PorterDuff.Mode.SRC_ATOP);
+    }
+
     private void cardArtwork(Uri uri) {
         if (uri == null || uri.toString().equals(artworkUri) ||
             uri.toString().equals(failedArtworkUri) && SystemClock.elapsedRealtime() < artworkRetryAfter)
@@ -1526,6 +1543,7 @@ public final class PreviewMoviePage extends ScrollView {
                         return;
                     artworkReady = true;
                     failedArtworkUri = null;
+                    calmBackdrop();
                     Diagnostics.event(
                         "details_artwork_ready", "media_id", diagnosticMedia(), "elapsed_ms",
                         SystemClock.elapsedRealtime() - openedAt);
