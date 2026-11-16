@@ -737,6 +737,8 @@ public final class PreviewMoviePage extends ScrollView {
             if (key == KeyEvent.KEYCODE_DPAD_UP) {
                 focusPrimary();
                 scrollTo(0, 0);
+                // The taller Details tab can pull the page down again while focus settles: back to the top after.
+                post(() -> scrollTo(0, 0));
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_DOWN) {

@@ -147,8 +147,13 @@ public class SettingsWorkspaceTest {
         key(KeyEvent.KEYCODE_DPAD_UP);
         assertTrue("Up from the first row returns to the open tab", first.hasFocus());
         ViewGroup speed = (ViewGroup)tagged("settings.preference.playback_speed");
-        View title = (View)speed.getChildAt(0), toggle = speed.findViewWithTag("settings.switch");
-        assertSame("the switch shares the title's line", title, toggle.getParent());
+        View toggle = speed.findViewWithTag("settings.switch");
+        // Everything in a row sits on the row's centre line (RULES; 0.157 Shield review #2).
+        int[] rowAt = new int[2], toggleAt = new int[2];
+        speed.getLocationInWindow(rowAt);
+        toggle.getLocationInWindow(toggleAt);
+        float rowCentre = rowAt[1] + speed.getHeight() / 2f, toggleCentre = toggleAt[1] + toggle.getHeight() / 2f;
+        assertTrue("the switch is on the row's centre line", Math.abs(rowCentre - toggleCentre) <= 2);
     }
 
     /** Owner rule: up to ~5 short choices sit inline and Left/Right changes them straight away. */
@@ -194,10 +199,9 @@ public class SettingsWorkspaceTest {
             for (int y = 0; y < 100; y++)
                 for (int x = 0; x < 200; x++)
                     colours.add(image.getPixel(x, y));
-            assertTrue("White thumb visible", colours.contains(Color.WHITE));
-            assertTrue("Blue gradient remains visible",
-                       colours.stream().anyMatch(
-                           c -> Color.blue(c) > 180 && Color.red(c) < 100));
+            // No blue (RULES; player v10): on = white track with a dark knob, whatever the accent.
+            assertTrue("White track visible", colours.contains(StandardSwitchDrawable.ON_TRACK));
+            assertTrue("Dark knob visible", colours.contains(StandardSwitchDrawable.KNOB_ON));
             assertNotEquals(Color.WHITE, PreviewAccent.switchTrack(host.get()));
             assertNotEquals(Color.BLACK, PreviewAccent.switchTrack(host.get()));
             if (accent == 0xff62bbf3)

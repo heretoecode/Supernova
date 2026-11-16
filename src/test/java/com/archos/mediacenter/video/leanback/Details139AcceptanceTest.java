@@ -241,9 +241,12 @@ public class Details139AcceptanceTest {
                 assertNotNull(section, region);
                 assertFalse(region.isFocusable());
                 assertTrue(section + " has height", region.getHeight() > 0);
-                Rect regionBounds = bounds(region), viewport = bounds(reading);
-                assertEquals(section + " fully visible", region.getHeight(), regionBounds.height());
-                assertTrue(section + " stays above bottom", regionBounds.bottom <= viewport.bottom);
+                // Details v20 runs about two screens: each section is reachable by scrolling the tab.
+                Rect place = new Rect(0, 0, region.getWidth(), region.getHeight());
+                reading.offsetDescendantRectToMyCoords(region, place);
+                reading.scrollTo(0, Math.max(0, place.top - reading.getPaddingTop()));
+                assertTrue(section + " reachable", region.getGlobalVisibleRect(new Rect()));
+                reading.scrollTo(0, 0);
             }
             assertNotNull("Reception remains explicit without reliable ratings",
                 page.findViewWithTag("semantic:details.panel.reception"));

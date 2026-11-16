@@ -251,6 +251,9 @@ public class DetailsReferenceRenderTest {
     private void assertVisibleLogo(View root, int slot) {
         ImageView logo = root.findViewWithTag("details.reception.logo." + slot);
         assertNotNull(logo);
+        View reading = root.findViewWithTag("details.reading.overflow");
+        if (reading != null)
+            reading.scrollTo(0, 0);
         assertNotNull(logo.getDrawable());
         Rect bounds = new Rect();
         assertTrue(logo.getGlobalVisibleRect(bounds));

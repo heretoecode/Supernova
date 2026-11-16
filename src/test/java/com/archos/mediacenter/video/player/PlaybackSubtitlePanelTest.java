@@ -314,6 +314,9 @@ public class PlaybackSubtitlePanelTest {
             assertTrue(key, v.getTop() > previous);
             previous = v.getTop();
             assertTrue(v.isFocusable());
+            // At the mock-up's text size the panel scrolls: bring the row into view as the remote would.
+            v.requestRectangleOnScreen(new Rect(0, 0, v.getWidth(), v.getHeight()), true);
+            layout(main);
             Rect visible = new Rect();
             assertTrue(key, v.getGlobalVisibleRect(visible));
             assertEquals("Whole row visible " + key, v.getHeight(), visible.height());
