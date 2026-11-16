@@ -300,8 +300,8 @@ public class SettingsWorkspaceTest {
             p.setValue("en");
             Dialog dialog = SettingsChoiceDialog.show(host.get(), p);
             for (int n = 0; n < 4; n++) {
-                ViewGroup row = dialog.getWindow().getDecorView().findViewWithTag("settings.choice." + n);
-                Drawable icon = ((ImageView)row.getChildAt(1)).getDrawable();
+                ViewGroup row = dialog.getWindow().getDecorView().findViewWithTag(n);
+                Drawable icon = ((ImageView)row.getChildAt(0)).getDrawable();
                 assertTrue(icon instanceof PreviewLanguageIcon);
                 Object flag = ReflectionHelpers.getField(icon, "flag");
                 if (n < 3)
@@ -455,20 +455,22 @@ public class SettingsWorkspaceTest {
         opener.requestFocus();
         Dialog dialog = SettingsChoiceDialog.show(host.get(), level);
         assertNotNull(dialog);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").requestFocus();
+        dialog.getWindow().getDecorView().findViewWithTag(0).requestFocus();
         String original = level.getValue();
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.cancel").performClick();
+        // The shared choice list has no Cancel button: Back closes it.
+        dialog.onBackPressed();
+        layout();
         assertEquals(original, level.getValue());
         assertTrue(opener.hasFocus());
         level.setOnPreferenceChangeListener((p, value) -> false);
         dialog = SettingsChoiceDialog.show(host.get(), level);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
+        dialog.getWindow().getDecorView().findViewWithTag(0).performClick();
         assertTrue(dialog.isShowing());
         assertEquals(original, level.getValue());
         dialog.dismiss();
         level.setOnPreferenceChangeListener((p, value) -> true);
         dialog = SettingsChoiceDialog.show(host.get(), level);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
+        dialog.getWindow().getDecorView().findViewWithTag(0).performClick();
         layout();
         assertFalse(dialog.isShowing());
         assertEquals(level.getEntryValues()[0].toString(), level.getValue());
