@@ -70,19 +70,20 @@ public class StandardSwitchReferenceTest {
                     for (int y = 0; y < 104; y++)
                         for (int x = 0; x < 280; x++) {
                             int p = plain.getPixel(x, y);
-                            if (Color.red(p) > 245 && Color.green(p) > 245 && Color.blue(p) > 245
-                                && Color.alpha(p) > 240) {
+                            // The knob: white when off, dark on the white track when on (no blue).
+                            boolean knob = checked ? p == StandardSwitchDrawable.KNOB_ON
+                                                   : Color.red(p) > 245 && Color.green(p) > 245 && Color.blue(p) > 245;
+                            if (knob && Color.alpha(p) > 240) {
                                 xSum += x;
                                 whites++;
                             }
                         }
-                    assertTrue("Circular white thumb is painted", whites > 100);
+                    assertTrue("Circular thumb is painted", whites > 100);
                     assertEquals(checked, xSum / (double) whites > 140);
                     // 2 Nov 2026 proportions: in a 280x104 box the 44:26 track spans x=52..228 and the thumb
                     // (radius 40) sits at x=104 (off) or x=176 (on), so sample track pixels clear of the thumb.
                     if (checked)
-                        assertTrue("Cyan to blue gradient",
-                            Color.green(plain.getPixel(70, 52)) > Color.green(plain.getPixel(125, 52)) + 10);
+                        assertEquals("White track", StandardSwitchDrawable.ON_TRACK, plain.getPixel(70, 52));
                     else
                         assertEquals(StandardSwitchDrawable.OFF, plain.getPixel(190, 52));
                     assertEquals("No track painted outside the 44:26 face", 0, Color.alpha(plain.getPixel(30, 52)));

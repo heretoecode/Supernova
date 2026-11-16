@@ -224,12 +224,14 @@ public class SettingsWorkspaceTest {
                 for (int x = 0; x < 60; x++)
                     if (Color.alpha(image.getPixel(x, y)) > 240)
                         colours.add(image.getPixel(x, y));
-            assertTrue(colours.contains(Color.WHITE));
-            if (checked)
-                assertTrue(colours.stream().anyMatch(
-                    c -> Color.blue(c) > 180 && Color.red(c) < 100));
-            else
+            // No blue (RULES; player v10): on = white track, dark knob; off = dark track, white knob.
+            if (checked) {
+                assertTrue(colours.contains(StandardSwitchDrawable.ON_TRACK));
+                assertTrue(colours.contains(StandardSwitchDrawable.KNOB_ON));
+            } else {
+                assertTrue(colours.contains(Color.WHITE));
                 assertTrue(colours.contains(StandardSwitchDrawable.OFF));
+            }
             box.setEnabled(false);
             image.eraseColor(Color.TRANSPARENT);
             icon = box.getButtonDrawable();

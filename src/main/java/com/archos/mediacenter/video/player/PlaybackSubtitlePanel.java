@@ -543,7 +543,9 @@ final class PlaybackSubtitlePanel extends LinearLayout {
      * side. No lines between rows.
      */
     private void section(String title, boolean first) {
-        LinearLayout heading = (LinearLayout) SupernovaStyle.groupHeading(owner, title, 11);
+        // The callers pass capitals ("AUDIO SELECTION"); the heading is Title Case ("Audio Selection").
+        String words = title.toLowerCase(java.util.Locale.ROOT);
+        LinearLayout heading = (LinearLayout) SupernovaStyle.groupHeading(owner, words, 11);
         heading.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         heading.setPadding(s(6), s(first ? 10 : 22), s(6), s(6));
         heading.setTag("playback.heading");
