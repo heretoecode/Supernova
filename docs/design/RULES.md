@@ -1,11 +1,14 @@
 # Supernova design rules
 
-**The one place for every agreed design rule** (started 12 Nov 2026 at the owner's request). When the owner says
+**The one place for every current decision: how things look (§1–23) and how they behave (§24)** (started 12 Nov
+2026 at the owner's request; behaviour added 16 Nov). When the owner says
 "redesign this page", the page is built from these rules first; the owner is only asked about what they do not
 settle. Each rule names where it was decided and the mock-up that shows it. Where an older document disagrees, this
 file wins; where this file and the owner disagree, the owner wins and this file is corrected the same day.
 
 How to use it:
+0. **Current decisions live here; the owner notes (`docs/0.1xx/OWNER_NOTES.md`) are the diary of how we got here.**
+   When a decision changes, change it here the same day and mark the old diary entry "Replaced <date>: see RULES §n".
 1. Read the whole file before drawing a page. Check every element on the page against its section.
 2. If a rule nearly fits but the page is different, follow the rule and say so in the message to the owner.
 3. Only ask the owner about things no rule covers. Every answer becomes a rule here (or changes one).
@@ -350,6 +353,18 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   "Make this page your own" with the same **Customise page** button the page keeps once set up (same panel), and one
   quiet line: "More options for your library are in Files and Settings." No full-screen walkthrough.
 
+## 24. Behaviour decisions (how things work)
+Latest decision only; the diary entry it came from is named so the reasoning can be found.
+- **Streaming service order:** Your services is one ordered list (move gesture; "Your first choice goes at the top").
+  Wherever a title is on more than one of your services, the top one is used: its logo shows and OK opens it.
+  Replaces "Show first" (one preferred service, 0.155 notes) and "asks which when more than one has it" (0.157 §29).
+  (Settings redesign, `docs/0.157/SETTINGS_INVENTORY.md`; confirmed by the owner 16 Nov.)
+- **Fix match:** one Fix match page, on Files › Library Care; Fix match or Change info from anywhere goes straight to
+  it for that title, Back returns. The old side panel is retired (owner, 12 Nov; 0.157 notes).
+- **For This Series** (Playback Settings): the last row of both the Subtitles and Audio tabs, acting as a save row
+  (owner, 16 Nov; replaces its place between Audio selection and Audio adjustment).
+- **Text boxes:** every one uses the one shared keyboard (§15); mock-ups may simplify it, the app never does.
+
 ## Open questions (to settle when the page comes up)
 - **Home row text:** inside the picture (current rule) or below it — with the Home redesign.
 - **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.
@@ -366,3 +381,4 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Section separator lines → gaps (12 Nov).
 - "Clear" (beside Recent searches), "In library" pill, two-line "On your services" headings (12 Nov).
 - The Fix match side panel → one Fix match page on Files › Library Care (12 Nov).
+- "Show first" (one preferred service) and "asks which service" → the order of Your services (16 Nov).

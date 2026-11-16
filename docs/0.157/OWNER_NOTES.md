@@ -904,7 +904,7 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
 
 ## 29. Details — tabs and metadata row for all four kinds (owner, 12 Nov 2026; decided)
 - Details opens for four kinds: movie, TV show, season, episode (episodes do have their own page; streaming-only
-  episodes not in the library have none: OK opens the service, or asks which when more than one has it).
+  episodes not in the library have none: OK opens the service, or asks which when more than one has it). *(Replaced 16 Nov: see RULES §24, service order.)*
 - **Tabs: one master order, each tab shown or hidden, never moved:** Details · Episodes · Extras · More Like This.
   Movie: Details · Extras · More Like This. TV show, season and episode: all four. "Episodes" is the one name (replaces
   "Seasons & Episodes"; on a show it holds one row per season). The page opens on the most useful tab (TV show and

@@ -70,6 +70,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - **Consistency first (owner, 12 Nov 2026):** before asking the owner how something should look, read or behave, check
   whether the same thing is already decided elsewhere in the app (e.g. Details' "Resume S2 E2" wording, the open-in-app
   streaming button) and follow that. Only ask when nothing already settles it.
+- **Current decisions (owner, 16 Nov 2026): `docs/design/RULES.md` holds every current decision, design and
+  behaviour; the owner notes are the history.** Check RULES.md first; when anything changes, update it the same day and
+  mark the old diary entry "Replaced <date>: see RULES §n". Never act on a diary entry without checking it there.
 - **Design rulebook (owner, 12 Nov 2026): `docs/design/RULES.md` holds every agreed design rule.** Read it before
   drawing any page; build from it and only ask the owner what it does not settle; record every new decision there the
   same day. The summary below is kept for quick reference; RULES.md wins if they differ.
