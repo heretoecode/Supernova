@@ -881,6 +881,7 @@ public final class PreviewMoviePage extends ScrollView {
         if (identity.equals(boundTitle))
             return;
         boundTitle = identity;
+        providerSignature = "";
         openedAt = SystemClock.elapsedRealtime();
         activeSection = "Details";
         scrollTo(0, 0);
@@ -1517,6 +1518,8 @@ public final class PreviewMoviePage extends ScrollView {
             quick.noPlaceholder();
         quick.into(cardArtwork, new Callback() {
                 public void onSuccess() {
+                    // Decide the shade on the first copy, so the picture does not darken a moment later.
+                    calmBackdrop();
                     fullArtwork(uri, identity, requested);
                 }
                 public void onError(Exception error) {
@@ -1530,8 +1533,9 @@ public final class PreviewMoviePage extends ScrollView {
             return;
         Drawable showing = cardArtwork.getDrawable();
         RequestCreator full = artworkLoader.load(uri).fit().centerCrop();
+        // With a copy already showing, the sharp one replaces it without a second fade (0.157 Shield review #6).
         if (showing != null)
-            full.placeholder(showing);
+            full.placeholder(showing).noFade();
         else
             full.noPlaceholder();
         full.into(
@@ -1577,6 +1581,12 @@ public final class PreviewMoviePage extends ScrollView {
         moreButton.setVisibility(remoteDetails == null ? VISIBLE : GONE);
         View focused = providerActions.findFocus();
         Object focusKey = focused == null ? null : focused.getTag();
+        // The hero's buttons are rebuilt only when what they offer changes; rebuilding the same buttons on every
+        // data update made them flicker while the page loaded (0.157 Shield review #6).
+        String signature = providerSignature();
+        if (signature.equals(providerSignature) && providerActions.getChildCount() > 0)
+            return;
+        providerSignature = signature;
         for (Presenter.ViewHolder holder : providerHolders)
             providerPresenter.onUnbindViewHolder(holder);
         providerHolders.clear();
@@ -1621,6 +1631,21 @@ public final class PreviewMoviePage extends ScrollView {
             else
                 play.requestFocus();
         }
+    }
+
+    private String providerSignature = "";
+
+    /** What the hero's provider buttons show: the offers' ids and names, in order. */
+    private String providerSignature() {
+        if (observedActions == null)
+            return "none";
+        StringBuilder key = new StringBuilder(remoteDetails == null ? "local" : "remote");
+        for (int i = 0; i < observedActions.size(); i++) {
+            Object item = observedActions.get(i);
+            if (item instanceof Action && StreamingActions.isAvailableOffer((Action) item))
+                key.append('|').append(((Action) item).getId()).append(':').append(((Action) item).getLabel1());
+        }
+        return key.toString();
     }
 
     private Action matchingAction() {
