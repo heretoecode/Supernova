@@ -38,3 +38,13 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
     the card, on its shade; captions under cards are for Home rows. Kept as approved; say if you want them changed.
 11. **Centred chapter row (REVIEW_0157 #17):** QUESTIONS #8 wrongly called it unapproved; Player v11 approved it
     (13 Nov). Now built: equal space above and below the card row.
+12. **Track pills on the main Playback Settings page (REVIEW_0157 #11).** You asked for this "to confirm in the
+    mock-ups"; the approved mock-ups (`player/25`, `28`) show the track row as name only. Not built. Recommendation:
+    show the chosen track's pills on the Subtitle Track and Audio Track rows (e.g. "English · Original · SDH"), as in
+    the lists; say yes and it goes in.
+13. **Fix match opens as a page in Files' style, over where you were.** The decision was "Fix match from anywhere
+    takes you to Files › Library Care's Fix match page; Back returns". Built as one full page (path "Files › Library
+    Care › Fix match", keyboard left, matches right); Back returns to where you came from. It is not yet reached by
+    switching to the Files tab first. Easy to change if you want the tab to switch underneath.
+14. **Folder grid (REVIEW_0157 #25):** browsing a storage now stays in Files as the approved grid (path, cards,
+    In library / Not added, Sort, Videos only). Not yet: the List view button and folder artwork mosaics.
