@@ -15,3 +15,6 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
    Connections · Accounts · Subtitle fonts) don't match the stored parts: there is no accounts part (logins are never
    backed up) and no subtitle-fonts part. Recommendation: five groups now (Accounts = service settings), fonts when
    they can be backed up; with the Settings redesign in 0.158. (Skipped for 0.157.)
+6. **Check matches for TV shows.** Films are done (looked up again from the file name; Accept saves the new match).
+   For a show, Accept means re-matching every episode, which needs more care. Recommendation: films in 0.157, TV
+   shows in 0.158; Fix match still works for any show meanwhile. (Skipped for 0.157.)
