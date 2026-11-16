@@ -43,17 +43,26 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   storage row gets the bar (consistency).
 
 ### To decide (Claude's recommendation in brackets)
-- **F15. Scroll bar:** none at all? It can't be used, only read. [None. As on Home rows, the next row peeking at the
-  bottom edge shows there is more.]
+- **F15. Scroll bar:** owner (16 Nov): no scroll bar (a PC thing; nothing to click with a remote), but keep a sign
+  that there is more below; a row half on the screen already does it. [Lay pages out so a row always peeks at the
+  bottom edge when there is more, with a soft fade over it; no bar. Mock-up to follow.]
 - **F16. Long-press:** should a long-press of OK open the row's actions menu, as the Menu button does, everywhere
   (Files grid and list, libraries)? [Yes, one gesture app-wide. Release without holding still plays.]
-- **F17. Up always goes to the open tab:** from anywhere in a tab's content, Up into the tab row lands on the open
-  tab, not the tab above the focus. [Yes, as a rule for every tab row, Details included.]
+- **F17. Up always goes to the open tab** (owner, 16 Nov: agreed): from anywhere in a tab's content, Up into the tab
+  row lands on the open tab, never the tab above the focus (today Connections or Library Care + Up opens Your
+  Library). Rule for every tab row, Details included. To add to RULES §4.
 - **F18. Tab-row facts removed:** the summary on the right ("1,934 Videos · 3 To Check · …") repeats the Library Care
   badge, Library Health and Your Library, and won't fit as tabs grow. Owner leans to removing it on every tab; the
-  badge stays. Replaces RULES §7b "Tab row facts" and v3/v6/v7. Where does the scan button go? [Remove the facts;
-  scanning lives in Library Care's Scan now row and the top-bar ring.]
+  badge stays. Replaces RULES §7b "Tab row facts" and v3/v6/v7. The latest design (v19, `network-files-tabs/44`,
+  13 Nov) already shows only the scan button on the right ("⟳ 12 min ago": OK scans now, Stop while scanning; "Scanning
+  Put.io · 42%" during a scan; §28 of the 0.157 notes). [Remove the facts on every tab; keep that scan button alone.]
 - **F19. "This device" row renamed "Internal storage"** (the tab is already This Device). [Yes.]
+
+- **F20. Library files in the grid show title and file size;** approved: title and year (size for files not in the
+  library), `32`. Check which the owner prefers.
+- **F21. Your Library shows 0% watched and "0% 4K · 0% HDR"** with 1,934 videos: probably not counted. To check.
+- **F22. Folder actions not drawn:** the row menu (`28`: Play · Details · Mark as watched · Exclude · Fix match) is for
+  files. A folder's menu (e.g. Open · Add to library · Exclude · Scan this folder) needs a mock-up.
 
 ### Confirmed
 - The breadcrumb ("Backup 1 › … › Movies") is a signpost, not focusable; Back goes up one level (v6, 6 Nov).
