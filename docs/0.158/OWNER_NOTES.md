@@ -35,3 +35,8 @@ investigating, ask the owner for their existing Supernova research document and 
      already folds "Show first" into Your services as an ordered list (move gesture; "Your first choice goes at the
      top", `docs/0.157/SETTINGS_INVENTORY.md`), so the order is the default everywhere. This replaces the older
      "asks which when more than one has it" for streaming-only episodes (`docs/0.157/OWNER_NOTES.md` §29).
+   - **Owner, 16 Nov (mock-ups `trakt-list-row/`):** Customise Home gets **two rows, "Add a row" (from your library)
+     and "Add a Trakt list"**, each opening its own panel (option B, `trakt-optB-01`, `-02`): kept to today's design
+     rather than a panel whose rows swap. The Trakt panel: The List (List link, On your services "12 of 20" with
+     "Netflix 5 · Prime Video 4 · Disney+ 3"), The Row (Row name, Icon, Maximum items), a quiet line, Add row. The link
+     is pasted with the one keyboard's Phone key. Real full-colour logos. Open: logo on every card or only the focused one.

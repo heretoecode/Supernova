@@ -298,3 +298,8 @@ is ever wanted back.
   widely: per-user settings without switching accounts). (5) "Ask every time" and (6) a user's watchlist: owner asked
   for details. (7) **Seasonal Home row** liked in theory; mock-ups `06-v6-02`–`04` (Tags list in Edit users and views;
   Edit a tag: Show on Home Off · Always · In season, From, Until). (8) Guest view: owner asked what it does.
+
+## Panels whose rows change with a choice (owner, 16 Nov 2026)
+- Idea from the Trakt list row: a choice at the top of a panel ("Row from: Your library · Trakt list") swaps the rows
+  under it. The owner likes it, but only as an app-wide rule if adopted, not a one-off; today only Customise page's
+  Includes hides rows that don't apply. Parked; the Trakt row uses two separate Add rows instead.
