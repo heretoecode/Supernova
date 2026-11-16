@@ -9,7 +9,11 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 
 const cols = [
   ['Undecided', [
-    ['', ['Nothing undecided. Everything is placed; you can still move anything between columns.']],
+    ['To discuss (owner, 16 Nov)', ['Episodes: OK plays; long-press menu (Play, Show details, Delete episode); '
+      + 'deleting one offers earlier episodes of the season, each your choice', 'Network statistics: split by '
+      + 'source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library (not built in 0.157)',
+      'A Trakt list as a Home row, with where each title streams on your services', 'Feature blueprint (research): '
+      + 'pick ideas to take forward (docs/research/FEATURE_BLUEPRINT.md)']],
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
