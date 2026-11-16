@@ -135,7 +135,7 @@ Other `codex/*`, `automation/*` and `archive/*` branches are history; leave them
 
 There is no Android SDK in Claude's container: everything builds on GitHub Actions.
 
-1. **Conformance** — `.github/workflows/supernova-0156-conformance.yml` (manual dispatch on the working branch,
+1. **Conformance** — `.github/workflows/supernova-0157-conformance.yml` (0.157; the 0156 one checks for 0.156) (manual dispatch on the working branch,
    about 35 minutes). Builds the unsigned APK and runs every JUnit/Robolectric test, lint and the tooling checks.
    A new dispatch cancels one already running.
 2. **Failures** — `.github/workflows/report-test-failures.yml` with input `run_id` lists the failing tests.

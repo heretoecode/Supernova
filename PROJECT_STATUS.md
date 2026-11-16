@@ -51,14 +51,12 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 - Older Preview-era files and early planning: [`docs/archive/`](docs/archive/README.md).
 
 ### 0.157 coding (started 15 Nov 2026)
-- Build order steps 1–5 coded except `main` (needs the owner's yes), the version number, the dead connection still
-  scanned (with Files) and memory cuts (wait for Shield numbers). Step 6 partly (Issues Digest, picture in picture
-  out; All files access once). Step 7 (foundation) mostly coded. Step 8: the new Files page is built behind a
-  switch. Steps 9–11 started (Details, Player settings, data). Running notes: `docs/0.157/RELEASE_NOTES_DRAFT.md`.
-- Not yet green: build 8 running (15 Nov 23:17); builds 4–7 failed on a few tests each, all fixed. Details and what is next:
-  [`docs/0.157/HANDOVER.md`](docs/0.157/HANDOVER.md). Time taken: `docs/0.157/TIMELOG.md`.
-- For the owner to check on the Shield when a build is ready: deleting a local file (no Android screen expected),
-  the new mark's orientation (copied from the mock-up picture; RULES §21's wording differs).
+- **Version 0.157 (157)**; every build-order item coded except those skipped with reasons in
+  `docs/0.157/QUESTIONS.md`. Release notes are in the app (About › What's new), drawn from
+  `docs/0.157/RELEASE_NOTES_DRAFT.md`.
+- Builds: `supernova-0157-conformance.yml`. Final run in progress; see `docs/0.157/HANDOVER.md`.
+- **Waiting for the owner:** signing 0.157 (QUESTIONS.md #9: the signing gate only accepts 0.156), and the other
+  questions in that file.
 - Build order and batches: `docs/0.157/VERSION_PLAN.md` (end).
 
 ### Where things stand (14 Nov 2026, end of the design phase)
