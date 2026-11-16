@@ -78,8 +78,7 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   `report-test-failures.yml` with `run_id`, read the job log's last ~60 lines, fix, push, re-run.
 - **Next items, in order:** (1) build 8 result → build 9; (2) player HUD layout (R5): title block top left done;
   controls lower, seek preview as a card with time and chapter inside, skip button at the end of the
-  control row with its 10 s bar, chapter row centred; check with `preview-renders.yml`; (3) Files: Check matches
-  (needs a re-match engine), real reachability pills (Found on your network, Couldn't be read, scan control done); (4) subtitles plan (ready during
+  control row with its 10 s bar, chapter row centred; check with `preview-renders.yml`; (3) Files: done except TV shows in Check matches (films only so far; `MatchCheck`); (4) subtitles plan (ready during
   Preparing playback, next two episodes); (5) calmer hero backdrops (needs a way to tell the owner's chosen backdrop
   from TMDB's default first); (6) version bump to 0.157 (`assets/foundation/release-history.json`, Gradle version,
   `tools/test_settings_0143_mapping.py` expects 0.156), final release notes from `RELEASE_NOTES_DRAFT.md`;
