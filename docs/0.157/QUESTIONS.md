@@ -32,3 +32,9 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
    That is a change to the signing setup, which you've ruled out, so it is not done. Recommendation: allow the
    0.157 copies (or make the gate read the version from the history file), then sign the final green build.
    The 0.157 conformance (build) workflow copy is added: `supernova-0157-conformance.yml`.
+
+10. **Captions under the player's Chapters and Episodes cards? (REVIEW_0157 #16) — answered from the approved
+    designs:** no. The approved player mock-ups (`player/20`, `27`, `chapters/04`) put the name and second line inside
+    the card, on its shade; captions under cards are for Home rows. Kept as approved; say if you want them changed.
+11. **Centred chapter row (REVIEW_0157 #17):** QUESTIONS #8 wrongly called it unapproved; Player v11 approved it
+    (13 Nov). Now built: equal space above and below the card row.

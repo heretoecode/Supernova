@@ -112,7 +112,9 @@ final class PlayerPartsStrip implements PlayerController.Strip
         View rule = new View(context);
         rule.setBackgroundColor(TAB_RULE);
         LinearLayout.LayoutParams ruleSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(1)));
-        ruleSize.bottomMargin = dp(12);
+        // The card row sits centred between the tab line and the screen's bottom edge (player v11, approved 13 Nov):
+        // 24dp here + the cards' 8dp padding matches the 8dp padding + the control bar's 24dp bottom inset below.
+        ruleSize.bottomMargin = dp(24);
         root.addView(rule, ruleSize);
         tabs.getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> paintTabs());
         row = new HorizontalScrollView(context);
