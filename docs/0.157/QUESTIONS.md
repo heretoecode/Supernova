@@ -18,3 +18,8 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
 6. **Check matches for TV shows.** Films are done (looked up again from the file name; Accept saves the new match).
    For a show, Accept means re-matching every episode, which needs more care. Recommendation: films in 0.157, TV
    shows in 0.158; Fix match still works for any show meanwhile. (Skipped for 0.157.)
+7. **Experimental "Also translate other languages".** Approved to build and judge, but it merges a second subtitle
+   source on screen: a large piece of player work. Recommendation: build it first thing in 0.158 so it gets a proper
+   Shield trial. (Skipped for 0.157.)
+8. **Chapter row centred between the tab line and the bottom edge** (player v10) was proposed, not approved, so it
+   was left as it is.
