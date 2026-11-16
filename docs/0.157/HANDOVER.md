@@ -81,11 +81,17 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   REVIEW_0157.md. Render test classes: `Review0157RenderTest` (Files in the app frame),
   `settings/Review0157SettingsRenderTest`; request file `.github/diagnostics/preview-request.json` (pushing it runs
   `preview-renders.yml`; PNGs land on branch `previews/claude`).
-- Done so far: charcoal page frame (PreviewUtilityBackground), top-bar focus ink, Settings shared list, Settings
-  without panel, Playback Settings rework, Files tab-row fix (PageTabs.TabLine), icon ink (SupernovaStyle.inkIcons),
-  Files margins/row height, USB icon. Next: render check of those, then stacking lists (12/22), Details tab (4/5),
-  seek box (8/23), chapters (14/17), Episodes row (15/16), hero flicker (6), logo pop (7), Fix match page (26),
-  drive browsing (25), Playback series save row for format and skipping.
+- Done (code; ✓ = checked in a render, see REVIEW_0157 "Fix progress"): charcoal page frame ✓, top-bar focus
+  ink ✓, Settings shared list ✓, Settings flat ✓ and rows on their centre line, no blue switches, Playback Settings
+  rework ✓ (tabs, chips, plain Playback list, sized per tab, headings Title Case, For This Series at the bottom, series
+  format+skipping save row), track lists stacked on the panel, Files tab row ✓ / margins ✓ / USB icon ✓ / Your Library
+  tab / folder grid browser, Fix match page ✓ (renders `find-a-match`), Details tab v20 ✓ (three columns; tab row
+  without the old box pending render), portrait cast, Details hero flicker, Preparing playback logo space, seek
+  time card, chapter renumbering, player tab row, Episodes row text, centred chapter row.
+- In flight: renders of 66e9fa1 (`preview-renders.yml`), conformance run 43855741788 (on a200b34, older). Next:
+  check renders, then a conformance run on the latest commit, fix failures, record renders in REVIEW_0157, then
+  sign (owner approved signing for this build) and report the APK.
+- Open questions for the owner: QUESTIONS.md #10–#14.
 
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
 - **Version is 0.157 (157)** since `571224b`; builds now use **`supernova-0157-conformance.yml`** (the 0.156 one
