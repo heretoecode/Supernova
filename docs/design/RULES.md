@@ -183,6 +183,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
   such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
+- **Small menus fold inline (owner, 16 Nov 2026):** if a menu's choices would add only a button or two to the row that
+  opens it (for example Boost → "This copy · Everything queued" on a row with Pause and Cancel), put them inline on the
+  row instead (Boost this · Boost all · Pause · Cancel), as long as the row stays at about five buttons or fewer. A
+  menu is for longer lists. Check this before drawing any menu.
 - **Opens beside the button or item that opened it** (drops down under a toolbar button), never in a corner (§19; owner,
   13 Nov).
 - **Menus versus side panels (owner, 14 Nov 2026):** the "beside the button" rule is for menus (short pick-lists such
@@ -364,6 +368,9 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - **For This Series** (Playback Settings): the last row of both the Subtitles and Audio tabs, acting as a save row
   (owner, 16 Nov; replaces its place between Audio selection and Audio adjustment).
 - **Text boxes:** every one uses the one shared keyboard (§15); mock-ups may simplify it, the app never does.
+- **Version numbers (owner, 16 Nov):** a corrected release of a version is 0.xxx.1 (then .2 …); the next version is
+  0.xxx+1. Android's version code is the version × 10 from 0.157.1 on (0.157.1 = 1571, 0.158 = 1580, 0.158.1 = 1581), so
+  it always climbs (0.157 itself shipped as 157).
 
 ## Open questions (to settle when the page comes up)
 - **Home row text:** inside the picture (current rule) or below it — with the Home redesign.

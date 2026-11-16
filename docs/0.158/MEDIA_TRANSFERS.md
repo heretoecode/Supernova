@@ -1,4 +1,4 @@
-# Media Transfers: everything decided so far (gathered 15 Nov 2026)
+# Media Transfers: fully designed and approved (16 Nov 2026; roadmap: Undecided › Ready)
 
 Moved whole into **0.158** (owner, 15 Nov 2026): wanted, but not urgent, and the owner wants time to think of more
 settings and improvements. Sources: `docs/0.157/OWNER_NOTES.md` §23–24 and §28, mock-up
@@ -42,10 +42,40 @@ optionally delete the network copy once the local copy is safe.
 - Running while the device sleeps. The owner has run a Plex server on this Shield while it slept, so background work
   is possible; test early.
 
+## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/` v4–v5; **all approved by the owner, 16 Nov: Media Transfers is fully designed and approved**)
+A section on the Transfers tab, above Where copies go:
+- **Keep free on this device: a percentage of the drive the copies go to** (5 · 10 · 15 · 20%), shown with the real
+  size of that percentage on that drive (e.g. "10% · 100 GB"). Second line: "Small overruns are fine; bigger ones wait
+  for your OK". **An overrun of up to 2% of the amount kept free goes ahead; anything bigger pauses the copy (never
+  cancels it) and puts it in Needs your OK** at the top of the Transfers tab (Copy anyway · Choose another folder ·
+  Cancel on its focused row). **No pop-up** (owner, 16 Nov: nothing forced): where you pressed Copy it quietly reads
+  "Waiting for your OK · Transfers". A truly full disk stops with an error.
+- **While you watch** (from the network or this device): Pause · Slow down · Carry on (default Slow down).
+- **Scans** always get priority (no setting).
+- **Full speed hours** (owner, 16 Nov): one row, five-hour windows only, Left/Right through **Off · 22:00–03:00 ·
+  23:00–04:00 · 00:00–05:00 · 01:00–06:00 · 02:00–07:00** (default 02:00–07:00; Off kept, owner 16 Nov). Between the times copies run flat out;
+  otherwise gently. Daytime windows and days of the week: parked (`docs/REVISIT_LATER.md`).
+  **Technical check:** whether copies can run while the Shield is in standby (may need a keep-awake while copying).
+- **Boost** (replaces "Full speed now"): inline on the focused copying row, **Boost this** (until it is done) · **Boost all**
+  (until the queue is empty) · Pause · Cancel (owner, 16 Nov: no menu; `transfers-v5-01`). The row then reads "Boosted: flat out until
+  done", with **Stop boost**. **Pressing Play during a boost** (network or this device) asks "Boost is on — copies are
+  running at full speed, so playback may stutter": **Slow copies while I watch** (first) · **Keep boost**; boost picks up
+  again when you stop watching. (A question about what you just asked for, so it is not a forced notification.)
+- Standard speed while watching = the While you watch setting (Pause · Slow down · Carry on).
+- The copying row has no percentage pill (it duplicated the bar): "1.4 of 2.1 GB · 67%" in its second line.
+- **Copies at once:** 1 · 2 · 3 (default 1).
+- **Where copies go:** two inline rows, Movies and TV Shows, each showing its folder; OK opens the one folder picker.
+- **Remove the network copy:** one switch for everything (owner, 16 Nov), off by default; Bring new episodes follows it.
+- "Only copy from these connections": dropped.
+- **The Files dot (owner, 16 Nov):** Files always opens on This Device; nothing is forced. Each tab needing a look carries
+  its count badge (Transfers, Library Care); the question waits on that tab, at the top.
+
 ## Open questions to think about (owner)
 - Anything to add to Transfers settings (e.g. how much free space to always keep, speed limit, which connections are
   allowed)?
 - Should "Remove the network copy" be per transfer, per series, or one switch for everything?
-- What happens when the local folder fills up: stop, or remove the oldest watched copies?
-- Should watched copies ever be cleaned up automatically?
-- Notifications inside Supernova when something finishes or fails (a badge on Files, a line on Home)?
+- **Decided (owner, 16 Nov):** when the local folder fills up, **stop** (never remove anything), show an error and ask
+  the user to choose another location.
+- **Decided (owner, 16 Nov):** watched copies are **never cleaned up automatically**.
+- **Decided (owner, 16 Nov):** a transfer problem shows as the **dot beside Files** in the top bar (the existing
+  attention dot).
