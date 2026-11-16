@@ -1,73 +1,42 @@
-# Discussion handover: roadmap, parked ideas and the tags feature (15 Nov 2026)
+# Discussion handover (updated 16 Nov 2026, evening)
 
-For a fresh **discussion** session (designs, ideas, planning). Coding of 0.157 runs in a separate session from
-`docs/0.157/HANDOVER.md`; do not code from a discussion session. Start by reading `CLAUDE.md`, `PROJECT_STATUS.md`,
-this file and `docs/REVISIT_LATER.md`.
+For a fresh **discussion** session (designs, ideas, planning; no coding). Read `CLAUDE.md`, then this, then
+`docs/ROADMAP.md` and `docs/design/RULES.md` (current decisions, design and behaviour; the owner notes are history).
+The coding session is called **Supernova Coding** (owner's name for it).
 
-## Where the project stands
-- Every redesign is designed and approved (Search, Files, Details, Player, choice list, library pages incl. empty
-  pages and the + page, Home, Settings, onboarding, the new mark and loading ring). Rulebook: `docs/design/RULES.md`.
-- 0.157 coding started 15 Nov (owner's go-ahead). Time is being measured in `docs/0.157/TIMELOG.md`.
-- Codex is not used for now; the owner may bring it back if usage becomes the bottleneck.
+## Where things stand (16 Nov evening)
+- **0.157** was signed and installed; the owner's Shield test found much of the approved redesign missing (passing
+  tests ≠ matching mock-ups). Findings: `docs/0.157/REVIEW_0157.md` (26 points + answers). Supernova Coding is fixing
+  them, checking each screen in a real render (`preview-renders.yml`) before ticking it, and will ship **0.157.1**
+  (version code 1571; codes are version × 10 from now on, RULES §24). Signing for 0.157.1 is pre-approved by the owner.
+- Roadmap is now a document, `docs/ROADMAP.md` (picture retired). **Send it to the owner in the app after every change.**
+- Undecided is split into **Ready** (designed and approved, needs a version) and **To discuss**.
 
-## Roadmap (picture: `docs/ROADMAP.md`; keep it current)
-**Undecided:** nothing. The owner may still move items between columns.
+## Ready (designed and approved)
+- **Media Transfers** — complete: `docs/0.158/MEDIA_TRANSFERS.md`, mock-ups `docs/design/proposals/transfers-settings/`.
+- **Trakt list as a Home row** — `docs/0.158/OWNER_NOTES.md`, mock-ups `docs/design/proposals/trakt-list-row/` (option B).
 
-**0.157** (`docs/0.157/VERSION_PLAN.md`, sections "0.157 without the redesigns" and "0.157 build order"):
-- Redesigns: foundation R0 (panels, menus, choice list, focus, headings, artwork edge, move gesture, the one keyboard
-  with phone-app paste and password eye), the new mark (icon, banner, splash, loading ring), Files (without
-  Transfers), Details (with portrait cast and crew), Preparing playback, the Player and Playback Settings.
-- Engine: Codex merge (done), all of NOVA 6.6.5+ (library part done), seek loading signal.
-- Old NOVA out: SAFE list, hidden grid and screens, picture in picture, Issue digest, All files access once.
-- Speed and reliability: memory, no rebuild on unchanged scans, scan rules, reopen where you were, focus after
-  standby, held Down, network-drop and Put.io checks.
-- Every bug from diagnostics and the walkthrough; data items (subtitles plan, UK age ratings, reception offline,
-  technical info, calmer hero backdrops, region from device, sort titles, diagnostics retention, backup groups,
-  licences); 0.157 release notes written properly (grouped, more detail, one line per point; approved style in
-  `docs/design/proposals/0157-checks/01`).
+## To discuss
+- **Users and tags** (out of 0.158 until settled): notes in `docs/REVISIT_LATER.md` ("Profiles", "Tags and views", rounds
+  1–7), mock-ups `tags-views/01`–`06-v6-*`. Approved so far: shared tags, record who watched, editable users and tags,
+  in Backup, one feature, delete-a-user options, Default user, Together hides one-person titles, nudges (v5), "Watch
+  without Alex?", seasonal Home row, suggested tags. Open: "Ask every time" default user, per-user watchlist, Guest view.
+  Parked: Trakt per user, per-user playback settings.
+- **Episodes** (OK plays, long-press menu, deleting earlier episodes) and **network statistics by source** (with Files ›
+  Your Library): `docs/0.158/OWNER_NOTES.md`.
+- **Diagnostics that catch problems before the owner notices** (health snapshot, smoothness, speed, playback, leaks,
+  Health summary with limits): on the roadmap.
+- **Feature blueprint** `docs/research/FEATURE_BLUEPRINT.md`: pick ideas to take forward.
 
-**0.158:** Home, library pages, Search, Settings, onboarding, **Media Transfers (all of it)**, and **users and tags**
-(pinned, still in discussion).
-
-**Parked** (`docs/REVISIT_LATER.md` is the parked list): newer NOVA engine stack; make the repo private and a private
-Releases page; "going public" checklist incl. Supernova's own TMDB key; release-notes rethink for older versions;
-screensaver; picture in picture could return; documentation website; built-in OMDb key; discovery in Search; the old
-concept-only ideas (launcher channels, person pages, more than one custom library page, anime metadata, subtitle
-presets, Trakt social, AI, themes, content warnings, Drive delivery).
-- **Rule (owner, 15 Nov):** "park that" adds to the parked list; anything the owner raises that matches a parked idea
-  is added to that idea's notes, so each builds into a proper discussion.
-
-## Media Transfers (moved whole to 0.158)
-Everything decided, plus open questions for the owner: `docs/0.158/MEDIA_TRANSFERS.md`.
-
-## Users and tags (pinned for 0.158, in discussion) — replaces "profiles"
-Full notes: `docs/REVISIT_LATER.md`, "Profiles" and "Tags and views instead of profiles". Mock-ups
-`docs/design/proposals/tags-views/01`–`03` (03 is the whole flow, 13 screens).
-- **Why:** the owner mostly watches alone, sometimes with a partner; titles are mine, my partner's or shared, and
-  nothing must be walled off. No separate folders, ideally no profiles.
-- **Tags:** two kinds. **User tags** (Me, Alex, Together) say whose a title is; **general tags** (Christmas, Classics)
-  say what kind. A title can have many tags. Tag from long-press, from Details › More › Tags, or many at once in a
-  library select mode ("Select all" then untick; "Tag 12 titles").
-- **Filters:** library Filters show Users and Tags groups; OK on a tag cycles **Off › Hide › Only** (like the order
-  button flipping).
-- **User switcher:** "SUPERNOVA" leaves the top bar; a fixed-size round icon at the far left, left of Home, shows the
-  current user's own monochrome icon (each user picks one from the one app-wide icon picker, extended with new
-  icons; Together defaults to two overlapping people). Its menu: Everything, each user, Together, Edit users and
-  views. Switching applies everywhere: Home hero and rows, every library page, Continue Watching; page filters work on
-  top of it; Search always finds everything.
-- **Users are managed only from the user switcher** (create, edit name and icon, delete with warning). Elsewhere users
-  can only be picked. **Default user per installation**, changeable ("Open Supernova as").
-- **Tags show on the Details hero card** itself; "New tag" opens the one keyboard in its own panel beside the list.
-- **Known limit:** one shared watch history. It only matters for titles both people watch separately.
-- **Open questions (owner to answer):** (1) can a user's view also hide general tags (e.g. Me hides Classics)? Claude:
-  yes. (2) per-user tags (seen only by their owner) as well as global tags, or all tags shared?
-- Dropping the name also leaves room for a fourth library page one day (parked FD-017).
-
-## Mock-up rules the owner added recently (also in CLAUDE.md)
-- Whole flow: show every screen the drawn pieces lead to.
-- Whole picture, light-grey frame, captions only, fewest pictures, made-up names, "this device" (never "Shield").
+## Rules added today (all in RULES.md / CLAUDE.md)
+- Current decisions live in RULES.md; replaced diary entries are marked. A sweep for old contradictions is still to do.
+- Small menus fold inline (≤ about five buttons on the row).
+- Fix match is one page on Files; from a title it offers Match and return · Match and stay.
+- Streaming service order: the top of Your services is used everywhere.
+- Mock-ups: full size, up to about four screens per picture; whole flow; the one keyboard in the app.
+- Diagnostics read before each version ends with what the owner didn't see, with fixes.
+- Revisit later: captions under the player's cards (match Home rows); panels whose rows swap with a choice (app-wide).
 
 ## Practical
-- Usage: long conversations burn the 5-hour allowance fast; keep sessions short and start fresh often. Discussion and
-  coding sessions share one allowance.
+- Push check: after every push confirm `git ls-remote` matches HEAD (a restart once left commits unpushed).
 - Owner's notes while Claude is unavailable: `docs/INBOX.md` or a GitHub issue titled "Inbox: …".
