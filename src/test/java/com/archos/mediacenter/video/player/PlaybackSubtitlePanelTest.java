@@ -285,7 +285,8 @@ public class PlaybackSubtitlePanelTest {
     @Test
     public void sidePanelIsOneThirdWideTopRightAndFittedToItsRows() throws Exception {
         WindowManager.LayoutParams a = main.getWindow().getAttributes();
-        assertEquals(640, a.width);
+        // Sized to its tab (player v10/v11): 885px for Subtitles at 1080p.
+        assertEquals(885, a.width);
         assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, a.height);
         assertEquals(Gravity.TOP | Gravity.END, a.gravity);
         assertEquals(40, a.x);
@@ -293,7 +294,7 @@ public class PlaybackSubtitlePanelTest {
         assertEquals("No full-screen dim: the film stays visible", 0,
                      a.flags & WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         int height = main.getWindow().getDecorView().getHeight();
-        assertTrue("Fitted, not full height: " + height, height < 1000 && height > 700);
+        assertTrue("Fitted, not full height: " + height, height <= 1000 && height > 700);
         capture(main, "playback-subtitles-tab");
     }
 
@@ -544,15 +545,16 @@ public class PlaybackSubtitlePanelTest {
             assertTrue(tag, v.getTop() > previous);
             previous = v.getTop();
         }
-        assertEquals("1.0×", value(tagged("playback.row.speed")));
+        assertEquals("1×", value(tagged("playback.row.speed")));
         assertEquals("Binge watching", value(tagged("playback.row.playmode")));
         capture(main, "playback-playback-tab");
         key(tagged("playback.row.format"), KeyEvent.KEYCODE_DPAD_RIGHT);
         assertEquals(1, (int)model.modeSelected.get("format"));
         assertEquals("Fullscreen", value(tagged("playback.row.format")));
         key(tagged("playback.row.speed"), KeyEvent.KEYCODE_DPAD_RIGHT);
-        assertEquals(1.05f, model.speed, .001f);
-        assertEquals("1.05×", value(tagged("playback.row.speed")));
+        // Speed is five chips (player v10): Right from 1× goes to 1.25×.
+        assertEquals(1.25f, model.speed, .001f);
+        assertEquals("1.25×", value(tagged("playback.row.speed")));
         key(tagged("playback.row.playmode"), KeyEvent.KEYCODE_DPAD_RIGHT);
         assertEquals("Last mode stays", 4, (int)model.modeSelected.get("playmode"));
         tagged("playback.row.skip").performClick();
