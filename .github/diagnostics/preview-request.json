@@ -1,5 +1,5 @@
 {
- "purpose": "0.157 review round 8: Details tab row without the old box, Your Library, folder grid, Fix match page",
+ "purpose": "0.157 review round 9: Details tab focus and hero edge, switches, Settings rows, panel headings, seek card weight",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review0157RenderTest",
   "com.archos.mediacenter.video.player.Playback141RenderTest",
