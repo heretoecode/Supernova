@@ -220,6 +220,7 @@ public final class FilesPage extends LinearLayout
 
     private void show(int tab)
     {
+        browser = null;
         body.removeAllViews();
         showSummary();
         ScrollView scroll = new ScrollView(getContext());
@@ -245,6 +246,22 @@ public final class FilesPage extends LinearLayout
         {
             yourLibrary(column);
         }
+    }
+
+    private FolderBrowser browser;
+
+    /** Opens a storage in the folder grid, under the tabs (mock-up network-files-tabs/32). */
+    public void browse(android.net.Uri root, String name, FolderBrowser.Opener opener)
+    {
+        browser = new FolderBrowser(getContext(), opener, () -> {
+            browser = null;
+            show(tabs.openTab());
+        });
+        browser.setLibrary(media);
+        body.removeAllViews();
+        body.addView(browser, new FrameLayout.LayoutParams(-1, -1));
+        browser.start(root, name);
+        browser.requestFocus();
     }
 
     /** The library's figures for Files › Your Library. */
@@ -917,6 +934,16 @@ public final class FilesPage extends LinearLayout
     @Override
     public boolean dispatchKeyEvent(android.view.KeyEvent event)
     {
+        if (browser != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK)
+        {
+            if (event.getAction() == android.view.KeyEvent.ACTION_UP && !browser.up())
+            {
+                browser = null;
+                show(tabs.openTab());
+                focusContent();
+            }
+            return true;
+        }
         if (matchPage && event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK)
         {
             if (event.getAction() == android.view.KeyEvent.ACTION_UP)

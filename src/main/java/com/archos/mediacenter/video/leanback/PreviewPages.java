@@ -2824,7 +2824,13 @@ public final class PreviewPages extends FrameLayout {
             filesPage.setDevices(devices, device -> {
                 for (Box box : files)
                     if (device.name.equals(box.getName()) || !device.removable && box.getBoxId() == Box.ID.FOLDERS) {
-                        click.open(new Presenter.ViewHolder(container), box);
+                        Uri root = storageRoot(box);
+                        if (root == null) {
+                            click.open(new Presenter.ViewHolder(container), box);
+                            return;
+                        }
+                        // Browsing stays in Files: the folder grid (0.157 Shield review #25).
+                        filesPage.browse(root, device.name, (file, inLibrary) -> playFile(file, inLibrary));
                         return;
                     }
             });
@@ -2882,6 +2888,24 @@ public final class PreviewPages extends FrameLayout {
                 int unreadable = com.archos.mediacenter.video.leanback.files.FilesPageData.unreadable(app);
                 page.post(() -> page.setUnreadable(unreadable));
             }, "FilesUnreadable").start();
+        }
+
+        /** A storage's top folder: its own path, or the device's shared storage for "This device". */
+        private Uri storageRoot(Box box) {
+            String path = box.getPath();
+            if (path != null && !path.isEmpty())
+                return Uri.fromFile(new java.io.File(path));
+            if (box.getBoxId() == Box.ID.FOLDERS)
+                return Uri.fromFile(android.os.Environment.getExternalStorageDirectory());
+            return null;
+        }
+
+        /** Plays a file chosen in the folder grid, from the library entry when it has one. */
+        private void playFile(com.archos.filecorelibrary.MetaFile2 file, Base inLibrary) {
+            Video video = inLibrary instanceof Video
+                ? (Video)inLibrary
+                : new NonIndexedVideo(file.getStreamingUri(), file.getUri(), file.getName(), null);
+            PlayUtils.startVideo((Activity)getContext(), video, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
         }
 
         /** Files › Your Library: one line per video in the library snapshot (mock-up network-files-tabs/44). */
