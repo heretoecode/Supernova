@@ -27,6 +27,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 8. `docs/DISCUSSION_HANDOVER.md` — for discussion sessions: roadmap, parked ideas, the users-and-tags feature.
 9. `docs/ROADMAP.md` — the **roadmap** (a document; the old picture is retired): Undecided (**Ready**: designed and
    approved, waiting for a version; **To discuss**) · 0.157 · 0.158 · Parked. Keep it current whenever something moves.
+   **After every roadmap change, send the file to the owner in the app** (to view in Claude, not only a GitHub link).
 10. `docs/research/FEATURE_BLUEPRINT.md` — the owner's research blueprint of possible future features (not a to-do
     list), each line marked built, planned, parked, new idea or to check.
 

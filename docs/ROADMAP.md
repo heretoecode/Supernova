@@ -10,7 +10,7 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 ### Ready (designed and approved)
 
 - A Trakt list as a Home row: only what streams on your services, logo on every card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)
-- Media Transfers, all of it: copy, checks, resilience, delete after copy, per-series "Bring new episodes", schedule (`docs/0.158/MEDIA_TRANSFERS.md`; copy settings drawn and waiting for approval: `docs/design/proposals/transfers-settings/`)
+- **Media Transfers, fully designed and approved (16 Nov):** copy, checks, resilience, keep free (percentage, 2% rule, Needs your OK), While you watch, full speed hours, Boost this / Boost all, Play warning during a boost, copies at once, one switch to remove the network copy, per-series "Bring new episodes" (`docs/0.158/MEDIA_TRANSFERS.md`, mock-ups `docs/design/proposals/transfers-settings/`)
 
 ### To discuss (owner, 16 Nov)
 

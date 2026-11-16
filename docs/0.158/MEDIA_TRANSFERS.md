@@ -1,4 +1,4 @@
-# Media Transfers: everything decided so far (gathered 15 Nov 2026; roadmap: Undecided › Ready, 16 Nov)
+# Media Transfers: fully designed and approved (16 Nov 2026; roadmap: Undecided › Ready)
 
 Moved whole into **0.158** (owner, 15 Nov 2026): wanted, but not urgent, and the owner wants time to think of more
 settings and improvements. Sources: `docs/0.157/OWNER_NOTES.md` §23–24 and §28, mock-up
@@ -42,7 +42,7 @@ optionally delete the network copy once the local copy is safe.
 - Running while the device sleeps. The owner has run a Plex server on this Shield while it slept, so background work
   is possible; test early.
 
-## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/` v4–v5; v4-01, v4-05 and v5-01 approved by the owner, 16 Nov)
+## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/` v4–v5; **all approved by the owner, 16 Nov: Media Transfers is fully designed and approved**)
 A section on the Transfers tab, above Where copies go:
 - **Keep free on this device: a percentage of the drive the copies go to** (5 · 10 · 15 · 20%), shown with the real
   size of that percentage on that drive (e.g. "10% · 100 GB"). Second line: "Small overruns are fine; bigger ones wait
@@ -53,7 +53,7 @@ A section on the Transfers tab, above Where copies go:
 - **While you watch** (from the network or this device): Pause · Slow down · Carry on (default Slow down).
 - **Scans** always get priority (no setting).
 - **Full speed hours** (owner, 16 Nov): one row, five-hour windows only, Left/Right through **Off · 22:00–03:00 ·
-  23:00–04:00 · 00:00–05:00 · 01:00–06:00 · 02:00–07:00** (default 02:00–07:00). Between the times copies run flat out;
+  23:00–04:00 · 00:00–05:00 · 01:00–06:00 · 02:00–07:00** (default 02:00–07:00; Off kept, owner 16 Nov). Between the times copies run flat out;
   otherwise gently. Daytime windows and days of the week: parked (`docs/REVISIT_LATER.md`).
   **Technical check:** whether copies can run while the Shield is in standby (may need a keep-awake while copying).
 - **Boost** (replaces "Full speed now"): inline on the focused copying row, **Boost this** (until it is done) · **Boost all**
