@@ -1906,15 +1906,26 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             edge.setStroke(Math.max(1, Math.round(density)), SupernovaStyle.GLASS_EDGE);
             picture.setBackground(edge);
             picture.setClipToOutline(true);
-            // The artwork edge, as on every picture in the app (RULES §14).
-            picture.setForeground(new com.archos.mediacenter.video.leanback.ArtworkEdge(mContext, 8, false));
+            // A soft shade at the bottom for the time and chapter, and the artwork edge (owner, 12 Nov 2026).
+            android.graphics.drawable.GradientDrawable shade = new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.BOTTOM_TOP,
+                new int[] {0xCC000000, 0x00000000, 0x00000000});
+            shade.setCornerRadius(8 * density);
+            picture.setForeground(new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[] {
+                shade, new com.archos.mediacenter.video.leanback.ArtworkEdge(mContext, 8, false)}));
             parent.addView(picture, new FrameLayout.LayoutParams(width, height, Gravity.TOP | Gravity.START));
         }
         picture.setImageBitmap(frame);
         picture.setVisibility(View.VISIBLE);
         float left = PreviewHudTiming.pillLeft(centre - width / 2f, mProgress.getWidth(), width);
         picture.setTranslationX(left);
-        picture.setTranslationY(bubble.getTranslationY() - height - 6 * density);
+        // The preview is a card like the row cards, its bottom where the time box sits; the time box (time over the
+        // chapter name) moves inside it, centred, on the shade (player v6–v7).
+        float bottom = bubble.getTranslationY() + bubble.getMeasuredHeight();
+        picture.setTranslationY(bottom - height);
+        bubble.setTranslationX(left + (width - bubble.getMeasuredWidth()) / 2f);
+        bubble.setTranslationY(bottom - bubble.getMeasuredHeight() - 6 * density);
+        bubble.bringToFront();
     }
 
     private void listenForSeekPictures(SeekThumbnails engine) {
