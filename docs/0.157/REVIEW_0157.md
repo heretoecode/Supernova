@@ -76,29 +76,30 @@ behaviour, not how screens look. Next: an audit of every approved 0.157 design a
 not built), then a fix pass that checks real screen renders against the mock-ups before anything is called done.
 
 ## Fix progress (Claude, 16 Nov)
-Renders are real Android screens from `preview-renders.yml`, published on branch `previews/claude` (folder `normal/`),
-compared by eye with the named mock-up. ✓ = fixed and checked in a render; … = code changed, render pending.
-- **1** ✓ Settings lists on the shared choice list: search line above 12, flags, tick on the right, no Cancel, Back
-  closes. Render `0157-settings-audio-language-list` vs `choice-list/01`–`03`.
-- **3 / 18 / 19** ✓ Files: flat charcoal, tab row This Device · Connections · Library Care, open tab underlined, content
-  lined up with the top bar (96 px), rows 96 px. Renders `0157-files-tab-0-content`, `0157-files-tab-2-content` (ce951de)
-  vs `network-files-tabs/39`. Not yet: Your Library / Transfers tab.
-- **20** ✓ Focus ink black on white: top bar "Files" (regular weight), Files rows and their icons, tab row.
-  Renders `0157-files-topbar-focused`, `0157-files-tab-0-content` (ce951de).
-- **24** ✓ USB drives show a USB-stick icon. Render `0157-files-tab-0-content` (ce951de).
-- **9 / 13 / 21** ✓ Playback Settings: underline tab row, plain Playback list, chip choices (no squash, no blue), white
-  values. Render `0152-playback-side-panel-tab-2` (ce951de) vs `player/25`. … Subtitles/Audio headings centred and the
-  tick white: in the same code, Subtitles render to recheck.
-- **10** … For This Series at the bottom of Subtitles and Audio (4f00150); the render fixture has no series, so not shown.
-- **12 / 22** … Track lists open on top of the panel, panel pushed back and darkened (a200b34), render pending.
-- **8 / 23** … Seek time box is always the card, time over chapter, never clipped (ce951de); Chapters / Episodes as the
-  underline tab row (5abf800). HUD render test fixed to show the card (41e2621), render pending.
-- **14** … Generic chapter names renumbered (Scene 3 → Chapter n), unit test added (ce951de).
-- **15** … Episodes cards: episode name, second line "Playing · Episode 2 · 46 min", never "Unknown" (79edcd0).
-- **16** answered: no captions under player cards (approved mock-ups put the text inside); QUESTIONS #10.
-- **17** … Chapter row centred between tab line and bottom edge (036f0d0).
-- **4 / 5** … Details tab rebuilt to `details-background/21` (v20): three columns with icon headings and faint row lines,
-  Cast and Crew as one row of 2:3 portrait cards, scrolls with Down/Up (e0e47d9), render pending.
-- **18 (Settings)** … Settings page without its glass panel (999631f), render pending.
-- Not started: **2** Settings rows centred, **6** hero flicker, **7** logo pop-in, **11** track pills on the main
-  page, **25** drive browsing, **26** Fix match page.
+Renders are real Android screens from `preview-renders.yml` (branch `previews/claude`, folder `normal/`; latest of
+commit 6885119), compared by eye with the named mock-up. ✓ = fixed and checked in a render. ◐ = fixed; behaviour or
+data a still render cannot show, checked by code and a unit test instead.
+- **1** ✓ Settings lists on the shared choice list (search above 12, flags, tick right, no Cancel). `0157-settings-audio-language-list` vs `choice-list/01`–`03`.
+- **2** ✓ Settings rows on their centre line; switches white on / dark off (no blue). `1080p-playback` vs `settings-flat/01`.
+- **3 / 18 / 19** ✓ Files on flat charcoal, tab row This Device · Connections · Library Care · Your Library, 96 px
+  margins and rows. `0157-files-tab-0…3-content` vs `network-files-tabs/39`, `44`. Transfers waits for 0.158 (plan).
+- **4 / 5** ✓ Details tab v20: three columns, icon headings, faint row lines, Cast and Crew as 2:3 portraits, plain
+  underline tab row, hero with the white edge. `0140-reference-fixture-1920-1.0`, `movie-details` vs `details-background/21`.
+- **6** ◐ Hero flicker: buttons rebuilt only when the offer changes; artwork changes once (shade decided first, no second fade).
+- **7** ◐ Preparing playback keeps a fixed two-line space for the logo.
+- **8 / 23** ✓ Seek time box is the card (time over chapter), never clipped; Chapters / Episodes on the underline tab
+  row. `next-hud-1920-1.0` vs `player/27`.
+- **9 / 13 / 21** ✓ Playback Settings: underline tabs, chips (no squash, no blue), plain Playback list, centred Title
+  Case headings, white values and tick, sized to its tab. `0152-playback-side-panel-tab-0…2`, `playback-playback-tab` vs `player/25`.
+- **10** ◐ For This Series at the bottom of Subtitles and Audio (render fixture has no series); Playback tab save row
+  for format and skipping added (unit test `SeriesPlaybackChoicesTest`).
+- **11** open: QUESTIONS #12 (track pills on the main page, awaiting your yes).
+- **12 / 22** ✓ Track lists open on top of the panel, panel pushed back and darkened. `playback-subtitle-track-list` vs `player/28`.
+- **14** ◐ Generic chapter names renumbered (Scene 3 → Chapter n); unit test `PlaybackPartsTest`.
+- **15** ◐ Episodes cards: the episode's name, second line "Playing · Episode 2 · 46 min", never "Unknown"; `PlayerPartsStripTest`.
+- **16** answered: no captions under player cards (QUESTIONS #10).
+- **17** ◐ Chapter row centred between tab line and bottom edge (equal spacing in code).
+- **20** ✓ Focus ink black on white (top bar, tabs, rows and icons). `0157-files-topbar-focused`, `0157-files-tab-0-content`.
+- **24** ✓ USB-stick icon. `0157-files-tab-0-content`.
+- **25** ✓ Browsing a drive stays in Files as the folder grid. `0157-files-folder-grid` vs `network-files-tabs/32` (List view not yet; QUESTIONS #14).
+- **26** ✓ One Fix match page; Details › More says "Fix match". `find-a-match` vs `network-files-tabs/14b` (QUESTIONS #13).
