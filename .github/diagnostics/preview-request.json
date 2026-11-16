@@ -1,12 +1,13 @@
 {
- "purpose": "0.157 review round 4: seek card, track list on top, Files, Playback Settings",
+ "purpose": "0.157 review round 5: Details tab v20, player tabs, Episodes row, chapter row",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review0157RenderTest",
   "com.archos.mediacenter.video.player.Playback141RenderTest",
   "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest.render1080p",
   "com.archos.mediacenter.video.leanback.PreviewMoviePageTest.moviePageDelegatesPlaybackAndRenders",
   "com.archos.mediacenter.video.leanback.settings.Review0157SettingsRenderTest",
-  "com.archos.mediacenter.video.player.NextHudTest.rowAt1080p"
+  "com.archos.mediacenter.video.player.NextHudTest.rowAt1080p",
+  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest"
  ],
  "variants": {
   "normal": {}

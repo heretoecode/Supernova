@@ -107,7 +107,7 @@ public class Supernova138UiTest {
             assertSame(tab, page.findFocus());
             for (String heading :
                 new String[] {
-                    "Cast", "Crew", "Key Information", "Reception", "Technical Information"
+                    "Cast", "Crew", "Key information", "Reception", "Technical information"
                 }) {
                     View text = PreviewPagesTest.findText(page, heading);
                     assertNotNull(heading, text);
@@ -305,7 +305,7 @@ public class Supernova138UiTest {
             PreviewPagesTest.capture(nav, "0138-details-local-tracks-150-text");
             for (String heading :
                 new String[] {
-                    "Cast", "Crew", "Key Information", "Reception", "Technical Information"
+                    "Cast", "Crew", "Key information", "Reception", "Technical information"
                 }) {
                     TextView title = (TextView) PreviewPagesTest.findText(page, heading);
                     assertNotNull(heading, title);

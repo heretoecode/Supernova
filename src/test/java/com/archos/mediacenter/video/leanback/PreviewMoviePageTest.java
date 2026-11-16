@@ -227,13 +227,13 @@ public class PreviewMoviePageTest {
                                 .put("tagline", "A real supplied tagline")
                                 .put("revenue", 1234),
                             "movie", 0);
-            assertNotNull(PreviewPagesTest.findText(page, "Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page, "Technical information"));
             assertNotNull(PreviewPagesTest.findText(page, "Unknown"));
             assertNotNull(PreviewPagesTest.findText(page, "Reception"));
             assertNotNull(PreviewPagesTest.findText(page, "Ratings unavailable"));
             assertNull(PreviewPagesTest.findText(page, "Reviews unavailable"));
             assertNull(PreviewPagesTest.findText(page, "No rating available"));
-            assertNotNull(PreviewPagesTest.findText(page, "Description"));
+            // Details v20: the description is in the hero, so the tab has no Description section.
         } finally {
             host.pause().stop().destroy();
         }
@@ -424,9 +424,9 @@ public class PreviewMoviePageTest {
             assertTrue(restored.hasFocus());
             restored.performClick();
             PreviewPagesTest.layout(nav);
-            assertNotNull(PreviewPagesTest.findText(page, "Key Information"));
+            assertNotNull(PreviewPagesTest.findText(page, "Key information"));
             assertNotNull(PreviewPagesTest.findText(page, "Reception"));
-            assertNotNull(PreviewPagesTest.findText(page, "Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page, "Technical information"));
             View keyPanel = page.findViewWithTag("semantic:details.panel.key.information");
             assertNotNull(keyPanel);
             assertFalse(keyPanel.requestFocus());

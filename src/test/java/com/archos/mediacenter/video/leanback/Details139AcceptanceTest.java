@@ -230,8 +230,8 @@ public class Details139AcceptanceTest {
             assertEquals(page.getWidth() - Math.round(page.getWidth() * .04f), frame.getRight());
             assertEquals("Four percent viewport bottom inset", page.getHeight() - Math.round(page.getHeight() * .04f),
                 bounds(frame).bottom - page.getTop());
-            for (String section :
-                List.of("Description", "Key Information", "Reception", "Cast", "Crew", "Technical Information")) {
+            // Details tab v20 (approved 14 Nov 2026): three columns on the first screen; Cast and Crew below them.
+            for (String section : List.of("Key Information", "Reception", "Technical Information")) {
                 View region = page.findViewWithTag("details.region:" + section);
                 if (region == null)
                     region = page.findViewWithTag("details.region." + section);
@@ -251,11 +251,16 @@ public class Details139AcceptanceTest {
             TextView full = page.findViewWithTag("details.full.synopsis");
             assertEquals(synopsis, full.getText().toString());
             assertFalse(full.isFocusable());
-            assertNotNull("Explicit bounded long-synopsis policy", full.getEllipsize());
+            assertEquals("The description is in the hero, not repeated on the tab", View.GONE, full.getVisibility());
+            for (String people : List.of("Cast", "Crew"))
+                assertNotNull(people, page.findViewWithTag("details.region." + people));
             for (int n = 0; n < 5; n++)
                 key(root, KeyEvent.KEYCODE_DPAD_DOWN);
+            assertSame("Nothing on the tab takes focus", tab, page.findFocus());
+            key(root, KeyEvent.KEYCODE_DPAD_UP);
+            layout(root);
+            assertEquals("Up scrolls back to the top of the tab", 0, reading.getScrollY());
             assertSame(tab, page.findFocus());
-            assertEquals("Details is not independently scrollable", 0, reading.getScrollY());
             assertFalse(root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK)));
             PreviewPagesTest.capture(
                 root, "0140-details-fixed-" + root.getWidth() + "-" + root.getResources().getConfiguration().fontScale);

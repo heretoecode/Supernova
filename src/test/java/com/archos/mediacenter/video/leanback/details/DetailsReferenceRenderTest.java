@@ -191,7 +191,7 @@ public class DetailsReferenceRenderTest {
             .put("active_tab", rectangle(page.findViewWithTag("section:Details")));
         for (String name :
             new String[] {
-                "Description", "Key Information", "Reception", "Cast", "Crew", "Technical Information"
+                "Key Information", "Reception", "Cast", "Crew", "Technical Information"
             }) {
             View region = page.findViewWithTag("details.region." + name);
             if (region == null)

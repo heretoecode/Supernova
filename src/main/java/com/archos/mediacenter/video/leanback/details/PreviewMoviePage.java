@@ -288,14 +288,8 @@ public final class PreviewMoviePage extends ScrollView {
         reading = new ScrollView(c) {
             @Override
             protected void onMeasure(int w, int h) {
+                // The Details tab runs about two screens and scrolls (v20): measured at its own height.
                 super.onMeasure(w, h);
-                if ("Details".equals(activeSection) && getChildCount() > 0)
-                    getChildAt(0).measure(MeasureSpec.makeMeasureSpec(
-                                              Math.max(1, getMeasuredWidth() - getPaddingLeft() - getPaddingRight()),
-                                              MeasureSpec.EXACTLY),
-                                          MeasureSpec.makeMeasureSpec(
-                                              Math.max(1, getMeasuredHeight() - getPaddingTop() - getPaddingBottom()),
-                                              MeasureSpec.EXACTLY));
             }
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -731,6 +725,11 @@ public final class PreviewMoviePage extends ScrollView {
                 return true;
         }
         if (tag.startsWith("section:")) {
+            // Details tab (v20; owner, 5 Nov): Down scrolls to cast and crew, Up scrolls back, one more Up leaves.
+            if (key == KeyEvent.KEYCODE_DPAD_UP && activeSection.equals("Details") && reading.getScrollY() > 0) {
+                reading.scrollTo(0, 0);
+                return true;
+            }
             if (key == KeyEvent.KEYCODE_DPAD_UP) {
                 focusPrimary();
                 scrollTo(0, 0);
@@ -741,7 +740,13 @@ public final class PreviewMoviePage extends ScrollView {
                     int target = expandedScrollTarget();
                     int before = getScrollY();
                     scrollTo(0, target);
-                    if (before == getScrollY()) {
+                    int readingBefore = reading.getScrollY();
+                    if (before == getScrollY() && reading.getChildCount() > 0) {
+                        int end = Math.max(0, reading.getChildAt(0).getHeight() - reading.getHeight()
+                                              + reading.getPaddingTop() + reading.getPaddingBottom());
+                        reading.scrollTo(0, end);
+                    }
+                    if (before == getScrollY() && readingBefore == reading.getScrollY()) {
                         View reviews = findViewWithTag("details.reviews");
                         if (reviews != null)
                             reviews.requestFocus();
@@ -1317,15 +1322,8 @@ public final class PreviewMoviePage extends ScrollView {
                         break;
                     }
         }
+        // Each technical fact has its own row on the Details tab (v20), so nothing is merged here.
         Map<String, String> technicalFacts = DetailsBlueprintPanel.facts(technical);
-        if (movie != null)
-            technicalFacts.put(
-                "Video", SharedMetadata.join(technicalFacts.get("Resolution"), technicalFacts.get("Video codec"),
-                                             technicalFacts.get("Dynamic range"), technicalFacts.get("Frame rate"),
-                                             technicalFacts.get("Video bitrate")));
-        if (technicalFacts.containsKey("Subtitles"))
-            technicalFacts.put("Audio tracks", SharedMetadata.join(technicalFacts.get("Audio tracks"),
-                                                                   "Subtitles: " + technicalFacts.get("Subtitles")));
         if (technicalFacts.containsKey("Average file size"))
             technicalFacts.put("Library size", technicalFacts.get("Library size") + " · avg " +
                                                    technicalFacts.get("Average file size"));
@@ -1683,12 +1681,17 @@ public final class PreviewMoviePage extends ScrollView {
         portrait.setForeground(new com.archos.mediacenter.video.leanback.ArtworkEdge(getContext(), 4, false));
         portraits.put(name, portrait);
         cell.addView(portrait, new LinearLayout.LayoutParams(dp(40), dp(60)));
+        boolean first = true;
         for (String value : new String[] {name, safe(role)}) {
-            TextView text = text(value, 9);
+            TextView text = text(value, first ? 10 : 9);
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(true);
             text.setEllipsize(TextUtils.TruncateAt.END);
-            cell.addView(text, new LinearLayout.LayoutParams(-1, dp(12)));
+            text.setTextColor(first ? Color.WHITE : SupernovaStyle.TEXT_SECONDARY);
+            LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-1, -2);
+            size.topMargin = first ? dp(8) : dp(2);
+            cell.addView(text, size);
+            first = false;
         }
         row.addView(cell, new LinearLayout.LayoutParams(-1, -1));
     }

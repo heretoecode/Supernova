@@ -72,23 +72,27 @@ public class DetailsImprovementsTest {
     }
 
     @Test
-    public void peopleGridHasSharedGapFourColumnsAndNoFocusStops() {
-        for (int count : new int[] {
-            0, 1, 4, 5, 8
-        }) {
+    public void peopleGridIsOneRowOfPortraitCardsWithNoFocusStops() {
+        // Details tab v20 (approved 14 Nov 2026): up to eight 2:3 portrait cards in one row.
+        for (int count : new int[] {0, 1, 4, 8}) {
             DetailsPeopleGrid grid = new DetailsPeopleGrid(context);
-            for (int i = 0; i < count; i++)
-                grid.addView(new LinearLayout(context));
-            grid.measure(View.MeasureSpec.makeMeasureSpec(801, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(281, View.MeasureSpec.EXACTLY));
-            grid.layout(0, 0, 801, 281);
-            if (count > 4) {
-                assertEquals(grid.rowGap(), grid.getChildAt(4).getTop() - grid.getChildAt(0).getBottom());
-                assertEquals(grid.getChildAt(0).getLeft(), grid.getChildAt(4).getLeft());
-            }
             for (int i = 0; i < count; i++) {
-                assertTrue(grid.getChildAt(i).getBottom() <= grid.getHeight());
-                assertTrue(grid.getChildAt(i).getRight() <= grid.getWidth());
+                LinearLayout cell = new LinearLayout(context);
+                cell.setOrientation(LinearLayout.VERTICAL);
+                cell.addView(new ImageView(context), new LinearLayout.LayoutParams(10, 10));
+                grid.addView(cell);
+            }
+            grid.measure(View.MeasureSpec.makeMeasureSpec(1600, View.MeasureSpec.EXACTLY),
+                         View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            grid.layout(0, 0, 1600, grid.getMeasuredHeight());
+            for (int i = 0; i < count; i++) {
+                View cell = grid.getChildAt(i);
+                View portrait = ((ViewGroup) cell).getChildAt(0);
+                assertEquals("One row", 0, cell.getTop());
+                assertTrue(cell.getRight() <= grid.getWidth());
+                assertEquals("Portrait 2:3", Math.round(portrait.getWidth() * 1.5f), portrait.getHeight());
+                if (i > 0)
+                    assertEquals(grid.gap(), cell.getLeft() - grid.getChildAt(i - 1).getRight());
             }
             assertEquals(ViewGroup.FOCUS_BLOCK_DESCENDANTS, grid.getDescendantFocusability());
         }
