@@ -29,9 +29,11 @@ import java.util.List;
 public final class FilesPage extends LinearLayout
 {
     // Transfers waits for 0.158 (build order: "Files without Transfers").
-    public static final String[] TABS = {"This Device", "Connections", "Library Care"};
-    static final String[] TAB_ICONS = {"tv", "integration", "health"};
+    public static final String[] TABS = {"This Device", "Connections", "Library Care", "Your Library"};
+    static final String[] TAB_ICONS = {"tv", "integration", "health", "chart"};
     public static final int LIBRARY_CARE = 2;
+    public static final int YOUR_LIBRARY = 3;
+    private LibraryStats stats;
 
     static final int SECOND_LINE = 0xFFC9D3E6;
     static final int LINE = 0x14FFFFFF;
@@ -239,6 +241,137 @@ public final class FilesPage extends LinearLayout
         {
             thisDevice(column);
         }
+        else if (tab == YOUR_LIBRARY)
+        {
+            yourLibrary(column);
+        }
+    }
+
+    /** The library's figures for Files › Your Library. */
+    public void setStats(LibraryStats latest)
+    {
+        stats = latest;
+        if (tabs.openTab() == YOUR_LIBRARY)
+        {
+            show(YOUR_LIBRARY);
+        }
+    }
+
+    /**
+     * Files › Your Library (approved 13 Nov 2026, mock-up network-files-tabs/44): Total Library, By Library Page and
+     * Most Space Per Episode, each row a name, a second line and its figures on the right.
+     */
+    private void yourLibrary(LinearLayout column)
+    {
+        LibraryStats s = stats == null ? LibraryStats.of(new java.util.ArrayList<>(), 0) : stats;
+        heading(column, "Total Library", "chart", false);
+        statRow(column, "list", s.all.name,
+                joinDot(count(s.all.titles, "title"), count(s.all.videos, "video"), size(s.all.bytes())),
+                places(s.all), true);
+        statRow(column, "check", "Watched", s.watchedTitles + " of " + count(s.all.titles, "title"),
+                s.percent(s.watchedTitles) + "%", false);
+        statRow(column, "time", "Time to watch everything", "Every unwatched title and episode",
+                String.format(java.util.Locale.UK, "%,d hours", s.hoursToWatch), false);
+        statRow(column, "hdr", "Picture", s.uhdTitles + " titles in 4K · " + s.hdrTitles + " in HDR",
+                s.percent(s.uhdTitles) + "% 4K · " + s.percent(s.hdrTitles) + "% HDR", false);
+        java.text.DateFormat month = new java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale.UK);
+        statRow(column, "folder", "Added this month", "Since " + month.format(monthStart()),
+                count(s.addedThisMonth, "title"), false);
+        heading(column, "By Library Page", "film", true);
+        for (LibraryStats.Page page : new LibraryStats.Page[] {s.movies, s.shows})
+        {
+            String line = page == s.shows
+                ? joinDot(count(page.titles, "title"), count(page.videos, "episode"), size(page.bytes()))
+                : joinDot(count(page.titles, "title"), size(page.bytes()));
+            statRow(column, page == s.shows ? "tv" : "film", page.name, line, places(page), false);
+        }
+        if (!s.heaviest.isEmpty())
+        {
+            heading(column, "Most Space Per Episode", "sort", true);
+            for (LibraryStats.Heavy heavy : s.heaviest)
+            {
+                statRow(column, "tv", heavy.show,
+                        joinDot(count(heavy.episodes, "episode"), size(heavy.bytes)),
+                        size(heavy.perEpisode()) + " per episode", false);
+            }
+        }
+    }
+
+    private static String joinDot(String... parts)
+    {
+        return TextUtils.join(" · ", parts);
+    }
+
+    private static String count(long value, String noun)
+    {
+        return String.format(java.util.Locale.UK, "%,d", value) + " " + noun + (value == 1 ? "" : "s");
+    }
+
+    private String size(long bytes)
+    {
+        return android.text.format.Formatter.formatShortFileSize(getContext(), bytes);
+    }
+
+    /** On this device and on the network, the two sizes in a mock-up line. */
+    private String places(LibraryStats.Page page)
+    {
+        return "This device " + size(page.localBytes) + " · Network " + size(page.networkBytes);
+    }
+
+    public static java.util.Date monthStart()
+    {
+        java.util.Calendar start = java.util.Calendar.getInstance();
+        start.set(java.util.Calendar.DAY_OF_MONTH, 1);
+        start.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        start.set(java.util.Calendar.MINUTE, 0);
+        start.set(java.util.Calendar.SECOND, 0);
+        start.set(java.util.Calendar.MILLISECOND, 0);
+        return start.getTime();
+    }
+
+    /** A row of figures: name and second line on the left, the figures in white on the right. */
+    private void statRow(LinearLayout column, String icon, String name, String line, String value, boolean first)
+    {
+        Context context = getContext();
+        LinearLayout row = new LinearLayout(context);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setFocusable(true);
+        row.setFocusableInTouchMode(true);
+        row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        int pad = SupernovaStyle.dp(context, 20);
+        row.setPadding(pad, 0, pad, 0);
+        row.setContentDescription(name + ", " + value);
+        TextView mark = new TextView(context);
+        PreviewIcon.apply(mark, icon, 16);
+        row.addView(mark, new LayoutParams(SupernovaStyle.dp(context, 36), -2));
+        LinearLayout words = new LinearLayout(context);
+        words.setOrientation(VERTICAL);
+        TextView title = text(name, 18, Color.WHITE);
+        TextView second = text(line, 13.5f, SECOND_LINE);
+        words.addView(title);
+        words.addView(second);
+        row.addView(words, new LayoutParams(0, -2, 1));
+        TextView figure = text(value, 15, Color.WHITE);
+        figure.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+        row.addView(figure, new LayoutParams(-2, -2));
+        row.setOnFocusChangeListener((view, focused) -> {
+            int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
+            title.setTextColor(ink);
+            second.setTextColor(focused ? SupernovaStyle.FOCUS_TEXT : SECOND_LINE);
+            figure.setTextColor(ink);
+            mark.setTextColor(ink);
+            SupernovaStyle.inkIcons(mark, ink);
+            row.setBackground(focused ? box(SupernovaStyle.FOCUS_FILL) : null);
+        });
+        Object previous = column.getChildCount() == 0 ? null : column.getChildAt(column.getChildCount() - 1).getTag();
+        if (previous instanceof String && ((String) previous).startsWith(ROW))
+        {
+            View divider = new View(context);
+            divider.setBackgroundColor(LINE);
+            column.addView(divider, new LayoutParams(-1, Math.max(1, SupernovaStyle.dp(context, 1))));
+        }
+        row.setTag(first ? "files.row.first" : ROW);
+        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
     }
 
     private void showSummary()

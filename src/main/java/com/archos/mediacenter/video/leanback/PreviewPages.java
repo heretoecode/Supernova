@@ -2861,6 +2861,7 @@ public final class PreviewPages extends FrameLayout {
                         com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
                 });
             filesPage.setMedia(media);
+            filesPage.setStats(libraryStats());
             filesPage.setScanActions(() -> PreviewLibraryScan.request(getContext()),
                                      () -> PreviewLibraryScan.stop(getContext()));
             container.addView(filesPage, new LinearLayout.LayoutParams(-1, -1));
@@ -2881,6 +2882,26 @@ public final class PreviewPages extends FrameLayout {
                 int unreadable = com.archos.mediacenter.video.leanback.files.FilesPageData.unreadable(app);
                 page.post(() -> page.setUnreadable(unreadable));
             }, "FilesUnreadable").start();
+        }
+
+        /** Files › Your Library: one line per video in the library snapshot (mock-up network-files-tabs/44). */
+        private com.archos.mediacenter.video.leanback.files.LibraryStats libraryStats() {
+            List<com.archos.mediacenter.video.leanback.files.LibraryStats.Item> items = new ArrayList<>();
+            for (Entry entry : snapshot.technical) {
+                if (!(entry.media instanceof Video))
+                    continue;
+                Video video = (Video)entry.media;
+                String show = video instanceof Episode ? ((Episode)video).getShowName() : null;
+                boolean uhd = video.getMeasuredHeight() >= 1800 || video.getMeasuredWidth() >= 3800;
+                String range = video.getPreviewDynamicRange();
+                boolean hdr = !range.isEmpty() && !"SDR".equalsIgnoreCase(range);
+                items.add(new com.archos.mediacenter.video.leanback.files.LibraryStats.Item(
+                    show == null || show.isEmpty() ? (video instanceof Episode ? "Unknown" : null) : show,
+                    Math.max(0, video.getSize()), video.isLocalFile(), video.getDurationMs(), video.getResumeMs(),
+                    video.isWatched(), uhd, hdr, entry.added));
+            }
+            long monthStart = com.archos.mediacenter.video.leanback.files.FilesPage.monthStart().getTime() / 1000L;
+            return com.archos.mediacenter.video.leanback.files.LibraryStats.of(items, monthStart);
         }
 
         /** Adds what the last check found (and when each was last seen); starts a check at most once a minute. */
