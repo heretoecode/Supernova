@@ -199,6 +199,14 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return null;
         }
 
+        /** The Playback tab's save row: null when this is not an episode of a known series. */
+        default Boolean seriesPlayback() {
+            return null;
+        }
+
+        default void setSeriesPlayback(boolean enabled) {
+        }
+
         default void setSeriesChoices(boolean enabled) {
         }
 
@@ -900,6 +908,34 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             choiceStepper("skipmode", "skip", "Skip Intros & Credits");
         else
             option("skip", "skip", "Skip Intros & Credits");
+        seriesPlaybackRow();
+    }
+
+    /**
+     * The Playback tab's save row (player v11, approved 13 Nov 2026): "Use this format and skipping for all of
+     * <show>". While it is on, changing the format or skipping here updates what the series remembers.
+     */
+    private void seriesPlaybackRow() {
+        if (backend.seriesPlayback() == null)
+            return;
+        section("FOR THIS SERIES", false);
+        String name = backend.seriesName().isEmpty() ? "this series" : backend.seriesName();
+        String label = "Use this format and skipping for all of " + name;
+        LinearLayout row = row("playback.row.series", "repeat", label);
+        ImageView value = switchView(row);
+        bindings.add(() -> {
+            Boolean on = backend.seriesPlayback();
+            boolean enabled = on != null && on;
+            if (enabled)
+                backend.setSeriesPlayback(true);
+            value.setImageDrawable(StandardSwitchDrawable.snapshot(owner, enabled));
+            row.setContentDescription(label + ", " + (enabled ? "On" : "Off"));
+        });
+        row.setOnClickListener(v -> {
+            Boolean on = backend.seriesPlayback();
+            backend.setSeriesPlayback(on == null || !on);
+            refresh();
+        });
     }
 
     /** Approved mock-up {@code suggestions/06}: remember this episode's choices for the whole series. */

@@ -5654,6 +5654,36 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
+    /** The series' remembered picture format and skipping, when its save row is on (player v11). */
+    private void applySeriesPlayback()
+    {
+        String series = mVideoInfo != null && mVideoInfo.isShow ? mVideoInfo.scraperShowId : null;
+        SeriesPlaybackChoices choices = new SeriesPlaybackChoices(this);
+        int format = choices.format(series);
+        if (format >= 0)
+            mSurfaceController.setVideoFormat(format);
+        SeriesPlaybackChoices.useSkipping(choices.skip(series));
+    }
+
+    /** Null when this is not an episode of a known series. */
+    public Boolean seriesPlaybackEnabled()
+    {
+        if (mVideoInfo == null || !mVideoInfo.isShow || mVideoInfo.scraperShowId == null)
+            return null;
+        return new SeriesPlaybackChoices(this).enabled(mVideoInfo.scraperShowId);
+    }
+
+    /** Turns the series' save row on (remembering today's format and skipping) or off. */
+    public void setSeriesPlaybackEnabled(boolean on)
+    {
+        if (mVideoInfo == null || !mVideoInfo.isShow || mVideoInfo.scraperShowId == null)
+            return;
+        SegmentSkippingPolicy.Mode skip =
+            SegmentSkippingPolicy.mode(mPreferences, com.archos.mediacenter.utils.introdb.IntroSegments.Type.INTRO);
+        new SeriesPlaybackChoices(this).set(mVideoInfo.scraperShowId, on, mSurfaceController.getCurrentFormat(), skip);
+        SeriesPlaybackChoices.useSkipping(on ? skip : null);
+    }
+
     public boolean seriesTrackChoicesEnabled()
     {
         return mVideoInfo != null && mVideoInfo.isShow && mVideoInfo.scraperShowId != null &&
@@ -6255,6 +6285,7 @@ public class PlayerActivity extends AppCompatActivity
         @Override public void onFirstPlay()
         {
             mPlayerController.hide();
+            applySeriesPlayback();
         }
 
         @Override public void onIntroDbReady()
