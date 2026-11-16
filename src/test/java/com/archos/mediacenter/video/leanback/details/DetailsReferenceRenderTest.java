@@ -264,6 +264,15 @@ public class DetailsReferenceRenderTest {
     private void assertWholeText(View root, String text) {
         TextView view = find(root, text);
         assertNotNull(text, view);
+        // Details v20 scrolls: bring the text into view as Down would on a small screen.
+        View reading = root.findViewWithTag("details.reading.overflow");
+        if (reading instanceof android.widget.ScrollView) {
+            Rect place = new Rect(0, 0, view.getWidth(), view.getHeight());
+            ((ViewGroup) reading).offsetDescendantRectToMyCoords(view, place);
+            int shown = reading.getHeight() - reading.getPaddingTop() - reading.getPaddingBottom();
+            if (place.bottom - reading.getScrollY() > shown)
+                reading.scrollTo(0, Math.max(0, place.bottom - shown));
+        }
         Rect bounds = new Rect();
         assertTrue(text, view.getGlobalVisibleRect(bounds));
         assertEquals("No clipped rating/provider: " + text, view.getHeight(), bounds.height());
