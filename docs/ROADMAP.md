@@ -17,6 +17,10 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 - Episodes: OK plays; long-press menu (Play, Show details, Delete episode); deleting one offers earlier episodes of the season, each your choice
 - Network statistics: split by source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library
 - Feature blueprint (research): pick ideas to take forward (`docs/research/FEATURE_BLUEPRINT.md`)
+- Diagnostics that catch problems before you notice them: a health snapshot (memory, threads, caches, database,
+  free space, temperature), smoothness (dropped frames, slow remote response), speed (start-up, page and artwork times),
+  playback quality, stability (crashes, freezes, leaks), and a Health summary at the top of each report flagging anything
+  over its limit; later the build checks the same limits
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
