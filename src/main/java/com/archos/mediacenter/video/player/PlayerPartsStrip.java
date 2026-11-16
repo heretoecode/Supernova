@@ -409,10 +409,7 @@ final class PlayerPartsStrip implements PlayerController.Strip
     {
         boolean playing = item.id == currentId;
         card.playing = playing;
-        String minutes = item.durationMs > 0 ? Math.max(1, Math.round(item.durationMs / 60000f)) + " min" : "";
-        String state = playing ? "Playing" : item.watched ? "Watched" : "";
-        String text = state.isEmpty() ? minutes : minutes.isEmpty() ? state : state + " · " + minutes;
-        card.subtitle.setText(text.isEmpty() ? "Unknown" : text);
+        card.subtitle.setText(episodeLine(item, playing));
         card.subtitle.setTextColor(playing ? PLAYING_TEXT : SupernovaStyle.TEXT);
         float fraction = 0f;
         if (playing && item.durationMs > 0)
@@ -498,9 +495,36 @@ final class PlayerPartsStrip implements PlayerController.Strip
         return key.toString();
     }
 
+    /** The card's name: the episode's own title, or "Episode 4" when it has none (0.157 Shield review #15). */
     static String episodeTitle(PlaybackEpisodes.Item item)
     {
-        return item.number > 0 ? "Episode " + item.number : TextUtils.isEmpty(item.title) ? "Unknown" : item.title;
+        if (!TextUtils.isEmpty(item.title) && !genericEpisodeTitle(item.title))
+            return item.title;
+        return item.number > 0 ? "Episode " + item.number : "Episode";
+    }
+
+    /**
+     * The card's second line from what is known, never "Unknown": Playing / Watched, the episode number when the
+     * name is on the first line, and the length. "Playing · Episode 2 · 46 min".
+     */
+    static String episodeLine(PlaybackEpisodes.Item item, boolean playing)
+    {
+        List<String> parts = new ArrayList<>();
+        if (playing)
+            parts.add("Playing");
+        else if (item.watched)
+            parts.add("Watched");
+        if (item.number > 0 && !episodeTitle(item).equals("Episode " + item.number))
+            parts.add("Episode " + item.number);
+        if (item.durationMs > 0)
+            parts.add(Math.max(1, Math.round(item.durationMs / 60000f)) + " min");
+        return TextUtils.join(" · ", parts);
+    }
+
+    /** "Episode 4", "Ep. 4", "4": a title that only repeats the number. */
+    static boolean genericEpisodeTitle(String title)
+    {
+        return title.trim().matches("(?i)(episode|ep\\.?)?\\s*0*[0-9]+");
     }
 
     /** "0:52", "11:40" or "1:02:05". */
