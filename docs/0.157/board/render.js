@@ -12,7 +12,7 @@ const cols = [
     ['Ready (designed and approved)', ['A Trakt list as a Home row: only what streams on your services, logo on every '
       + 'card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)',
       'Media Transfers, all of it: copy, checks, resilience, delete after copy, per-series "Bring new episodes", schedule '
-      + '(docs/0.158/MEDIA_TRANSFERS.md; five small questions still open there)']],
+      + '(docs/0.158/MEDIA_TRANSFERS.md; two small questions still open there)']],
     ['To discuss (owner, 16 Nov)', ['Episodes: OK plays; long-press menu (Play, Show details, Delete episode); '
       + 'deleting one offers earlier episodes of the season, each your choice', 'Network statistics: split by '
       + 'source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library',
