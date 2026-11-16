@@ -42,21 +42,21 @@ optionally delete the network copy once the local copy is safe.
 - Running while the device sleeps. The owner has run a Plex server on this Shield while it slept, so background work
   is possible; test early.
 
-## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/` v2, to approve)
+## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/` v3, to approve)
 A section on the Transfers tab, above Where copies go:
-- **Keep free on this device: a percentage of the drive the copies go to** (5 · 10 · 15 · 20%), shown with its size
-  (e.g. "10% · 100 GB"), because copies may go to a large USB drive or the small internal storage. Second line: "Small
-  overruns are fine; bigger ones wait for your OK". **An overrun of up to 2% of the amount kept free goes ahead; anything
-  bigger pauses the copy (never cancels it) until you say.** Started by you: asked straight away ("Copy anyway?": the
-  title and size, then one line "Leaves 31 GB free, under the 10% (100 GB) you keep free."; Cancel first · Copy anyway ·
-  Choose another folder). Arising later (automatic copies, or space shrinking): the copy waits in **Needs your OK** at the
-  top of the Transfers tab with the same three buttons on its focused row. A truly full disk stops with an error.
+- **Keep free on this device: a percentage of the drive the copies go to** (5 · 10 · 15 · 20%), shown with the real
+  size of that percentage on that drive (e.g. "10% · 100 GB"). Second line: "Small overruns are fine; bigger ones wait
+  for your OK". **An overrun of up to 2% of the amount kept free goes ahead; anything bigger pauses the copy (never
+  cancels it) and puts it in Needs your OK** at the top of the Transfers tab (Copy anyway · Choose another folder ·
+  Cancel on its focused row). **No pop-up** (owner, 16 Nov: nothing forced): where you pressed Copy it quietly reads
+  "Waiting for your OK · Transfers". A truly full disk stops with an error.
 - **While you watch** (from the network or this device): Pause · Slow down · Carry on (default Slow down).
 - **Scans** always get priority (no setting).
-- **Full speed hours** › panel: Full speed hours (switch) · From and Until (Left/Right in half hours) · Full speed now
-  ("until 07:00, or until you watch something"). Inside the hours copies run flat out; outside, While you watch applies.
+- **Full speed from ‹02:00›** and **until ‹07:00›**, inline (Left/Right in half hours; the first "from" step is Off).
+  Between the times copies run flat out; otherwise gently, leaving room on the network.
+- **Full speed now:** a button on the copying row (beside Pause and Cancel), not a setting.
 - **Copies at once:** 1 · 2 · 3 (default 1).
-- **Where copies go** › panel: Movies and TV Shows rows, each opening the one folder picker (`network-files-tabs/40`).
+- **Where copies go:** two inline rows, Movies and TV Shows, each showing its folder; OK opens the one folder picker.
 - **Remove the network copy:** one switch for everything (owner, 16 Nov), off by default; Bring new episodes follows it.
 - "Only copy from these connections": dropped.
 - **The Files dot (owner, 16 Nov):** Files always opens on This Device; nothing is forced. Each tab needing a look carries
