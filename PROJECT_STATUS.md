@@ -4,6 +4,10 @@ Updated 6 November 2026 (night). Keep this page short and current: update it at 
 
 ## Released
 
+**0.157.1** (code 1571) — signed 16 Nov 2026 (run 43960203498 of `supernova-0157-qa.yml`, from green conformance run
+43952836182 on `5f5f9f6`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.1.apk`). 0.157 plus every fix from the Shield
+review (`docs/0.157/REVIEW_0157.md`). Waiting for the owner to install it.
+
 **Numbering (owner, 16 Nov 2026):** point releases are allowed; version codes are version × 10 from 0.157.1 on
 (0.157.1 = 1571, 0.158 = 1580). **0.157.1** = 0.157 plus the Shield review fixes (`docs/0.157/REVIEW_0157.md`).
 

@@ -74,8 +74,8 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   control row, track names and pills, subtitle lists stacked on the panel).
 
 ## Now: 0.157.1 (owner, 16 Nov): 0.157 + the review fixes; code 1571 (codes are version × 10 from now)
-- Build and signing checks accept 0.157.1 (version strings and APK names only). Next: green conformance, then sign
-  with `supernova-0157-qa.yml`; APK `Supernova_0.157.1.apk` in artifact `supernova-0157-signed-qa`.
+- **Signed 16 Nov:** conformance 43952836182 on `5f5f9f6` green; signing run 43960203498; APK `Supernova_0.157.1.apk` in
+  artifact `supernova-0157-signed-qa` (kept 14 days). Next: the owner installs it on the Shield and reviews.
 
 ## Fix 0.157 against the approved designs (owner, 16 Nov)
 - Source: `docs/0.157/REVIEW_0157.md` on `claude/project-discussion-planning-fccq9a` (26 Shield problems; an audit

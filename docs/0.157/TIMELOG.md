@@ -49,3 +49,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 16 Nov (later) | Fix-against-designs loop starts. Discussion branch merged (b45042a). Blocked: `docs/0.157/REVIEW_0157.md` is not on the discussion branch yet; watching for it. |
 | 16 Nov (later) | Review fixes: shared pieces (frame, tabs, focus ink, choice list, headings, values) and Playback Settings, Files fixes; renders compared. |
 | 16 Nov (later) | Review fixes continued: Details v20, Fix match page, Your Library, folder grid, switches, Settings rows, series save row. |
+| 16 Nov (evening) | 0.157.1 green (run 43952836182) and signed (run 43960203498). Discussion branch merged. |
