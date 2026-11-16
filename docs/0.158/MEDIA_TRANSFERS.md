@@ -1,4 +1,4 @@
-# Media Transfers: everything decided so far (gathered 15 Nov 2026)
+# Media Transfers: everything decided so far (gathered 15 Nov 2026; roadmap: Undecided › Ready, 16 Nov)
 
 Moved whole into **0.158** (owner, 15 Nov 2026): wanted, but not urgent, and the owner wants time to think of more
 settings and improvements. Sources: `docs/0.157/OWNER_NOTES.md` §23–24 and §28, mock-up

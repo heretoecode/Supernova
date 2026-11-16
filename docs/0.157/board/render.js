@@ -10,7 +10,9 @@ const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/w
 const cols = [
   ['Undecided', [
     ['Ready (designed and approved)', ['A Trakt list as a Home row: only what streams on your services, logo on every '
-      + 'card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)']],
+      + 'card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)',
+      'Media Transfers, all of it: copy, checks, resilience, delete after copy, per-series "Bring new episodes", schedule '
+      + '(docs/0.158/MEDIA_TRANSFERS.md; five small questions still open there)']],
     ['To discuss (owner, 16 Nov)', ['Episodes: OK plays; long-press menu (Play, Show details, Delete episode); '
       + 'deleting one offers earlier episodes of the season, each your choice', 'Network statistics: split by '
       + 'source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library',
@@ -44,8 +46,6 @@ const cols = [
       + '/ Restore, smart steps)', 'Search (library first, On your services, recent searches)']],
     ['In discussion, pinned here', ['Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA '
       + 'name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)']],
-    ['Features', ['Media Transfers, all of it: copy, checks, resilience, delete after copy, per-series “Bring new '
-      + 'episodes”, schedule (docs/0.158/MEDIA_TRANSFERS.md)']],
   ]],
   ['Parked', [
     ['To discuss', ['Release notes: proper notes for every version (0.156 has two vague lines)']],
