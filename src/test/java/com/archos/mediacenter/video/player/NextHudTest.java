@@ -157,6 +157,11 @@ public class NextHudTest {
         assertNotNull(bubble.getLayout());
         assertEquals("Timestamp must actually fit its painted text layout", 0, bubble.getLayout().getEllipsisCount(0));
         assertTrue(bubble.getWidth() > bubble.getCompoundPaddingLeft() + bubble.getCompoundPaddingRight());
+        // Lay out the time card added by the first pass, then draw over a dark scene so white text shows.
+        layout();
+        ReflectionHelpers.callInstanceMethod(controller, "updatePreviewScrubber");
+        layout();
+        root.setBackgroundColor(0xFF202428);
         Bitmap image = Bitmap.createBitmap(root.getWidth(), root.getHeight(),
                                                                              Bitmap.Config.ARGB_8888);
         root.draw(new Canvas(image));
