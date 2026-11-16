@@ -1,16 +1,10 @@
 {
- "purpose": "Network & Files: options 2 and 4 with stronger tile outlines",
+ "purpose": "0.157 review baseline: Files in the app frame, Playback Settings, Settings, Details",
  "tests": [
-  "com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus"
+  "com.archos.mediacenter.video.leanback.Review0157RenderTest",
+  "com.archos.mediacenter.video.player.Playback141RenderTest",
+  "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest.render1080p",
+  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest.moviePageDelegatesPlaybackAndRenders"
  ],
- "variants": {
-  "option2-edge28": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "47ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
-  "option2-edge40": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "66ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
-  "option3-edge28": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "47ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
-  "option3-edge40": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "66ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"}
- }
+ "variants": {"normal": {}}
 }
