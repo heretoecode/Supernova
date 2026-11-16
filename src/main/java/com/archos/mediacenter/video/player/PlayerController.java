@@ -2010,6 +2010,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         // The time box is the card (player v8-v11): no tooltip; the card behind it is drawn by placeSeekPicture.
         bubble.setBackground(null);
         bubble.setGravity(Gravity.START | Gravity.BOTTOM);
+        bubble.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
         keepUnclipped(bubble);
         ChapterMarkers markers = mControllerViewLeft.findViewById(R.id.preview_chapter_markers);
         if (markers != null)
