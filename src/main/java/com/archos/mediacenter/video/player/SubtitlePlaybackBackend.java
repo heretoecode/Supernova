@@ -82,17 +82,21 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     private List<PlaybackSubtitlePanel.Track> asTracks(List<TVMenuItem> items, boolean subtitles) {
         List<PlaybackSubtitlePanel.Track> out = new ArrayList<>();
         com.archos.mediacenter.video.utils.VideoMetadata metadata =
-            subtitles || Player.sPlayer == null ? null : Player.sPlayer.getVideoMetadata();
-        // Audio tracks in plain words with pills when the engine's list lines up with the menu.
-        boolean details = metadata != null && metadata.getAudioTrackNb() == items.size();
+            Player.sPlayer == null ? null : Player.sPlayer.getVideoMetadata();
+        // Plain words with pills when the engine's list lines up with the menu (subtitles: after the first row).
+        int offset = subtitles ? 1 : 0;
+        boolean details = metadata != null && (subtitles
+            ? metadata.getSubtitleTrackNb() == items.size() - offset
+            : metadata.getAudioTrackNb() == items.size());
         for (int i = 0; i < items.size(); i++) {
             TVMenuItem item = items.get(i);
             final int index = i;
             Object language = item.getTag(R.id.preview_track_language);
             String label = plain(item);
             List<String> pills = java.util.Collections.emptyList();
-            if (details) {
-                TrackDetails track = TrackDetails.audio(metadata.getAudioTrack(i));
+            if (details && i >= offset) {
+                TrackDetails track = subtitles ? TrackDetails.subtitle(metadata.getSubtitleTrack(i - offset))
+                                               : TrackDetails.audio(metadata.getAudioTrack(i));
                 if (!track.language().isEmpty())
                     label = track.language();
                 pills = PlaybackSubtitlePanel.pills(track);
