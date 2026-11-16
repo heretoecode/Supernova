@@ -46,6 +46,8 @@ optionally delete the network copy once the local copy is safe.
 - Anything to add to Transfers settings (e.g. how much free space to always keep, speed limit, which connections are
   allowed)?
 - Should "Remove the network copy" be per transfer, per series, or one switch for everything?
-- What happens when the local folder fills up: stop, or remove the oldest watched copies?
-- Should watched copies ever be cleaned up automatically?
-- Notifications inside Supernova when something finishes or fails (a badge on Files, a line on Home)?
+- **Decided (owner, 16 Nov):** when the local folder fills up, **stop** (never remove anything), show an error and ask
+  the user to choose another location.
+- **Decided (owner, 16 Nov):** watched copies are **never cleaned up automatically**.
+- **Decided (owner, 16 Nov):** a transfer problem shows as the **dot beside Files** in the top bar (the existing
+  attention dot).

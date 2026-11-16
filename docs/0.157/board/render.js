@@ -16,7 +16,9 @@ const cols = [
     ['To discuss (owner, 16 Nov)', ['Episodes: OK plays; long-press menu (Play, Show details, Delete episode); '
       + 'deleting one offers earlier episodes of the season, each your choice', 'Network statistics: split by '
       + 'source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library',
-      'Feature blueprint (research): pick ideas to take forward (docs/research/FEATURE_BLUEPRINT.md)']],
+      'Feature blueprint (research): pick ideas to take forward (docs/research/FEATURE_BLUEPRINT.md)',
+      'Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA '
+      + 'name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)']],
   ]],
   ['0.157', [
     ['Redesigns', ['Foundation: panels, menus, choice list, focus, headings', 'One keyboard: paste from the phone '
@@ -44,8 +46,7 @@ const cols = [
     ['Redesigns', ['Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)', 'Library pages (posters, '
       + 'Filters, Sort, Columns, list view, Customise page, empty pages, + page, episode counts)', 'Settings (seven tabs, Backup and Restore, Diagnostics, About)', 'Onboarding (on Home, Start fresh '
       + '/ Restore, smart steps)', 'Search (library first, On your services, recent searches)']],
-    ['In discussion, pinned here', ['Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA '
-      + 'name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)']],
+
   ]],
   ['Parked', [
     ['To discuss', ['Release notes: proper notes for every version (0.156 has two vague lines)']],
