@@ -1337,8 +1337,38 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         value.setText(selected == null ? none : selected.label);
         PreviewLanguageIcon.apply(value, selected == null ? null : selected.language, s(30));
         value.setCompoundDrawablePadding(s(10));
-        row.setContentDescription(title + ", " + value.getText() +
+        showTrackPills(value, selected == null || selected.pills == null ? Collections.emptyList() : selected.pills);
+        String pills = selected == null || selected.pills == null || selected.pills.isEmpty() ? ""
+            : ", " + String.join(", ", selected.pills);
+        row.setContentDescription(title + ", " + value.getText() + pills +
                                   ". Left and Right change track; OK shows all tracks.");
+    }
+
+    /**
+     * The chosen track's pills beside its name on the main page, as in the lists (owner, 16 Nov 2026: yes to
+     * REVIEW_0157 #11), e.g. English · Original · SDH.
+     */
+    private void showTrackPills(TextView value, List<String> pills) {
+        if (!(value.getParent() instanceof ViewGroup))
+            return;
+        ViewGroup box = (ViewGroup) value.getParent();
+        for (int i = box.getChildCount() - 1; i >= 0; i--)
+            if ("track.pill".equals(box.getChildAt(i).getTag()))
+                box.removeViewAt(i);
+        int at = box.indexOfChild(value) + 1;
+        for (String pill : pills) {
+            TextView chip = text(pill, 15, Color.WHITE, false);
+            chip.setTag("track.pill");
+            chip.setSingleLine(true);
+            chip.setPadding(s(9), s(2), s(9), s(2));
+            android.graphics.drawable.GradientDrawable edge = new android.graphics.drawable.GradientDrawable();
+            edge.setCornerRadius(s(10));
+            edge.setStroke(Math.max(1, s(1)), 0xAAFFFFFF);
+            chip.setBackground(edge);
+            LayoutParams gap = new LayoutParams(-2, -2);
+            gap.leftMargin = s(8);
+            box.addView(chip, at++, gap);
+        }
     }
 
     // ---- in-panel track list ---------------------------------------------------------------

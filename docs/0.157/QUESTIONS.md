@@ -48,3 +48,6 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
     switching to the Files tab first. Easy to change if you want the tab to switch underneath.
 14. **Folder grid (REVIEW_0157 #25):** browsing a storage now stays in Files as the approved grid (path, cards,
     In library / Not added, Sort, Videos only). Not yet: the List view button and folder artwork mosaics.
+- **Answered (owner, 16 Nov; REVIEW_0157 "Owner's answers"):** #12 track pills on the main page: yes, built. #10
+  captions inside the player cards: kept. #13 Fix match from a title: the approved v2 page on Files (Match and
+  return / Match and stay), built.
