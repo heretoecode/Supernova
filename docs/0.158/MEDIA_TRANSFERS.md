@@ -42,6 +42,20 @@ optionally delete the network copy once the local copy is safe.
 - Running while the device sleeps. The owner has run a Plex server on this Shield while it slept, so background work
   is possible; test early.
 
+## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/`, to approve)
+A section on the Transfers tab, above Where copies go:
+- **Keep free on this device:** 25 · 50 · 100 · 200 GB. Flexible, not strict: a copy you start yourself may dip in a
+  little (about 2% of the amount, e.g. 1 GB of 50 GB) without asking; a bigger dip asks "Copy anyway?" (Cancel first ·
+  Copy anyway · Choose another folder). Automatic copies (Bring new episodes) never dip in: they wait, and the dot beside
+  Files shows. When the disk is truly full: stop, error, ask for another location (never remove anything).
+- **While you watch** (from the network or this device): Pause · Slow down · Carry on (default Slow down).
+- **Scans** always get priority (no setting).
+- **Full speed hours:** the decided transfer window (e.g. 02:00–07:00) — copies run flat out inside it; outside, the
+  row above applies.
+- **Copies at once:** 1 · 2 · 3 (default 1).
+- **Remove the network copy:** **one switch for everything** (owner, 16 Nov), off by default; Bring new episodes follows it.
+- "Only copy from these connections": dropped (you choose what to copy each time).
+
 ## Open questions to think about (owner)
 - Anything to add to Transfers settings (e.g. how much free space to always keep, speed limit, which connections are
   allowed)?
