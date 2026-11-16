@@ -545,20 +545,21 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         }
     }
 
-    /** More-menu heading: sentence case, soft grey, with a thin line alongside. No lines between rows. */
+    /**
+     * Section heading: the shared group heading (RULES §11): Title Case, centred on its line, with a line either
+     * side. No lines between rows.
+     */
     private void section(String title, boolean first) {
-        LinearLayout heading = new LinearLayout(owner);
-        heading.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout heading = (LinearLayout) SupernovaStyle.groupHeading(owner, title, 11);
         heading.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         heading.setPadding(s(6), s(first ? 10 : 22), s(6), s(6));
         heading.setTag("playback.heading");
-        TextView label = text(sentenceCase(title), 18, HEADING, false);
-        heading.addView(label);
-        View line = new View(owner);
-        line.setBackgroundColor(HEADING_RULE);
-        LayoutParams lineSize = new LayoutParams(0, Math.max(1, s(2)), 1);
-        lineSize.leftMargin = s(14);
-        heading.addView(line, lineSize);
+        for (int i = 0; i < heading.getChildCount(); i++) {
+            View part = heading.getChildAt(i);
+            if (part instanceof TextView)
+                ((TextView) part).setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                                              s(18) * owner.getResources().getConfiguration().fontScale);
+        }
         body.addView(heading, new LayoutParams(-1, -2));
     }
 
