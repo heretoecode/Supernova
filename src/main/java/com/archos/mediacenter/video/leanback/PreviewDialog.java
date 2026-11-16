@@ -129,8 +129,8 @@ public final class PreviewDialog {
     }
 
     /** The panel behind a list: darkened to about 45% brightness and pushed back to 96% (RULES §11). */
-    static final float BEHIND_SCALE = 0.96f;
-    static final int BEHIND_SHADE = 0x8C000000;
+    public static final float BEHIND_SCALE = 0.96f;
+    public static final int BEHIND_SHADE = 0x8C000000;
 
     /** Only the top window is at full size and brightness; every window under it is pushed back. */
     private static void stackLook(List<WeakReference<Dialog>> windows, Dialog starting) {

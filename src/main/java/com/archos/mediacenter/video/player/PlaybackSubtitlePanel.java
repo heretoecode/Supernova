@@ -326,6 +326,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         setBackground(new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26),
                                   Math.max(1, s(2)), 0x66000000, glow));
         setPadding(s(30) + glow, s(30) + glow, s(30) + glow, s(26) + glow);
+        resting = getBackground();
+        restingPadding = new int[] {getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom()};
 
         header = new LinearLayout(owner);
         header.setOrientation(VERTICAL);
@@ -1336,6 +1338,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private void openTracks(String which) {
         if (closed)
             return;
+        if (page == null)
+            stackOverPanel();
         building = true;
         try {
             page = which;
@@ -1399,6 +1403,88 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             building = false;
         }
         scroll.post(this::updateMore);
+    }
+
+    // ---- a list on top of the panel ---------------------------------------------------------
+
+    private final Drawable resting;
+    private final int[] restingPadding;
+
+    /**
+     * A list opened from a row sits on top of the panel (RULES §11, mock-up player/28 bottom): the panel behind is
+     * darkened and pushed back slightly, the list in front is offset a little down and in, with the faint edge and a
+     * deeper shadow. Back closes the list and the panel comes forward again (0.157 Shield review #12, #22).
+     */
+    private void stackOverPanel() {
+        if (getWidth() <= 0 || getHeight() <= 0)
+            return;
+        Bitmap behind = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        draw(new Canvas(behind));
+        int left = Math.round(getWidth() * .12f);
+        int top = restingPadding[1] + header.getHeight();
+        int glow = s(14);
+        setBackground(new StackedList(behind, left, top, glow + s(8), s(22), Math.max(1, s(2)), s(18)));
+        setPadding(left + s(12), top + s(12), glow + s(20), restingPadding[3]);
+    }
+
+    private void unstack() {
+        setBackground(resting);
+        setPadding(restingPadding[0], restingPadding[1], restingPadding[2], restingPadding[3]);
+    }
+
+    /** The panel as it was (pushed back, darkened) with the list's own surface in front of it. */
+    private static final class StackedList extends Drawable {
+        private final Bitmap behind;
+        private final int left, top, right, radius, edge, shadow;
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+
+        StackedList(Bitmap behind, int left, int top, int right, int radius, int edge, int shadow) {
+            this.behind = behind;
+            this.left = left;
+            this.top = top;
+            this.right = right;
+            this.radius = radius;
+            this.edge = edge;
+            this.shadow = shadow;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            Rect b = getBounds();
+            float scale = com.archos.mediacenter.video.leanback.PreviewDialog.BEHIND_SCALE;
+            int saved = canvas.save();
+            canvas.scale(scale, scale, behind.getWidth() / 2f, behind.getHeight() / 2f);
+            paint.setColorFilter(null);
+            canvas.drawBitmap(behind, 0, 0, paint);
+            paint.setColor(com.archos.mediacenter.video.leanback.PreviewDialog.BEHIND_SHADE);
+            canvas.drawRoundRect(new RectF(0, 0, behind.getWidth(), behind.getHeight()), radius, radius, paint);
+            canvas.restoreToCount(saved);
+            RectF card = new RectF(left, top, b.right - right, b.bottom - shadow);
+            paint.setColor(SupernovaStyle.GLASS);
+            paint.setShadowLayer(shadow, 0, shadow / 3f, 0xAA000000);
+            canvas.drawRoundRect(card, radius, radius, paint);
+            paint.clearShadowLayer();
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(edge);
+            paint.setColor(SupernovaStyle.GLASS_EDGE);
+            canvas.drawRoundRect(card, radius, radius, paint);
+            paint.setStyle(Paint.Style.FILL);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
     }
 
     private void removeHeaderPage() {
@@ -1485,6 +1571,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return false;
         String was = page;
         removeHeaderPage();
+        unstack();
         showTab(was.equals("audio") ? TAB_AUDIO : TAB_SUBTITLES);
         View row = body.findViewWithTag(was.equals("audio") ? "audio.row.track" : "subtitles.row.track");
         if (row != null)

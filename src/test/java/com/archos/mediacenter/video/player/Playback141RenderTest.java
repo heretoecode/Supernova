@@ -24,6 +24,15 @@ import org.robolectric.shadows.ShadowDialog;
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class Playback141RenderTest {
+    private static void save(Bitmap bitmap, String name) throws Exception {
+        File out = new File("build/reports/preview-ui/" + name + ".png");
+        out.getParentFile().mkdirs();
+        try (FileOutputStream stream = new FileOutputStream(out)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        }
+        bitmap.recycle();
+    }
+
     @Test
     public void actualSidePanelRendersThreeTabsOverTheFilm() throws Exception {
         var host = Robolectric.buildActivity(PreviewPlaybackMenusTest.TopNavigationTestHost.class).setup().visible();
@@ -89,7 +98,8 @@ public class Playback141RenderTest {
                 decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 int height = decor.getHeight();
-                assertEquals("One third of the screen wide", 320, width);
+                // Sized to its tab (player v10/v11): 885 / 1166 px at 1080p, so 443 / 583 on this 960px screen.
+                assertEquals(tab == PlaybackSubtitlePanel.TAB_PLAYBACK ? 583 : 443, width);
                 assertTrue("Fitted inside the 20px margins: " + height, height <= 540 - 40);
                 assertNull("No fourth tab", decor.findViewWithTag("playback.tab:3"));
                 Bitmap bitmap = Bitmap.createBitmap(960, 540, Bitmap.Config.ARGB_8888);
@@ -102,13 +112,31 @@ public class Playback141RenderTest {
                 canvas.translate(960 - width - 20, 20);
                 decor.draw(canvas);
                 canvas.restore();
-                File out =
-                    new File("build/reports/preview-ui/0152-playback-side-panel-tab-" + tab + ".png");
-                out.getParentFile().mkdirs();
-                try (FileOutputStream stream = new FileOutputStream(out)) {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                }
-                bitmap.recycle();
+                save(bitmap, "0152-playback-side-panel-tab-" + tab);
+            }
+            // A track list opens on top of the panel (RULES §11, player/28 bottom).
+            View subtitlesTab = dialog.getWindow().getDecorView().findViewWithTag("playback.tab:0");
+            subtitlesTab.requestFocus();
+            subtitlesTab.performClick();
+            View decor = dialog.getWindow().getDecorView();
+            int width = dialog.getWindow().getAttributes().width;
+            decor.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                          View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.AT_MOST));
+            decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            View trackRow = decor.findViewWithTag("subtitles.row.track");
+            if (trackRow != null) {
+                trackRow.performClick();
+                decor.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                              View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.AT_MOST));
+                decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                Bitmap bitmap = Bitmap.createBitmap(960, 540, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                scene.draw(canvas);
+                canvas.translate(960 - width - 20, 20);
+                decor.draw(canvas);
+                save(bitmap, "0157-playback-track-list-on-top");
             }
         } finally {
             PreviewPlaybackMenus.close();
