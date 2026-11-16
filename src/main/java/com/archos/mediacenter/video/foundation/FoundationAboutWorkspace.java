@@ -538,8 +538,14 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private String notes(JSONArray notes) {
         StringBuilder out = new StringBuilder();
         if (notes != null)
-            for (int i = 0; i < notes.length(); i++)
-                out.append("• ").append(notes.optString(i)).append('\n');
+            for (int i = 0; i < notes.length(); i++) {
+                String note = notes.optString(i);
+                // Grouped notes (0.157, approved style): "## New Look" is a heading, not a point.
+                if (note.startsWith("## "))
+                    out.append(out.length() == 0 ? "" : "\n").append("— ").append(note.substring(3)).append(" —\n");
+                else
+                    out.append("• ").append(note).append('\n');
+            }
         return out.toString().trim();
     }
 
