@@ -73,6 +73,12 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   row, the rest of R5 (title block, seek preview card, skip button in the
   control row, track names and pills, subtitle lists stacked on the panel).
 
+## Now: fix 0.157 against the approved designs (owner, 16 Nov)
+- Source: `docs/0.157/REVIEW_0157.md` on `claude/project-discussion-planning-fccq9a` (26 Shield problems; an audit
+  adds more). Order: shared pieces first, then pages. Each item is done only when rendered with
+  `preview-renders.yml` and compared with its mock-up; note the render beside the item. Sign when all ticked and green.
+- Discussion branch merged in `b45042a`. **Waiting:** REVIEW_0157.md not pushed there yet.
+
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
 - **Version is 0.157 (157)** since `571224b`; builds now use **`supernova-0157-conformance.yml`** (the 0.156 one
   checks for 0.156 and will fail). **Run 43813823463** (0.157 conformance on `571224b`) **passed** (16 Nov ~06:45). **Final run 43817914116 on `3c3ffbf` passed**
