@@ -74,8 +74,7 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   control row, track names and pills, subtitle lists stacked on the panel).
 
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
-- **Build 8 (43774031993) started 23:17** on `2afbc9e`. Everything after it (Files page on by default, Playback
-  Settings items, Preparing playback, track lists, sort titles, Couldn't be read, …) goes into build 9. On failure:
+- Build 8 failed on 10 tests (fixed in `9c59963`). **Build 9 (43778002592) started 16 Nov ~00:01** on `9c59963`. On failure:
   `report-test-failures.yml` with `run_id`, read the job log's last ~60 lines, fix, push, re-run.
 - **Next items, in order:** (1) build 8 result → build 9; (2) player HUD layout (R5): title block top left done;
   controls lower, seek preview as a card with time and chapter inside, skip button at the end of the
