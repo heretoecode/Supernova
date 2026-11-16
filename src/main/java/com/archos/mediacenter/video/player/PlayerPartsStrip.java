@@ -108,6 +108,13 @@ final class PlayerPartsStrip implements PlayerController.Strip
         tabs.addView(chaptersTab);
         tabs.addView(episodesTab);
         root.addView(tabs, new LinearLayout.LayoutParams(-1, -2));
+        // The shared tab row (RULES §3; player v8-v11): a faint line under the row, the open tab underlined on it.
+        View rule = new View(context);
+        rule.setBackgroundColor(TAB_RULE);
+        LinearLayout.LayoutParams ruleSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(1)));
+        ruleSize.bottomMargin = dp(12);
+        root.addView(rule, ruleSize);
+        tabs.getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> paintTabs());
         row = new HorizontalScrollView(context);
         row.setTag(TAG_ROW);
         row.setHorizontalScrollBarEnabled(false);
@@ -578,37 +585,64 @@ final class PlayerPartsStrip implements PlayerController.Strip
         tab.setId(View.generateViewId());
         tab.setText(name);
         tab.setTag("player.strip.tab." + name);
-        tab.setTextSize(12);
+        tab.setTextSize(15);
         tab.setGravity(Gravity.CENTER);
-        tab.setPadding(dp(14), dp(6), dp(14), dp(6));
+        tab.setPadding(dp(10), dp(6), dp(10), dp(8));
         tab.setFocusable(true);
         tab.setFocusableInTouchMode(true);
         tab.setClickable(true);
-        tab.setBackground(SupernovaStyle.tab(context, false));
-        tab.setTextColor(SupernovaStyle.buttonContent());
+        com.archos.mediacenter.video.leanback.PreviewIcon.apply(tab, CHAPTERS.equals(name) ? "list" : "tv", 16);
+        tab.setTextColor(CLOSED_TAB);
         tab.setOnFocusChangeListener((v, focused) -> {
             if (focused) {
                 keepShowing.run();
                 setMode(name);
             }
+            paintTabs();
         });
         tab.setOnClickListener(v -> {
             setMode(name);
             focusCurrentCard();
         });
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, dp(30));
-        lp.rightMargin = dp(8);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
+        lp.rightMargin = dp(20);
         tab.setLayoutParams(lp);
         return tab;
     }
 
-    /** The shared page-tab look: the open row's tab a lighter charcoal, the focused tab the white box. */
+    private static final int TAB_RULE = 0x24FFFFFF;
+    private static final int CLOSED_TAB = 0xB3FFFFFF;
+
+    /** Marks the open row's tab; the look follows the remote (see {@link #paintTabs()}). */
     private void openTab(TextView tab, boolean open)
     {
-        if (tab.isActivated() == open && tab.getBackground() != null)
-            return;
         tab.setActivated(open);
-        tab.setBackground(SupernovaStyle.tab(context, open));
+        paintTabs();
+    }
+
+    /**
+     * Focus and path on the tab row (RULES §3; player v8-v11): the focused tab is the white box with black text and
+     * icon; the open tab is underlined, bright while the remote is on the cards below, dull while it is on the row.
+     */
+    private void paintTabs()
+    {
+        boolean inRow = tabs.hasFocus();
+        for (TextView tab : new TextView[] {chaptersTab, episodesTab}) {
+            if (tab == null)
+                continue;
+            boolean focused = tab.isFocused();
+            int ink = focused ? SupernovaStyle.FOCUS_TEXT : tab.isActivated() ? Color.WHITE : CLOSED_TAB;
+            tab.setTextColor(ink);
+            SupernovaStyle.inkIcons(tab, ink);
+            if (focused)
+                tab.setBackground(SupernovaStyle.rounded(context, SupernovaStyle.FOCUS_FILL, 8));
+            else if (tab.isActivated())
+                tab.setBackground(new com.archos.mediacenter.video.leanback.TabUnderline(
+                    inRow ? com.archos.mediacenter.video.leanback.TabUnderline.DULL
+                          : com.archos.mediacenter.video.leanback.TabUnderline.BRIGHT, Math.max(2, dp(2))));
+            else
+                tab.setBackground(null);
+        }
     }
 
     private GradientDrawable box(int fill, int edge)

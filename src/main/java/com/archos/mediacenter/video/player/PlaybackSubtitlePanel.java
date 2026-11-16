@@ -530,42 +530,14 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             if (focused)
                 t.setBackground(SupernovaStyle.rounded(owner, SupernovaStyle.FOCUS_FILL, 10));
             else if (open)
-                t.setBackground(new TabLine(inRow ? 0x59FFFFFF : Color.WHITE, Math.max(2, s(3))));
+                t.setBackground(new com.archos.mediacenter.video.leanback.TabUnderline(
+                    inRow ? com.archos.mediacenter.video.leanback.TabUnderline.DULL
+                          : com.archos.mediacenter.video.leanback.TabUnderline.BRIGHT, Math.max(2, s(3))));
             else
                 t.setBackground(null);
         }
     }
 
-    /** The open tab's underline, drawn on the row's line at the bottom of the tab. */
-    private static final class TabLine extends Drawable {
-        private final android.graphics.Paint paint = new android.graphics.Paint();
-        private final int height;
-
-        TabLine(int colour, int height) {
-            paint.setColor(colour);
-            this.height = height;
-        }
-
-        @Override
-        public void draw(android.graphics.Canvas canvas) {
-            android.graphics.Rect b = getBounds();
-            canvas.drawRect(b.left, b.bottom - height, b.right, b.bottom, paint);
-        }
-
-        @Override
-        public void setAlpha(int alpha) {
-            paint.setAlpha(alpha);
-        }
-
-        @Override
-        public void setColorFilter(android.graphics.ColorFilter filter) {
-            paint.setColorFilter(filter);
-        }
-
-        @Override
-        public int getOpacity() {
-            return android.graphics.PixelFormat.TRANSLUCENT;
-        }
     }
 
     /**
