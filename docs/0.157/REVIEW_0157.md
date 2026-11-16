@@ -81,6 +81,10 @@ not built), then a fix pass that checks real screen renders against the mock-ups
 - **#10 Captions on the player's Chapters and Episodes cards: keep as approved** (inside the card) for 0.157. Noted to
   revisit: Home rows and player rows are meant to be the same kind of row, so captions under the card may suit both
   (needs mock-ups; `docs/REVISIT_LATER.md`).
-- **#13 Fix match from Details: waiting for the owner's choice** between two mock-ups
-  (`docs/design/proposals/fix-match-from-details/`): 01 on Files › Library Care, 02 over Details with the path
-  Movies › Snowed In › Fix match. Library long-press and Library Care keep going to Files. Leave as built until chosen.
+- **#13 Fix match from Details: Files › Library Care's Fix match page (owner, 16 Nov), knowing where you came from.**
+  Mock-up `docs/design/proposals/fix-match-from-details/fix-match-v2-on-files-from-a-title.png` (to approve). Opened
+  from a title (Details › More, library long-press): the top bar moves to Files, Library Care open, path "Library Care ›
+  Fix match · <title>", and "From <title> · Back returns there" on the right. The focused match shows two buttons:
+  **Match and go back** (first; applies the match and returns to that title's Details) and **Match only** (applies it and
+  stays on Files). Back without choosing returns to the title unchanged. Opened from Library Care itself: OK matches,
+  no "go back". (Option 02 over Details was declined.)
