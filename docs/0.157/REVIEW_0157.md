@@ -82,7 +82,7 @@ not built), then a fix pass that checks real screen renders against the mock-ups
   revisit: Home rows and player rows are meant to be the same kind of row, so captions under the card may suit both
   (needs mock-ups; `docs/REVISIT_LATER.md`).
 - **#13 Fix match from Details: Files › Library Care's Fix match page (owner, 16 Nov), knowing where you came from.**
-  Mock-up `docs/design/proposals/fix-match-from-details/fix-match-v2-on-files-from-a-title.png` (to approve). Opened
+  Mock-up `docs/design/proposals/fix-match-from-details/fix-match-v2-on-files-from-a-title.png` (**approved by the owner, 16 Nov**). Opened
   from a title (Details › More, library long-press): the top bar moves to Files, Library Care open, path "Library Care ›
   Fix match · <title>", and "From <title> · Back returns there" on the right. The focused match shows two buttons:
   **Match and return** (first; applies the match and returns to that title's Details) and **Match and stay** (applies it and
