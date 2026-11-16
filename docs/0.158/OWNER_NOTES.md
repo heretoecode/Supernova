@@ -24,3 +24,14 @@ investigating, ask the owner for their existing Supernova research document and 
    real indexed media, not estimated capacity.
 4. **A Trakt list as a Home row:** pick one of your Trakt lists to show as a Home row, each title showing where it can
    be streamed on the services you have chosen. Investigate the data source and how provider choices are set.
+   - **Owner, 16 Nov (detail):** a **public** Trakt list needs no sign-in (Supernova reads it with its own Trakt app
+     key). Attach a list (Customise Home › Add a row); the row takes the list's name, which can be changed. Supernova
+     checks each title against **your selected streaming services** and shows **only the ones you can stream** (e.g.
+     12 of 20). **Streaming only:** titles already in the library are not shown in this row. No Details page: each card
+     shows the service's icon on the artwork and **OK opens that app**. Claude: paste the list's link with the
+     keyboard's Phone key; a preview line ("12 of 20 on your services") before adding; refreshed daily; the row hides
+     when nothing is available; several lists = several rows.
+   - **Which service when a title is on more than one:** the top one in **Your services**. The Settings redesign
+     already folds "Show first" into Your services as an ordered list (move gesture; "Your first choice goes at the
+     top", `docs/0.157/SETTINGS_INVENTORY.md`), so the order is the default everywhere. This replaces the older
+     "asks which when more than one has it" for streaming-only episodes (`docs/0.157/OWNER_NOTES.md` §29).
