@@ -25,7 +25,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 7. `docs/REVISIT_LATER.md` — **Parked**: every idea not assigned to a version (the roadmap's Parked column). "Park
    that" adds to it; anything the owner raises that matches a parked idea is added to that idea's notes.
 8. `docs/DISCUSSION_HANDOVER.md` — for discussion sessions: roadmap, parked ideas, the users-and-tags feature.
-9. `docs/0.157/board/version-board.png` (script beside it) — the **roadmap**: Undecided (**Ready**: designed and
+9. `docs/ROADMAP.md` — the **roadmap** (a document; the old picture is retired): Undecided (**Ready**: designed and
    approved, waiting for a version; **To discuss**) · 0.157 · 0.158 · Parked. Keep it current whenever something moves.
 10. `docs/research/FEATURE_BLUEPRINT.md` — the owner's research blueprint of possible future features (not a to-do
     list), each line marked built, planned, parked, new idea or to check.
