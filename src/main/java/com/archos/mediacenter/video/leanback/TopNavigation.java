@@ -335,6 +335,9 @@ public final class TopNavigation extends LinearLayout {
             boolean focused = tab.isFocused();
             int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
             tab.setTextColor(ink);
+            // The focus box is never dimmed: black ink on solid white (RULES §3).
+            if (tab != tabs[6])
+                tab.setAlpha(focused || tab == selected ? 1f : .78f);
             for (Drawable icon : tab.getCompoundDrawables())
                 if (icon != null)
                     icon.setColorFilter(focused
@@ -503,8 +506,6 @@ public final class TopNavigation extends LinearLayout {
         selected = tabs[index];
         selected.setSelected(true);
         refreshPath();
-        for (TextView t : tabs)
-            t.setAlpha(t == selected ? 1f : .78f);
         if (index >= 3 && index <= 5)
             setScrolled(false);
         if (moveNavigationFocus)
