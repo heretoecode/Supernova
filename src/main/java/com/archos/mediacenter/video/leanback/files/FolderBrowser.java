@@ -251,6 +251,7 @@ public final class FolderBrowser extends LinearLayout
         };
         card.setFocusable(true);
         card.setFocusableInTouchMode(true);
+        card.setTag("files.folder.card");
         card.setClipToOutline(true);
         card.setContentDescription(file.getName());
         GradientDrawable base = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,

@@ -90,6 +90,35 @@ public class Review0157RenderTest {
         }
     }
 
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void folderGridInFiles() throws Exception {
+        File root = java.nio.file.Files.createTempDirectory("drive").toFile();
+        for (String folder : new String[] {"4K", "Old rips"})
+            new File(root, folder).mkdirs();
+        for (String film : new String[] {"Conclave.mkv", "Flow.mkv", "Anora.mp4", "home-video-2019.mkv"})
+            new File(root, film).createNewFile();
+        ActivityController<TopNavigationTest.Host> host =
+            Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try {
+            FilesPage page = new FilesPage(host.get());
+            host.get().setContentView(page);
+            page.browse(android.net.Uri.fromFile(root), "Backup drive", (file, inLibrary) -> {
+            });
+            for (int wait = 0; wait < 40; wait++) {
+                Thread.sleep(50);
+                settle(page);
+            }
+            View card = page.findViewWithTag("files.folder.card");
+            if (card != null)
+                card.requestFocus();
+            settle(page);
+            save(page, "0157-files-folder-grid");
+        } finally {
+            host.pause().stop().destroy();
+        }
+    }
+
     private static Snapshot snapshot() {
         Snapshot s = new Snapshot();
         for (int i = 1; i <= 6; i++) {

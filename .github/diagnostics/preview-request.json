@@ -1,5 +1,5 @@
 {
- "purpose": "0.157 review round 9: Details tab focus and hero edge, switches, Settings rows, panel headings, seek card weight",
+ "purpose": "round 10: folder grid, track list on top, plus round 9 checks",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review0157RenderTest",
   "com.archos.mediacenter.video.player.Playback141RenderTest",
@@ -8,7 +8,9 @@
   "com.archos.mediacenter.video.leanback.settings.Review0157SettingsRenderTest",
   "com.archos.mediacenter.video.player.NextHudTest.rowAt1080p",
   "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
-  "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest"
+  "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest.okOpensTheTrackListInsideThePanelAndBackReturns",
+  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest.playbackTabRowsAndControls"
  ],
  "variants": {
   "normal": {}
