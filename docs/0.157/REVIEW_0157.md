@@ -62,6 +62,9 @@ decisions (`docs/0.157/OWNER_NOTES.md`, `docs/design/RULES.md`). "Approved" = wh
 24. **USB drives show a document icon** on This Device.
 25. **Choosing a drive opens the older three-panel file browser** (Locations · folder list · Information). To check
     against the approved Files design for browsing a storage.
+26. **Details › More › Change info of all episodes still opens the old side panel.** Decided 12 Nov: one Fix match,
+    on Files — from anywhere it goes to Files › Library Care's Fix match page for that title, Back returns; the 0.156
+    side panel is retired. The Fix match page is not in the code.
 - Photos are taken at an angle, so row alignment can't be judged from them; check in screen renders.
 
 **Owner decision (16 Nov):** "For This Series" sits at the **bottom** of both the Subtitles and Audio tabs, as a save
