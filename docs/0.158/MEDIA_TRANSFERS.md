@@ -42,7 +42,7 @@ optionally delete the network copy once the local copy is safe.
 - Running while the device sleeps. The owner has run a Plex server on this Shield while it slept, so background work
   is possible; test early.
 
-## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/` v3, to approve)
+## How copies run (owner, 16 Nov 2026; mock-ups `docs/design/proposals/transfers-settings/` v4, to approve)
 A section on the Transfers tab, above Where copies go:
 - **Keep free on this device: a percentage of the drive the copies go to** (5 · 10 · 15 · 20%), shown with the real
   size of that percentage on that drive (e.g. "10% · 100 GB"). Second line: "Small overruns are fine; bigger ones wait
@@ -52,9 +52,16 @@ A section on the Transfers tab, above Where copies go:
   "Waiting for your OK · Transfers". A truly full disk stops with an error.
 - **While you watch** (from the network or this device): Pause · Slow down · Carry on (default Slow down).
 - **Scans** always get priority (no setting).
-- **Full speed from ‹02:00›** and **until ‹07:00›**, inline (Left/Right in half hours; the first "from" step is Off).
-  Between the times copies run flat out; otherwise gently, leaving room on the network.
-- **Full speed now:** a button on the copying row (beside Pause and Cancel), not a setting.
+- **Full speed hours: 02:00–07:00** (one row; Left/Right step through Off · 00:00–06:00 · 01:00–07:00 · 02:00–07:00 ·
+  23:00–07:00 · Custom…; Custom opens From and Until). Between the times copies run flat out; otherwise gently.
+  **Technical check:** whether copies can run while the Shield is in standby (may need a keep-awake while copying).
+- **Boost** (replaces "Full speed now"): a button on the copying row (beside Pause and Cancel) opening a menu: **This copy**
+  (until it is done) · **Everything queued** (until the queue is empty). The row then reads "Boosted: flat out until
+  done", with **Stop boost**. **Pressing Play during a boost** (network or this device) asks "Boost is on — copies are
+  running at full speed, so playback may stutter": **Slow copies while I watch** (first) · **Keep boost**; boost picks up
+  again when you stop watching. (A question about what you just asked for, so it is not a forced notification.)
+- Standard speed while watching = the While you watch setting (Pause · Slow down · Carry on).
+- The copying row has no percentage pill (it duplicated the bar): "1.4 of 2.1 GB · 67%" in its second line.
 - **Copies at once:** 1 · 2 · 3 (default 1).
 - **Where copies go:** two inline rows, Movies and TV Shows, each showing its folder; OK opens the one folder picker.
 - **Remove the network copy:** one switch for everything (owner, 16 Nov), off by default; Bring new episodes follows it.
