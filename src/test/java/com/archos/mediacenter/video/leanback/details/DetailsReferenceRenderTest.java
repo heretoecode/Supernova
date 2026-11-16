@@ -222,6 +222,13 @@ public class DetailsReferenceRenderTest {
     private void assertVisibleText(View view, String text) {
         TextView match = find(view, text);
         assertNotNull(text, match);
+        // Details v20 runs about two screens: Down scrolls to Cast and Crew, so scroll there as a viewer would.
+        View reading = view.findViewWithTag("details.reading.overflow");
+        if (reading instanceof android.widget.ScrollView) {
+            Rect place = new Rect(0, 0, match.getWidth(), match.getHeight());
+            ((ViewGroup) reading).offsetDescendantRectToMyCoords(match, place);
+            reading.scrollTo(0, Math.max(0, place.top - reading.getPaddingTop()));
+        }
         Rect bounds = new Rect();
         assertTrue(text, match.getGlobalVisibleRect(bounds));
         assertEquals(text, match.getHeight(), bounds.height());

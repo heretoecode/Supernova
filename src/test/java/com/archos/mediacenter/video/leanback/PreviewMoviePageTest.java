@@ -357,7 +357,7 @@ public class PreviewMoviePageTest {
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             assertSame(page.findViewWithTag("section:Details"), page.findFocus());
             primary.requestFocus();
-            assertNotNull(PreviewPagesTest.findText(page, "SMB · server/movies/film.mkv"));
+            // Details v20 (approved 14 Nov 2026): the technical column ends at Added; the file path is not on the tab.
             assertNotNull(PreviewPagesTest.findText(page, "MKV"));
             ShowTags cast = new ShowTags();
             for (int person = 1; person <= 10; person++)
@@ -438,7 +438,7 @@ public class PreviewMoviePageTest {
             Rect visible = new Rect();
             assertTrue("Information fixture must actually show its panel", keyPanel.getGlobalVisibleRect(visible));
             assertEquals("Entire compact information panel must be visible", keyPanel.getHeight(), visible.height());
-            assertNotNull(PreviewPagesTest.findText(keyPanel, "Release Date"));
+            assertNotNull(PreviewPagesTest.findText(keyPanel, "Released"));
             assertNotNull(PreviewPagesTest.findText(keyPanel, "2024"));
             PreviewPagesTest.capture(nav, "details-information-next");
         } finally {
