@@ -21,6 +21,12 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   free space, temperature), smoothness (dropped frames, slow remote response), speed (start-up, page and artwork times),
   playback quality, stability (crashes, freezes, leaks), and a Health summary at the top of each report flagging anything
   over its limit; later the build checks the same limits
+- Top bar and tabs without underlines (owner, 16 Nov, photo from 0.157): the page switches as focus moves (no pause),
+  the white box alone shows focus in the bar; below the bar the current page's word is bright and bolder, the rest soft.
+  Page outline at once, artwork after you stop. Questions: (1) same for the tabs on Details and Files? (2) mock-up with
+  the user switcher in SUPERNOVA's place: in the bar, down in the rows, moving along (with today's underline beside it)
+- Text centred on its letters, not its font box, in every box (buttons, chips, tabs, pills): "TV Shows" sat low in its
+  focus box (owner, 16 Nov). Same photo: grey text in the white box and a blue Home underline; check on 0.157.1
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
