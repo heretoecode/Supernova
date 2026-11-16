@@ -139,7 +139,7 @@ There is no Android SDK in Claude's container: everything builds on GitHub Actio
    about 35 minutes). Builds the unsigned APK and runs every JUnit/Robolectric test, lint and the tooling checks.
    A new dispatch cancels one already running.
 2. **Failures** — `.github/workflows/report-test-failures.yml` with input `run_id` lists the failing tests.
-3. **Signing** (only when the owner says so) — `.github/workflows/supernova-0156-qa.yml` with input
+3. **Signing** (only when the owner says so) — `.github/workflows/supernova-0157-qa.yml` (0.157; the 0156 one signs 0.156) with input
    `conformance_run_id` (a green conformance run of the exact same source). It signs with the established
    certificate in the `supernova-foundation-signing` environment. The signed APK is the run's artifact.
 4. **Other tools:** `preview-renders.yml` renders real Android screens for mock-up checks; `lint-report.yml`;

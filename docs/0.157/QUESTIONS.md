@@ -23,7 +23,9 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
    Shield trial. (Skipped for 0.157.)
 8. **Chapter row centred between the tab line and the bottom edge** (player v10) was proposed, not approved, so it
    was left as it is.
-9. **Signing 0.157 — needs you (blocked).** The signing gate (`.github/signing/supernova_0156_qa_signing.py` and
+9. **Signing 0.157 — resolved (owner, 16 Nov 2026: "Allow the 0.157 signing copies").** Copies added:
+   `supernova-0157-qa.yml`, `supernova_0157_qa_signing.py`, `verify_supernova_0157_qa_apk.py` — version strings
+   only; certificate pin, environment, branch, test thresholds and required classes unchanged. Original note: The signing gate (`.github/signing/supernova_0156_qa_signing.py` and
    `verify_supernova_0156_qa_apk.py`, used by `supernova-0156-qa.yml`) only accepts version 0.156. Signing a 0.157
    APK needs 0.157 copies of the QA workflow and those two gate files, as was done for 0.156 (same certificate pin,
    same protected environment and branch; only the version strings and the list of required test classes change).
