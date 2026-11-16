@@ -43,3 +43,4 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 16 Nov 05:49–05:51 | Build 9: 1 failing test, fixed; build 10 started. |
 | 16 Nov 05:51–06:01 | Subtitles (next two episodes, full subtitles default, pills), calmer backdrops, skip button row, seek preview card, version 0.157 with 0.156 history evidence, 0.157 build workflow. Signing blocked (QUESTIONS #9). |
 | 16 Nov 06:45 | First green 0.157 conformance (run 43813823463 on 571224b). Final run on the last commit next; signing waits for the owner. |
+| 16 Nov 07:15 | Final 0.157 conformance green (run 43817914116 on 3c3ffbf). Stopped: signing waits for the owner (QUESTIONS #9). |
