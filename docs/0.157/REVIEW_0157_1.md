@@ -52,17 +52,33 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   row lands on the open tab, never the tab above the focus (today Connections or Library Care + Up opens Your
   Library). Rule for every tab row, Details included. To add to RULES §4.
 - **F18. Tab-row facts removed:** the summary on the right ("1,934 Videos · 3 To Check · …") repeats the Library Care
-  badge, Library Health and Your Library, and won't fit as tabs grow. Owner leans to removing it on every tab; the
-  badge stays. Replaces RULES §7b "Tab row facts" and v3/v6/v7. The latest design (v19, `network-files-tabs/44`,
+  badge, Library Health and Your Library, and won't fit as tabs grow. **Owner (16 Nov): remove; always keep a scan button
+  in the tab row, locked right** (until the room is needed for tabs); the badge stays. Replaces RULES §7b "Tab row facts" and v3/v6/v7. The latest design (v19, `network-files-tabs/44`,
   13 Nov) already shows only the scan button on the right ("⟳ 12 min ago": OK scans now, Stop while scanning; "Scanning
   Put.io · 42%" during a scan; §28 of the 0.157 notes). [Remove the facts on every tab; keep that scan button alone.]
 - **F19. "This device" row renamed "Internal storage"** (the tab is already This Device). [Yes.]
 
-- **F20. Library files in the grid show title and file size;** approved: title and year (size for files not in the
-  library), `32`. Check which the owner prefers.
-- **F21. Your Library shows 0% watched and "0% 4K · 0% HDR"** with 1,934 videos: probably not counted. To check.
+- **F20. File captions (owner, 16 Nov):** title alone on line one (long titles end in "…"); line two "year · size"
+  (e.g. "2024 · 14.2 GB"); size only when the year is unknown. In a folder view the size matters more than the year.
+  Replaces `32` (title and year).
+- **F21. Your Library › Picture: show every quality** (owner idea, 16 Nov): 4K, 1080p, 720p, SD and HDR, not only
+  "% 4K · % HDR". (The 0% figures are right: 1 of 420 watched, two titles in 4K.)
 - **F22. Folder actions not drawn:** the row menu (`28`: Play · Details · Mark as watched · Exclude · Fix match) is for
   files. A folder's menu (e.g. Open · Add to library · Exclude · Scan this folder) needs a mock-up.
+
+- **F23. Folders have no count and no pill:** a folder shows neither "86 videos" nor In library / Excluded / Not
+  added. Approved (`32`, `02`): every folder has its count and its pill, like files.
+- **F24. Folder artwork:** no mosaic yet (see F8). Files not in the library: approved a still from the video where
+  one can be made (v4); owner to test what shows today.
+- **F25. Sort:** approved menu (`11`): Name A–Z / Z–A, Newest / Oldest first, Largest / Smallest first. Owner asks for
+  sort choices plus an ascending / descending button. Library pages already split them (Sort · Order). [Same here:
+  Sort by Name · Date modified · Size, and an Order button.]
+- **F26. List view "not yet":** the fix pass for REVIEW_0157 #25 built the grid and stopped (QUESTIONS #14); it was
+  left unfinished, not dropped. List is the default.
+- **F27. Background differs between pages:** Settings, Search and Files share one; Home and the library pages look
+  different. Expected for now: Home and library pages keep Space Black until their 0.158 redesign moves them to
+  charcoal (CLAUDE.md, 7 Nov). To confirm in the code.
+- **F28. Screen went blank for a moment at about 23:39 local time,** then came back (no reload). For the diagnostics.
 
 ### Confirmed
 - The breadcrumb ("Backup 1 › … › Movies") is a signpost, not focusable; Back goes up one level (v6, 6 Nov).
