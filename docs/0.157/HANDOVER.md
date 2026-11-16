@@ -79,7 +79,7 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 - **Next items, in order:** (1) build 8 result → build 9; (2) player HUD layout (R5): title block top left done;
   controls lower, seek preview as a card with time and chapter inside, skip button at the end of the
   control row with its 10 s bar, chapter row centred; check with `preview-renders.yml`; (3) Files: done except TV shows in Check matches (films only so far; `MatchCheck`); (4) subtitles plan: next two episodes done (`SubtitleDiscovery.nextEpisodes`; fetch starts at playback start);
-  still to do: full subtitles when the audio is in your language, subtitle track pills (SDH, Foreign parts); (5) calmer hero backdrops (needs a way to tell the owner's chosen backdrop
+  full subtitles for your language on by default, subtitle pills done; Experimental translate not built; (5) calmer hero backdrops (needs a way to tell the owner's chosen backdrop
   from TMDB's default first); (6) version bump to 0.157 (`assets/foundation/release-history.json`, Gradle version,
   `tools/test_settings_0143_mapping.py` expects 0.156), final release notes from `RELEASE_NOTES_DRAFT.md`;
   (7) green conformance on the final commit, then sign with `supernova-0156-qa.yml` (owner approved this final

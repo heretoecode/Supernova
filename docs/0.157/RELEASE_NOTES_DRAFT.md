@@ -17,6 +17,10 @@ coded is listed; it still needs a green build and the owner's Shield test before
 - Password boxes have an eye to show what you typed
 
 ## Files
+- The new Files page: This Device, Connections and Library Care
+- Library Care: missing files, files that couldn't be read, unmatched videos, Check matches for films
+- Scan one source on its own, and see the last three scans
+- Connections show whether each is reachable, and new devices found on your network
 - Network & Files is now called Files
 - A small ring beside Files while a scan runs, or a white dot when something needs a look
 - The "Scanning…" pill in the corner is gone
@@ -24,7 +28,7 @@ coded is listed; it still needs a green build and the owner's Shield test before
 
 ## Details
 - Cast and crew in portrait photos, so nobody loses the top of their head; initials when there is no photo
-- Tabs in one order: Details · Episodes · Extras · More Like This
+- Tabs in one order: Details · Episodes · Extras · More Like This, drawn with the page instead of popping in
 - The line under the title reads age rating · year · length · genres, on Home and Details alike
 - Episodes show "Season 2 · Episode 8 · Title" under the logo, as in the player
 - A show with one season lists its episodes straight away, with no season page
@@ -32,7 +36,13 @@ coded is listed; it still needs a green build and the owner's Shield test before
 ## Player
 - Preparing playback shows the episode as "Season 2 · Episode 8 · Title" and the age rating
 - Seek previews now work on Put.io and local files
-- Audio tracks read in plain words with tags: Original, Dolby Digital Plus, 5.1
+- Audio and subtitle tracks read in plain words with tags: Original, Dolby Digital Plus, 5.1, SDH
+- Subtitles are fetched ahead for the next two episodes
+- Full subtitles when the audio is in your language, on by default
+- The skip button sits at the end of the control row while the controls show
+- The seek preview is a card with the time and chapter inside
+- The title sits top left, level with the clock
+- Track lists have no back header, and Subtitle track has no None row
 - The age rating shows for 8 seconds as playback starts
 - Stop playing at: pick a clock time, or the end of the episode or film
 - Still watching? can ask after a number of episodes or after a few hours
@@ -60,4 +70,4 @@ coded is listed; it still needs a green build and the owner's Shield test before
 - Issues Digest is gone: diagnostics are automatic
 
 ## Not in the draft yet (planned for 0.157, not coded)
-The new Files page itself (built, switched off until finished), memory savings, the new player controls, subtitles ready ahead of time, the dead-connection fix, the move gesture everywhere.
+Memory savings, the new player controls, subtitles ready ahead of time, the dead-connection fix, the move gesture everywhere.
