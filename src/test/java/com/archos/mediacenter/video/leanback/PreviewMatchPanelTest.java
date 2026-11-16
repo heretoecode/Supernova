@@ -44,7 +44,9 @@ public class PreviewMatchPanelTest
         });
         host.setContentView(page);
         page.setSubject("Pressure.2026.2160p.mkv");
-        assertNotNull(PreviewPagesTest.findText(page, "Fix match · Pressure.2026.2160p.mkv"));
+        // Opened from a title (fix-match-from-details/v2): the path names the title and says where Back returns.
+        assertNotNull(PreviewPagesTest.findText(page, "Fix match · Pressure"));
+        assertNotNull(PreviewPagesTest.findText(page, "From Pressure · Back returns there"));
         page.setResults(Arrays.asList(movie("Pressure", 2026), movie("Pressure", 2015)));
         PreviewPagesTest.layout(page);
         View keyboard = page.findViewWithTag("semantic:keyboard:T");

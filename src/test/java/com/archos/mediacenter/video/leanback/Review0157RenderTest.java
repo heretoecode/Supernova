@@ -119,6 +119,38 @@ public class Review0157RenderTest {
         }
     }
 
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void fixMatchFromATitle() throws Exception {
+        ActivityController<TopNavigationTest.Host> host =
+            Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try {
+            PreviewMatchSearch page = new PreviewMatchSearch(host.get(), "Snowed In", query -> {
+            }, tags -> {
+            });
+            TopNavigation shell = new TopNavigation(host.get(), page, index -> {
+            }, () -> true);
+            shell.selectTab(3);
+            host.get().setContentView(shell);
+            java.util.List<com.archos.mediascraper.BaseTags> results = new java.util.ArrayList<>();
+            for (int year : new int[] {2024, 2011}) {
+                com.archos.mediascraper.MovieTags tags = new com.archos.mediascraper.MovieTags();
+                tags.setTitle("Snowed In");
+                tags.setYear(year);
+                results.add(tags);
+            }
+            page.setResults(results);
+            settle(shell);
+            View first = shell.findViewWithTag("semantic:match.result:0");
+            if (first != null)
+                first.requestFocus();
+            settle(shell);
+            save(shell, "0157-fix-match-from-a-title");
+        } finally {
+            host.pause().stop().destroy();
+        }
+    }
+
     private static Snapshot snapshot() {
         Snapshot s = new Snapshot();
         for (int i = 1; i <= 6; i++) {

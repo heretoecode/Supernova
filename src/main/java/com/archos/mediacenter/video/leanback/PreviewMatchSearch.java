@@ -33,18 +33,32 @@ public final class PreviewMatchSearch extends LinearLayout {
         // One Fix match page (owner, 12 Nov 2026; mock-up network-files-tabs/14b): a page on charcoal, the path
         // across the top, the search and keyboard on the left, the matches on TMDB on the right. Back returns to
         // where it was opened from. Replaces the 0.156 side panel.
-        setPadding(dp(48), dp(36), dp(48), dp(20));
+        // Opened from a title (owner, 16 Nov 2026; fix-match-from-details/v2): Files › Library Care's page,
+        // the tab row with Library Care open, the path, and where Back returns to.
+        setPadding(dp(48), dp(8), dp(48), dp(20));
         setBackgroundColor(PAGE);
+        com.archos.mediacenter.video.leanback.files.FilesTabsPicture tabs =
+            new com.archos.mediacenter.video.leanback.files.FilesTabsPicture(context);
+        LayoutParams tabsSize = new LayoutParams(-1, -2);
+        tabsSize.bottomMargin = dp(20);
+        addView(tabs, tabsSize);
         LinearLayout crumb = new LinearLayout(context);
         crumb.setGravity(Gravity.CENTER_VERTICAL);
-        TextView where = text("Files  ›  Library Care  ›  ", 17);
+        TextView where = text("Library Care  ›  ", 17);
         where.setTextColor(SupernovaStyle.TEXT_SECONDARY);
         crumb.addView(where);
-        title = text("Fix match", 17);
+        title = text(initial == null || initial.isEmpty() ? "Fix match" : "Fix match · " + initial, 17);
         title.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
         title.setSingleLine(true);
         title.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         crumb.addView(title, new LayoutParams(0, -2, 1));
+        fromTitle = initial == null ? "" : initial;
+        if (!fromTitle.isEmpty()) {
+            TextView back = text("From " + fromTitle + " · Back returns there", 13);
+            back.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            back.setTag("semantic:match.from");
+            crumb.addView(back);
+        }
         LayoutParams crumbSize = new LayoutParams(-1, -2);
         crumbSize.bottomMargin = dp(24);
         addView(crumb, crumbSize);
@@ -115,6 +129,36 @@ public final class PreviewMatchSearch extends LinearLayout {
             return false;
         });
         post(keyboard::focusLastKey);
+    }
+
+    /** The two buttons on a match opened from a title; none when opened from Library Care itself. */
+    private TextView[] matchButtons(LinearLayout row) {
+        if (fromTitle.isEmpty())
+            return new TextView[0];
+        TextView[] buttons = {text("Match and return", 14), text("Match and stay", 14)};
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setPadding(dp(14), dp(6), dp(14), dp(6));
+            buttons[i].setVisibility(INVISIBLE);
+            buttons[i].setTag(i == 0 ? "semantic:match.return" : "semantic:match.stay");
+            LayoutParams size = new LayoutParams(-2, -2);
+            size.leftMargin = dp(12);
+            row.addView(buttons[i], size);
+        }
+        return buttons;
+    }
+
+    private void paintMatchButtons(TextView[] buttons, boolean shown, int chosen) {
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setVisibility(shown ? VISIBLE : INVISIBLE);
+            android.graphics.drawable.GradientDrawable box = new android.graphics.drawable.GradientDrawable();
+            box.setCornerRadius(dp(8));
+            if (i == chosen)
+                box.setColor(SupernovaStyle.FOCUS_TEXT);
+            else
+                box.setStroke(Math.max(1, dp(1)), SupernovaStyle.FOCUS_TEXT);
+            buttons[i].setBackground(box);
+            buttons[i].setTextColor(i == chosen ? Color.WHITE : SupernovaStyle.FOCUS_TEXT);
+        }
     }
 
     /** The page's colour: plain charcoal, as every page (RULES). */
@@ -193,11 +237,32 @@ public final class PreviewMatchSearch extends LinearLayout {
     }
 
     /** "Fix match · File: name.mkv" — which file is being matched. */
+    /** Names the file only when the page was not opened from a title (which already names it). */
     public void setSubject(String fileName) {
+        if (!fromTitle.isEmpty())
+            return;
         if (fileName == null || fileName.isEmpty())
             title.setText("Fix match");
         else
             title.setText("Fix match · " + fileName);
+    }
+
+    private String fromTitle = "";
+
+    /**
+     * After "Match and stay" the page that finishes the match opens Files › Library Care instead of returning to the
+     * title (owner, 16 Nov 2026). Read once by the scraping activity when it closes.
+     */
+    public static volatile boolean stayOnFiles;
+
+    /** Opens Files › Library Care if the last choice was "Match and stay". */
+    public static void finishTo(android.app.Activity activity) {
+        if (!stayOnFiles)
+            return;
+        stayOnFiles = false;
+        activity.startActivity(new android.content.Intent(activity, MainActivityLeanback.class)
+                                   .putExtra("preview_tab", 3)
+                                   .addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     /** The keyboard shows while you type; in the results it folds away so they get the room. */
@@ -284,10 +349,28 @@ public final class PreviewMatchSearch extends LinearLayout {
                 row.addView(current);
             }
             row.setContentDescription(label(tags));
-            row.setOnClickListener(v -> choose.accept(tags));
+            // The focused match offers Match and return (first) and Match and stay (fix-match-from-details/v2);
+            // Left/Right moves between them, OK applies.
+            int[] choice = {0};
+            TextView[] actions = matchButtons(row);
+            row.setOnFocusChangeListener((v, focused) -> paintMatchButtons(actions, focused, choice[0]));
+            row.setOnClickListener(v -> {
+                stayOnFiles = !fromTitle.isEmpty() && choice[0] == 1;
+                choose.accept(tags);
+            });
             row.setOnKeyListener((v, key, event) -> {
                 if (event.getAction() != KeyEvent.ACTION_DOWN)
                     return false;
+                if (!fromTitle.isEmpty() && key == KeyEvent.KEYCODE_DPAD_RIGHT && choice[0] == 0) {
+                    choice[0] = 1;
+                    paintMatchButtons(actions, true, 1);
+                    return true;
+                }
+                if (!fromTitle.isEmpty() && key == KeyEvent.KEYCODE_DPAD_LEFT && choice[0] == 1) {
+                    choice[0] = 0;
+                    paintMatchButtons(actions, true, 0);
+                    return true;
+                }
                 if (key == KeyEvent.KEYCODE_DPAD_LEFT || (key == KeyEvent.KEYCODE_DPAD_UP && index == 0)) {
                     keyboard.setVisibility(VISIBLE);
                     keyboard.focusLastKey();
