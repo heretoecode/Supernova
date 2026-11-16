@@ -75,6 +75,20 @@ Much of the approved 0.157 redesign is not in the build, although the build pass
 behaviour, not how screens look. Next: an audit of every approved 0.157 design against the code (built, partly,
 not built), then a fix pass that checks real screen renders against the mock-ups before anything is called done.
 
+## Owner's answers to QUESTIONS.md #10–#13 (16 Nov)
+- **#12 Track pills on the main Playback Settings page: yes.** Show the chosen track's pills on the Subtitle Track and
+  Audio Track rows (e.g. English · Original · SDH), as in the lists.
+- **#10 Captions on the player's Chapters and Episodes cards: keep as approved** (inside the card) for 0.157. Noted to
+  revisit: Home rows and player rows are meant to be the same kind of row, so captions under the card may suit both
+  (needs mock-ups; `docs/REVISIT_LATER.md`).
+- **#13 Fix match from Details: Files › Library Care's Fix match page (owner, 16 Nov), knowing where you came from.**
+  Mock-up `docs/design/proposals/fix-match-from-details/fix-match-v2-on-files-from-a-title.png` (**approved by the owner, 16 Nov**). Opened
+  from a title (Details › More, library long-press): the top bar moves to Files, Library Care open, path "Library Care ›
+  Fix match · <title>", and "From <title> · Back returns there" on the right. The focused match shows two buttons:
+  **Match and return** (first; applies the match and returns to that title's Details) and **Match and stay** (applies it and
+  stays on Files). Back without choosing returns to the title unchanged. Opened from Library Care itself: OK matches,
+  no "go back". (Option 02 over Details was declined.)
+
 ## Fix progress (Claude, 16 Nov)
 Renders are real Android screens from `preview-renders.yml` (branch `previews/claude`, folder `normal/`; latest of
 commit 6885119), compared by eye with the named mock-up. ✓ = fixed and checked in a render. ◐ = fixed; behaviour or
