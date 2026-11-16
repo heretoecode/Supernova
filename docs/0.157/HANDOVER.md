@@ -79,9 +79,9 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   (16 Nov ~07:15): the candidate for signing. If later commits are made, run conformance again before signing. On
   failure: `report-test-failures.yml` with `run_id`; log via `curl -sL api.github.com/repos/heretoecode/Supernova/
   actions/jobs/<job>/logs`; fix, push, dispatch `supernova-0157-conformance.yml` again.
-- **Blocked on the owner: signing** (QUESTIONS.md #9). The signing gate only accepts 0.156; making 0.157 copies is a
-  signing-setup change, refused. When the owner allows it: copy `supernova-0156-qa.yml` and the two
-  `.github/signing/*0156*` files as 0157 (version strings and required classes only), then sign the green run.
+- **Signing (owner approved, 16 Nov):** 0.157 copies added in `bfca787` (`supernova-0157-qa.yml`,
+  `.github/signing/*0157*`; version strings only). Conformance **run 43839950017 on `bfca787`** passed; **signed by run 43846921936**
+  of `supernova-0157-qa.yml`. APK: artifact `supernova-0157-signed-qa` (`Supernova_0.157.apk`, kept 14 days).
 - Build-order items all coded except those skipped in QUESTIONS.md (#3 hidden grid, #4 memory cuts, #5 backup
   groups, #6 TV in Check matches, #7 Experimental translate, #8 chapter row (not approved)).
 - Release notes: in `assets/foundation/release-history.json` (current 0.157), from `RELEASE_NOTES_DRAFT.md`; About

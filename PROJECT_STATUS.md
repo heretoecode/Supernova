@@ -4,6 +4,10 @@ Updated 6 November 2026 (night). Keep this page short and current: update it at 
 
 ## Released
 
+**0.157** — signed 16 November 2026 (run 43846921936 of `supernova-0157-qa.yml`, from green conformance run
+43839950017 on `bfca787`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.apk`). Waiting for the owner to
+install it on the Shield. Status of each item: `docs/0.157/HANDOVER.md`; open decisions: `docs/0.157/QUESTIONS.md`.
+
 **0.155** — signed 4 November 2026 (run 41922310251 of `supernova-0155-qa.yml`, from a green conformance run on
 `claude/supernova-github-access-yfhe89`). Installed on the owner's Shield and confirmed working. Highlights: NOVA
 6.6.4 engine, the new native stack, Settings and Network & Files groundwork, IntroDB skipping.
