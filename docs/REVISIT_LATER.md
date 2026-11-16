@@ -287,4 +287,14 @@ is ever wanted back.
   (6) **It stays one feature** in 0.158, not split. (5) Nudges: owner asked how they would look (described 15 Nov:
   a Library Care row "8 new titles without a user tag" with a Tag them button that opens select mode with those
   titles ticked; "12 hidden by Me" in the library page's facts; a hidden title in Search shows its user's icon and
-  name in its second line). Waiting for the owner's answer.
+  name in its second line). Waiting for the owner's answer. Mock-ups `tags-views/05-v5-*`.
+- **Owner, 16 Nov (round 7), on Claude's further ideas:** (1) **Trakt per user: parked** (good idea; only the owner
+  uses Trakt and doesn't sign in on Supernova yet). (2) **"Watch without Alex?"** liked; mock-up `06-v6-01` (a Together
+  show's next episode that the other person hasn't seen: Wait for Alex (focus) · Watch now · We're both here, which
+  switches to Together). (3) **Automatic tagging** wanted; owner asked how it works (described: folder rules a user
+  sets are applied silently; collection matches, e.g. a sequel of a title tagged Alex, are suggested in Library Care
+  for one-press Add or Skip; mock-ups `06-v6-05`, `06-v6-06`, folder rule in `06-v6-03`). (4) **Each user's playback
+  and subtitle preferences: parked** (both use subtitles on everything today; needed if Supernova is ever used more
+  widely: per-user settings without switching accounts). (5) "Ask every time" and (6) a user's watchlist: owner asked
+  for details. (7) **Seasonal Home row** liked in theory; mock-ups `06-v6-02`–`04` (Tags list in Edit users and views;
+  Edit a tag: Show on Home Off · Always · In season, From, Until). (8) Guest view: owner asked what it does.
