@@ -75,7 +75,8 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
 
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
 - **Version is 0.157 (157)** since `571224b`; builds now use **`supernova-0157-conformance.yml`** (the 0.156 one
-  checks for 0.156 and will fail). **Run 43813823463** (0.157 conformance on `571224b`) started 16 Nov 06:00. On
+  checks for 0.156 and will fail). **Run 43813823463** (0.157 conformance on `571224b`) **passed** (16 Nov ~06:45). A last run on the final docs
+  commit follows (the signing gate needs the exact source). On
   failure: `report-test-failures.yml` with `run_id`; log via `curl -sL api.github.com/repos/heretoecode/Supernova/
   actions/jobs/<job>/logs`; fix, push, dispatch `supernova-0157-conformance.yml` again.
 - **Blocked on the owner: signing** (QUESTIONS.md #9). The signing gate only accepts 0.156; making 0.157 copies is a
