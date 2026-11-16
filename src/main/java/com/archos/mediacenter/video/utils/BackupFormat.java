@@ -1,4 +1,5 @@
 package com.archos.mediacenter.video.utils;
+import com.archos.mediacenter.video.foundation.FoundationVersion;
 import com.archos.mediacenter.video.BuildConfig;
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,7 +35,8 @@ public final class BackupFormat {
             if (!"Supernova".equals(root.getString("format")) || !"1.0".equals(root.getString("formatVersion"))
                 || root.getBoolean("credentialsIncluded"))
                 throw new IOException("Unsupported or unsafe backup format");
-            if (!root.getString("applicationVersion").matches("0\\.[1-9][0-9]*") || root.getLong("createdUtc") <= 0)
+            if (!root.getString("applicationVersion").matches(FoundationVersion.PATTERN)
+                || root.getLong("createdUtc") <= 0)
                 throw new IOException("Invalid backup origin");
             JSONArray categories = root.getJSONArray("categories");
             Set<String> actual = new HashSet<>();
