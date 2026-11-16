@@ -365,9 +365,9 @@ final class DetailsBlueprintPanel extends LinearLayout {
             caption = tmdbVotes.isEmpty() ? "TMDb user score" : tmdbVotes + " votes";
         TextView count = text(caption, 11, LABEL, false);
         count.setTag("details.reception.count." + row);
-        count.setSingleLine(true);
-        count.setEllipsize(TextUtils.TruncateAt.END);
-        LayoutParams countSize = new LayoutParams(-2, -2);
+        // Never cut short: on small screens or with large text the caption wraps instead.
+        count.setMaxLines(3);
+        LayoutParams countSize = new LayoutParams(0, -2, 1);
         countSize.leftMargin = dp(8);
         box.addView(count, countSize);
         return box;

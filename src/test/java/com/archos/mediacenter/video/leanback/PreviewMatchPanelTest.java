@@ -53,7 +53,8 @@ public class PreviewMatchPanelTest
         View first = page.findViewWithTag("semantic:match.result:0");
         assertTrue(first.requestFocus());
         PreviewPagesTest.layout(page);
-        assertEquals(View.GONE, ((View) keyboardRoot(keyboard)).getVisibility());
+        // Full page (fix-match-from-details/v2): the keyboard stays in view beside the matches.
+        assertEquals(View.VISIBLE, ((View) keyboardRoot(keyboard)).getVisibility());
         first.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
         PreviewPagesTest.layout(page);
         assertEquals(View.VISIBLE, ((View) keyboardRoot(keyboard)).getVisibility());

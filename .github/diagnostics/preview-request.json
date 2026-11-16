@@ -1,5 +1,5 @@
 {
- "purpose": "round 11: Fix match from a title (v2), track pills",
+ "purpose": "round 12: Fix match white focus and keyboard, Reception captions wrap",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review0157RenderTest",
   "com.archos.mediacenter.video.player.Playback141RenderTest",

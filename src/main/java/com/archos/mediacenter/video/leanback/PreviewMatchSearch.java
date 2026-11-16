@@ -131,6 +131,16 @@ public final class PreviewMatchSearch extends LinearLayout {
         post(keyboard::focusLastKey);
     }
 
+    private static void inkWords(LinearLayout words, boolean focused) {
+        for (int i = 0; i < words.getChildCount(); i++) {
+            if (!(words.getChildAt(i) instanceof TextView))
+                continue;
+            TextView line = (TextView) words.getChildAt(i);
+            int rest = i == 0 ? Color.WHITE : SupernovaStyle.TEXT_SECONDARY;
+            line.setTextColor(focused ? SupernovaStyle.FOCUS_TEXT : rest);
+        }
+    }
+
     /** The two buttons on a match opened from a title; none when opened from Library Care itself. */
     private TextView[] matchButtons(LinearLayout row) {
         if (fromTitle.isEmpty())
@@ -271,8 +281,8 @@ public final class PreviewMatchSearch extends LinearLayout {
     private void focusMoved(View before, View after) {
         if (after == null || !isInside(after, this))
             return;
-        boolean inResults = isInside(after, rows);
-        keyboard.setVisibility(inResults ? GONE : VISIBLE);
+        // On the full page there is room for both (fix-match-from-details/v2): the keyboard stays in view.
+        keyboard.setVisibility(VISIBLE);
     }
 
     private static boolean isInside(View view, View parent) {
@@ -324,7 +334,7 @@ public final class PreviewMatchSearch extends LinearLayout {
             row.setFocusableInTouchMode(true);
             row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
             row.setPadding(dp(8), dp(8), dp(12), dp(8));
-            row.setBackground(PreviewDialog.focus(getContext()));
+            row.setBackground(null);
             row.addView(poster(tags), new LayoutParams(dp(40), dp(60)));
             LinearLayout words = new LinearLayout(getContext());
             words.setOrientation(VERTICAL);
@@ -353,7 +363,12 @@ public final class PreviewMatchSearch extends LinearLayout {
             // Left/Right moves between them, OK applies.
             int[] choice = {0};
             TextView[] actions = matchButtons(row);
-            row.setOnFocusChangeListener((v, focused) -> paintMatchButtons(actions, focused, choice[0]));
+            row.setOnFocusChangeListener((v, focused) -> {
+                // The focused match is the white box with black text (RULES §3; fix-match-from-details/v2).
+                v.setBackground(focused ? SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL, 10) : null);
+                inkWords(words, focused);
+                paintMatchButtons(actions, focused, choice[0]);
+            });
             row.setOnClickListener(v -> {
                 stayOnFiles = !fromTitle.isEmpty() && choice[0] == 1;
                 choose.accept(tags);
