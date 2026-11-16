@@ -449,7 +449,7 @@
             app:iconSpaceReserved="false"/>
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="subtitles_show_full_for_local_audio"
             android:summary="@string/subtitles_show_full_for_local_audio_summary"
             android:title="@string/subtitles_show_full_for_local_audio_title"

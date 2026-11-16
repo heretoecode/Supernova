@@ -806,7 +806,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mNightModeOn = mPreferences.getBoolean(KEY_AUDIO_FILT_NIGHT, false);
         mForceSingleRepeatMode = isDemoMode;
         mHideSubtitles = mPreferences.getBoolean(KEY_HIDE_SUBTITLES, false);
-        mShowFullSubsForLocalAudio = mPreferences.getBoolean(KEY_SHOW_FULL_SUBTITLES_FOR_LOCAL_AUDIO, false);
+        // On by default (owner, 14 Nov 2026).
+        mShowFullSubsForLocalAudio = mPreferences.getBoolean(KEY_SHOW_FULL_SUBTITLES_FOR_LOCAL_AUDIO, true);
         mPlayMode = mPreferences.getInt(KEY_PLAY_MODE, PLAYMODE_SINGLE);
         // Any start clears the binge-transition flag; onCompletion re-sets it when auto-advancing.
         mArrivedViaBingeTransition = false;
