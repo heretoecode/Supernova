@@ -13,9 +13,6 @@ import java.util.function.Consumer;
 
 /** Shared Find a Match presentation; native search and accepted-save handlers stay in the fragment. */
 public final class PreviewMatchSearch extends LinearLayout {
-    /** Side panels use the one shared panel value (RULES §11). */
-    static final int PANEL = SupernovaStyle.GLASS;
-    static final int PANEL_WIDTH_DP = 440;
     private final EditText input;
     private final PreviewKeyboard keyboard;
     private final LinearLayout rows;
@@ -33,18 +30,35 @@ public final class PreviewMatchSearch extends LinearLayout {
         this.search = search;
         this.choose = choose;
         setOrientation(VERTICAL);
-        // Approved 0.156 #40 (suggestions/04): a side panel over Details, not a page of its own.
-        setPadding(dp(22), dp(18), dp(22), dp(14));
-        setBackgroundColor(PANEL);
-        title = text("Fix match", 15);
-        title.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        // One Fix match page (owner, 12 Nov 2026; mock-up network-files-tabs/14b): a page on charcoal, the path
+        // across the top, the search and keyboard on the left, the matches on TMDB on the right. Back returns to
+        // where it was opened from. Replaces the 0.156 side panel.
+        setPadding(dp(48), dp(36), dp(48), dp(20));
+        setBackgroundColor(PAGE);
+        LinearLayout crumb = new LinearLayout(context);
+        crumb.setGravity(Gravity.CENTER_VERTICAL);
+        TextView where = text("Files  ›  Library Care  ›  ", 17);
+        where.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        crumb.addView(where);
+        title = text("Fix match", 17);
+        title.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
         title.setSingleLine(true);
         title.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-        addView(title);
-        TextView help = text("Search by title, TMDB ID or IMDb ID", 12);
-        help.setTextColor(SupernovaStyle.TEXT_SECONDARY);
-        help.setPadding(0, dp(2), 0, dp(10));
-        addView(help);
+        crumb.addView(title, new LayoutParams(0, -2, 1));
+        LayoutParams crumbSize = new LayoutParams(-1, -2);
+        crumbSize.bottomMargin = dp(24);
+        addView(crumb, crumbSize);
+        LinearLayout body = new LinearLayout(context);
+        body.setBaselineAligned(false);
+        addView(body, new LayoutParams(-1, 0, 1));
+        LinearLayout left = new LinearLayout(context);
+        left.setOrientation(VERTICAL);
+        body.addView(left, new LayoutParams(0, -1, 44));
+        LinearLayout right = new LinearLayout(context);
+        right.setOrientation(VERTICAL);
+        LayoutParams rightSize = new LayoutParams(0, -1, 56);
+        rightSize.leftMargin = dp(30);
+        body.addView(right, rightSize);
         input = new KeyboardInput(context);
         input.setTag("semantic:match.query");
         input.setSingleLine(true);
@@ -54,16 +68,17 @@ public final class PreviewMatchSearch extends LinearLayout {
         input.setBackground(PreviewDialog.focus(context));
         input.setText(initial);
         input.setSelection(input.length());
-        addView(input, new LayoutParams(-1, KeyboardInput.compactHeight(context)));
+        left.addView(input, new LayoutParams(-1, KeyboardInput.compactHeight(context)));
         keyboard = new PreviewKeyboard(context, input, this::focusResults);
         LayoutParams keys = new LayoutParams(-1, -2);
         keys.topMargin = dp(10);
-        addView(keyboard, keys);
+        left.addView(keyboard, keys);
         keyboard.setLeaveDown(this::focusResults);
-        status = text("Searching…", 13);
-        status.setTextColor(SupernovaStyle.HEADING);
-        status.setPadding(dp(2), dp(12), 0, dp(8));
-        addView(status);
+        tips(left);
+        status = text("Searching…", 15);
+        status.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        status.setPadding(dp(2), 0, 0, dp(10));
+        right.addView(status);
         scroll = new ScrollView(context);
         scroll.setClipChildren(false);
         scroll.setClipToPadding(false);
@@ -72,7 +87,7 @@ public final class PreviewMatchSearch extends LinearLayout {
         rows.setClipChildren(false);
         rows.setClipToPadding(false);
         scroll.addView(rows);
-        addView(scroll, new LayoutParams(-1, 0, 1));
+        right.addView(scroll, new LayoutParams(-1, 0, 1));
         query = () -> search.accept(input.getText().toString().trim());
         input.addTextChangedListener(new TextWatcher() {
             @Override
@@ -102,13 +117,39 @@ public final class PreviewMatchSearch extends LinearLayout {
         post(keyboard::focusLastKey);
     }
 
-    /** Shows the hosting activity as a right-hand side panel; Details stays visible beside it. */
+    /** The page's colour: plain charcoal, as every page (RULES). */
+    static final int PAGE = 0xFF16181C;
+
+    /** What the search understands, under the keyboard (mock-up network-files-tabs/14b). */
+    private void tips(LinearLayout parent) {
+        String[][] lines = {
+            {"search", "Any style", "capitals, dots and dashes and a leading \u201cThe\u201d are ignored"},
+            {"language", "Original titles", "search in the film\u2019s own language if you like"},
+            {"info", "ID numbers", "type a TMDB or IMDb number"}
+        };
+        for (String[] line : lines) {
+            TextView tip = text("", 12);
+            android.text.SpannableStringBuilder words = new android.text.SpannableStringBuilder(line[1]);
+            words.setSpan(new android.text.style.ForegroundColorSpan(Color.WHITE), 0, line[1].length(),
+                          android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            words.append("   ").append(line[2]);
+            tip.setText(words);
+            tip.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            PreviewIcon.apply(tip, line[0], 14);
+            LayoutParams size = new LayoutParams(-1, -2);
+            size.topMargin = dp(parent.getChildCount() == 2 ? 18 : 8);
+            parent.addView(tip, size);
+        }
+    }
+
+    /**
+     * Shows the hosting activity as the Fix match page, full screen (owner, 12 Nov 2026). Kept under its old name
+     * for the two scraping activities.
+     */
     public static void asSidePanel(android.app.Activity activity) {
         android.view.Window window = activity.getWindow();
-        int width = Math.round(PANEL_WIDTH_DP * activity.getResources().getDisplayMetrics().density);
-        window.setGravity(Gravity.END | Gravity.FILL_VERTICAL);
-        window.setLayout(width, ViewGroup.LayoutParams.MATCH_PARENT);
-        window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(PAGE));
     }
 
     /** Marks the result that is today's match ("Current"). */
@@ -156,7 +197,7 @@ public final class PreviewMatchSearch extends LinearLayout {
         if (fileName == null || fileName.isEmpty())
             title.setText("Fix match");
         else
-            title.setText("Fix match · File: " + fileName);
+            title.setText("Fix match · " + fileName);
     }
 
     /** The keyboard shows while you type; in the results it folds away so they get the room. */

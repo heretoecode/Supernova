@@ -7,7 +7,8 @@
   "com.archos.mediacenter.video.leanback.PreviewMoviePageTest.moviePageDelegatesPlaybackAndRenders",
   "com.archos.mediacenter.video.leanback.settings.Review0157SettingsRenderTest",
   "com.archos.mediacenter.video.player.NextHudTest.rowAt1080p",
-  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest"
+  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+  "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest"
  ],
  "variants": {
   "normal": {}

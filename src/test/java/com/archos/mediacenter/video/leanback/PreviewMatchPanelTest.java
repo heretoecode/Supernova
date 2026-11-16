@@ -44,7 +44,7 @@ public class PreviewMatchPanelTest
         });
         host.setContentView(page);
         page.setSubject("Pressure.2026.2160p.mkv");
-        assertNotNull(PreviewPagesTest.findText(page, "Fix match · File: Pressure.2026.2160p.mkv"));
+        assertNotNull(PreviewPagesTest.findText(page, "Fix match · Pressure.2026.2160p.mkv"));
         page.setResults(Arrays.asList(movie("Pressure", 2026), movie("Pressure", 2015)));
         PreviewPagesTest.layout(page);
         View keyboard = page.findViewWithTag("semantic:keyboard:T");
@@ -82,13 +82,13 @@ public class PreviewMatchPanelTest
     }
 
     @Test
-    public void sidePanelIsNarrowAndOnTheRight()
+    public void fixMatchIsAFullPageOnCharcoal()
     {
+        // One Fix match page (owner, 12 Nov 2026; network-files-tabs/14b): the 0.156 side panel is retired.
         Activity host = Robolectric.buildActivity(Activity.class).setup().get();
         PreviewMatchSearch.asSidePanel(host);
-        assertEquals(PreviewMatchSearch.PANEL_WIDTH_DP, host.getWindow().getAttributes().width);
-        assertEquals(android.view.Gravity.END | android.view.Gravity.FILL_VERTICAL,
-                     host.getWindow().getAttributes().gravity);
+        assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, host.getWindow().getAttributes().width);
+        assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, host.getWindow().getAttributes().height);
     }
 
     private static Object keyboardRoot(View key)
