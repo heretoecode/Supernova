@@ -9,19 +9,16 @@ import com.archos.mediacenter.video.R;
 
 /** Exact supplied 4.1.2 asset, aspect-preserving viewport cover; decoded once. */
 public final class PreviewUtilityBackground extends Drawable {
-    private static Bitmap image, foundationImage;
+    /** The one page colour (RULES.md). */
+    public static final int CHARCOAL = 0xFF16181C;
+    private static Bitmap image;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 
     public PreviewUtilityBackground(Context context) {
+        if (BuildConfig.FOUNDATION)
+            return;
         synchronized (PreviewUtilityBackground.class) {
-            if (BuildConfig.FOUNDATION) {
-                if (foundationImage == null) {
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 2;
-                    foundationImage = BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.foundation_space_black, options);
-                }
-            } else if (image == null)
+            if (image == null)
                 image = BitmapFactory.decodeResource(
                     context.getResources(), R.drawable.preview_utility_background);
         }
@@ -29,12 +26,16 @@ public final class PreviewUtilityBackground extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
-        Bitmap image =
-            BuildConfig.FOUNDATION ? foundationImage : PreviewUtilityBackground.image;
+        Bitmap image = PreviewUtilityBackground.image;
         Rect b = getBounds();
         int flat = previewColour("SUPERNOVA_PREVIEW_BG", 0);
         if (flat != 0) {
             canvas.drawColor(flat);
+            return;
+        }
+        if (BuildConfig.FOUNDATION) {
+            // Every page is plain charcoal (RULES.md: no Space Black artwork, no page panels).
+            canvas.drawColor(CHARCOAL);
             return;
         }
         canvas.drawColor(0xff09111a);
@@ -46,8 +47,7 @@ public final class PreviewUtilityBackground extends Drawable {
             new RectF(
                 b.exactCenterX() - w / 2, b.exactCenterY() - h / 2, b.exactCenterX() + w / 2, b.exactCenterY() + h / 2),
             paint);
-        if (!BuildConfig.FOUNDATION)
-            canvas.drawColor(0x44050b12);
+        canvas.drawColor(0x44050b12);
     }
 
     /**
