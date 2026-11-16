@@ -110,7 +110,14 @@
       "run_id": 43846921936,
       "artifact_id": 14215961576,
       "archive_sha256": "80565e5db1bd52fb0e84c986e16c6a0adb92a4cd545521f66eb89a30159d73f4",
-      "archive_digest_verified": true
+      "archive_digest_verified": true,
+      "apks": [
+        {
+          "sha256": "041220ce6a3461ce2d265ec9141f260a677912d12fe02fae4fad06bc6b2cf8ad",
+          "size": 35531807,
+          "filename": "Supernova_0.157.apk"
+        }
+      ]
     },
     {
       "version": "0.156",
