@@ -538,8 +538,6 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         }
     }
 
-    }
-
     /**
      * Section heading: the shared group heading (RULES §11): Title Case, centred on its line, with a line either
      * side. No lines between rows.
