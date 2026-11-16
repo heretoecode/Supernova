@@ -79,15 +79,26 @@ not built), then a fix pass that checks real screen renders against the mock-ups
 Renders are real Android screens from `preview-renders.yml`, published on branch `previews/claude` (folder `normal/`),
 compared by eye with the named mock-up. ✓ = fixed and checked in a render; … = code changed, render pending.
 - **1** ✓ Settings lists on the shared choice list: search line above 12, flags, tick on the right, no Cancel, Back
-  closes. Render `0157-settings-audio-language-list` vs `choice-list/01`–`03` (render of de2214e).
-- **3 / 18 / 19** ✓ Files: flat charcoal, no Space Black, tab row This Device · Connections · Library Care with the
-  open tab underlined; tabs no longer collapse to one. Render `0157-files-tab-2-content` vs
-  `network-files-tabs/39` (de2214e). … Margins and row height tightened to the mock-up (afb1729), render pending.
-  Your Library / Transfers tab: not yet.
-- **20** ✓ Files rows: icon turns black with the text on the white box (`0157-files-tab-2-content`). … Top bar:
-  regular weight so "Files" is black, not grey (render of de2214e still showed grey).
-- **24** … USB drives get a USB-stick icon (afb1729), render pending.
-- **9 / 10 / 13 / 21** … Playback Settings: underline tab row, centred Title Case headings, white values and tick,
-  chip choices (no bars, no squash), sized to its tab (885 / 1166 px), Playback tab one plain list, For This Series at
-  the bottom of Subtitles and Audio (4f00150), render pending against `player/25`, `27`.
-- **18 (Settings)** … Settings page without its glass panel (999631f), render pending against `settings-flat/01`.
+  closes. Render `0157-settings-audio-language-list` vs `choice-list/01`–`03`.
+- **3 / 18 / 19** ✓ Files: flat charcoal, tab row This Device · Connections · Library Care, open tab underlined, content
+  lined up with the top bar (96 px), rows 96 px. Renders `0157-files-tab-0-content`, `0157-files-tab-2-content` (ce951de)
+  vs `network-files-tabs/39`. Not yet: Your Library / Transfers tab.
+- **20** ✓ Focus ink black on white: top bar "Files" (regular weight), Files rows and their icons, tab row.
+  Renders `0157-files-topbar-focused`, `0157-files-tab-0-content` (ce951de).
+- **24** ✓ USB drives show a USB-stick icon. Render `0157-files-tab-0-content` (ce951de).
+- **9 / 13 / 21** ✓ Playback Settings: underline tab row, plain Playback list, chip choices (no squash, no blue), white
+  values. Render `0152-playback-side-panel-tab-2` (ce951de) vs `player/25`. … Subtitles/Audio headings centred and the
+  tick white: in the same code, Subtitles render to recheck.
+- **10** … For This Series at the bottom of Subtitles and Audio (4f00150); the render fixture has no series, so not shown.
+- **12 / 22** … Track lists open on top of the panel, panel pushed back and darkened (a200b34), render pending.
+- **8 / 23** … Seek time box is always the card, time over chapter, never clipped (ce951de); Chapters / Episodes as the
+  underline tab row (5abf800). HUD render test fixed to show the card (41e2621), render pending.
+- **14** … Generic chapter names renumbered (Scene 3 → Chapter n), unit test added (ce951de).
+- **15** … Episodes cards: episode name, second line "Playing · Episode 2 · 46 min", never "Unknown" (79edcd0).
+- **16** answered: no captions under player cards (approved mock-ups put the text inside); QUESTIONS #10.
+- **17** … Chapter row centred between tab line and bottom edge (036f0d0).
+- **4 / 5** … Details tab rebuilt to `details-background/21` (v20): three columns with icon headings and faint row lines,
+  Cast and Crew as one row of 2:3 portrait cards, scrolls with Down/Up (e0e47d9), render pending.
+- **18 (Settings)** … Settings page without its glass panel (999631f), render pending.
+- Not started: **2** Settings rows centred, **6** hero flicker, **7** logo pop-in, **11** track pills on the main
+  page, **25** drive browsing, **26** Fix match page.
