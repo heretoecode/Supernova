@@ -1888,7 +1888,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         listenForSeekPictures(engine);
         boolean seeking = mNextSeek >= 0 || mPreviewKeySeeking;
         android.graphics.Bitmap frame = seeking && engine != null ? engine.nearest(position) : null;
-        if (frame == null) {
+        if (bubble.getVisibility() != View.VISIBLE) {
             if (picture != null)
                 picture.setVisibility(View.GONE);
             return;
@@ -1915,7 +1915,11 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 shade, new com.archos.mediacenter.video.leanback.ArtworkEdge(mContext, 8, false)}));
             parent.addView(picture, new FrameLayout.LayoutParams(width, height, Gravity.TOP | Gravity.START));
         }
-        picture.setImageBitmap(frame);
+        // The time box is always the card (RULES: time over the chapter name); plain charcoal until a picture exists.
+        if (frame != null)
+            picture.setImageBitmap(frame);
+        else
+            picture.setImageDrawable(new android.graphics.drawable.ColorDrawable(SEEK_CARD_EMPTY));
         picture.setVisibility(View.VISIBLE);
         float left = PreviewHudTiming.pillLeft(centre - width / 2f, mProgress.getWidth(), width);
         picture.setTranslationX(left);
@@ -1923,9 +1927,29 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         // chapter name) moves inside it, centred, on the shade (player v6–v7).
         float bottom = bubble.getTranslationY() + bubble.getMeasuredHeight();
         picture.setTranslationY(bottom - height);
-        bubble.setTranslationX(left + (width - bubble.getMeasuredWidth()) / 2f);
-        bubble.setTranslationY(bottom - bubble.getMeasuredHeight() - 6 * density);
+        // Time over the chapter name at the card's bottom left (player v8-v11).
+        bubble.setTranslationX(left + 12 * density);
+        bubble.setTranslationY(bottom - bubble.getMeasuredHeight() - 8 * density);
         bubble.bringToFront();
+    }
+
+    /** The card behind the time while no seek picture exists yet. */
+    static final int SEEK_CARD_EMPTY = 0xFF22252B;
+
+    /**
+     * The time card rises above the seek bar, outside the bar's own row; no parent may cut it off (0.157 Shield
+     * review #8: the top of the time box was clipped where subtitles sit).
+     */
+    private void keepUnclipped(View view) {
+        android.view.ViewParent parent = view.getParent();
+        while (parent instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) parent;
+            group.setClipChildren(false);
+            group.setClipToPadding(false);
+            if (group == mControllerViewLeft)
+                return;
+            parent = group.getParent();
+        }
     }
 
     private void listenForSeekPictures(SeekThumbnails engine) {
@@ -1980,10 +2004,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             bubble.setText(mCurrentTime == null ? "" : mCurrentTime.getText());
         if (mProgress.getWidth() <= 0)
             return;
-        bubble.setMaxWidth(mProgress.getWidth());
+        float cardDensity = mContext.getResources().getDisplayMetrics().density;
+        bubble.setMaxWidth(Math.round((SEEK_PICTURE_WIDTH_DP - 24) * cardDensity));
         float density = mContext.getResources().getDisplayMetrics().density;
-        if (!(bubble.getBackground() instanceof SeekTooltipDrawable))
-            bubble.setBackground(new SeekTooltipDrawable(density, 0));
+        // The time box is the card (player v8-v11): no tooltip; the card behind it is drawn by placeSeekPicture.
+        bubble.setBackground(null);
+        bubble.setGravity(Gravity.START | Gravity.BOTTOM);
+        keepUnclipped(bubble);
         ChapterMarkers markers = mControllerViewLeft.findViewById(R.id.preview_chapter_markers);
         if (markers != null)
             markers.bind(chapters, Player.sPlayer == null ? 0 : Player.sPlayer.getDuration(),
@@ -1999,7 +2026,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                   bubble.getMeasuredWidth() / 2f;
         float left = PreviewHudTiming.pillLeft(x, mProgress.getWidth(), bubble.getMeasuredWidth());
         bubble.setTranslationX(left);
-        ((SeekTooltipDrawable)bubble.getBackground()).setPointer(x + bubble.getMeasuredWidth() / 2f - left);
         // Raised clearly above the dot (approved 0.156 HUD), so the time never sits on it.
         bubble.setTranslationY(mProgress.getY() + mProgress.getHeight() / 2f - bubble.getMeasuredHeight() -
                                SCRUB_BUBBLE_GAP_DP * density);

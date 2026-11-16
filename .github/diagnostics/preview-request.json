@@ -1,11 +1,12 @@
 {
- "purpose": "0.157 review round 3: Files margins, top bar weight, Playback Settings rework, Settings flat",
+ "purpose": "0.157 review round 4: seek card, track list on top, Files, Playback Settings",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review0157RenderTest",
   "com.archos.mediacenter.video.player.Playback141RenderTest",
   "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest.render1080p",
   "com.archos.mediacenter.video.leanback.PreviewMoviePageTest.moviePageDelegatesPlaybackAndRenders",
-  "com.archos.mediacenter.video.leanback.settings.Review0157SettingsRenderTest"
+  "com.archos.mediacenter.video.leanback.settings.Review0157SettingsRenderTest",
+  "com.archos.mediacenter.video.player.NextHudTest.rowAt1080p"
  ],
  "variants": {
   "normal": {}
