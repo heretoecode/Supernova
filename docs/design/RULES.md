@@ -368,6 +368,9 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - **For This Series** (Playback Settings): the last row of both the Subtitles and Audio tabs, acting as a save row
   (owner, 16 Nov; replaces its place between Audio selection and Audio adjustment).
 - **Text boxes:** every one uses the one shared keyboard (§15); mock-ups may simplify it, the app never does.
+- **Version numbers (owner, 16 Nov):** a corrected release of a version is 0.xxx.1 (then .2 …); the next version is
+  0.xxx+1. Android's version code is the version × 10 from 0.157.1 on (0.157.1 = 1571, 0.158 = 1580, 0.158.1 = 1581), so
+  it always climbs (0.157 itself shipped as 157).
 
 ## Open questions (to settle when the page comes up)
 - **Home row text:** inside the picture (current rule) or below it — with the Home redesign.
