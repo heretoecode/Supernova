@@ -49,7 +49,8 @@ public final class FilesPage extends LinearLayout
         super(context);
         setOrientation(VERTICAL);
         setBackgroundColor(0xFF16181C);
-        int side = SupernovaStyle.dp(context, 48);
+        // Content lines up with the top bar (mock-up network-files-tabs/39: 96px from the edge at 1080p).
+        int side = SupernovaStyle.dp(context, 20);
         setPadding(side, SupernovaStyle.dp(context, 8), side, 0);
         LinearLayout top = new LinearLayout(context);
         top.setGravity(Gravity.CENTER_VERTICAL);
@@ -403,7 +404,7 @@ public final class FilesPage extends LinearLayout
             buttons.get(0).setTag("files.row.first");
         }
         restyle.run();
-        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, 64)));
+        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
     }
 
     /** The last three scans (approved Recent scans); plain information, so no row lines and no focus. */
@@ -453,7 +454,7 @@ public final class FilesPage extends LinearLayout
         }
         for (Device device : devices)
         {
-            row(column, device.removable ? "files" : "tv", device.name,
+            row(column, device.removable ? "usbdrive" : "tv", device.name,
                 DeviceLine.second(device.kind, device.videos, device.freeBytes, device.totalBytes), null,
                 () -> openDevice.accept(device), column.findViewWithTag("files.row.first") == null);
             View last = column.getChildAt(column.getChildCount() - 1);
@@ -642,7 +643,7 @@ public final class FilesPage extends LinearLayout
             column.addView(divider, new LayoutParams(-1, Math.max(1, SupernovaStyle.dp(context, 1))));
         }
         row.setTag(column.findViewWithTag("files.row.first") == null ? "files.row.first" : ROW);
-        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, 64)));
+        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
     }
 
     private int unreadable = -1;
@@ -879,10 +880,12 @@ public final class FilesPage extends LinearLayout
             column.addView(divider, new LayoutParams(-1, Math.max(1, SupernovaStyle.dp(context, 1))));
         }
         row.setTag(first ? "files.row.first" : ROW);
-        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, 64)));
+        column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
     }
 
     private static final String ROW = "files.row";
+    /** Row height (mock-up network-files-tabs/39: 96px at 1080p). */
+    private static final int ROW_HEIGHT_DP = 48;
 
     private TextView text(String value, float size, int colour)
     {

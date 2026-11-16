@@ -320,6 +320,12 @@ public final class PreviewIcon extends Drawable {
             line(c, 14, 11, 19, 11);
             line(c, 5, 15, 13, 15);
             line(c, 17, 15, 19, 15);
+        } else if (kind.equals("usbdrive")) {
+            // A USB stick: connector on top, body below (0.157 Shield review #24).
+            c.drawRoundRect(9, 2, 15, 8, 1, 1, p);
+            c.drawRoundRect(7, 8, 17, 22, 2, 2, p);
+            line(c, 11, 4, 11, 5);
+            line(c, 13, 4, 13, 5);
         } else if (kind.contains("network") || kind.contains("source") || kind.contains("storage")) {
             c.drawRoundRect(3, 3, 21, 10, 2, 2, p);
             c.drawRoundRect(3, 14, 21, 21, 2, 2, p);
