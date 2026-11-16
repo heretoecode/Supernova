@@ -39,8 +39,8 @@ const kb = top => `<div class="sbox" style="top:${top}px">${svg(I.search, 30)}sn
   titles</b> search in the film's own language if you like</p><p>${svg(I.pen, 24)}<b>Near misses</b> a letter out of
   place is forgiven</p><p>${svg(I.info, 24)}<b>ID numbers</b> type a TMDB, IMDb, TVDB or Trakt number</p></div>`;
 const res = (c, t, s, o = {}) => `<div class="r ${o.focus ? 'f' : ''}"><span class="ra" style="background:linear-gradient(
-  150deg,${c},#1f2228)"></span><div><b>${t}</b><small>${s}</small></div>${o.btns ? `<span class="bt on">Match and go back</span>
-  <span class="bt">Match only</span>` : o.pill ? `<span class="pill">${o.pill}</span>` : ''}</div>`;
+  150deg,${c},#1f2228)"></span><div><b>${t}</b><small>${s}</small></div>${o.btns ? `<span class="bt on">Match and return</span>
+  <span class="bt">Match and stay</span>` : o.pill ? `<span class="pill">${o.pill}</span>` : ''}</div>`;
 const matches = top => `<div class="mh" style="top:${top}px">Matches on TMDB</div><div class="rs" style="top:${top + 46}px">
   ${res('#6a5a48', 'Snowed In', '2024 · Movie', { pill: 'Best match', focus: true, btns: true })}
   ${res('#3f5f62', 'Snowed In', '2011 · Movie · 1 h 28 min')}${res('#4d4766', 'Snowed Under', '2019 · TV show · 2 seasons')}</div>`;

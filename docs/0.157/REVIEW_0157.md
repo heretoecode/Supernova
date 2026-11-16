@@ -85,6 +85,6 @@ not built), then a fix pass that checks real screen renders against the mock-ups
   Mock-up `docs/design/proposals/fix-match-from-details/fix-match-v2-on-files-from-a-title.png` (to approve). Opened
   from a title (Details › More, library long-press): the top bar moves to Files, Library Care open, path "Library Care ›
   Fix match · <title>", and "From <title> · Back returns there" on the right. The focused match shows two buttons:
-  **Match and go back** (first; applies the match and returns to that title's Details) and **Match only** (applies it and
+  **Match and return** (first; applies the match and returns to that title's Details) and **Match and stay** (applies it and
   stays on Files). Back without choosing returns to the title unchanged. Opened from Library Care itself: OK matches,
   no "go back". (Option 02 over Details was declined.)
