@@ -151,6 +151,10 @@ public class PreviewPagesTest {
     @Test
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void renderActualPagesAndCheckTabFocus() throws Exception {
+        // Checks the old Files landing; the new Files page has its own tests (FilesPageTest).
+        android.content.Context files = org.robolectric.RuntimeEnvironment.getApplication();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(files)
+            .edit().putBoolean("supernova_files_page", false).commit();
         try {
             Picasso.get();
         } catch (IllegalStateException e) {
