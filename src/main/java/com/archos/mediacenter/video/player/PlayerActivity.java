@@ -3327,8 +3327,46 @@ public class PlayerActivity extends AppCompatActivity
         mSkipButton.postDelayed(mSkipProgressTicker, SKIP_PROGRESS_TICK_MS);
     }
 
+    private android.view.ViewGroup.LayoutParams mSkipFloatingParams;
+
+    /**
+     * While the controls show, the skip button sits at the end of the control row (owner, 12 Nov 2026); otherwise
+     * it floats in the bottom corner as before. Called as the skip bar ticks, so it follows the controls.
+     */
+    private void placeSkipButton()
+    {
+        if (mSkipButtonContainer == null || !(mRootView instanceof ViewGroup))
+            return;
+        ViewGroup row = findViewById(R.id.preview_transport);
+        View bar = findViewById(R.id.control_bar);
+        boolean inRow = row != null && bar != null && bar.getVisibility() == View.VISIBLE && bar.isShown();
+        ViewGroup target = inRow ? row : (ViewGroup)mRootView;
+        if (mSkipButtonContainer.getParent() == target)
+            return;
+        boolean hadFocus = mSkipButtonContainer.hasFocus();
+        if (mSkipButtonContainer.getParent() instanceof ViewGroup) {
+            if (mSkipFloatingParams == null && mSkipButtonContainer.getParent() == mRootView)
+                mSkipFloatingParams = mSkipButtonContainer.getLayoutParams();
+            ((ViewGroup)mSkipButtonContainer.getParent()).removeView(mSkipButtonContainer);
+        }
+        if (inRow) {
+            android.widget.LinearLayout.LayoutParams end = new android.widget.LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            end.setMarginStart(Math.round(12 * getResources().getDisplayMetrics().density));
+            end.gravity = android.view.Gravity.CENTER_VERTICAL;
+            row.addView(mSkipButtonContainer, end);
+        } else if (mSkipFloatingParams != null) {
+            ((ViewGroup)mRootView).addView(mSkipButtonContainer, mSkipFloatingParams);
+        } else {
+            ((ViewGroup)mRootView).addView(mSkipButtonContainer);
+        }
+        if (hadFocus)
+            mSkipButton.requestFocus();
+    }
+
     private void updateSkipProgress()
     {
+        placeSkipButton();
         if (mSkipProgress == null)
             return;
         final long span = mSkipProgressTargetMs - mSkipProgressStartMs;
