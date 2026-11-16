@@ -220,7 +220,15 @@ public class DetailsReferenceRenderTest {
     }
 
     private void assertVisibleText(View view, String text) {
-        TextView match = find(view, text);
+        // Look in Cast and Crew first: v20 also names the director and writers under Key information.
+        TextView match = null;
+        for (String region : new String[] {"details.region.Cast", "details.region.Crew"}) {
+            View people = view.findViewWithTag(region);
+            if (match == null && people != null)
+                match = find(people, text);
+        }
+        if (match == null)
+            match = find(view, text);
         assertNotNull(text, match);
         // Details v20 runs about two screens: Down scrolls to Cast and Crew, so scroll there as a viewer would.
         View reading = view.findViewWithTag("details.reading.overflow");

@@ -497,11 +497,7 @@ public final class PreviewMoviePage extends ScrollView {
             SupernovaStyle.applyButton(tab, SupernovaStyle.Surface.STANDARD);
             // The shared tab row (RULES §3; details-background/21): no box at rest, the white box when focused; the
             // open tab's underline is drawn by the frame below the row.
-            android.graphics.drawable.StateListDrawable look = new android.graphics.drawable.StateListDrawable();
-            look.addState(new int[] {android.R.attr.state_focused},
-                          SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL, 8));
-            look.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));
-            tab.setBackground(look);
+            tab.setBackground(null);
             if (label.equals("Details"))
                 tab.setMinWidth(Math.round(getResources().getDisplayMetrics().widthPixels * .143f));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -1);
@@ -515,6 +511,7 @@ public final class PreviewMoviePage extends ScrollView {
                 tab.setPadding(dp(8), dp(6), dp(8), dp(6));
             }
             tab.setOnFocusChangeListener((v, focused) -> {
+                v.setBackground(focused ? SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL, 8) : null);
                 if (focused)
                     showSection(label, false);
                 sectionFrame.invalidate();
