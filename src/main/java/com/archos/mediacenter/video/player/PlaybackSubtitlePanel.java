@@ -40,7 +40,9 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     // Approved mock-up colours.
     private static final int TAB_BORDER = 0xff5a7bd8, TAB_ACTIVE = 0xff2f6df0, FOCUS_BORDER = 0xff7fd6ff;
     private static final int HEADING = SupernovaStyle.HEADING, HEADING_RULE = SupernovaStyle.HEADING_LINE;
-    private static final int VALUE = 0xff3fb6ff, META = 0xffb9c7e8, BAR = 0xffcfd8ff, ICON = 0xffe8eeff;
+    /** The faint line under the tab row (about 8% white, as on Search and Files). */
+    private static final int TAB_RULE = 0x24FFFFFF;
+    private static final int VALUE = 0xffffffff, META = 0xffb9c7e8, BAR = 0xffcfd8ff, ICON = 0xffe8eeff;
     private static final int ROW_HEIGHT = 74, LIST_ROWS_VISIBLE = 7;
 
     static final class Track {
@@ -334,8 +336,14 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         for (int i = 0; i < ids.length; i++)
             tabs.addView(tab(i, ids[i], names[i], icons[i]), tabSize(i));
         LayoutParams tabsSize = new LayoutParams(-1, s(72));
-        tabsSize.bottomMargin = s(12);
         header.addView(tabs, tabsSize);
+        // The shared tab row (RULES §3; player v10): a faint line under the row, the open tab underlined on it.
+        View tabRule = new View(owner);
+        tabRule.setBackgroundColor(TAB_RULE);
+        LayoutParams ruleSize = new LayoutParams(-1, Math.max(1, s(2)));
+        ruleSize.bottomMargin = s(12);
+        header.addView(tabRule, ruleSize);
+        getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> paintTabs());
 
         scroll = new MaxHeightScroll(owner);
         scroll.setVerticalScrollBarEnabled(true);
@@ -420,9 +428,9 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     private LayoutParams tabSize(int index) {
-        LayoutParams size = new LayoutParams(0, -1, 1);
+        LayoutParams size = new LayoutParams(-2, -1);
         if (index > 0)
-            size.leftMargin = s(10);
+            size.leftMargin = s(16);
         return size;
     }
 
@@ -433,6 +441,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         t.setFocusable(true);
         t.setFocusableInTouchMode(true);
         t.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        t.setPadding(s(14), 0, s(14), 0);
         t.addView(icon(iconKind, 22));
         TextView label = text(name, 19, Color.WHITE, true);
         label.setSingleLine(true);
@@ -469,10 +478,70 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private void styleTabs() {
         for (int i = 0; i < tabs.getChildCount(); i++) {
             View t = tabs.getChildAt(i);
-            boolean active = ("playback.tab:" + tab).equals(t.getTag());
-            t.setSelected(active);
-            // Approved global button style: tabs never change size; selected = thin white outline; focus = white box.
-            SupernovaStyle.applyButton(t, SupernovaStyle.Surface.PANEL);
+            t.setSelected(("playback.tab:" + tab).equals(t.getTag()));
+        }
+        paintTabs();
+    }
+
+    /**
+     * Focus and path on the tab row (RULES §3): the focused tab is the white box with black text and icon; the open
+     * tab has a bright underline while the remote is below it and a dull one while the remote is on the tab row.
+     */
+    private void paintTabs() {
+        if (tabs == null)
+            return;
+        boolean inRow = tabs.hasFocus();
+        for (int i = 0; i < tabs.getChildCount(); i++) {
+            ViewGroup t = (ViewGroup) tabs.getChildAt(i);
+            boolean focused = t.isFocused();
+            boolean open = ("playback.tab:" + tab).equals(t.getTag());
+            int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
+            for (int c = 0; c < t.getChildCount(); c++) {
+                View part = t.getChildAt(c);
+                if (part instanceof TextView)
+                    ((TextView) part).setTextColor(ink);
+                else if (part instanceof ImageView && ((ImageView) part).getDrawable() != null)
+                    ((ImageView) part).getDrawable()
+                        .setColorFilter(new PorterDuffColorFilter(focused ? ink : ICON, PorterDuff.Mode.SRC_IN));
+            }
+            if (focused)
+                t.setBackground(SupernovaStyle.rounded(owner, SupernovaStyle.FOCUS_FILL, 10));
+            else if (open)
+                t.setBackground(new TabLine(inRow ? 0x59FFFFFF : Color.WHITE, Math.max(2, s(3))));
+            else
+                t.setBackground(null);
+        }
+    }
+
+    /** The open tab's underline, drawn on the row's line at the bottom of the tab. */
+    private static final class TabLine extends Drawable {
+        private final android.graphics.Paint paint = new android.graphics.Paint();
+        private final int height;
+
+        TabLine(int colour, int height) {
+            paint.setColor(colour);
+            this.height = height;
+        }
+
+        @Override
+        public void draw(android.graphics.Canvas canvas) {
+            android.graphics.Rect b = getBounds();
+            canvas.drawRect(b.left, b.bottom - height, b.right, b.bottom, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
         }
     }
 
@@ -558,7 +627,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         return v;
     }
 
-    /** {@code ‹ value ›}: the value in accent blue between two chevrons. */
+    /** {@code ‹ value ›}: the value in plain white between two chevrons (no blue for values). */
     private TextView stepper(LinearLayout row, float minWidth, Stepper stepper) {
         LinearLayout box = new LinearLayout(owner);
         box.setGravity(Gravity.CENTER_VERTICAL);

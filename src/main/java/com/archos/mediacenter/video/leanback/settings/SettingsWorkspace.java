@@ -296,7 +296,8 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         LinearLayout panel = new LinearLayout(getContext());
         panel.setTag("settings.category");
         panel.setOrientation(VERTICAL);
-        panel.setBackground(SupernovaStyle.glass(getContext()));
+        // Flat charcoal page, content straight on it: no page panel (RULES; settings-flat mock-ups).
+        panel.setBackground(null);
         panel.setPadding(dp(14), dp(11), dp(14), dp(8));
         stage.addView(panel, new FrameLayout.LayoutParams(-1, -1));
         LinearLayout head = new LinearLayout(getContext());
