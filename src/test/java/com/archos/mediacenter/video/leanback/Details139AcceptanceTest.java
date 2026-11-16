@@ -259,8 +259,10 @@ public class Details139AcceptanceTest {
             assertFalse(root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK)));
             PreviewPagesTest.capture(
                 root, "0140-details-fixed-" + root.getWidth() + "-" + root.getResources().getConfiguration().fontScale);
-            key(root, KeyEvent.KEYCODE_DPAD_RIGHT);
             View extras = page.findViewWithTag("section:Extras");
+            // 0.157 master order: Details · Episodes · Extras · More Like This.
+            for (int step = 0; step < 3 && page.findFocus() != extras; step++)
+                key(root, KeyEvent.KEYCODE_DPAD_RIGHT);
             assertSame(extras, page.findFocus());
             key(root, KeyEvent.KEYCODE_DPAD_DOWN);
             layout(root);

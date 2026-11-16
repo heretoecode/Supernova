@@ -66,7 +66,8 @@ public final class PreviewDialog {
                 windows.removeIf(reference -> reference.get() == null || reference.get() == this);
                 windows.add(new WeakReference<>(this));
                 modalState(windows);
-                stackLook(windows);
+                // Not "showing" yet while it starts, so it is named as the top window.
+                stackLook(windows, this);
             }
             @Override
             public void dismiss() {
@@ -83,7 +84,7 @@ public final class PreviewDialog {
                         WINDOWS.remove(owner);
                 }
                 modalState(windows);
-                stackLook(windows);
+                stackLook(windows, null);
                 if (!showing)
                     return;
                 View root = previousRoot.get(), requested = previous.get(), target = requested;
@@ -132,13 +133,14 @@ public final class PreviewDialog {
     static final int BEHIND_SHADE = 0x8C000000;
 
     /** Only the top window is at full size and brightness; every window under it is pushed back. */
-    private static void stackLook(List<WeakReference<Dialog>> windows) {
+    private static void stackLook(List<WeakReference<Dialog>> windows, Dialog starting) {
         if (windows == null)
             return;
-        Dialog top = null;
-        for (WeakReference<Dialog> reference : windows)
-            if (reference.get() != null && reference.get().isShowing())
-                top = reference.get();
+        Dialog top = starting;
+        if (top == null)
+            for (WeakReference<Dialog> reference : windows)
+                if (reference.get() != null && reference.get().isShowing())
+                    top = reference.get();
         for (WeakReference<Dialog> reference : windows) {
             Dialog dialog = reference.get();
             if (dialog == null || dialog.getWindow() == null)

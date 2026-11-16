@@ -78,13 +78,13 @@ public class FoundationCardContainmentTest {
         boolean leftGlow = false, rightGlow = false;
         for (int x = now[0] - 7; x < now[0]; x++) {
             int c = after.getPixel(x, 85);
-            leftGlow |= Color.blue(c) > Color.red(c) + 10;
+            leftGlow |= Color.red(c) > 200 && Color.green(c) > 200 && Color.blue(c) > 200;
         }
         for (int x = now[1] + 1; x < now[1] + 8; x++) {
             int c = after.getPixel(x, 85);
-            rightGlow |= Color.blue(c) > Color.red(c) + 10;
+            rightGlow |= Color.red(c) > 200 && Color.green(c) > 200 && Color.blue(c) > 200;
         }
-        assertTrue("Boundary/glow follows enlarged artwork on both sides", leftGlow && rightGlow);
+        assertTrue("The white ring follows the enlarged artwork on both sides (0.157)", leftGlow && rightGlow);
         File file = new File("build/reports/preview-ui/focused-card-unit.png");
         file.getParentFile().mkdirs();
         try (FileOutputStream out = new FileOutputStream(file)) {
