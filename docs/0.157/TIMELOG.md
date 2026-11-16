@@ -38,3 +38,5 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 15 Nov 23:47–23:54 | Files page on; track lists without back header and None; sort titles automatic; Put.io source name; Couldn't be read row; questions logged. |
 | 15 Nov 23:54–23:59 | Details tabs no longer pop in; player title block top left; Files scan control and Found on your network. |
 | 16 Nov 00:00–00:01 | Build 8: 10 failing tests, fixed; build 9 started. Connections reachability check added. |
+| 16 Nov 00:06–05:49 | **Not working: the session stopped** (about 5¾ hours). Build 9 had failed meanwhile. |
+| 16 Nov 05:49– | Resumed. |
