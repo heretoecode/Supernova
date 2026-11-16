@@ -260,3 +260,41 @@ is ever wanted back.
   hides Classics by default), not just other users' titles? (2) per-user tags (seen only by their owner, e.g. the
   owner's Classics) as well as global tags (everyone's, e.g. Christmas), or every tag shared? Full-flow mock-up
   `tags-views/03` drawn 15 Nov to discuss.
+- **Owner, 15 Nov (round 5), on v3; mock-ups `tags-views/04-v4-*` (changed screens only, one full-size picture each):**
+  - **Default user:** "Open Supernova as" is renamed **Default user** (value on the right, second line "Supernova opens
+    as this user"), under the This Device heading.
+  - **Together** hides titles that belong to one person only (was "only titles tagged Together", which would hide every
+    untagged title, i.e. most of the library). Untagged titles are everyone's.
+  - **Delete a user** is one panel with real options (RULES §7b): where their titles go (Move to Together · Move to Me
+    · Leave untagged, default Move to Together), each tag they made with its title count (OK switches Keep / Delete),
+    a new default user (only on a device where they were the default), the line "No videos are deleted from your
+    storage", then Keep <name> (focus first) · Delete <name>. Everything and the last user can't be deleted.
+    Supernova therefore records who made each tag.
+  - **Menus follow RULES §10–11:** a list opened from a named row (Default user, the titles choice) has no heading.
+  - The Filters hint line "OK changes Off › Hide › Only" is part of the menu and stays.
+  - Approved by the owner apart from the points below; no more mock-ups needed for these screens.
+- **Still open (Claude's suggestions, owner to answer):** (1) every tag shared (Claude: yes; views do the hiding, no
+  private tags); (2) record who watched each play now, so separate progress can come later; (3) Library Care shows
+  "N new titles without a user tag"; (4) a quiet "N hidden by this view" line on library pages, and hidden titles in
+  Search show their user icon; (5) another device whose default user was deleted asks "Who should Supernova open as?"
+  next time; (6) where general tags are renamed or deleted (a Tags list in Edit users and views?); (7) users and tags
+  included in Backup; (8) possibly ship tags and Filters first, the user switcher next, if 0.158 is too full.
+- **Mock-up rule (owner, 15 Nov):** full size, up to about four screens per picture, never one sheet of 13.
+- **Owner, 15 Nov (round 6), answers to the open list above:** (1) **every tag is shared**; views do the hiding.
+  (2) **Record who watched each play from the start** (separate progress can come later). (3) **Users and tags can be
+  edited:** rename and re-icon users, and rename, re-icon or delete general tags (a Tags list beside Users in Edit
+  users and views; deleting a tag warns how many titles it comes off). (4) **Users and tags are part of Backup.**
+  (6) **It stays one feature** in 0.158, not split. (5) Nudges: owner asked how they would look (described 15 Nov:
+  a Library Care row "8 new titles without a user tag" with a Tag them button that opens select mode with those
+  titles ticked; "12 hidden by Me" in the library page's facts; a hidden title in Search shows its user's icon and
+  name in its second line). Waiting for the owner's answer. Mock-ups `tags-views/05-v5-*`.
+- **Owner, 16 Nov (round 7), on Claude's further ideas:** (1) **Trakt per user: parked** (good idea; only the owner
+  uses Trakt and doesn't sign in on Supernova yet). (2) **"Watch without Alex?"** liked; mock-up `06-v6-01` (a Together
+  show's next episode that the other person hasn't seen: Wait for Alex (focus) · Watch now · We're both here, which
+  switches to Together). (3) **Automatic tagging** wanted; owner asked how it works (described: folder rules a user
+  sets are applied silently; collection matches, e.g. a sequel of a title tagged Alex, are suggested in Library Care
+  for one-press Add or Skip; mock-ups `06-v6-05`, `06-v6-06`, folder rule in `06-v6-03`). (4) **Each user's playback
+  and subtitle preferences: parked** (both use subtitles on everything today; needed if Supernova is ever used more
+  widely: per-user settings without switching accounts). (5) "Ask every time" and (6) a user's watchlist: owner asked
+  for details. (7) **Seasonal Home row** liked in theory; mock-ups `06-v6-02`–`04` (Tags list in Edit users and views;
+  Edit a tag: Show on Home Off · Always · In season, From, Until). (8) Guest view: owner asked what it does.
