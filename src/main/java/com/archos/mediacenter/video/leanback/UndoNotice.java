@@ -15,7 +15,7 @@ import android.widget.TextView;
  * the screen, the Undo button focused, gone by itself after a few seconds; Back closes it and focus returns to the
  * item you pressed.
  */
-final class UndoNotice
+public final class UndoNotice
 {
     static final long SHOWN_MS = 6000;
 
@@ -23,7 +23,7 @@ final class UndoNotice
     {
     }
 
-    static Dialog show(Context context, String message, Runnable undo)
+    public static Dialog show(Context context, String message, Runnable undo)
     {
         Dialog dialog = PreviewDialog.create(context, "notice");
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

@@ -120,8 +120,9 @@ public final class PreviewSearch extends LinearLayout {
         glass.setColor(SupernovaStyle.GLASS);
         glass.setCornerRadius(dp(Math.round(SupernovaStyle.PANEL_RADIUS_DP)));
         glass.setStroke(Math.max(1, dp(1)), SupernovaStyle.GLASS_EDGE);
-        panel.setBackground(glass);
-        panel.setPadding(dp(12), dp(12), dp(16), dp(10));
+        // 0.158 (page sheet SEARCH.md): plain charcoal, content straight on the page, no panel.
+        panel.setBackground(null);
+        panel.setPadding(0, dp(12), 0, dp(10));
         addView(panel, new LayoutParams(-1, 0, 1));
         LinearLayout keyboardColumn = new LinearLayout(activity);
         keyboardColumn.setOrientation(VERTICAL);
@@ -132,6 +133,7 @@ public final class PreviewSearch extends LinearLayout {
         LayoutParams dividerSize = new LayoutParams(Math.max(1, dp(1)), -1);
         dividerSize.leftMargin = dp(18);
         dividerSize.rightMargin = dp(18);
+        divider.setVisibility(INVISIBLE);
         panel.addView(divider, dividerSize);
         LinearLayout search = new LinearLayout(activity);
         search.setGravity(Gravity.CENTER_VERTICAL);
@@ -145,7 +147,7 @@ public final class PreviewSearch extends LinearLayout {
         search.addView(icon, new LayoutParams(dp(18), dp(18)));
         query = new KeyboardInput(activity);
         query.setId(View.generateViewId());
-        query.setHint("Films, shows, episodes, people");
+        query.setHint("Movies, TV shows, people…");
         query.setTextColor(-1);
         query.setHintTextColor(0xff9aa3b2);
         query.setTextSize(17);
@@ -201,9 +203,7 @@ public final class PreviewSearch extends LinearLayout {
         buildKeyboard(keyboardColumn);
         View spacer = new View(activity);
         keyboardColumn.addView(spacer, new LayoutParams(-1, 0, 1));
-        TextView hint = text("/ . @ always on the letters page · #+= for every other symbol · ⇧ for capitals", 11);
-        hint.setTextColor(0xff8b93a1);
-        keyboardColumn.addView(hint);
+
         query.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -236,65 +236,71 @@ public final class PreviewSearch extends LinearLayout {
 
     // ---- before typing: recent searches and "What you can search" ------------------------------------------
 
+    /**
+     * Before typing (mock-up `search-flat/17`): Recent searches (clock icon) as rows with a magnifying glass, Clear
+     * history (plain words with a small ✕) at the end of the heading; then What you can search (light bulb), tips as
+     * plain text with no lines. Headings with icons, about 26 px below and 64 px above (RULES §5).
+     */
     private View guidance() {
         LinearLayout column = new LinearLayout(activity);
         column.setOrientation(VERTICAL);
         LinearLayout line = new LinearLayout(activity);
         line.setGravity(Gravity.CENTER_VERTICAL);
-        TextView heading = text("Recent searches", 14);
-        heading.setTextColor(SupernovaStyle.TEXT_SECONDARY);
-        PreviewIcon.apply(heading, "history", 16);
+        TextView heading = heading("Recent searches", "history");
         line.addView(heading, new LayoutParams(0, -2, 1));
-        TextView clear = TvButton.create(activity, "Clear recent", this::clearRecent, false);
+        TextView clear = TvButton.create(activity, "Clear history", this::clearRecent, false);
+        PreviewIcon.apply(clear, "close", 12);
         clear.setTag("search.recent.clear");
         line.addView(clear);
         column.addView(line, new LayoutParams(-1, -2));
         recentLine = line;
         recentChips = new LinearLayout(activity);
-        recentChips.setPadding(0, dp(8), 0, dp(4));
+        recentChips.setOrientation(VERTICAL);
+        recentChips.setPadding(0, dp(6), 0, 0);
         column.addView(recentChips, new LayoutParams(-1, -2));
         bindRecent();
         LinearLayout tips = new LinearLayout(activity);
         tips.setOrientation(VERTICAL);
-        tips.setPadding(dp(36), dp(20), dp(36), 0);
-        TextView title = text("What you can search", 19);
-        title.setTextColor(SupernovaStyle.TEXT);
-        title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        title.setPadding(0, 0, 0, dp(8));
-        tips.addView(title);
-        String[][] features = {
-            {"movie", "Titles and episodes", "Films, TV shows, episode names — and file names as a last resort"},
-            {"language", "Original titles", "A film or show’s original-language title finds it too"},
-            {"people", "Cast, crew and studios", "Actors, directors, writers and studios, by full name or surname"},
-            {"custom row", "Any order, part words", "“horses slow” and “slow hor” both find Slow Horses"},
-            {"search", "Forgiving", "Capitals, accents, punctuation and a leading “The” don’t matter"},
-            {"spelling", "Small typos", "One wrong letter in a longer word still finds it — “Dume” finds Dune"}};
-        for (int i = 0; i < features.length; i++) {
+        tips.setPadding(0, dp(32), 0, 0);
+        tips.addView(heading("What you can search", "info"));
+        List<String[]> features = new ArrayList<>(Arrays.asList(
+            new String[] {"film", "Titles", "movies and TV shows in your library"},
+            new String[] {"people", "People", "actors, directors and writers"},
+            new String[] {"genre", "Genres", "e.g. \"comedy\" or \"crime drama\""},
+            new String[] {"year", "Years", "e.g. \"1994\" or \"1990s\""}));
+        if (com.archos.mediacenter.video.streaming.StreamingRepository.enabled(activity))
+            features.add(new String[] {"cloud", "Your services",
+                                       "related titles you can stream, for things already in your library"});
+        for (String[] feature : features) {
             LinearLayout row = new LinearLayout(activity);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(0, dp(7), 0, dp(7));
+            row.setPadding(dp(12), dp(6), 0, dp(6));
             ImageView glyph = new ImageView(activity);
-            glyph.setImageDrawable(new PreviewIcon(features[i][0]));
-            row.addView(glyph, new LayoutParams(dp(18), dp(18)));
-            LinearLayout words = new LinearLayout(activity);
-            words.setOrientation(VERTICAL);
-            words.setPadding(dp(14), 0, 0, 0);
-            TextView name = text(features[i][1], 15);
+            glyph.setImageDrawable(new PreviewIcon(feature[0]));
+            row.addView(glyph, new LayoutParams(dp(16), dp(16)));
+            TextView name = text(feature[1], 15);
             name.setTextColor(SupernovaStyle.TEXT);
-            words.addView(name);
-            TextView line2 = text(features[i][2], 12);
+            name.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            LayoutParams nameSize = new LayoutParams(dp(120), -2);
+            nameSize.leftMargin = dp(12);
+            row.addView(name, nameSize);
+            TextView line2 = text(feature[2], 14);
             line2.setTextColor(SupernovaStyle.TEXT_SECONDARY);
-            words.addView(line2);
-            row.addView(words, new LayoutParams(0, -2, 1));
+            row.addView(line2, new LayoutParams(0, -2, 1));
             tips.addView(row);
-            if (i + 1 < features.length) {
-                View rule = new View(activity);
-                rule.setBackgroundColor(0x1FFFFFFF);
-                tips.addView(rule, new LayoutParams(-1, Math.max(1, dp(1))));
-            }
         }
         column.addView(tips);
         return column;
+    }
+
+    /** A section heading with its icon, white, medium weight (RULES §5). */
+    private TextView heading(String words, String icon) {
+        TextView heading = text(words, 16);
+        heading.setTextColor(SupernovaStyle.TEXT);
+        heading.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        PreviewIcon.apply(heading, icon, 16);
+        heading.setPadding(0, 0, 0, dp(6));
+        return heading;
     }
 
     static List<String> recent(Context context) {
@@ -321,28 +327,42 @@ public final class PreviewSearch extends LinearLayout {
             .putString(RECENT_KEY, TextUtils.join("\n", values)).apply();
     }
 
+    /** Clear history: cleared at once, with an Undo notice (sheet). */
     private void clearRecent() {
+        String saved = androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity)
+                           .getString(RECENT_KEY, "");
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).edit().remove(RECENT_KEY).apply();
         bindRecent();
         keyboard.focusLastKey();
+        UndoNotice.show(activity, "Search history cleared", () -> {
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).edit()
+                .putString(RECENT_KEY, saved).apply();
+            bindRecent();
+        });
     }
 
+    /** Recent searches as rows with a magnifying glass; faint lines between rows only (RULES §5). */
     private void bindRecent() {
         recentChips.removeAllViews();
         List<String> values = recent(activity);
         recentLine.setVisibility(values.isEmpty() ? GONE : VISIBLE);
         recentChips.setVisibility(values.isEmpty() ? GONE : VISIBLE);
         for (String value : values) {
-            if (recentChips.getChildCount() >= 5)
+            if (recentChips.getChildCount() >= 9)
                 break;
-            TextView chip = TvButton.create(activity, value, () -> {
+            if (recentChips.getChildCount() > 0) {
+                View rule = new View(activity);
+                rule.setBackgroundColor(0x14FFFFFF);
+                recentChips.addView(rule, new LayoutParams(-1, Math.max(1, dp(1) / 2)));
+            }
+            TextView row = TvButton.create(activity, value, () -> {
                 query.setText(value);
                 query.setSelection(query.length());
             }, false);
-            chip.setTag("search.recent." + value);
-            LayoutParams gap = new LayoutParams(-2, -2);
-            gap.rightMargin = dp(8);
-            recentChips.addView(chip, gap);
+            PreviewIcon.apply(row, "search", 14);
+            row.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+            row.setTag("search.recent." + value);
+            recentChips.addView(row, new LayoutParams(-1, dp(34)));
         }
     }
 
@@ -431,9 +451,7 @@ public final class PreviewSearch extends LinearLayout {
             return;
         }
         int count = ALL.equals(filter) ? items.size() : groupCount(filter);
-        status.setText(count == 0 ? "Nothing in your library matches “" + lastQuery + "”"
-                                  : count + (count == 1 ? " result" : " results") + " for “" + lastQuery +
-                                        "” · in your library");
+        status.setText(count == 0 ? "Nothing in your library matches “" + lastQuery + "”" : "");
     }
 
     private void buildKeyboard(LinearLayout column) {
@@ -886,25 +904,28 @@ public final class PreviewSearch extends LinearLayout {
         return TextUtils.join(" · ", parts);
     }
 
+    /**
+     * Pills in a fixed column (RULES §7; sheet): "Resume S5 E3" (or "Resume" for a film), "Watched", "Unwatched";
+     * plain text in a thin outline, no colour; never "In library" (the heading says so).
+     */
     private void bindPill(TextView pill, Video video) {
-        int percent = video == null || video.getDurationMs() <= 0 ? 0
-                                                                  : Math.round(100f * video.getResumeMs() /
-                                                                               video.getDurationMs());
         android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
         shape.setCornerRadius(dp(12));
-        if (video != null && video.isWatched()) {
-            pill.setText("✓ Watched");
-            pill.setTextColor(SupernovaStyle.FOCUS_TEXT);
-            shape.setColor(SupernovaStyle.FOCUS_FILL);
-        } else if (percent > 0 && percent < 100) {
-            pill.setText(percent + "% watched");
-            pill.setTextColor(SupernovaStyle.TEXT);
-            shape.setColor(SupernovaStyle.PANEL_REST);
-            shape.setStroke(Math.max(1, dp(1)), SupernovaStyle.GLASS_EDGE);
-        } else {
+        shape.setColor(Color.TRANSPARENT);
+        shape.setStroke(Math.max(1, dp(1)), 0x80FFFFFF);
+        if (video == null) {
             pill.setVisibility(GONE);
             return;
         }
+        if (video.isWatched())
+            pill.setText("✓ Watched");
+        else if (video.getResumeMs() > 0)
+            pill.setText(video instanceof Episode ? "▶ Resume S" + ((Episode)video).getSeasonNumber() + " E" +
+                                                        ((Episode)video).getEpisodeNumber()
+                                                  : "▶ Resume");
+        else
+            pill.setText("○ Unwatched");
+        pill.setTextColor(SupernovaStyle.TEXT);
         pill.setBackground(shape);
         pill.setVisibility(VISIBLE);
     }
@@ -914,24 +935,23 @@ public final class PreviewSearch extends LinearLayout {
         private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
 
         GroupHeadings() {
-            paint.setColor(SupernovaStyle.TEXT_SECONDARY);
-            paint.setTextSize(13 * activity.getResources().getDisplayMetrics().scaledDensity);
+            paint.setColor(SupernovaStyle.TEXT);
+            paint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            paint.setTextSize(16 * activity.getResources().getDisplayMetrics().scaledDensity);
         }
 
+        /** One heading, "In your library", above the first result (sheet: the library is the key). */
         private String heading(int position) {
             List<Result> shown = visible();
-            if (position < 0 || position >= shown.size())
+            if (position != 0 || shown.isEmpty())
                 return null;
-            String group = shown.get(position).group();
-            if (position > 0 && group.equals(shown.get(position - 1).group()))
-                return null;
-            return group + " · " + groupCount(group);
+            return "In your library";
         }
 
         @Override
         public void getItemOffsets(android.graphics.Rect out, View view, RecyclerView parent,
                                    RecyclerView.State state) {
-            out.set(0, heading(parent.getChildAdapterPosition(view)) == null ? 0 : dp(30), 0, 0);
+            out.set(0, heading(parent.getChildAdapterPosition(view)) == null ? 0 : dp(36), 0, 0);
         }
 
         @Override
@@ -939,8 +959,14 @@ public final class PreviewSearch extends LinearLayout {
             for (int i = 0; i < parent.getChildCount(); i++) {
                 View child = parent.getChildAt(i);
                 String text = heading(parent.getChildAdapterPosition(child));
-                if (text != null)
-                    canvas.drawText(text, child.getLeft() + dp(4), child.getTop() - dp(10), paint);
+                if (text != null) {
+                    PreviewIcon books = new PreviewIcon("library");
+                    int size = dp(16);
+                    int top = child.getTop() - dp(13) - size;
+                    books.setBounds(child.getLeft() + dp(4), top, child.getLeft() + dp(4) + size, top + size);
+                    books.draw(canvas);
+                    canvas.drawText(text, child.getLeft() + dp(4) + size + dp(10), child.getTop() - dp(14), paint);
+                }
             }
         }
     }
