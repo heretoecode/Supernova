@@ -163,9 +163,8 @@ public class Supernova138UiTest {
                 }, () -> true);
             host.get().setContentView(nav);
             PreviewPagesTest.layout(nav);
-            TextView brand = (TextView) PreviewPagesTest.findText(nav, "SUPERNOVA");
-            assertEquals(1, brand.getLineCount());
-            assertTrue(brand.getWidth() >= brand.getPaint().measureText("SUPERNOVA"));
+            // 0.158 top bar: no SUPERNOVA wordmark (RULES §2).
+            assertNull(PreviewPagesTest.findText(nav, "SUPERNOVA"));
             TextView clock = nav.findViewWithTag("preview-default-clock");
             assertTrue(clock.getWidth() >= clock.getPaint().measureText(clock.getText().toString()));
             for (String tag : new String[] {

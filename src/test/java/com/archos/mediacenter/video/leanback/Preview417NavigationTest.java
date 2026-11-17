@@ -56,8 +56,8 @@ public class Preview417NavigationTest {
         assertSame(settings, shell.findFocus());
         shell.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
         assertSame(search, shell.findFocus());
-        // 0.157: the open page keeps its path underline; nothing at rest is a box.
-        assertFalse(home.getBackground() instanceof android.graphics.drawable.GradientDrawable);
+        // 0.158: the open page keeps a soft grey box while focus is elsewhere; nothing else at rest is a box.
+        assertTrue(home.getBackground() instanceof android.graphics.drawable.GradientDrawable);
         assertNull(settings.getBackground());
         assertEquals("semantic:topnav.home",home.getTag());assertEquals("semantic:topnav.settings",settings.getTag());
         host.finish();
