@@ -154,10 +154,11 @@ public class DetailsReferenceRenderTest {
             }
             bitmap.recycle();
             writeMetrics(root, page);
-            for (String name : actors)
-                assertVisibleText(page, name);
-            for (String name : names)
-                assertVisibleText(page, name);
+            // B2 (approved 17 Nov 2026): seven people each, Cast and Crew side by side.
+            for (int n = 0; n < Math.min(7, actors.length); n++)
+                assertVisibleText(page, actors[n]);
+            for (int n = 0; n < Math.min(7, names.length); n++)
+                assertVisibleText(page, names[n]);
             assertVisibleLogo(page, 1);
             assertVisibleLogo(page, 2);
             assertWholeText(page, "7.7/10");

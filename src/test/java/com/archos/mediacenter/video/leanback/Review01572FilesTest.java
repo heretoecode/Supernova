@@ -478,14 +478,23 @@ public class Review01572FilesTest
         assertTrue("The menu is not showing", menu.isShowing());
         View decor = menu.getWindow().getDecorView();
         WindowManager.LayoutParams at = menu.getWindow().getAttributes();
-        int width = at.width > 0 ? at.width : WIDTH / 3;
-        int height = at.height > 0 ? at.height : HEIGHT / 2;
-        decor.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-                      View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        // Windows sized to their content measure themselves; centred windows (the default) are drawn centred.
+        decor.measure(at.width > 0 ? View.MeasureSpec.makeMeasureSpec(at.width, View.MeasureSpec.EXACTLY)
+                          : View.MeasureSpec.makeMeasureSpec(WIDTH, View.MeasureSpec.AT_MOST),
+                      at.height > 0 ? View.MeasureSpec.makeMeasureSpec(at.height, View.MeasureSpec.EXACTLY)
+                          : View.MeasureSpec.makeMeasureSpec(HEIGHT, View.MeasureSpec.AT_MOST));
+        int width = decor.getMeasuredWidth();
+        int height = decor.getMeasuredHeight();
         decor.layout(0, 0, width, height);
+        int horizontal = at.gravity & android.view.Gravity.HORIZONTAL_GRAVITY_MASK;
+        int vertical = at.gravity & android.view.Gravity.VERTICAL_GRAVITY_MASK;
+        int x = horizontal == android.view.Gravity.LEFT ? at.x
+            : horizontal == android.view.Gravity.RIGHT ? WIDTH - width - at.x : (WIDTH - width) / 2;
+        int y = vertical == android.view.Gravity.TOP ? at.y
+            : vertical == android.view.Gravity.BOTTOM ? HEIGHT - height - at.y : (HEIGHT - height) / 2;
         canvas.drawColor(0x59000000);
         canvas.save();
-        canvas.translate(at.x, at.y);
+        canvas.translate(x, y);
         decor.draw(canvas);
         canvas.restore();
         write(bitmap, name);

@@ -1,12 +1,10 @@
 {
- "purpose": "0.157.2 round 6: Details More menu, full description, TMDB page, artwork panel pressed",
+ "purpose": "0.157.2 round 7: Details reference at seven people, honest pop-up composites, F24 stills, Files flow",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review01572DetailsTest",
+  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
   "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
-  "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest",
-  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
-  "com.archos.mediacenter.video.streaming.Supernova139ProviderMarksTest",
-  "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
   "com.archos.mediacenter.video.leanback.NoOldScreensTest"
  ],
  "variants": {
