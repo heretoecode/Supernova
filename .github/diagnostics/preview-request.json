@@ -1,9 +1,16 @@
 {
- "purpose": "0.157.2 round 2: Connections on the page (form, edit, remove with Undo, found devices), Library Care pages, no old screens",
+ "purpose": "0.157.2 round 3: player P1-P5, plain charcoal on Home and library pages, Details fixes, Files tests",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review01572FilesTest",
   "com.archos.mediacenter.video.leanback.NoOldScreensTest",
-  "com.archos.mediacenter.video.leanback.files.FilesPageTest"
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
+  "com.archos.mediacenter.video.player.Playback141RenderTest",
+  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+  "com.archos.mediacenter.video.player.PlayerPartsStripTest",
+  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+  "com.archos.mediacenter.video.leanback.details.PreviewEpisodeFactsTest",
+  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+  "com.archos.mediacenter.video.leanback.Review0157RenderTest"
  ],
  "variants": {
   "normal": {}

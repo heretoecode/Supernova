@@ -69,7 +69,8 @@ public final class TopNavigation extends LinearLayout {
         setWillNotDraw(false);
         artwork = new PreviewBackdrop(c);
         artwork.setFoundationHome(BuildConfig.FOUNDATION);
-        setBackground(artwork);
+        // One plain charcoal behind every page, Home and the library pages included (owner, 17 Nov 2026; F27).
+        setBackground(BuildConfig.FOUNDATION ? new PreviewUtilityBackground(c) : artwork);
         bar = new LinearLayout(c);
         bar.setClipChildren(true);
         bar.setClipToPadding(true);
@@ -502,7 +503,9 @@ public final class TopNavigation extends LinearLayout {
         selectedIndex = index;
         artwork.setPage(index);
         artwork.setFoundationHome(BuildConfig.FOUNDATION && index == 0);
-        setBackground(index >= 3 && index <= 5 ? new PreviewUtilityBackground(getContext()) : artwork);
+        // Plain charcoal on every page (F27): Home and the library pages match Files, Settings and Search exactly.
+        setBackground(BuildConfig.FOUNDATION || index >= 3 && index <= 5 ? new PreviewUtilityBackground(getContext())
+                                                                         : artwork);
         for (TextView t : tabs)
             t.setSelected(false);
         selected = tabs[index];

@@ -128,7 +128,7 @@ final class PlayerPartsStrip implements PlayerController.Strip
         cards.setOrientation(LinearLayout.HORIZONTAL);
         cards.setClipChildren(false);
         cards.setClipToPadding(false);
-        cards.setPadding(0, dp(8), dp(24), dp(8));
+        cards.setPadding(0, dp(8), dp(24), 0);
         row.addView(cards, new FrameLayout.LayoutParams(-2, -2));
         root.addView(row, new LinearLayout.LayoutParams(-1, -2));
         refresh();

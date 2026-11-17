@@ -257,7 +257,7 @@ public final class ConnectionFormPage extends LinearLayout
         LinearLayout chips = new LinearLayout(getContext());
         chips.setGravity(Gravity.CENTER_VERTICAL);
         chips.setPadding(dp(14), 0, dp(14), 0);
-        chips.addView(text("Type", 16, SupernovaStyle.TEXT_SECONDARY), new LayoutParams(dp(104), -2));
+        chips.addView(text("Type", 16, SupernovaStyle.TEXT_SECONDARY), new LayoutParams(dp(84), -2));
         for (int index = 0; index < TYPES.length; index++)
         {
             chips.addView(chip(index), chipSize());
@@ -293,7 +293,7 @@ public final class ConnectionFormPage extends LinearLayout
     private LayoutParams chipSize()
     {
         LayoutParams size = new LayoutParams(-2, dp(30));
-        size.rightMargin = dp(6);
+        size.rightMargin = dp(4);
         return size;
     }
 
@@ -301,7 +301,7 @@ public final class ConnectionFormPage extends LinearLayout
     {
         TextView chip = text(TYPES[index], 15, Color.WHITE);
         chip.setGravity(Gravity.CENTER);
-        chip.setPadding(dp(14), 0, dp(14), 0);
+        chip.setPadding(dp(11), 0, dp(11), 0);
         chip.setFocusable(true);
         chip.setFocusableInTouchMode(true);
         chip.setTag("files.form.type:" + TYPES[index]);

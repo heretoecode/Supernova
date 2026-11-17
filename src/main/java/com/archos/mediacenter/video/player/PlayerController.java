@@ -1660,16 +1660,15 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if (partsStrip != null || !(mContext instanceof PlayerActivity) || !(mControlBar instanceof LinearLayout))
             return;
         ChapterMarkers markers = mControllerViewLeft.findViewById(R.id.preview_chapter_markers);
+        // The title logo and metadata keep one fixed place whatever the rows do (P2, RULES §19): nothing lifts.
         List<View> lift = new ArrayList<>();
-        for (int id : new int[] {R.id.preview_playback_title, R.id.preview_playback_episode}) {
-            View v = mControllerViewLeft.findViewById(id);
-            if (v != null)
-                lift.add(v);
-        }
         PlayerPartsStrip.Highlight highlight = markers != null ? markers : (start, end) -> {};
         partsStrip = new PlayerPartsStrip(mContext, new PlayerStripSource((PlayerActivity)mContext), mProgress,
                                           highlight, this::keepControlsShowing, lift);
-        ((LinearLayout)mControlBar).addView(partsStrip.view(), new LinearLayout.LayoutParams(-1, -2));
+        // The tab row and its cards sit lower (P1): the gap below the cards is halved, from 32 to 16 dp.
+        LinearLayout.LayoutParams stripSize = new LinearLayout.LayoutParams(-1, -2);
+        stripSize.bottomMargin = -Math.round(8 * mContext.getResources().getDisplayMetrics().density);
+        ((LinearLayout)mControlBar).addView(partsStrip.view(), stripSize);
         setStrip(partsStrip);
     }
 

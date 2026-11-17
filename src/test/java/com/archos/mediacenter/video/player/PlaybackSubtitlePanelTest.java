@@ -285,8 +285,8 @@ public class PlaybackSubtitlePanelTest {
     @Test
     public void sidePanelIsOneThirdWideTopRightAndFittedToItsRows() throws Exception {
         WindowManager.LayoutParams a = main.getWindow().getAttributes();
-        // Sized to its tab (player v10/v11): 885px for Subtitles at 1080p.
-        assertEquals(885, a.width);
+        // One size for every tab (P4): 40% of the width, 768px at 1080p.
+        assertEquals(PlaybackSubtitlePanel.PANEL_WIDTH_1080P, a.width);
         assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, a.height);
         assertEquals(Gravity.TOP | Gravity.END, a.gravity);
         assertEquals(40, a.x);

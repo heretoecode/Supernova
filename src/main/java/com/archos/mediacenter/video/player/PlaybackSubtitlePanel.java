@@ -392,13 +392,16 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     /**
-     * The panel is sized to its tab (RULES §11; player v10/v11 mock-ups at 1080p): about 885px for Subtitles and
-     * Audio, 1166px for Playback, whose rows hold up to five choices.
+     * One size for every tab (P4, the brief's default from the owner's review of 0.157.1): about 40% of the width at
+     * most, like the choice list, the height following the content with arrows for more (RULES §11, §16).
      */
     int widthFor(int id) {
         float screen = owner.getResources().getDisplayMetrics().widthPixels / 1920f;
-        return Math.round((id == TAB_PLAYBACK ? 1166 : 885) * screen);
+        return Math.round(PANEL_WIDTH_1080P * screen);
     }
+
+    /** 40% of a 1080p screen. */
+    static final int PANEL_WIDTH_1080P = 768;
 
     private Window placed;
 
@@ -454,8 +457,38 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     /** Approved global row focus: white outline, no fill change. */
+    /** Focused rows fill white (P5, RULES §3); their text and icons turn black (see {@link #inkRow}). */
     private Drawable rowFocus() {
-        return SupernovaStyle.rowFocus(owner);
+        android.graphics.drawable.StateListDrawable states = new android.graphics.drawable.StateListDrawable();
+        states.addState(new int[] {android.R.attr.state_focused},
+                        SupernovaStyle.rounded(owner, SupernovaStyle.FOCUS_FILL, 10));
+        states.addState(new int[] {}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+        return states;
+    }
+
+    private final java.util.Map<TextView, Integer> restingInk = new java.util.WeakHashMap<>();
+
+    /** Black ink on the white box for a focused row's words and icons; their own colours again at rest (P5). */
+    void inkRow(View view, boolean focused) {
+        if (view instanceof TextView) {
+            TextView words = (TextView) view;
+            if (focused) {
+                if (!restingInk.containsKey(words))
+                    restingInk.put(words, words.getCurrentTextColor());
+                words.setTextColor(SupernovaStyle.FOCUS_TEXT);
+            } else if (restingInk.containsKey(words)) {
+                words.setTextColor(restingInk.remove(words));
+            }
+        } else if (view instanceof ImageView) {
+            Drawable d = ((ImageView) view).getDrawable();
+            if (d instanceof SubtitlePanelStyle.Icon)
+                d.setColorFilter(new PorterDuffColorFilter(focused ? SupernovaStyle.FOCUS_TEXT : ICON,
+                                                           PorterDuff.Mode.SRC_IN));
+        } else if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++)
+                inkRow(group.getChildAt(i), focused);
+        }
     }
 
     private LayoutParams tabSize(int index) {
@@ -691,6 +724,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return;
         watchingRows = true;
         getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> {
+            if (before != null && before.getParent() == body)
+                inkRow(before, false);
+            if (after != null && after.getParent() == body)
+                inkRow(after, true);
             if (building || after == null || page != null)
                 return;
             View at = after;
@@ -745,10 +782,13 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             body.removeViewAt(last);
     }
 
+    /** Playback Settings opens with focus on the open tab (P3), also when asked before the panel is on screen. */
     void focusTab() {
         View t = tabs.findViewWithTag("playback.tab:" + tab);
-        if (t != null)
-            t.requestFocus();
+        if (t == null)
+            return;
+        if (!t.requestFocus() || !t.isAttachedToWindow())
+            t.post(t::requestFocus);
     }
 
     private void focusTop() {
@@ -1433,9 +1473,11 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             }
             dropTrailingRule();
             scroll.scrollTo(0, 0);
-            if (initial != null)
+            // While the remote is on the tab row, moving along the tabs keeps it there (P3, RULES §4).
+            boolean onTabs = tabs != null && tabs.hasFocus();
+            if (!onTabs && initial != null)
                 initial.requestFocus();
-            else if (!body.requestFocus())
+            else if (!onTabs && !body.requestFocus())
                 requestFocus();
         } finally {
             building = false;

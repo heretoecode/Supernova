@@ -422,6 +422,8 @@ public class PreviewPagesTest {
         mountain.lineTo(1600, 900);
         mountain.close();
         canvas.drawPath(mountain, paint);
-        ((PreviewBackdrop) nav.getBackground()).onBitmapLoaded(art, Picasso.LoadedFrom.MEMORY);
+        // Every page is plain charcoal now (F27); the artwork backdrop is only there outside Supernova builds.
+        if (nav.getBackground() instanceof PreviewBackdrop)
+            ((PreviewBackdrop) nav.getBackground()).onBitmapLoaded(art, Picasso.LoadedFrom.MEMORY);
     }
 }
