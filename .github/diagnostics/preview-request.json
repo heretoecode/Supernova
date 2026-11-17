@@ -1,16 +1,12 @@
 {
- "purpose": "0.157.2 round 3: player P1-P5, plain charcoal on Home and library pages, Details fixes, Files tests",
+ "purpose": "0.157.2 round 4: Details tab on one screen (B2), age rating, Back to a library page, Extras cards",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
-  "com.archos.mediacenter.video.leanback.NoOldScreensTest",
-  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
-  "com.archos.mediacenter.video.player.Playback141RenderTest",
-  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
-  "com.archos.mediacenter.video.player.PlayerPartsStripTest",
   "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
-  "com.archos.mediacenter.video.leanback.details.PreviewEpisodeFactsTest",
+  "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest",
+  "com.archos.mediacenter.video.leanback.NoOldScreensTest",
   "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
-  "com.archos.mediacenter.video.leanback.Review0157RenderTest"
+  "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+  "com.archos.mediacenter.video.leanback.files.LibraryStatsTest"
  ],
  "variants": {
   "normal": {}

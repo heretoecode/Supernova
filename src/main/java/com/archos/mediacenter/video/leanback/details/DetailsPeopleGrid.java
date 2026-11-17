@@ -8,11 +8,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * Cast or crew on the Details tab (approved 14 Nov 2026, details-background/21): one row of up to eight portrait
- * cards, 2:3 like TMDB's photos, the name and role under each. No focus stops (the tab is for reading).
+ * Cast or crew on the Details tab (B2, approved 17 Nov 2026, files-review-0157-1/06): one row of seven portrait
+ * cards, 2:3 like TMDB's photos, the name and role under each; Cast and Crew side by side. No focus stops.
  */
 final class DetailsPeopleGrid extends LinearLayout {
-    static final int COLUMNS = 8;
+    static final int COLUMNS = 7;
 
     DetailsPeopleGrid(Context c) {
         super(c);
@@ -23,7 +23,7 @@ final class DetailsPeopleGrid extends LinearLayout {
 
     /** The space between two cards. */
     int gap() {
-        return Math.round(16 * getResources().getDisplayMetrics().density);
+        return Math.round(8 * getResources().getDisplayMetrics().density);
     }
 
     @Override
@@ -33,6 +33,10 @@ final class DetailsPeopleGrid extends LinearLayout {
         int tallest = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
+            // Seven each (D18): the rest stay out of the row.
+            child.setVisibility(i < COLUMNS ? VISIBLE : GONE);
+            if (i >= COLUMNS)
+                continue;
             if (child instanceof ViewGroup) {
                 ViewGroup group = (ViewGroup) child;
                 if (group.getChildCount() > 0 && group.getChildAt(0) instanceof ImageView) {
@@ -54,7 +58,7 @@ final class DetailsPeopleGrid extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         int cell = Math.max(1, (getWidth() - gap() * (COLUMNS - 1)) / COLUMNS);
-        for (int i = 0; i < getChildCount(); i++) {
+        for (int i = 0; i < Math.min(COLUMNS, getChildCount()); i++) {
             View child = getChildAt(i);
             int left = i * (cell + gap());
             child.layout(left, 0, left + cell, child.getMeasuredHeight());

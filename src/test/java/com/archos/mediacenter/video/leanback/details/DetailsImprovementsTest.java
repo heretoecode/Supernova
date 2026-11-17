@@ -73,8 +73,8 @@ public class DetailsImprovementsTest {
 
     @Test
     public void peopleGridIsOneRowOfPortraitCardsWithNoFocusStops() {
-        // Details tab v20 (approved 14 Nov 2026): up to eight 2:3 portrait cards in one row.
-        for (int count : new int[] {0, 1, 4, 8}) {
+        // Details tab B2 (approved 17 Nov 2026): seven 2:3 portrait cards in one row.
+        for (int count : new int[] {0, 1, 4, 7}) {
             DetailsPeopleGrid grid = new DetailsPeopleGrid(context);
             for (int i = 0; i < count; i++) {
                 LinearLayout cell = new LinearLayout(context);

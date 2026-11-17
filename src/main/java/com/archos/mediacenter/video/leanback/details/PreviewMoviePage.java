@@ -1127,6 +1127,9 @@ public final class PreviewMoviePage extends ScrollView {
             selectedEpisode == null && seasonNumber < 0 && enrichment != null
                 ? SharedMetadata.certificate(enrichment.classification, StreamingRepository.country(getContext()))
                 : "";
+        // The show's rating, else its first episode's (D11, notes §29); a movie's own stored rating last.
+        if (safe(certificate).isEmpty() && selectedEpisode == null && seasonNumber < 0)
+            certificate = storedRating();
 
         fact(key, "Age rating", certificate);
         fact(key, "Genres", genre);
@@ -2678,6 +2681,32 @@ public final class PreviewMoviePage extends ScrollView {
     private void fullDescription() {
         String name = movie != null ? movie.getName() : show != null ? show.getName() : "";
         PreviewDialog.read(getContext(), name == null ? "" : name, String.valueOf(plot.getText()));
+    }
+
+    private String storedRating() {
+        if (movie != null)
+            return safe(movie.getContentRating());
+        if (show == null)
+            return "";
+        if (!safe(show.getContentRating()).isEmpty())
+            return show.getContentRating();
+        Snapshot local = snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache();
+        if (local == null)
+            return "";
+        Episode first = null;
+        for (Entry entry : local.episodes) {
+            if (!(entry.media instanceof Episode) || safe(((Episode)entry.media).getContentRating()).isEmpty())
+                continue;
+            Episode episode = (Episode)entry.media;
+            if (entry.show != show.getTvshowId())
+                continue;
+            boolean earlier = first == null || episode.getSeasonNumber() < first.getSeasonNumber() ||
+                              episode.getSeasonNumber() == first.getSeasonNumber() &&
+                                  episode.getEpisodeNumber() < first.getEpisodeNumber();
+            if (earlier)
+                first = episode;
+        }
+        return first == null ? "" : first.getContentRating();
     }
 
     /** The title's TMDB page, when its TMDB number is known. */

@@ -87,7 +87,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         setTag("details.blueprint.v3");
         setFocusable(false);
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-        setPadding(dp(8), dp(16), dp(8), dp(24));
+        setPadding(dp(8), dp(8), dp(8), dp(12));
         crewSource = crew;
         // The full description is not shown on this tab (it is in the hero and More › Full description); the view
         // is kept, hidden, so the page can still read and update it.
@@ -110,8 +110,13 @@ final class DetailsBlueprintPanel extends LinearLayout {
             column(columns, "Technical information", "cog", "semantic:details.panel.technical.information");
         bindFacts(tech, TECH_FIELDS, technical, technicalValues);
 
-        people("Cast", "people", cast);
-        people("Crew", "film", crew);
+        // B2 (D18): Cast and Crew side by side under the columns, so the whole tab fits one screen.
+        LinearLayout people = new LinearLayout(c);
+        people.setBaselineAligned(false);
+        people.setTag("details.people.row");
+        addView(people, new LayoutParams(-1, -2));
+        people(people, "Cast", "people", cast);
+        people(people, "Crew", "film", crew);
     }
 
     void updateText(String synopsis, Map<String, String> facts, Map<String, String> technical) {
@@ -390,7 +395,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
 
     // ---- cast and crew -------------------------------------------------------------------------------
 
-    private void people(String title, String icon, View content) {
+    private void people(LinearLayout row, String title, String icon, View content) {
         LinearLayout region = new LinearLayout(getContext());
         region.setOrientation(VERTICAL);
         region.setTag("details.region." + title);
@@ -403,7 +408,10 @@ final class DetailsBlueprintPanel extends LinearLayout {
             content.setPadding(0, 0, 0, 0);
             region.addView(content, new LayoutParams(-1, -2));
         }
-        addView(region, new LayoutParams(-1, -2));
+        LayoutParams half = new LayoutParams(0, -2, 1);
+        if (row.getChildCount() > 0)
+            half.leftMargin = dp(28);
+        row.addView(region, half);
     }
 
     /** Directed by and Written by, read from the crew cards ("person:<name>:<role>"). */

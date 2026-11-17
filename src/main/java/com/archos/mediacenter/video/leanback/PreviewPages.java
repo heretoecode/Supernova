@@ -669,6 +669,8 @@ public final class PreviewPages extends FrameLayout {
         {
             startHeroClock();
             post(this::recoverLostFocus);
+            // Once more after the page has re-laid itself out (the snapshot may refresh on return).
+            postDelayed(this::recoverLostFocus, 400);
         }
         else {
             heroOwnsHorizontal = false;
@@ -739,7 +741,11 @@ public final class PreviewPages extends FrameLayout {
 
     /** After standby the window can come back with nothing focused: return to the remembered card. */
     private void recoverLostFocus() {
-        if (!isShown() || !hasWindowFocus() || getRootView().findFocus() != null || cells.isEmpty())
+        // Back from a title (D17): focus can come back to nothing, or to this page or its list themselves, which
+        // shows no box and lets Down fall into the top bar. Either way, return to the remembered card.
+        View current = getRootView().findFocus();
+        boolean lost = current == null || current == this || current == list;
+        if (!isShown() || !hasWindowFocus() || !lost || cells.isEmpty() || tab == 3)
         {
             return;
         }
