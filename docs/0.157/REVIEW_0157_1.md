@@ -148,11 +148,11 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 - **F44. Check matches opens a page even when nothing changed** ("Everything looks fine: every film still finds its
   own match"); focus also jumped to Home (F9) and the text says "film" (RULES §6: Movies). Owner wants the result
   inline. [Run it in the row: progress, then the pill says "No changes · 17 Nov"; only when there are changes does
-  the row say "4 to review" and OK open the review page.]
+  the row say "4 to review" and OK open the review page.] **Approved 17 Nov.**
 - **F45. Missing files, Couldn't be read and Not matched open the old three-panel screen.** Approved: one page each in
   the tab (`12`, `13`, `14`) with Find it again · Remove / Try again · Exclude / Fix match · Not a movie.
 - **F46. Rows with nothing to show still open** ("None"). RULES §10: never offer what does nothing. [A "None" row has
-  no › and OK does nothing.]
+  no › and OK does nothing.] **Approved 17 Nov.**
 - **F47. Scan buttons' icons invisible,** focused or not (see F30).
 - **F48. Scan one source shows a "This device" button while not focused;** the other buttons appear only on focus.
   RULES §7: buttons show on the focused row only.
@@ -161,12 +161,15 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 - **F50. Recent scans can't be reached** (each row has a "Done" pill; focus never gets there). Approved: the last three
   as plain rows, then Show all scans (focusable) for the last ten.
 - **F51. Pressing several scan buttons:** nothing visible happens after the first (queued or ignored?). Approved scan
-  rules: one at a time. [Each pressed source shows "Waiting" in the row until its turn.]
+  rules: one at a time. [Each pressed source shows "Waiting" in the row until its turn.] **Approved 17 Nov.**
 - **F52. One connection per server (owner idea, 17 Nov):** the owner added Films and TV (one WebDAV server) and Movies
   and TV Shows (one SFTP server) as four connections, so Scan one source shows four buttons. Proposed: group by server.
   [A connection is the server and its login; the folders chosen are part of it. Connections shows one row per server
   (second line lists its folders), Scan one source one button per server, named by the connection's name, not its
-  type, so two WebDAV servers stay apart.] Awaiting the owner; likely 0.158.
+  type, so two WebDAV servers stay apart.] **Approved 17 Nov, for 0.158.** The name is the form's Name field,
+  suggested from the address (webdav.put.io → "Put.io"; an SFTP server → its host name) and changeable with Edit.
+  E.g. Connections: "Put.io · alex — WebDAV · Films, TV" and "Seedbox · alex — SFTP · Movies, TV Shows"; Scan one
+  source: This device · Put.io · Seedbox, each with its type's icon.
 
 ### Confirmed
 - The breadcrumb ("Backup 1 › … › Movies") is a signpost, not focusable; Back goes up one level (v6, 6 Nov).

@@ -103,6 +103,7 @@ Bug fixes only (owner, 17 Nov): as many as possible before 0.158. Findings in `d
 - Settings (seven tabs, Backup and Restore, Diagnostics, About)
 - Onboarding (on Home, Start fresh / Restore, smart steps)
 - Search (library first, On your services, recent searches)
+- Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
 - One side margin for every page (Home, library pages, Files, Settings, Search), set with these redesigns
 
 ## Parked
