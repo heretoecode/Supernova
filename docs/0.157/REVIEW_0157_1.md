@@ -80,7 +80,7 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   picture taken from the video file itself (a frame from a few minutes in, like a thumbnail), or a plain card when one
   can't be made. Owner to test what shows today. For network files this is Settings › Library and Home › "Make
   thumbnails for network videos" (kept as a switch in the Settings redesign): off means network files get the plain
-  card, because taking a picture means reading part of each file over the network. Plain card drawn
+  card, because taking a picture means reading part of each file over the network. Plain card drawn and **approved 17 Nov**
   (`files-review-0157-1/03`): charcoal-grey card, the film (or folder) icon, name and size, the usual pill.
 - **F25. Sort:** approved menu (`11`): Name A–Z / Z–A, Newest / Oldest first, Largest / Smallest first. Owner asks for
   sort choices plus an ascending / descending button. Library pages already split them (Sort · Order). Drawn (`files-review-0157-1/02` D):
