@@ -36,6 +36,7 @@ underline, this sheet wins.
 - Continue Watching updates as soon as playback ends.
 
 ## Customise Home (`03`)
+Opened from the **Customise Home** button at the bottom of Home, below the last row (as today).
 Floating side panel on the right; changes apply live; Back closes.
 - **Your Rows** first (each with ›, opens its settings), **Add a row**, then **Built-In Rows** with a switch each:
   Continue Watching, Recently Added, Watch Next, Trending on Trakt, Popular on Trakt, Recently Watched, Because You
@@ -61,7 +62,7 @@ Floating side panel on the right; changes apply live; Back closes.
 | Long-press / Menu on a card | The library long-press menu beside the card (LIBRARY.md) |
 | Move (row heading) | Move mode for that row |
 | Hide (row heading) | Row hidden at once with an Undo notice; it can come back in Customise Home |
-| Customise Home (where it lives today, and Settings › Home) | Customise Home panel on the right |
+| Customise Home (the button at the bottom of Home, below the last row; owner, 18 Nov) | Customise Home panel on the right; Back returns to the button |
 | A row in Customise Home (›) / Add a row | Its settings on top of Customise Home |
 | Icon | Icon picker; OK chooses and returns |
 | Delete row | The delete warning ("Keep row" first); Back returns |
