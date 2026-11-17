@@ -21,10 +21,6 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   free space, temperature), smoothness (dropped frames, slow remote response), speed (start-up, page and artwork times),
   playback quality, stability (crashes, freezes, leaks), and a Health summary at the top of each report flagging anything
   over its limit; later the build checks the same limits
-- Top bar and tabs without underlines (owner, 16 Nov, photo from 0.157): the page switches as focus moves (no pause),
-  the white box alone shows focus in the bar; below the bar the current page's word is bright and bolder, the rest soft.
-  Page outline at once, artwork after you stop. Questions: (1) same for the tabs on Details and Files? (2) mock-up with
-  the user switcher in SUPERNOVA's place: in the bar, down in the rows, moving along (with today's underline beside it)
 - Text centred on its letters, not its font box, in every box (buttons, chips, tabs, pills): "TV Shows" sat low in its
   focus box (owner, 16 Nov). Same photo: grey text in the white box and a blue Home underline; check on 0.157.1
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
@@ -108,6 +104,12 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - Search (library first, On your services, recent searches)
 - Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
 - One side margin for every page (Home, library pages, Files, Search), set with these redesigns
+- **Top bar (owner, 18 Nov; details to discuss):** SUPERNOVA removed from the top left (separately from users and
+  tags; the user switcher comes later), so Home and the places shift left. Places open as focus moves onto them, no OK
+  (Home · Movies · TV Shows · Documentaries · Files), like the Shield's own home screen; Search and Settings still
+  need OK. Focus is the white box. To discuss: what shows the current page once focus goes below the bar (16 Nov idea:
+  bright, bolder word, no underline), whether tabs on Details and Files follow, loading (page outline at once,
+  artwork once you stop), and the mock-ups
 
 ### Also in 0.158
 - Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
