@@ -2642,7 +2642,8 @@ public final class PreviewMoviePage extends ScrollView {
         moreItem(labels, icons, commands, "— Files & Media", null, null);
         if (movie != null)
             moreItem(labels, icons, commands, "Subtitles", "sub", nativeDetails);
-        moreItem(labels, icons, commands, "Artwork", "appearance", nativeDetails);
+        moreItem(labels, icons, commands, "Artwork", "appearance",
+                 artworkPanel != null ? artworkPanel : nativeDetails);
         moreItem(labels, icons, commands, "Full description", "synopsis", this::fullDescription);
         if (delete != null && movie != null) {
             moreItem(labels, icons, commands, "Delete file", "delete", () -> PreviewDialog.confirmDelete(
@@ -2675,6 +2676,25 @@ public final class PreviewMoviePage extends ScrollView {
         labels.add(label);
         icons.add(icon);
         commands.add(command);
+    }
+
+    private Runnable artworkPanel;
+
+    /** More › Artwork opens the side panel (D3); supplied by the Details screen, which knows the pictures. */
+    public void setArtworkPanel(Runnable panel) {
+        artworkPanel = panel;
+    }
+
+    /** The hero shows {@code uri} while the Artwork panel is on it; null shows the kept picture again (D3). */
+    public void previewArtwork(Uri uri) {
+        Uri shown = uri != null ? uri : artworkUri == null ? null : Uri.parse(artworkUri);
+        if (cardArtwork == null || shown == null)
+            return;
+        try {
+            com.squareup.picasso.Picasso.get().load(shown).fit().centerCrop().noFade().into(cardArtwork);
+        } catch (RuntimeException unavailable) {
+            // No picture loader in this process.
+        }
     }
 
     /** Full description: a pop-up sized to the text with the title, then the text (page sheet). */
