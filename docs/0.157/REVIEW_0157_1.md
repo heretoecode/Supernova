@@ -246,3 +246,8 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   of the width at most, like the choice list), height to its content, arrows for more (RULES §11, §16).] To confirm.
 - **P5. Focus inside Playback Settings is wrong:** focused rows don't fill white and their text and icons don't turn
   black (RULES §3).
+- **P6. Playback Settings panel surface (checked in the 0.157.2 code, 18 Nov):** the fill matches the mock-up
+  (charcoal `#16181C` at 95%, `SupernovaStyle.GLASS`), but `PlaybackSubtitlePanel` also draws a light edge round the
+  panel (`GLASS_EDGE`, white at 22%) and a dark glow. RULES §11: over video, no edge. The class still holds old blue
+  colour constants (tab border, active tab, focus border); check none is still drawn. The owner sees a difference
+  on the Shield: compare with a photo.
