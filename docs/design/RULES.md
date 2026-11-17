@@ -26,7 +26,8 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   (owner, 17 Nov):** in 0.157.2 Home and the library pages take the same charcoal background now, ahead of their
   0.158 redesigns, so every page matches.
 - No page title on a top-level page: the top bar already says where you are.
-- TV safe margins: about 56 px at the sides, 54 px at the bottom.
+- TV safe margins: about 56 px at the sides, 54 px at the bottom. **One side margin (owner, 18 Nov):** every page's
+  content lines up with the top bar's edges (the clock's right edge); Home's rows alone run off the edge.
 - **Typing happens on a page,** not in a side panel: fields on one side, the keyboard on the page, help under it
   (Files v6, Search, Fix match).
 - Flat-page sizes (Files): rows about 128 px tall, names 36 px, second lines 27 px, buttons 64 px. Denser lists

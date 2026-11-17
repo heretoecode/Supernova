@@ -103,7 +103,10 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)
 - Search (library first, On your services, recent searches)
 - Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
-- One side margin for every page (Home, library pages, Files, Search), set with these redesigns
+- **One side margin (owner, 18 Nov):** every page except Home lines up with the top bar's own edges: the clock's right
+  edge on the right, the first word's box on the left. Library pages, Files, Search and Settings use it for their
+  content, the toolbar's dividing line and the artwork. Today: top bar 26 units (about 52 px at 1080p), library pages
+  28 (a few pixels in), Files 48 (about 40 px further in). Home keeps no margin so its rows run off the edge
 - **Top bar (approved by the owner, 18 Nov; a trial before tabs elsewhere follow):** SUPERNOVA removed from the top left (separately
   from users and tags), places shift left. **Media pages open as focus lands on them** (Home, Movies, TV Shows, your
   own pages); **tools need OK** (Files, Search, Settings). Three looks, as on the Shield's home screen: plain word;
