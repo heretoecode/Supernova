@@ -51,7 +51,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   one line in the message (not on the picture) says what is new to look at.
 - **Reviewing a page (owner, 17 Nov 2026):** one page at a time; when moving to a new page, first send its latest
   mock-ups (for a side-by-side look) and its checklist from the page sheet (`docs/design/pages/`).
-- **The owner approves every signing.** Never sign or publish without being asked.
+- **Signing: standing approval (owner, 17 Nov 2026).** Sign every version as soon as the conformance run of the exact
+  same source is green, without asking; tell the owner it is signed and where the APK is. (Replaces "the owner approves
+  every signing".) Publishing anywhere else still needs the owner.
 - **This repository is public** (a GitHub fork of NOVA). Never put the owner's personal details in it: account
   names, email, location (country, city, time zone names), addresses, device names, real storage figures. Say "local
   time". Mock-ups and tests use made-up names (owner, 12 Nov 2026). The owner intends to make it private; it may go
