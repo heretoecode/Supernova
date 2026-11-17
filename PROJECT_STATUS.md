@@ -4,7 +4,8 @@ Updated 18 November 2026 (overnight 0.157.2 session). Keep this page short and c
 
 ## Released
 
-**0.157.2** (code 1572) — built 18 Nov 2026; signing and run links in the report. Bug fixes from the owner's Shield review of 0.157.1
+**0.157.2** (code 1572) — signed 18 Nov 2026 (run 44020349261 of `supernova-0157-qa.yml`, from green
+conformance run 44015287084 on `c3f75d5`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.2.apk`). Bug fixes from the owner's Shield review of 0.157.1
 (`docs/0.157/REVIEW_0157_1.md`), built overnight from `docs/0.157/BRIEF_0157_2.md` and the page sheets. Report:
 `docs/0.157/REPORT_0157_2.md` (fixed, not built, judgement calls in `docs/0.157/JUDGEMENT_CALLS_0157_2.md`).
 Waiting for the owner: install and check on the Shield; send the latest diagnostics report (not in the inbox).

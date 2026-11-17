@@ -4,7 +4,11 @@ Built from `docs/0.157/BRIEF_0157_2.md`, the page sheets (`docs/design/pages/FIL
 review `docs/0.157/REVIEW_0157_1.md`. Version **0.157.2**, code **1572**.
 
 ## Signed APK
-SIGNED_RESULT_PLACEHOLDER
+**Signed 18 Nov 2026** by run 44020349261 of `supernova-0157-qa.yml`
+(https://github.com/heretoecode/Supernova/actions/runs/44020349261), from green conformance run 44015287084 on
+`c3f75d5` (every app, MediaLib, FileCore and tooling test, lint, 2,205 app tests). Artifact
+**`supernova-0157-signed-qa`** (`Supernova_0.157.2.apk`, about 32 MB). Earlier conformance runs that night failed on
+tests still expecting the old design (updated) and one style rule (fixed).
 
 ## Diagnostics report
 Not in `docs/INBOX.md` and no "Inbox:" issue, so the two crashes (about 23:09 and 23:14, 16 Nov) and the blank
