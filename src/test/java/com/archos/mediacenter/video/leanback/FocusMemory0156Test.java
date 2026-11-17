@@ -132,7 +132,7 @@ public class FocusMemory0156Test
             PreviewHomeRows.customise(host.get(), () -> {
             });
             Dialog first = ShadowDialog.getLatestDialog();
-            String second = new PreviewHomeRows(host.get()).rows.get(1).id;
+            String second = "home.customise.builtin:recent";
             View row = first.getWindow().getDecorView().findViewWithTag(second);
             assertNotNull(row);
             row.requestFocus();

@@ -35,6 +35,8 @@ final class HomeCustomisePanel
         {"similar", "Because You Watched", "Similar titles in your library", "recommendation"},
     };
     static final int[] MAXIMUM = {10, 15, 20, 25, 30};
+    /** The row you were on last time, so reopening Customise Home returns there (focus audit F17). */
+    static final String LAST_ROW = "supernova_customise_home_last_row";
     static final String[] SORTS = {"title", "year", "added"};
 
     private final Context context;
@@ -89,7 +91,25 @@ final class HomeCustomisePanel
                 save();
             });
         }
-        panel.show(focusTag == null ? null : panel.body.findViewWithTag(focusTag));
+        android.content.SharedPreferences prefs =
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        String remembered = focusTag != null ? focusTag : prefs.getString(LAST_ROW, null);
+        for (int i = 0; i < panel.body.getChildCount(); i++)
+        {
+            android.view.View row = panel.body.getChildAt(i);
+            if (row.isFocusable() && row.getTag() instanceof String)
+            {
+                android.view.View.OnFocusChangeListener look = row.getOnFocusChangeListener();
+                row.setOnFocusChangeListener((v, has) -> {
+                    look.onFocusChange(v, has);
+                    if (has)
+                    {
+                        prefs.edit().putString(LAST_ROW, (String) v.getTag()).apply();
+                    }
+                });
+            }
+        }
+        panel.show(remembered == null ? null : panel.body.findViewWithTag(remembered));
     }
 
     private Row find(String id)

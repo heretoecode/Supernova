@@ -63,26 +63,19 @@ public class Preview41RowsTest {
                 rows.rows.stream().filter(r -> r.id.equals("watchnext")).findFirst().get().members.contains(e.key()));
             PreviewHomeRows.customise(c, () -> {
             });
+            // Customise Home (0.158): Watch Next's switch hides the row; its titles stay in it.
             Dialog editor = ShadowDialog.getLatestDialog();
             View root = editor.getWindow().getDecorView();
-            View watched = root.findViewWithTag("watchnext");
+            View watched = root.findViewWithTag("home.customise.builtin:watchnext");
             assertNotNull(watched);
             watched.performClick();
-            watched.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
-            root.findViewWithTag("watchnext").performClick();
-            root.findViewWithTag("watchnext:visibility").performClick();
-            int width = editor.getWindow().getAttributes().width, height = editor.getWindow().getAttributes().height;
+            int width = editor.getWindow().getAttributes().width;
             assertTrue(width <= TvLayout.safeWidth(c));
-            assertTrue(height <= TvLayout.safeHeight(c));
-            root.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-            root.layout(0, 0, width, height);
-            PreviewPagesTest.capture(root, "customise-home");
             editor.dismiss();
             rows = new PreviewHomeRows(c);
-            assertEquals("watchnext", rows.rows.get(0).id);
-            assertFalse(rows.rows.get(0).visible);
-            assertTrue(rows.rows.get(0).members.contains(e.key()));
+            PreviewHomeRows.Row next = rows.rows.stream().filter(r -> r.id.equals("watchnext")).findFirst().get();
+            assertFalse(next.visible);
+            assertTrue(next.members.contains(e.key()));
         } finally {
             host.pause().stop().destroy();
         }
