@@ -1,0 +1,245 @@
+<title>Supernova 0.157.2 Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: one reading column, a sticky page switcher, each check a tickable line. Supernova's own charcoal look, dark only. */
+:root{
+  --bg:#16181C; --panel:#1E2127; --line:rgba(255,255,255,.09); --fg:#F4F6FB; --soft:#C9D3E6; --muted:#8E96A6;
+  --focus:#F4F6FB; --ink:#0B0D12; --known:#d9b36c;
+  --display:"Space Grotesk",Inter,system-ui,sans-serif; --body:Inter,system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:760px;margin:0 auto}
+header{padding-block:32px 8px}
+h1{font-family:var(--display);font-size:32px;font-weight:600;letter-spacing:.2px;margin:0;text-wrap:balance}
+.lede{color:var(--soft);margin:8px 0 0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px;border-bottom:1px solid var(--line);
+  display:flex;gap:8px;flex-wrap:wrap}
+nav a{color:var(--fg);text-decoration:none;font-weight:500;padding:8px 16px;border-radius:12px;border:1px solid var(--line)}
+nav a:focus-visible,nav a:hover{background:var(--focus);color:var(--ink)}
+nav .count{color:var(--muted);font-weight:400;margin-left:6px;font-variant-numeric:tabular-nums}
+section{padding-top:28px}
+h2{font-family:var(--display);font-size:26px;font-weight:600;margin:0 0 4px}
+.order{color:var(--muted);font-size:15px;margin:0 0 6px}
+h3{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);font-weight:600;margin:26px 0 6px}
+ul{list-style:none;margin:0;padding:0}
+li{border-bottom:1px solid var(--line)}
+li:last-child{border-bottom:0}
+label{display:flex;gap:14px;align-items:flex-start;padding:11px 4px;cursor:pointer}
+input[type=checkbox]{appearance:none;flex:0 0 22px;width:22px;height:22px;margin-top:2px;border:2px solid var(--soft);border-radius:6px;background:transparent;display:grid;place-content:center}
+input[type=checkbox]:checked{background:var(--focus);border-color:var(--focus)}
+input[type=checkbox]:checked::after{content:"";width:6px;height:11px;border:solid var(--ink);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+input[type=checkbox]:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+li.done span{color:var(--muted)}
+b{font-weight:600}
+.known{background:var(--panel);border-radius:14px;padding:14px 18px;margin-top:22px}
+.known h3{margin-top:0;color:var(--known)}
+.known li{border-color:var(--line);padding:7px 0;color:var(--soft)}
+.tip{background:var(--panel);border-radius:14px;padding:14px 18px;margin-top:20px;color:var(--soft)}
+.tip b{color:var(--fg)}
+footer{color:var(--muted);font-size:14px;margin-top:40px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Supernova 0.157.2 Checklist</h1>
+  <p class="lede">What each redesigned page should look and behave like. Compare with the Shield and dictate what differs. Tick as you go; ticks stay on this iPad.</p>
+</header>
+
+<nav aria-label="Pages">
+  <a href="#player">Player<span class="count" data-for="player"></span></a>
+  <a href="#details">Details<span class="count" data-for="details"></span></a>
+  <a href="#files">Files<span class="count" data-for="files"></span></a>
+  <a href="#shared">Everywhere<span class="count" data-for="shared"></span></a>
+</nav>
+
+<div class="tip"><b>Dictating:</b> one note per page, say the page name first, and the time of any crash, freeze or blank screen. Photos where something looks wrong.</div>
+
+<section id="player">
+  <h2>Player</h2>
+  <p class="order">Start here. Use a TV episode with chapters and subtitles, then a film.</p>
+
+  <h3>Preparing playback</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>The title block in the top left, <b>level with the clock</b>: logo artwork (or the name), the episode line, then year · length · genres.</span></label></li>
+    <li><label><input type="checkbox"><span>Under it, the <b>age rating badge with its reasons</b> on its own line ("15 · Strong language, violence").</span></label></li>
+    <li><label><input type="checkbox"><span>The spinning Supernova rings and "Preparing playback…" well below the block. <b>Nothing pops in or shifts</b> when the logo arrives.</span></label></li>
+  </ul>
+
+  <h3>Playing, controls shown</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>The title block in <b>exactly the same place</b> as on Preparing playback.</span></label></li>
+    <li><label><input type="checkbox"><span>A soft full-width dark fade behind the controls, no blur. Running time and "Ends 21:14" between the bar and Settings.</span></label></li>
+    <li><label><input type="checkbox"><span>Controls stay about 3 seconds after you resume.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Chapters · Episodes</b> tab row under the bar, always shown. Moved lower than in 0.157.1, with half the old gap below (P1).</span></label></li>
+    <li><label><input type="checkbox"><span>Going down to the Chapters or Episodes cards, the <b>title block stays put</b> (P2).</span></label></li>
+    <li><label><input type="checkbox"><span>Chapter row centred between the tab line and the bottom edge. Names read Recap · Chapter 1 · Intro · Chapter 2 (no "Scene 3").</span></label></li>
+    <li><label><input type="checkbox"><span>Episode cards: the episode's own name and "Playing · Episode 2 · 46 min". Never "Unknown".</span></label></li>
+    <li><label><input type="checkbox"><span>Focused card grows with the thick white ring.</span></label></li>
+  </ul>
+
+  <h3>Seeking and waiting</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>The seek box is a card: the time over the chapter name, never cut off by subtitles. A seek preview picture sits inside it (labelled Experimental).</span></label></li>
+    <li><label><input type="checkbox"><span>Whenever playback waits (after a seek, slow network), <b>one loading ring in the centre</b> of the screen.</span></label></li>
+    <li><label><input type="checkbox"><span>Skip intro / credits button: its 10-second countdown is a bar, not a ring.</span></label></li>
+  </ul>
+
+  <h3>Playback Settings</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>A floating panel on the right, no outline over video. Tabs <b>Subtitles · Audio · Playback</b>, opens on Subtitles with <b>focus on the Subtitles tab</b> (P3).</span></label></li>
+    <li><label><input type="checkbox"><span><b>Same size on all three tabs</b>, at most about 40% of the width, as tall as its contents (P4).</span></label></li>
+    <li><label><input type="checkbox"><span>Focused row: <b>white box with black text and icons</b> (P5). No blue anywhere, ticks included.</span></label></li>
+    <li><label><input type="checkbox"><span>Section headings centred on a thin line, Title Case.</span></label></li>
+    <li><label><input type="checkbox"><span>Subtitles: on/off, Subtitle track › (with its pills: English · Original · SDH), Download subtitles ›, Subtitle delay; appearance rows (size, colour dots, position, outline, background, opacity) show a sample line; <b>For This Series</b> last.</span></label></li>
+    <li><label><input type="checkbox"><span>Audio: Audio track › (with pills), delay, boost, Night mode, Spatial audio; <b>For This Series</b> last.</span></label></li>
+    <li><label><input type="checkbox"><span>Playback: one plain list: Format, Speed, Stop playing at (Off · now + 30/60/90 · End of episode), Still watching?, Play mode (Stop after this · Play next · Repeat this · Repeat all), Skip intros and credits; then the save row for the series.</span></label></li>
+    <li><label><input type="checkbox"><span>A track list opens <b>on top</b> of the panel; the panel behind darkens and shrinks back slightly. No header. Back returns to the row you came from.</span></label></li>
+  </ul>
+
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>One Playback tab label may be cut short at 40% width ("Skip In…").</li>
+  </ul></div>
+</section>
+
+<section id="details">
+  <h2>Details</h2>
+  <p class="order">Try a film, a TV show (Mr. Robot), a season and an episode.</p>
+
+  <h3>Hero</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Logo artwork, then for seasons and episodes the line "Season 1 · Episode 5 · Title".</span></label></li>
+    <li><label><input type="checkbox"><span>Metadata row: <b>age badge</b> · year · length · genres (three at most). Mr. Robot now has its rating (D11).</span></label></li>
+    <li><label><input type="checkbox"><span>A <b>two-line description</b> that stays (no switch to the tagline, D10).</span></label></li>
+    <li><label><input type="checkbox"><span>Buttons fixed at the bottom left; at rest a <b>dark see-through box</b>, not solid black (D13).</span></label></li>
+    <li><label><input type="checkbox"><span>Watch for anything popping in: artwork, logo, metadata, tabs.</span></label></li>
+  </ul>
+
+  <h3>More menu</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Opens <b>beside More</b>, not in the top-right corner (D1).</span></label></li>
+    <li><label><input type="checkbox"><span>Items: Mark as watched · Fix match · Remove from library · Subtitles · Artwork · Full description · Delete file, then <b>TMDB page</b> at the foot after a line. A different icon each (D2).</span></label></li>
+    <li><label><input type="checkbox"><span>TMDB page: a small pop-up, "Scan to open the TMDB page" and the code, the page blurred behind. Back closes.</span></label></li>
+    <li><label><input type="checkbox"><span>Artwork: one panel floating on the right (Hero and rows · Library page); the hero previews as you move (D3).</span></label></li>
+    <li><label><input type="checkbox"><span>Fix match: goes to Files › Library Care for that title with Match and return · Match and stay.</span></label></li>
+  </ul>
+
+  <h3>Tabs</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Focused tab is the <b>white box alone</b>, no underline at the same time (D4). Up from inside a tab lands on that tab.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Details tab on one screen</b>, no scrolling: Reception · Key information · Technical information, then <b>seven Cast and seven Crew side by side</b> (D18).</span></label></li>
+    <li><label><input type="checkbox"><span>Dates in words ("24 June 2015"); shows say <b>Created by</b>; Runtime filled in (D14, D15).</span></label></li>
+    <li><label><input type="checkbox"><span>Episodes: season headings get the white box when focused (D5); cards not clipped at the sides (D6); <b>no play icon</b> on cards (D16).</span></label></li>
+    <li><label><input type="checkbox"><span>Extras cards the <b>same size</b> as Episodes cards (D7). A trailer plays nearly full screen, the page blurred behind, <b>no title bar and no controls</b>; check the quality is above 720p (D19).</span></label></li>
+    <li><label><input type="checkbox"><span>More Like This: service logos in <b>full colour</b> (D20). OK on a streaming title opens the <b>app straight away</b>, no Supernova page (D8).</span></label></li>
+  </ul>
+
+  <h3>Back</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Back from a title to a library page: <b>the same poster is focused</b>, arrows work (D17).</span></label></li>
+  </ul>
+
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>Netflix and Disney+ may open at their start rather than the exact title, especially from More Like This.</li>
+    <li>Rotten Tomatoes and Metacritic need your OMDb key (parked).</li>
+    <li>The TMDB page item uses a stand-in icon. Delete file's warning has no history switches yet.</li>
+    <li>Episode and More Like This rows stop at the page margin instead of running off the edge.</li>
+  </ul></div>
+</section>
+
+<section id="files">
+  <h2>Files</h2>
+  <p class="order">Last, since it had the most attention.</p>
+
+  <h3>Whole page</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Opens on <b>This Device</b> every time. Nothing cut off at the right; no invisible frame (F3).</span></label></li>
+    <li><label><input type="checkbox"><span>Tab row right end: only <b>Scan library</b> (Scanning · 42% while running).</span></label></li>
+    <li><label><input type="checkbox"><span>Up from the tab row reaches the top bar; Up from content lands on the open tab; <b>focus never jumps to Home</b> (F1, F9, F17).</span></label></li>
+    <li><label><input type="checkbox"><span>No scroll bars: small arrows in the right margin when there's more.</span></label></li>
+    <li><label><input type="checkbox"><span>Black text and icons on every white focus box, buttons included.</span></label></li>
+  </ul>
+
+  <h3>This Device and browsing</h3>
+  <ul>
+    <li><label><input type="checkbox"><span><b>Internal storage</b> with its storage bar, like the USB drives.</span></label></li>
+    <li><label><input type="checkbox"><span>Opening a drive: <b>list view</b> first, with Grid / List · Sort ▾ · Order · Videos only. Sort: Name · Date modified · Size; folders first.</span></label></li>
+    <li><label><input type="checkbox"><span>Folders show a count and a pill (In library · Excluded · Not added); grid folders a mosaic of their artwork.</span></label></li>
+    <li><label><input type="checkbox"><span>Files: title, then "2024 · 14.2 GB". Files not in the library: a still from the video, or the plain card.</span></label></li>
+    <li><label><input type="checkbox"><span>Long-press: a file gets Play · Details · Mark as watched · Exclude · Fix match; a folder gets Open · Add to library · Scan this folder · Exclude.</span></label></li>
+    <li><label><input type="checkbox"><span>Back after playing returns to <b>the same folder</b>, focus on the file.</span></label></li>
+  </ul>
+
+  <h3>Connections</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Rows: "Put.io · account" with "WebDAV · 1,204 videos"; pills in one column that doesn't move.</span></label></li>
+    <li><label><input type="checkbox"><span>Focused row: Open · Edit · Test · Remove. Remove goes at once with Undo.</span></label></li>
+    <li><label><input type="checkbox"><span>Edit and Add a connection open <b>our form</b> in the tab: Type chips SMB · WebDAV · SFTP · FTP, Encryption (HTTPS / FTPS), our keyboard with the eye and Phone key. No old pop-up, no Android keyboard.</span></label></li>
+    <li><label><input type="checkbox"><span>Found on your network: Open browses it; Add opens the form filled in, then the device moves up into Your connections.</span></label></li>
+  </ul>
+
+  <h3>Library Care and Your Library</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Rows on their centre line; "None" rows do nothing; the badge matches the total.</span></label></li>
+    <li><label><input type="checkbox"><span>Missing files, Couldn't be read and Not matched open <b>their own pages in the tab</b>, not the old three-panel screen.</span></label></li>
+    <li><label><input type="checkbox"><span>Check matches runs in its row ("No changes · 18 Nov").</span></label></li>
+    <li><label><input type="checkbox"><span>Scan one source: buttons only when focused, one focus only, "Waiting" when queued. Recent scans reachable, then Show all scans.</span></label></li>
+    <li><label><input type="checkbox"><span>Your Library › Picture lists 4K, 1080p, 720p, SD and HDR.</span></label></li>
+  </ul>
+
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>Opening a found device that needs a login says it can't open; use Add.</li>
+    <li>Network files get no stills (the thumbnails switch is a separate setting).</li>
+    <li>Coming in 0.158: one side margin lined up with the top bar, and connections grouped by server.</li>
+  </ul></div>
+</section>
+
+<section id="shared">
+  <h2>Everywhere</h2>
+  <p class="order">Note these wherever you meet them.</p>
+  <ul>
+    <li><label><input type="checkbox"><span>One focus on screen at a time; it never vanishes or jumps.</span></label></li>
+    <li><label><input type="checkbox"><span>Text sits in the middle of its box, not low.</span></label></li>
+    <li><label><input type="checkbox"><span>Choice lists (languages, country, services): tick on the right, search above 12 items, Back closes.</span></label></li>
+    <li><label><input type="checkbox"><span>Menus open beside their button, an icon each, sized to the longest item.</span></label></li>
+    <li><label><input type="checkbox"><span>Home and library pages now on the same charcoal as Files (their redesigns are 0.158, so skip the rest).</span></label></li>
+    <li><label><input type="checkbox"><span>Any crash, freeze or blank screen: note the time, then export the diagnostics report.</span></label></li>
+  </ul>
+</section>
+
+<footer>Sources: the page sheets (Files, Details), the 0.157.1 review and Coding's 0.157.2 report. Player's own sheet is still to be written.</footer>
+</div>
+
+<script>
+(function(){
+  var KEY='sn-01572-checks';
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){saved={}}
+  var boxes=document.querySelectorAll('section input[type=checkbox]');
+  boxes.forEach(function(b,i){
+    b.id='c'+i;
+    if(saved[b.id]){b.checked=true}
+    mark(b);
+    b.addEventListener('change',function(){
+      saved[b.id]=b.checked;
+      try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}
+      mark(b);count();
+    });
+  });
+  function mark(b){b.closest('li').classList.toggle('done',b.checked)}
+  function count(){
+    document.querySelectorAll('nav .count').forEach(function(c){
+      var s=document.getElementById(c.dataset.for);
+      var all=s.querySelectorAll('input[type=checkbox]');
+      var done=s.querySelectorAll('input[type=checkbox]:checked');
+      c.textContent=done.length+'/'+all.length;
+    });
+  }
+  count();
+})();
+</script>
