@@ -119,7 +119,8 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 - **F39. Add a connection, changed (owner, 17 Nov):** no inline type buttons and no extra button to name: the row
   itself opens the form (› on the right, RULES §8). The form starts with a **Type** row (Computer or NAS · WebDAV ·
   SFTP · FTP, inline chips since there are four), and the fields below follow the type. **Owner (17 Nov): "Computer or
-  NAS" renamed "Shared folders (SMB)"**, named by connection type like the others. Replaces v8's inline types
+  NAS" renamed "Shared folders (SMB)"**, named by connection type like the others. No "(S)" on the chips (SFTP is not encrypted FTP);
+  the switch names it instead: WebDAV "Encryption (HTTPS)", FTP "Encryption (FTPS)", on by default. Replaces v8's inline types
   (`06`). Mock-up `files-review-0157-1/04` (2). Awaiting the owner.
 - **F40. Found on your network opens to browse (owner, 17 Nov):** NOVA browses a found device straight away; Supernova
   should too. OK (Open) browses it in Files like a drive, asking for a username and password only if the device needs
