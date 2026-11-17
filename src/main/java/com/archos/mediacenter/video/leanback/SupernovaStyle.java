@@ -94,6 +94,11 @@ public final class SupernovaStyle {
         applyContent(view, true);
     }
 
+    /** Rest: plain, no box that could read as focus; focused: the white box (RULES §3, §12). */
+    public static void applyPlainButton(View view) {
+        view.setBackground(button(view.getContext(), Surface.STANDARD, Color.TRANSPARENT));
+    }
+
     public static StateListDrawable button(Context c, Surface surface) {
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
         return button(c, surface, rest);

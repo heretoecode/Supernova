@@ -250,6 +250,7 @@ public final class PreviewSearch extends LinearLayout {
         line.addView(heading, new LayoutParams(0, -2, 1));
         TextView clear = TvButton.create(activity, "Clear history", this::clearRecent, false);
         PreviewIcon.apply(clear, "close", 12);
+        SupernovaStyle.applyPlainButton(clear);
         clear.setTag("search.recent.clear");
         line.addView(clear);
         column.addView(line, new LayoutParams(-1, -2));
@@ -360,6 +361,7 @@ public final class PreviewSearch extends LinearLayout {
                 query.setSelection(query.length());
             }, false);
             PreviewIcon.apply(row, "search", 14);
+            SupernovaStyle.applyPlainButton(row);
             row.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
             row.setTag("search.recent." + value);
             recentChips.addView(row, new LayoutParams(-1, dp(34)));

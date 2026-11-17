@@ -64,7 +64,8 @@ final class Review0158Fixture
                                     false, false, i + 1,
                                     i + 1, i % 3 == 0 ? 3840 : 1920, i % 3 == 0 ? 2160 : 1080, "Atmos", null, null,
                                     null, 0, 1, 1000, 0);
-            Entry entry = new Entry(movie, 1000 - i, 0, genres[i % genres.length]);
+            // Added over the last few weeks (seconds, as the library stores them).
+            Entry entry = new Entry(movie, 1_778_000_000L - i * 260_000L, 0, genres[i % genres.length]);
             entry.bytes = (2L + i * 3L) * 1024L * 1024L * 1024L;
             entry.runtime = (95 + i * 7) * 60000L;
             entry.resolution = resolution[i % 3];
@@ -85,7 +86,7 @@ final class Review0158Fixture
             int episodes = seasons * (i == 2 ? 10 : 8 + i % 3);
             Tvshow show = new Tvshow(100 + i, SHOWS[i], null, seasons, episodes, i == 0 ? 12 : 0,
                                      "/storage/Backup #2/TV Shows/" + SHOWS[i]);
-            Entry entry = new Entry(show, 900 - i, 100 + i, genres[(i + 3) % genres.length]);
+            Entry entry = new Entry(show, 1_777_000_000L - i * 300_000L, 100 + i, genres[(i + 3) % genres.length]);
             entry.seasons = seasons;
             entry.episodes = episodes;
             entry.bytes = episodes * (1L + i % 2) * 1024L * 1024L * 1024L;

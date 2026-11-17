@@ -57,13 +57,13 @@ public final class PreviewCardPresenter extends Presenter {
         /** Library posters: the whole card (artwork and caption) grows about 8% (page sheet LIBRARY.md). */
         public static final float POSTER_FOCUS_SCALE = 1.08f;
         /** The library poster's caption box: three lines under the artwork (`library-pages/27`). */
-        public static final int POSTER_CAPTION_DP = 50;
+        public static final int POSTER_CAPTION_DP = 56;
         /** The caption box's charcoal grey (lighter than the page, darker than a focus box). */
         public static final int POSTER_CAPTION_FILL = 0xFF23262C;
         /** One row card size everywhere: 400 × 225 px at 1080p (focused 440 × 248); caption box under it. */
         public static final int ROW_WIDTH_DP = 200;
         public static final int ROW_PICTURE_DP = 113;
-        public static final int ROW_CAPTION_DP = 40;
+        public static final int ROW_CAPTION_DP = 46;
         public final ImageView image;
         final TextView title, subtitle;
         /** Library posters: the line that follows the sort, and the tick on a watched title. */
@@ -226,7 +226,7 @@ public final class PreviewCardPresenter extends Presenter {
             progress.setProgressBackgroundTintList(ColorStateList.valueOf(0xff627386));
             FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(-1, dp(3), Gravity.BOTTOM);
             // Inset in the caption, never touching the ring (sheet).
-            pp.setMargins(dp(8), 0, dp(8), dp(style == Style.POSTER ? 4 : 5));
+            pp.setMargins(dp(8), 0, dp(8), dp(style == Style.POSTER || style == Style.ROW ? 4 : 5));
             body.addView(progress, pp);
             progress.setVisibility(View.GONE);
             setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);

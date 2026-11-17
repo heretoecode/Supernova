@@ -2281,6 +2281,7 @@ public final class PreviewPages extends FrameLayout {
             action.accept(made[0]);
         }, false);
         PreviewIcon.apply(made[0], icon, Math.round(18 * TvLayout.scale(getContext())));
+        SupernovaStyle.applyPlainButton(made[0]);
         made[0].setContentDescription(label);
         return made[0];
     }

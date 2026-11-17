@@ -154,7 +154,11 @@ final class LibraryPageModel
             return "";
         }
         long minutes = Math.max(1, ms / 60000);
-        return minutes >= 60 ? minutes / 60 + " h " + minutes % 60 + " min" : minutes + " min";
+        if (minutes < 60)
+        {
+            return minutes + " min";
+        }
+        return minutes % 60 == 0 ? minutes / 60 + " h" : minutes / 60 + " h " + minutes % 60 + " min";
     }
 
     /** Dates in words: "2 Nov 2026" (RULES §6). */
