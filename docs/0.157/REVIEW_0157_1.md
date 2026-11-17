@@ -219,7 +219,8 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   each, larger portraits and roomier columns:** redrawn as B2 (`06`). New idea: a QR code to the title's TMDB page;
   two places drawn in `06`: (1) under Reception on the page, (2) More › TMDB page opens a pop-up with the one code
   (RULES §20). Idea 2 drawn as a flow (`07`): More menu, TMDB page at its foot set apart by a line, then the pop-up
-  with the page blurred behind; Back closes. Awaiting the owner.
+  with the page blurred behind; Back closes. **Approved 17 Nov** with one change: the pop-up has no title, only one
+  line, "Scan to open the TMDB page", above the code (sized to its content).
 - **D19. Trailers (owner, 17 Nov):** play in the pop-up with no title bar (no "Open YouTube" / Close) and no YouTube
   controls; always the highest quality. Note: YouTube's embedded player can hide its controls; quality can only be
   requested (it follows the player's size), so the pop-up should be large enough for HD. Back closes it.
