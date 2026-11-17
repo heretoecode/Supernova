@@ -25,7 +25,7 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   (`PreviewPages.filesLayout`), and that list keeps its old side padding (28 dp each side) and clips at it. So Files
   sits in an invisible frame: anything reaching past it (the tab row's right end, a grown card) is cut, and the scroll
   bar is drawn at the frame's edge, on the content. The old shared browser broke out of this with negative margins;
-  the Files page does not. Fix: Files fills the page itself, not a cell of the old list, **keeping its side margins** (96 px at 1080p, lined up with the top bar; owner, 17 Nov); only the clipping goes, so a grown card or ring may reach into the margin and the scroll arrows sit there (likely also behind F1 and F9,
+  the Files page does not. Fix: Files fills the page itself, not a cell of the old list, **keeping its side margins** (96 px at 1080p, lined up with the top bar; owner, 17 Nov); only the clipping goes. Today's visible margin is the old list's padding plus Files' own, so removing the frame must not narrow it: keep the margin exactly as it looks now (owner, 17 Nov). Only the clipping goes, so a grown card or ring may reach into the margin and the scroll arrows sit there (likely also behind F1 and F9,
   as the old list still handles focus around it).
 - **F4. Scroll bar sits on the content** (the old panel's edge), covering the right of the rows. See F15.
 - **F5. No List view, and grid is the default.** Approved: list is the default (`network-files-tabs/02`) with a
@@ -136,6 +136,9 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 - **F41. Photos 00:25–00:27:** Open on a connection shows NOVA's "Library Sources" cards, then the old three-panel
   browser (F33); Add a connection shows "Saved Locations › Browse a network share", then the old pop-up and Android's
   keyboard (F34).
+
+- **F42. One side margin for every page (owner, 17 Nov; for 0.158):** Home, library pages and Files each have a
+  different margin today (Files the widest). Settle one value with the 0.158 redesigns; in 0.157.2 only the frame goes.
 
 ### Confirmed
 - The breadcrumb ("Backup 1 › … › Movies") is a signpost, not focusable; Back goes up one level (v6, 6 Nov).
