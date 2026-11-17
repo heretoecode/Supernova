@@ -1056,6 +1056,9 @@ public final class PreviewPages extends FrameLayout {
         setFocusableInTouchMode(true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         list = new FocusRecycler(c, false);
+        // No scroll bars anywhere (owner, 17 Nov 2026; F4, F36).
+        list.setVerticalScrollBarEnabled(false);
+        list.setHorizontalScrollBarEnabled(false);
         list.setClipChildren(false);
         list.setClipToPadding(false);
         setClipChildren(false);
