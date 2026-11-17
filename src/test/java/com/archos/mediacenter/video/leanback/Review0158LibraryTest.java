@@ -34,48 +34,65 @@ import static org.junit.Assert.assertTrue;
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-xhdpi")
 public class Review0158LibraryTest
 {
-    /** Writes the test thread's stack into a picture every 25 s, so a hang shows where it is (renders keep PNGs). */
+    /** The test thread's stack, caught by a watchdog after 20 s, so a hang shows where it is. */
+    private static volatile String caught = "";
+
     @Before
     public void watchdog()
     {
         Thread test = Thread.currentThread();
+        caught = "";
         Thread dog = new Thread(() -> {
-            for (int n = 1; n <= 3; n++)
+            try
             {
-                try
-                {
-                    Thread.sleep(25000);
-                }
-                catch (InterruptedException stop)
-                {
-                    return;
-                }
-                StackTraceElement[] frames = test.getStackTrace();
-                java.awt.image.BufferedImage image =
-                    new java.awt.image.BufferedImage(1900, 20 + 16 * Math.min(frames.length, 70),
-                                                     java.awt.image.BufferedImage.TYPE_INT_RGB);
-                java.awt.Graphics2D g = image.createGraphics();
-                g.setColor(java.awt.Color.WHITE);
-                g.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 13));
-                for (int i = 0; i < Math.min(frames.length, 70); i++)
-                {
-                    g.drawString(frames[i].toString(), 6, 16 + 16 * i);
-                }
-                g.dispose();
-                try
-                {
-                    java.io.File out = new java.io.File("build/reports/preview-ui/0158-lib-stack-" + n + ".png");
-                    out.getParentFile().mkdirs();
-                    javax.imageio.ImageIO.write(image, "png", out);
-                }
-                catch (java.io.IOException ignored)
-                {
-                    return;
-                }
+                Thread.sleep(20000);
             }
+            catch (InterruptedException stop)
+            {
+                return;
+            }
+            caught = compact(test.getStackTrace());
         }, "render-watchdog");
         dog.setDaemon(true);
         dog.start();
+    }
+
+    /** "Class.method:line" for the app's own frames, outermost last. */
+    static String compact(StackTraceElement[] frames)
+    {
+        StringBuilder out = new StringBuilder();
+        for (StackTraceElement frame : frames)
+        {
+            if (!frame.getClassName().startsWith("com.archos"))
+            {
+                continue;
+            }
+            String name = frame.getClassName().substring(frame.getClassName().lastIndexOf('.') + 1);
+            out.append(name).append('.').append(frame.getMethodName()).append(':').append(frame.getLineNumber())
+                .append(" < ");
+        }
+        return out.toString();
+    }
+
+    /** Runs a test body; a hang that ends in running out of memory fails with where it was. */
+    private static void guarded(Body body) throws Exception
+    {
+        try
+        {
+            body.run();
+        }
+        catch (OutOfMemoryError lost)
+        {
+            String at = compact(lost.getStackTrace());
+            lost = null;
+            System.gc();
+            throw new AssertionError("HANG " + caught + " || OOM " + at);
+        }
+    }
+
+    interface Body
+    {
+        void run() throws Exception;
     }
 
     @Before
@@ -119,163 +136,169 @@ public class Review0158LibraryTest
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void everyMoviesActionPressed() throws Exception
     {
-        Page page = open(Review0158Fixture.snapshot(), "movies");
-        try
-        {
-            TopNavigation nav = page.nav;
-            assertNull("No statistics row or page title", Review0158Fixture.anyText(page.pages, "Movie library"));
-            View movies = nav.findViewWithTag("semantic:topnav.movies");
-            movies.requestFocus();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.save(nav, "0158-lib-01-movies-grid");
+        guarded(() -> {
+            Page page = open(Review0158Fixture.snapshot(), "movies");
+            try
+            {
+                TopNavigation nav = page.nav;
+                assertNull("No statistics row or page title", Review0158Fixture.anyText(page.pages, "Movie library"));
+                View movies = nav.findViewWithTag("semantic:topnav.movies");
+                movies.requestFocus();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.save(nav, "0158-lib-01-movies-grid");
 
-            // Down from the top bar: the toolbar's first button; then the first poster.
-            Review0158Fixture.press(page.host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
-            View filters = nav.findFocus();
-            assertNotNull(filters);
-            assertEquals("Down lands on Filters", "control:0", filters.getTag());
-            Review0158Fixture.save(nav, "0158-lib-02-toolbar-focus");
-            Review0158Fixture.press(page.host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
-            View poster = nav.findFocus();
-            assertTrue("Then the first poster", poster != null && poster.getTag() instanceof String
-                && ((String) poster.getTag()).length() > 0 && !((String) poster.getTag()).startsWith("control:"));
-            Review0158Fixture.save(nav, "0158-lib-03-poster-focused");
+                // Down from the top bar: the toolbar's first button; then the first poster.
+                Review0158Fixture.press(page.host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
+                View filters = nav.findFocus();
+                assertNotNull(filters);
+                assertEquals("Down lands on Filters", "control:0", filters.getTag());
+                Review0158Fixture.save(nav, "0158-lib-02-toolbar-focus");
+                Review0158Fixture.press(page.host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
+                View poster = nav.findFocus();
+                assertTrue("Then the first poster", poster != null && poster.getTag() instanceof String
+                    && ((String) poster.getTag()).length() > 0 && !((String) poster.getTag()).startsWith("control:"));
+                Review0158Fixture.save(nav, "0158-lib-03-poster-focused");
 
-            // Filters: menu under the button; Watched list on top; a choice applies live.
-            filters.performClick();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-04-filters-menu");
-            Dialog filtersMenu = ShadowDialog.getLatestDialog();
-            clickRow(filtersMenu, "Watched");
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-05-filters-watched");
-            clickRow(ShadowDialog.getLatestDialog(), "Watched ·");
-            Review0158Fixture.settle(nav);
-            assertNull("Unwatched films filtered out", Review0158Fixture.anyText(page.pages, "Conclave"));
-            clickRow(filtersMenu, "Genre");
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-06-filters-genres");
-            Review0158Fixture.dismissDialog(nav);
-            clickRow(filtersMenu, "Year");
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-07-filters-year");
-            Review0158Fixture.dismissDialog(nav);
-            clickRow(filtersMenu, "Clear filters");
-            Review0158Fixture.settle(nav);
-            assertNotNull("Clear filters brings everything back", Review0158Fixture.anyText(page.pages, "Conclave"));
+                // Filters: menu under the button; Watched list on top; a choice applies live.
+                filters.performClick();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-04-filters-menu");
+                Dialog filtersMenu = ShadowDialog.getLatestDialog();
+                clickRow(filtersMenu, "Watched");
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-05-filters-watched");
+                clickRow(ShadowDialog.getLatestDialog(), "Watched ·");
+                Review0158Fixture.settle(nav);
+                assertNull("Unwatched films filtered out", Review0158Fixture.anyText(page.pages, "Conclave"));
+                clickRow(filtersMenu, "Genre");
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-06-filters-genres");
+                Review0158Fixture.dismissDialog(nav);
+                clickRow(filtersMenu, "Year");
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-07-filters-year");
+                Review0158Fixture.dismissDialog(nav);
+                clickRow(filtersMenu, "Clear filters");
+                Review0158Fixture.settle(nav);
+                assertNotNull("Clear filters brings everything back", Review0158Fixture.anyText(page.pages, "Conclave"));
 
-            // Sort: grouped menu; File size; the Order button follows (Largest first), line three shows sizes.
-            View sort = Review0158Fixture.byTextStart(page.pages, "Sort:");
-            assertNotNull(sort);
-            sort.requestFocus();
-            sort.performClick();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-08-sort-menu");
-            clickRow(ShadowDialog.getLatestDialog(), "File size");
-            Review0158Fixture.settle(nav);
-            assertNotNull(Review0158Fixture.byText(page.pages, "Sort: File size"));
-            View order = Review0158Fixture.byText(page.pages, "Largest first");
-            assertNotNull("Order follows the sort", order);
-            Review0158Fixture.save(nav, "0158-lib-09-sorted-by-size");
-            order.performClick();
-            Review0158Fixture.settle(nav);
-            assertNotNull(Review0158Fixture.byText(page.pages, "Smallest first"));
+                // Sort: grouped menu; File size; the Order button follows (Largest first), line three shows sizes.
+                View sort = Review0158Fixture.byTextStart(page.pages, "Sort:");
+                assertNotNull(sort);
+                sort.requestFocus();
+                sort.performClick();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-08-sort-menu");
+                clickRow(ShadowDialog.getLatestDialog(), "File size");
+                Review0158Fixture.settle(nav);
+                assertNotNull(Review0158Fixture.byText(page.pages, "Sort: File size"));
+                View order = Review0158Fixture.byText(page.pages, "Largest first");
+                assertNotNull("Order follows the sort", order);
+                Review0158Fixture.save(nav, "0158-lib-09-sorted-by-size");
+                order.performClick();
+                Review0158Fixture.settle(nav);
+                assertNotNull(Review0158Fixture.byText(page.pages, "Smallest first"));
 
-            // List view, Columns (menu, pick up and move), Grid view.
-            View list = Review0158Fixture.byText(page.pages, "List view");
-            list.performClick();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.save(nav, "0158-lib-10-list-view");
-            View columns = Review0158Fixture.byText(page.pages, "Columns");
-            assertNotNull("Columns appears in list view", columns);
-            columns.performClick();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-11-columns-menu");
-            clickRow(ShadowDialog.getLatestDialog(), "Running time");
-            Review0158Fixture.settle(nav);
-            Dialog moving = ShadowDialog.getLatestDialog();
-            moving.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-12-columns-moving");
-            Review0158Fixture.dismissDialog(nav);
-            Review0158Fixture.byText(page.pages, "Grid view").performClick();
-            Review0158Fixture.settle(nav);
+                // List view, Columns (menu, pick up and move), Grid view.
+                View list = Review0158Fixture.byText(page.pages, "List view");
+                list.performClick();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.save(nav, "0158-lib-10-list-view");
+                View columns = Review0158Fixture.byText(page.pages, "Columns");
+                assertNotNull("Columns appears in list view", columns);
+                columns.performClick();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-11-columns-menu");
+                clickRow(ShadowDialog.getLatestDialog(), "Running time");
+                Review0158Fixture.settle(nav);
+                Dialog moving = ShadowDialog.getLatestDialog();
+                moving.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-12-columns-moving");
+                Review0158Fixture.dismissDialog(nav);
+                Review0158Fixture.byText(page.pages, "Grid view").performClick();
+                Review0158Fixture.settle(nav);
 
-            // Customise page: the side panel on the right (Movies: How To Show It).
-            View customise = Review0158Fixture.byText(page.pages, "Customise page");
-            assertNotNull(customise);
-            customise.performClick();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-13-customise-movies");
-            Review0158Fixture.dismissDialog(nav);
+                // Customise page: the side panel on the right (Movies: How To Show It).
+                View customise = Review0158Fixture.byText(page.pages, "Customise page");
+                assertNotNull(customise);
+                customise.performClick();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-13-customise-movies");
+                Review0158Fixture.dismissDialog(nav);
 
-            // Long-press on a poster: its menu beside it.
-            View started = Review0158Fixture.byDescription(page.pages, "Anora");
-            assertNotNull("A started film's poster", started);
-            started.requestFocus();
-            Review0158Fixture.settle(nav);
-            started.performLongClick();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-14-movie-long-press");
-            assertNotNull("Resume for a started film", rowLabel("Resume"));
-            assertNull("No More info", rowLabel("More info"));
-            Review0158Fixture.dismissDialog(nav);
-            View after = nav.findFocus();
-            assertFalse("Focus never jumps to the top bar", after != null && after.getTag() instanceof String
-                && ((String) after.getTag()).startsWith("semantic:topnav"));
-        }
-        finally
-        {
-            page.host.pause().stop().destroy();
-        }
+                // Long-press on a poster: its menu beside it.
+                View started = Review0158Fixture.byDescription(page.pages, "Anora");
+                assertNotNull("A started film's poster", started);
+                started.requestFocus();
+                Review0158Fixture.settle(nav);
+                started.performLongClick();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-14-movie-long-press");
+                assertNotNull("Resume for a started film", rowLabel("Resume"));
+                assertNull("No More info", rowLabel("More info"));
+                Review0158Fixture.dismissDialog(nav);
+                View after = nav.findFocus();
+                assertFalse("Focus never jumps to the top bar", after != null && after.getTag() instanceof String
+                    && ((String) after.getTag()).startsWith("semantic:topnav"));
+            }
+            finally
+            {
+                page.host.pause().stop().destroy();
+            }
+        });
     }
 
     @Test
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void tvShowsCaptionsAndLongPress() throws Exception
     {
-        Page page = open(Review0158Fixture.snapshot(), "tv");
-        try
-        {
-            TopNavigation nav = page.nav;
-            assertNotNull("Not started: seasons and episodes", Review0158Fixture.anyText(page.pages, "seasons ·"));
-            assertNotNull("One season: just episodes", Review0158Fixture.anyText(page.pages, "10 episodes"));
-            assertNotNull("Started: next episode and how many left",
-                          Review0158Fixture.anyText(page.pages, "S2 E3 · "));
-            Review0158Fixture.save(nav, "0158-lib-20-tv-shows");
-            View show = Review0158Fixture.byDescription(page.pages, "Slow Horses");
-            assertNotNull(show);
-            show.requestFocus();
-            Review0158Fixture.settle(nav);
-            show.performLongClick();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.saveWithDialog(nav, "0158-lib-21-tv-long-press");
-            assertNotNull(rowLabel("Resume S2 E3"));
-            assertNotNull(rowLabel("Mark show as watched"));
-            assertNotNull(rowLabel("Delete all episode files"));
-            Review0158Fixture.dismissDialog(nav);
-        }
-        finally
-        {
-            page.host.pause().stop().destroy();
-        }
+        guarded(() -> {
+            Page page = open(Review0158Fixture.snapshot(), "tv");
+            try
+            {
+                TopNavigation nav = page.nav;
+                assertNotNull("Not started: seasons and episodes", Review0158Fixture.anyText(page.pages, "seasons ·"));
+                assertNotNull("One season: just episodes", Review0158Fixture.anyText(page.pages, "10 episodes"));
+                assertNotNull("Started: next episode and how many left",
+                              Review0158Fixture.anyText(page.pages, "S2 E3 · "));
+                Review0158Fixture.save(nav, "0158-lib-20-tv-shows");
+                View show = Review0158Fixture.byDescription(page.pages, "Slow Horses");
+                assertNotNull(show);
+                show.requestFocus();
+                Review0158Fixture.settle(nav);
+                show.performLongClick();
+                Review0158Fixture.settle(nav);
+                Review0158Fixture.saveWithDialog(nav, "0158-lib-21-tv-long-press");
+                assertNotNull(rowLabel("Resume S2 E3"));
+                assertNotNull(rowLabel("Mark show as watched"));
+                assertNotNull(rowLabel("Delete all episode files"));
+                Review0158Fixture.dismissDialog(nav);
+            }
+            finally
+            {
+                page.host.pause().stop().destroy();
+            }
+        });
     }
 
     @Test
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void emptyPageHasNoToolbar() throws Exception
     {
-        Page page = open(new Snapshot(), "movies");
-        try
-        {
-            Review0158Fixture.settle(page.nav);
-            assertNull("No toolbar on an empty page", Review0158Fixture.byText(page.pages, "Customise page"));
-            Review0158Fixture.save(page.nav, "0158-lib-30-empty-movies");
-        }
-        finally
-        {
-            page.host.pause().stop().destroy();
-        }
+        guarded(() -> {
+            Page page = open(new Snapshot(), "movies");
+            try
+            {
+                Review0158Fixture.settle(page.nav);
+                assertNull("No toolbar on an empty page", Review0158Fixture.byText(page.pages, "Customise page"));
+                Review0158Fixture.save(page.nav, "0158-lib-30-empty-movies");
+            }
+            finally
+            {
+                page.host.pause().stop().destroy();
+            }
+        });
     }
 
     /** Clicks the first row of the latest menu whose label starts with the words. */
