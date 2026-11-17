@@ -15,7 +15,26 @@
     "documentation": "docs/0.158/",
     "notes": [
       "## 0.158: Top bar",
-      "(notes filled in as part A is built)"
+      "No SUPERNOVA name: every item is a word, Files, Search and Settings included, in one font with the clock",
+      "Home, Movies, TV Shows and your own page open as you land on them; Files, Search and Settings open on OK",
+      "The open page keeps a soft grey box while you are elsewhere; no underlines",
+      "Movies, TV Shows, Files and Search line up with the top bar's edges",
+      "## 0.158: Movies, TV Shows and your own page",
+      "Seven posters a row, each with a caption: the title, the show's size or how far you are, and a line that follows the sort",
+      "Watched titles get a tick; started titles a bar",
+      "Filters: Watched, Genre (Any or All), Year and your streaming services, each with how many titles",
+      "Sort in groups (General, Trakt, Files, Series); the Order button's words follow the sort",
+      "List view with Columns: pick a column up and move it; Reset to default",
+      "Customise page opens a panel on the right; changes show at once, no Save button",
+      "Long-press or Menu on a poster: Play or Resume, Mark as watched, Fix match, Remove from library, Delete file",
+      "Empty pages say so and offer Add your videos; your own page starts with Make this page your own",
+      "## 0.158: Home",
+      "Row cards are one size with their caption under the picture and a bar for what you have started",
+      "Move and Hide sit beside a row's heading; Hide has Undo",
+      "Customise Home is a panel on the right: your rows, Add a row and the built-in rows with a switch each",
+      "## 0.158: Search",
+      "Plain page: the keyboard on the left, Recent searches and tips on the right",
+      "Clear history has Undo; results sit under In your library with Resume, Watched or Unwatched"
     ]
   },
   "history": [
