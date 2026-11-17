@@ -61,11 +61,11 @@ Floating side panel on the right; changes apply live; Back closes.
 | OK on a streaming-only card | The title in its service's app (no Supernova page) |
 | Long-press / Menu on a card | The library long-press menu beside the card (LIBRARY.md) |
 | Move (row heading) | Move mode for that row |
-| Hide (row heading) | Row hidden at once with an Undo notice; it can come back in Customise Home |
+| Hide (row heading) | Row hidden at once with an Undo notice; it can come back in Customise Home (approved 18 Nov) |
 | Customise Home (the button at the bottom of Home, below the last row; owner, 18 Nov) | Customise Home panel on the right; Back returns to the button |
 | A row in Customise Home (›) / Add a row | Its settings on top of Customise Home |
 | Icon | Icon picker; OK chooses and returns |
-| Delete row | The delete warning ("Keep row" first); Back returns |
+| Delete row | The delete warning ("Keep row" focused first); Back returns (approved 18 Nov) |
 | Back from the rows | First to the hero, then to the top bar |
 
 ## Onboarding on Home (0.159; noted here so Home leaves room)
