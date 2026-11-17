@@ -173,3 +173,50 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 
 ### Confirmed
 - The breadcrumb ("Backup 1 › … › Movies") is a signpost, not focusable; Back goes up one level (v6, 6 Nov).
+
+## Details (17 Nov, about 01:30; a TV show, page sheet `docs/design/pages/DETAILS.md`)
+
+### Working
+- Hero button placement; Details and Episodes tabs don't pop in; an episode page shows a two-line description;
+  holding Down on library pages no longer loses focus.
+
+### Problems (already decided: fix to match)
+- **D1. More menu opens in the top-right corner** under the top-bar icons, not beside More (RULES §10).
+- **D2. More menu items:** three share the same fallback icon (Mark Watched, Fix Match, Artwork); Title Case items
+  ("Remove From Library", "Mark Watched"); Subtitles and Full description missing; an unplanned "Add to Row". Approved
+  (`16`, sheet): Mark as watched · Fix match · Remove from library · Subtitles · Artwork · Full description · Delete
+  file, an icon each.
+- **D3. Artwork opens a Posters / Backdrops menu, then a full-screen poster grid.** Approved (`17`, `20`): one side
+  panel floating on the right, Hero and rows · Library page, the hero previewing the picture you are on.
+- **D4. Focused tab shows the white box and the underline together** (the underline shows below the box). RULES §3: the
+  underline marks the open tab only while the remote is below it; the focused tab is the white box alone, the same as
+  Files' tabs.
+- **D5. Season heading focus:** the text turns black but the white box is missing, so it reads as nothing.
+- **D6. Invisible frame on Details too:** focused cards in Episodes and More Like This are clipped at the left and
+  right, and rows stop short of the screen edge instead of running off it (same cause as F3).
+- **D7. Extras cards are smaller than Episodes and More Like This cards.** RULES §14: one card size (400×225).
+- **D8. Streaming titles open a Supernova Details page.** RULES §18: a title with no file opens its service's app,
+  never a Supernova page.
+- **D9. Deep links:** Prime Video opens the title; Netflix and Disney+ open their home screens; Disney+ also shows
+  Android's "No application can handle this action". Each service needs its own link format (engine work).
+- **D10. Description flips to the tagline** a moment after the page opens. Approved: two-line description, no tagline.
+- **D11. Age rating missing on some shows** (Mr. Robot has none, another show has it). Approved: show the show's
+  rating, else the first episode's (§29).
+- **D12. Things pop in:** the hero artwork (grey gradient first), the logo, the metadata row and the title line; the
+  Extras and More Like This tabs flash. Approved: space kept, artwork pre-loaded, nothing popping (RULES §17).
+- **D13. Hero buttons at rest look solid black.** RULES §12: on artwork a dark box at about 72%.
+- **D14. Dates in numbers** ("2015-06-24", "24/10/26"). RULES §6: "24 June 2015", "24 Oct 2026".
+- **D15. Show facts:** Runtime "Unknown" (approved: from the episodes), "Directed by" on a show (should be Created by);
+  Rotten Tomatoes and Metacritic missing (data).
+- **D16. Episode cards show a play icon in the middle.** RULES §14: no play icon on library items.
+- **D17. Back to a library page loses the item:** after opening a title and pressing Back, nothing is focused; arrows do
+  nothing; Down jumps to Home in the top bar. RULES §16: focus returns to the item you opened.
+
+### To decide
+- **D18. Details tab on one screen (owner, 17 Nov):** no scrolling: Reception, Key information, Technical information,
+  Cast and Crew all visible at once, with smaller text, tighter rows and smaller portraits. Mock-up
+  `files-review-0157-1/05` (two layouts).
+- **D19. Trailers (owner, 17 Nov):** play in the pop-up with no title bar (no "Open YouTube" / Close) and no YouTube
+  controls; always the highest quality. Note: YouTube's embedded player can hide its controls; quality can only be
+  requested (it follows the player's size), so the pop-up should be large enough for HD. Back closes it.
+
