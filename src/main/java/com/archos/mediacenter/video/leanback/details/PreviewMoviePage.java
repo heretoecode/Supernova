@@ -29,13 +29,11 @@ import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
-import com.archos.mediacenter.video.leanback.LibraryHealthActivity;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import com.archos.mediacenter.video.player.PlayerActivity;
-import com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity;
 import com.archos.mediacenter.video.streaming.StreamingActionPresenter;
 import com.archos.mediacenter.video.streaming.StreamingActions;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
@@ -299,12 +297,15 @@ public final class PreviewMoviePage extends ScrollView {
             @Override
             protected void dispatchDraw(Canvas canvas) {
                 int saved = canvas.save();
-                canvas.clipRect(0, getScrollY(), getWidth(), getScrollY() + getHeight());
+                // Clipped above and below only: a grown card or its ring may reach past the sides (D6, RULES §1).
+                int side = getResources().getDisplayMetrics().widthPixels;
+                canvas.clipRect(-side, getScrollY(), getWidth() + side, getScrollY() + getHeight());
                 super.dispatchDraw(canvas);
                 canvas.restoreToCount(saved);
             }
         };
         reading.setTag("details.reading.overflow");
+        reading.setClipChildren(false);
         reading.setFillViewport(true);
         reading.setClipToPadding(false);
         reading.setSmoothScrollingEnabled(false);
@@ -1987,13 +1988,15 @@ public final class PreviewMoviePage extends ScrollView {
                     card.setTag("remote:" + id);
                     Diagnostics.semantic(card, "details.related.remote." + id);
                     card.setContentDescription(name + " · " + recommendation.provider.name);
-                    card.setOnClickListener(
-                        v
-                        -> getContext().startActivity(
-                            new Intent(getContext(),
-                                       PreviewRemoteDetailsActivity.class)
-                                .putExtra("kind", television ? "tv" : "movie")
-                                .putExtra("tmdb_id", id)));
+                    // A title on a service opens that service's app straight away, never a Supernova page (D8).
+                    String service = recommendation.provider.name;
+                    card.setOnClickListener(v -> {
+                        if (!(getContext() instanceof Activity) ||
+                            !com.archos.mediacenter.video.streaming.StreamingActions.openApp(
+                                (Activity)getContext(), service))
+                            com.archos.mediacenter.video.leanback.PreviewNotice.show(
+                                getContext(), "The " + service + " app isn't on this device", true);
+                    });
                     addRecommendation(card);
                     shown.add("id:" + id);
                 }
@@ -2034,6 +2037,12 @@ public final class PreviewMoviePage extends ScrollView {
                                 -> new VideoViewClickedListener((Activity)getContext())
                                        .onItemClicked(new Presenter.ViewHolder(v), entry.media, null, null));
         addRecommendation(card);
+    }
+
+    /** The Episodes card width: a quarter of the row (PreviewEpisodeRow.cardWidth). */
+    private int extraCardWidth() {
+        int width = getResources().getDisplayMetrics().widthPixels - dp(84);
+        return Math.max(1, (width - dp(36)) / 4);
     }
 
     private void addRecommendation(PreviewLandscapeCard card) {
@@ -2118,7 +2127,7 @@ public final class PreviewMoviePage extends ScrollView {
             row.setClipChildren(false);
             row.setClipToPadding(false);
             rail.addView(row);
-            trailers.addView(rail, new LinearLayout.LayoutParams(-1, dp(125)));
+            trailers.addView(rail, new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28)));
             for (ScraperTrailer extra : category.getValue()) {
                 PreviewLandscapeCard card = new PreviewLandscapeCard(getContext());
                 card.bind(safe(extra.mName),
@@ -2138,7 +2147,9 @@ public final class PreviewMoviePage extends ScrollView {
                         post(this::revealContentFocus);
                     }
                 });
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(172), dp(97));
+                // One card size everywhere (D7, RULES §14): the same quarter-row width as Episodes, 16:9.
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(extraCardWidth(),
+                                                                             extraCardWidth() * 9 / 16);
                 lp.setMargins(0, 0, dp(12), 0);
                 row.addView(card, lp);
                 extraCards.add(card);

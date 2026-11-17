@@ -46,8 +46,9 @@ final class PreviewLandscapeCard extends LinearLayout {
         body.addView(availability, new FrameLayout.LayoutParams(dp(28), dp(28), Gravity.CENTER));
         setOnFocusChangeListener((v, focus) -> {
             visual.setPresentationFocus(focus);
-            // No play icon on library items (D16, RULES §14).
-            availability.setVisibility(INVISIBLE);
+            // No play icon on library items (D16, RULES §14); a service card's logo stays.
+            if (availability.getDrawable() == playGlyph)
+                availability.setVisibility(INVISIBLE);
         });
     }
 

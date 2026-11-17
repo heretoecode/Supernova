@@ -44,6 +44,21 @@ public class NoOldScreensTest
         assertTrue("Old screens reachable from Files: " + found, found.isEmpty());
     }
 
+    /** Never opens from Details (DETAILS.md), including a streaming title's own Supernova page (RULES §18). */
+    static final String[] NEVER_FROM_DETAILS = {
+        "PreviewRemoteDetailsActivity", "InputMethodManager", "showSoftInput", "LibraryHealthActivity",
+        "UniversalFileBrowser",
+    };
+
+    @Test
+    public void detailsPageNamesNoOldScreen() throws IOException
+    {
+        List<String> found = new ArrayList<>();
+        Path page = Path.of("src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java");
+        check("PreviewMoviePage", read(page), NEVER_FROM_DETAILS, found);
+        assertTrue("Old screens reachable from Details: " + found, found.isEmpty());
+    }
+
     @Test
     public void filesHostOpensNoOldBrowserForADrive() throws IOException
     {
