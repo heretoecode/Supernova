@@ -34,17 +34,16 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   (Search results) may use about 96 px rows with 32 px names and 24 px second lines.
 
 ## 2. Top bar
-- Left to right: SUPERNOVA, Home · Movies · TV Shows · library pages; then on the right **Files**, the search icon,
-  the settings icon and the clock (Files v13; owner, 12 Nov: Files stays on the right). Places are words, tools are
-  icons; **no dots** between them; no line under the bar. (The `tab-style` mock-ups drew Files on the left by mistake;
-  only their focus look was approved.)
+- **Built in 0.158 (the note below is now the rule):** left to right Home · Movies · TV Shows · your page (+ until it
+  is set up); on the right Files · Search · Settings and the clock, every one a word in one font. **No dots** between
+  them; no line under the bar. The bar's edges are the one side margin (§1).
 - **One signal slot on the left of "Files"** (owner, 12 Nov), showing one thing at a time: a small spinning ring while
   a scan runs (the same size and line weight as the icons); otherwise a small white dot when the library needs
   attention; otherwise nothing. Nothing shifts when it changes. Not a notification bar.
 - Home + Left stays on Home; the clock is not focusable.
 - The top bar follows the focus-and-path rule (section 3): it switches page after a short pause.
 
-- **0.158 top bar (owner, 18 Nov; mock-up `files-review-0157-1/08`), replaces the lines above when built:** no SUPERNOVA
+- **0.158 top bar (owner, 18 Nov; mock-up `files-review-0157-1/08`), built in 0.158:** no SUPERNOVA
   wordmark; places shift left. Media pages (Home, Movies, TV Shows, own pages) open as focus lands on them; tools
   (Files, Search, Settings) need OK. Looks: plain word; white box with black text = focus; soft grey box with a faded
   word = the open page while focus is elsewhere. No underlines in the top bar. **Every item is a word, tools
@@ -403,3 +402,5 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - "Clear" (beside Recent searches), "In library" pill, two-line "On your services" headings (12 Nov).
 - The Fix match side panel → one Fix match page on Files › Library Care (12 Nov).
 - "Show first" (one preferred service) and "asks which service" → the order of Your services (16 Nov).
+- Top bar with the SUPERNOVA wordmark, icons for Search and Settings, and underlines for the open page → the 0.158
+  top bar (§2; owner 18 Nov, built 0.158).
