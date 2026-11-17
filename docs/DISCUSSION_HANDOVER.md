@@ -1,17 +1,22 @@
-# Discussion handover (updated 16 Nov 2026, evening)
+# Discussion handover (updated 17 Nov 2026, early hours)
 
 For a fresh **discussion** session (designs, ideas, planning; no coding). Read `CLAUDE.md`, then this, then
-`docs/ROADMAP.md` and `docs/design/RULES.md` (current decisions, design and behaviour; the owner notes are history).
-The coding session is called **Supernova Coding** (owner's name for it).
+`docs/ROADMAP.md` and `docs/design/RULES.md`. The coding session is called **Supernova Coding**.
 
-## Where things stand (16 Nov evening)
-- **0.157** was signed and installed; the owner's Shield test found much of the approved redesign missing (passing
-  tests ≠ matching mock-ups). Findings: `docs/0.157/REVIEW_0157.md` (26 points + answers). Supernova Coding is fixing
-  them, checking each screen in a real render (`preview-renders.yml`) before ticking it, and will ship **0.157.1**
-  (version code 1571; codes are version × 10 from now on, RULES §24). Signing for 0.157.1 is pre-approved by the owner.
-- Roadmap is now a document, `docs/ROADMAP.md` (picture retired). **Send it to the owner in the app after every change.**
-- Undecided is split into **Ready** (designed and approved, needs a version) and **To discuss**.
+## Where things stand (17 Nov)
+- **0.157.1** (code 1571) is installed: much better, not right yet. The owner reviewed **Files** and **Details** in
+  full and the **Player** briefly: `docs/0.157/REVIEW_0157_1.md` (F1–F52, D1–D20, P1–P5).
+- **Next: 0.157.2, bug fixes only** (plus the Home and library background). Brief for Supernova Coding:
+  `docs/0.157/BRIEF_0157_2.md`. It starts by merging this branch (`claude/design-planning-discussion-9poejm`).
+- **New way of working (CLAUDE.md, 17 Nov):** the Definition of done, and **page sheets** in `docs/design/pages/`
+  (Files, Details so far): every element and every action with where it leads. Reviewing a page: send its latest
+  mock-ups and its checklist first, one page at a time.
+- Still to review on the Shield: the Player properly, then the shared pieces. Settings, Home, library pages, Search and
+  onboarding wait for their 0.158 redesigns.
+- Waiting for the owner: the diagnostics report (crashes about 23:09 and 23:14, blank screen about 23:39, 16 Nov);
+  P4 (Playback Settings size); go-ahead to sign 0.157.2 when it is ready.
 
+## Earlier (16 Nov), still current
 ## Ready (designed and approved)
 - **Media Transfers** — complete: `docs/0.158/MEDIA_TRANSFERS.md`, mock-ups `docs/design/proposals/transfers-settings/`.
 - **Trakt list as a Home row** — `docs/0.158/OWNER_NOTES.md`, mock-ups `docs/design/proposals/trakt-list-row/` (option B).

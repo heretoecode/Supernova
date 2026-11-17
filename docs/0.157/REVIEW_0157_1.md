@@ -229,3 +229,20 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   the page; no buttons or controls at all.
 - **D20. Service logos are still monochrome** (More Like This and elsewhere). RULES §13: full colour, no background.
 
+
+## Player (17 Nov, a few points; full review later)
+
+### Working
+- Chapters and Episodes tabs: focus on the tabs and on each card looks right.
+
+### Problems
+- **P1. Chapters / Episodes rows sit too high:** move the tab row and its row down, halving today's gap below the row.
+- **P2. Title logo and metadata jump:** they sit top left as agreed, but going down to the Chapters / Episodes rows
+  pushes them up off the screen. They stay put whatever the rows do (RULES §19: one fixed place).
+- **P3. Playback Settings opens without focus on the Subtitles tab** (the tab is open but not focused). Focus starts on
+  the open tab.
+- **P4. Playback Settings changes size between tabs** (Playback grows wider) and is far too big (about half the screen
+  on Subtitles, about 60% wide on Playback). [One size for all three tabs, as narrow as the content allows (about 40%
+  of the width at most, like the choice list), height to its content, arrows for more (RULES §11, §16).] To confirm.
+- **P5. Focus inside Playback Settings is wrong:** focused rows don't fill white and their text and icons don't turn
+  black (RULES §3).

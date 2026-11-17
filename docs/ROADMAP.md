@@ -90,7 +90,8 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 Bug fixes only (owner, 17 Nov): as many as possible before 0.158. Findings in `docs/0.157/REVIEW_0157_1.md`.
 
-- Every Files bug from the 0.157.1 review (F1–F28 as decided)
+- Every bug from the 0.157.1 review: Files F1–F52, Details D1–D20, Player P1–P5 (`docs/0.157/BRIEF_0157_2.md`)
+- Details tab on one screen (B2), TMDB page in the More menu, trailer pop-up (approved 17 Nov)
 - Background: Home and the three library pages get the same plain charcoal as Files, Settings and Search (the one
   exception to "no new designs"; their redesigns stay in 0.158)
 
