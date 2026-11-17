@@ -1,8 +1,13 @@
 # Supernova — project status
 
-Updated 6 November 2026 (night). Keep this page short and current: update it at the end of every session.
+Updated 18 November 2026 (overnight 0.157.2 session). Keep this page short and current: update it at the end of every session.
 
 ## Released
+
+**0.157.2** (code 1572) — built 18 Nov 2026; signing and run links in the report. Bug fixes from the owner's Shield review of 0.157.1
+(`docs/0.157/REVIEW_0157_1.md`), built overnight from `docs/0.157/BRIEF_0157_2.md` and the page sheets. Report:
+`docs/0.157/REPORT_0157_2.md` (fixed, not built, judgement calls in `docs/0.157/JUDGEMENT_CALLS_0157_2.md`).
+Waiting for the owner: install and check on the Shield; send the latest diagnostics report (not in the inbox).
 
 **0.157.1** (code 1571) — signed 16 Nov 2026 (run 43960203498 of `supernova-0157-qa.yml`, from green conformance run
 43952836182 on `5f5f9f6`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.1.apk`). 0.157 plus every fix from the Shield
