@@ -145,8 +145,8 @@ public class AboutCreditsTest
     public void releaseHistoryHasBothVersionsWithoutClaimingAnUnsignedReleaseIsShipped() throws Exception
     {
         JSONObject history = json("assets/foundation/release-history.json");
-        assertEquals("0.157.2", history.getJSONObject("current").getString("version"));
-        assertEquals("docs/0.157/", history.getJSONObject("current").getString("documentation"));
+        assertEquals("0.158", history.getJSONObject("current").getString("version"));
+        assertEquals("docs/0.158/", history.getJSONObject("current").getString("documentation"));
         JSONObject previous = history.getJSONArray("history").getJSONObject(0);
         assertEquals("0.157", previous.getString("version"));
         assertEquals("docs/0.157/", previous.getString("documentation"));

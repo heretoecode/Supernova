@@ -23,7 +23,7 @@ ENGINE = {'run': 41848351713, 'source_commit': 'a8c82ae523533e8dc92cc30c203212f0
 def gate(evidence, apk, source):
     if not re.fullmatch(r'[0-9a-f]{40}', source or '') or evidence.get('source_commit') != source:
         raise key.SigningError('QA conformance source differs from the checked-out commit.')
-    if evidence.get('application_id') != 'app.supernova.player' or evidence.get('version_name') != '0.157.2' or evidence.get('version_code') != 1572:
+    if evidence.get('application_id') != 'app.supernova.player' or evidence.get('version_name') != '0.158' or evidence.get('version_code') != 1580:
         raise key.SigningError('QA application identity/version differs from the approved scope.')
     if evidence.get('signed') is not False:
         raise key.SigningError('QA signing requires the verified unsigned APK.')
