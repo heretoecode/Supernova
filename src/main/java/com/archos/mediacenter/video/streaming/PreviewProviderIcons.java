@@ -63,6 +63,26 @@ public final class PreviewProviderIcons {
         }
     }
 
+    /** The service's brand colour for its mark; 0 keeps it white (Apple TV, MUBI, HBO). Pure, for tests. */
+    public static int brand(String name) {
+        int resource = resource(name);
+        if (resource == R.drawable.provider_netflix)
+            return 0xFFE50914;
+        if (resource == R.drawable.provider_primevideo_symbol)
+            return 0xFF00A8E1;
+        if (resource == R.drawable.provider_disneyplus_symbol)
+            return 0xFF1A73E8;
+        if (resource == R.drawable.provider_paramountplus)
+            return 0xFF0064FF;
+        if (resource == R.drawable.provider_hbomax)
+            return 0xFF9B4DFF;
+        if (resource == R.drawable.provider_crunchyroll)
+            return 0xFFF47521;
+        if (resource == R.drawable.provider_britbox)
+            return 0xFF00B2E3;
+        return 0;
+    }
+
     private static StreamingRepository.Provider provider(Context c, String path) {
         if (path == null || !path.matches("/[A-Za-z0-9._-]+"))
             return null;
@@ -109,8 +129,14 @@ public final class PreviewProviderIcons {
         icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
         int resource = provider == null ? 0 : resource(provider.name);
         // Approved 2 Nov 2026: official single-colour symbol in a uniform tile; a monogram tile is the last resort.
-        if (resource != 0)
+        if (resource != 0) {
             icon.setImageResource(resource);
+            // Service logos in their own colour, no background (D20, RULES §13): each mark in its brand colour.
+            int colour = brand(provider.name);
+            if (colour != 0)
+                icon.setColorFilter(new android.graphics.PorterDuffColorFilter(
+                    colour, android.graphics.PorterDuff.Mode.SRC_IN));
+        }
         else
             icon.setImageDrawable(
                 new ProviderMonogram(provider == null ? "" : provider.name));
