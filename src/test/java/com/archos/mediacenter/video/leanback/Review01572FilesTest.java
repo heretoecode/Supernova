@@ -196,11 +196,57 @@ public class Review01572FilesTest
             // Moving along the tabs and back keeps the folder (F11); OK on the open tab resets it (F12).
             tabs.tab(FilesPage.THIS_DEVICE).requestFocus();
             settle(nav);
+            page.setConnections(Arrays.asList(
+                new FilesPage.Connection("Put.io", android.net.Uri.parse("webdavs://webdav.put.io/Films"), true, 1204,
+                                         0, "alex.morgan"),
+                new FilesPage.Connection("Seedbox in the attic (the slow one)", android.net.Uri.parse(
+                    "sftp://seedbox.example.net/TV"), false, 512, 0, "alex"),
+                new FilesPage.Connection("Home server", android.net.Uri.parse("smb://192.168.1.20/Media"), true, 0, 0,
+                                         "")), null);
+            page.setFound(Arrays.asList(
+                new FilesPage.Found("DESKTOP-7Q", "Windows computer · SMB", android.net.Uri.parse("smb://desktop-7q/")),
+                new FilesPage.Found("Living-room speaker", "SMB", android.net.Uri.parse("smb://speaker/"))));
             tabs.tab(FilesPage.CONNECTIONS).requestFocus();
             settle(nav);
             save(nav, "01572-files-13-connections-tab");
             press(host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
+            assertInFiles(nav, page, "Down into Connections");
             save(nav, "01572-files-14-connections-rows");
+            press(host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
+            press(host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
+            press(host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
+            save(nav, "01572-files-14b-connections-found-focused");
+
+            // Add a connection: the form as a page in the tab, the one keyboard beside it (F34, F39).
+            View add = byDescription(page, "Add a connection");
+            assertNotNull(add);
+            add.requestFocus();
+            add.performClick();
+            settle(nav);
+            assertInFiles(nav, page, "Opening the connection form");
+            save(nav, "01572-files-14c-connection-form");
+            View sftp = page.findViewWithTag("files.form.type:SFTP");
+            assertNotNull(sftp);
+            sftp.requestFocus();
+            sftp.performClick();
+            settle(nav);
+            save(nav, "01572-files-14d-connection-form-sftp");
+            View address = page.findViewWithTag("files.form.field:Address");
+            address.requestFocus();
+            address.performClick();
+            settle(nav);
+            save(nav, "01572-files-14e-connection-form-keyboard");
+            press(host, KeyEvent.KEYCODE_BACK, nav);
+            press(host, KeyEvent.KEYCODE_BACK, nav);
+            assertNotNull("Back leaves the form", byDescription(page, "Add a connection"));
+
+            // Edit: the saved connection's form, filled in (F32).
+            View edit = byDescription(page, "Edit, Put.io");
+            assertNotNull(edit);
+            edit.performClick();
+            settle(nav);
+            save(nav, "01572-files-14f-connection-edit");
+            press(host, KeyEvent.KEYCODE_BACK, nav);
             tabs.tab(FilesPage.THIS_DEVICE).requestFocus();
             settle(nav);
             assertNotNull("The folder is still open", page.findViewWithTag(FolderBrowser.itemTag(
@@ -215,9 +261,27 @@ public class Review01572FilesTest
             settle(nav);
             press(host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
             save(nav, "01572-files-16-library-care");
+            View check = byDescription(page, "Check matches");
+            assertNotNull(check);
+            check.requestFocus();
+            settle(nav);
+            save(nav, "01572-files-16b-check-matches-focused");
+            View scanOne = byDescription(page, "Scan one source");
+            if (scanOne != null)
+            {
+                scanOne.requestFocus();
+                settle(nav);
+                save(nav, "01572-files-16c-scan-one-source");
+            }
+            View notMatched = byDescription(page, "Not matched");
+            notMatched.requestFocus();
+            settle(nav);
+            save(nav, "01572-files-16d-not-matched-focused");
             tabs.tab(FilesPage.YOUR_LIBRARY).requestFocus();
             settle(nav);
             save(nav, "01572-files-17-your-library");
+            assertEquals("No other screen opened from Files", null,
+                         Shadows.shadowOf(host.get()).getNextStartedActivity());
         }
         finally
         {

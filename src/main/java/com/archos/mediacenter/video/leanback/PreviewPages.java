@@ -2841,39 +2841,21 @@ public final class PreviewPages extends FrameLayout {
                 for (Box box : files)
                     if (device.name.equals(box.getName()) || !device.removable && box.getBoxId() == Box.ID.FOLDERS) {
                         Uri root = storageRoot(box);
-                        if (root == null) {
-                            click.open(new Presenter.ViewHolder(container), box);
+                        // A drive without a folder to open stays where it is: never the old browser.
+                        if (root == null)
                             return;
-                        }
-                        // Browsing stays in Files: the folder grid (0.157 Shield review #25).
+                        // Browsing stays in Files (page sheet, Browsing a drive).
                         filesPage.browse(root, device.name, (file, inLibrary) -> playFile(file, inLibrary));
                         return;
                     }
             });
             filesPage.setConnections(
                 withReachability(
-                    com.archos.mediacenter.video.leanback.files.FilesPageData.connections(librarySources, media)),
-                new com.archos.mediacenter.video.leanback.files.FilesPage.ConnectionActions() {
-                    @Override public void open(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("library");
-                    }
-
-                    @Override public void tryAgain(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("library");
-                    }
-
-                    @Override public void edit(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("saved");
-                    }
-
-                    @Override public void remove(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("saved");
-                    }
-
-                    @Override public void add() {
-                        networkSection("add");
-                    }
-                });
+                    com.archos.mediacenter.video.leanback.files.FilesPageData.connections(
+                        getContext(), librarySources, media)),
+                // Every connection action now happens on the Files page itself (F31–F35, F40): no route leads to
+                // NOVA's network screens or the three-panel browser.
+                null);
             filesPage.setSources(
                 com.archos.mediacenter.video.leanback.files.FilesPageData.sources(devices, librarySources),
                 source -> {
@@ -2883,6 +2865,7 @@ public final class PreviewPages extends FrameLayout {
                         com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
                 });
             filesPage.setMedia(media);
+            filesPage.setPlayer((file, inLibrary) -> playFile(file, inLibrary));
             filesPage.setFolderActions(new com.archos.mediacenter.video.leanback.files.FolderBrowser.Actions() {
                 @Override public void details(Base item) {
                     click.open(new Presenter.ViewHolder(container), item);
@@ -2974,7 +2957,7 @@ public final class PreviewPages extends FrameLayout {
                 long seen = c.root == null ? 0
                     : com.archos.mediacenter.video.leanback.files.ConnectionCheck.lastSeen(getContext(), c.root);
                 known.add(new com.archos.mediacenter.video.leanback.files.FilesPage.Connection(
-                    c.name, c.root, state, c.videos, seen));
+                    c.name, c.root, state, c.videos, seen, c.account));
                 if (c.root != null)
                     roots.add(c.root);
             }

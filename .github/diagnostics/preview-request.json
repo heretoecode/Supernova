@@ -1,8 +1,9 @@
 {
- "purpose": "0.157.2 round 1: Files fills the page, focus never jumps, folder browser (list, sort, menus)",
+ "purpose": "0.157.2 round 2: Connections on the page (form, edit, remove with Undo, found devices), Library Care pages, no old screens",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review01572FilesTest",
-  "com.archos.mediacenter.video.leanback.Review0157RenderTest"
+  "com.archos.mediacenter.video.leanback.NoOldScreensTest",
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest"
  ],
  "variants": {
   "normal": {}

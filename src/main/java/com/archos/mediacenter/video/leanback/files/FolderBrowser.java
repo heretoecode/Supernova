@@ -588,15 +588,7 @@ public final class FolderBrowser extends LinearLayout
 
     private boolean excluded(MetaFile2 file)
     {
-        try
-        {
-            return com.archos.mediaprovider.video.Blacklist.getInstance(getContext()).isBlacklistedManual(
-                file.getUri()) && "file".equals(file.getUri().getScheme());
-        }
-        catch (RuntimeException unavailable)
-        {
-            return false;
-        }
+        return LibraryChanges.excluded(getContext(), file.getUri());
     }
 
     /** The pill (F20, F23): In library · Excluded · Not added. Pure, for tests. */
@@ -849,8 +841,14 @@ public final class FolderBrowser extends LinearLayout
                 com.archos.mediacenter.video.utils.DbUtils.markAsNotRead(context, (Video) inLibrary);
                 break;
             case "Add to library":
-                com.archos.mediacenter.video.leanback.PreviewFolderActions.chooseLibrary(context, file.getUri(),
-                                                                                       file.getName());
+                if (LibraryChanges.apply(context, selection -> selection.include(file.getUri())))
+                {
+                    TextView added = items.findViewWithTag(PILL + file.getName());
+                    if (added != null)
+                    {
+                        added.setText("In library");
+                    }
+                }
                 break;
             case "Scan this folder":
                 com.archos.mediaprovider.NetworkScanner.scanVideos(context, file.getUri());
@@ -863,28 +861,12 @@ public final class FolderBrowser extends LinearLayout
         }
     }
 
-    /** Exclude: the library leaves this file or folder out from now on (NOVA's indexed-folder list). */
+    /** Exclude: the library leaves this file or folder out from now on (Supernova's library exclusions). */
     private void exclude(MetaFile2 file)
     {
-        Context context = getContext();
-        boolean saved = com.archos.mediacenter.utils.BlacklistedDbAdapter.VIDEO.addBlacklisted(
-            context, new com.archos.mediacenter.utils.BlacklistedDbAdapter.Blacklisted(file.getUri().toString()));
-        if (!saved)
+        if (!LibraryChanges.apply(getContext(), selection -> selection.exclude(file.getUri())))
         {
             return;
-        }
-        com.archos.mediaprovider.video.Blacklist.updateBlacklisteds();
-        android.content.Intent rescan = new android.content.Intent(
-            context, com.archos.mediaprovider.video.VideoStoreImportService.class);
-        rescan.setAction(com.archos.mediaprovider.ArchosMediaIntent.ACTION_VIDEO_SCANNER_METADATA_UPDATE);
-        rescan.setData(file.getUri());
-        try
-        {
-            context.startService(rescan);
-        }
-        catch (RuntimeException notNow)
-        {
-            // The next scan leaves it out anyway.
         }
         TextView status = items.findViewWithTag(PILL + file.getName());
         if (status != null)
