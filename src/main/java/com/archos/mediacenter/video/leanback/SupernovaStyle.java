@@ -484,6 +484,14 @@ public final class SupernovaStyle {
 
     // ---- rows ----------------------------------------------------------------------------------
 
+    /** The white focus box on a plain row or heading, nothing at rest (RULES §3; D5, P5). */
+    public static StateListDrawable focusFill(Context c, float radiusDp) {
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[] {android.R.attr.state_focused}, rounded(c, FOCUS_FILL, radiusDp));
+        states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));
+        return states;
+    }
+
     /** Row focus: white outline, no fill change. Use with {@link #ROW_INSET_DP} padding inside the row. */
     public static StateListDrawable rowFocus(Context c) {
         StateListDrawable states = new StateListDrawable();

@@ -459,11 +459,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     /** Approved global row focus: white outline, no fill change. */
     /** Focused rows fill white (P5, RULES §3); their text and icons turn black (see {@link #inkRow}). */
     private Drawable rowFocus() {
-        android.graphics.drawable.StateListDrawable states = new android.graphics.drawable.StateListDrawable();
-        states.addState(new int[] {android.R.attr.state_focused},
-                        SupernovaStyle.rounded(owner, SupernovaStyle.FOCUS_FILL, 10));
-        states.addState(new int[] {}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
-        return states;
+        return SupernovaStyle.focusFill(owner, 10);
     }
 
     private final java.util.Map<TextView, Integer> restingInk = new java.util.WeakHashMap<>();

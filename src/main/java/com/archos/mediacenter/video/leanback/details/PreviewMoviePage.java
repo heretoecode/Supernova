@@ -1865,12 +1865,7 @@ public final class PreviewMoviePage extends ScrollView {
                 seasonInfo.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
                 seasonInfo.setPadding(dp(10), dp(5), dp(10), dp(5));
                 // Focused: the white box with black text (D5); at rest the heading sits plain on the page.
-                android.graphics.drawable.StateListDrawable headingBox =
-                    new android.graphics.drawable.StateListDrawable();
-                headingBox.addState(new int[] {android.R.attr.state_focused},
-                                    SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL, 8));
-                headingBox.addState(new int[] {}, new android.graphics.drawable.ColorDrawable(0));
-                seasonInfo.setBackground(headingBox);
+                seasonInfo.setBackground(SupernovaStyle.focusFill(getContext(), 8));
                 LinearLayout.LayoutParams headingSize = new LinearLayout.LayoutParams(-2, dp(44));
                 headingSize.topMargin = dp(8);
                 headingSize.bottomMargin = dp(6);
