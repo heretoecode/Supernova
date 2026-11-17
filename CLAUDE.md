@@ -49,6 +49,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   seen together on one screen; never one picture per item. Applying agreed rules (`docs/design/RULES.md`) to an
   approved page needs no mock-up (at most one sample screen); only genuinely new pieces are drawn. With each picture,
   one line in the message (not on the picture) says what is new to look at.
+- **Reviewing a page (owner, 17 Nov 2026):** one page at a time; when moving to a new page, first send its latest
+  mock-ups (for a side-by-side look) and its checklist from the page sheet (`docs/design/pages/`).
 - **The owner approves every signing.** Never sign or publish without being asked.
 - **This repository is public** (a GitHub fork of NOVA). Never put the owner's personal details in it: account
   names, email, location (country, city, time zone names), addresses, device names, real storage figures. Say "local
