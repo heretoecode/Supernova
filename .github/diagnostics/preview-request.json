@@ -1,11 +1,7 @@
 {
- "purpose": "0.158 part A: top bar, library pages, Home, Search",
+ "purpose": "0.158: find the library test hang",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review0158TopBarTest",
-  "com.archos.mediacenter.video.leanback.Review0158LibraryTest",
-  "com.archos.mediacenter.video.leanback.Review0158HomeTest",
-  "com.archos.mediacenter.video.leanback.Review0158SearchTest",
-  "com.archos.mediacenter.video.leanback.NoOldScreensTest"
+  "com.archos.mediacenter.video.leanback.Review0158LibraryTest"
  ],
  "variants": {
   "normal": {}

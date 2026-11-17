@@ -34,6 +34,50 @@ import static org.junit.Assert.assertTrue;
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-xhdpi")
 public class Review0158LibraryTest
 {
+    /** Writes the test thread's stack into a picture every 25 s, so a hang shows where it is (renders keep PNGs). */
+    @Before
+    public void watchdog()
+    {
+        Thread test = Thread.currentThread();
+        Thread dog = new Thread(() -> {
+            for (int n = 1; n <= 3; n++)
+            {
+                try
+                {
+                    Thread.sleep(25000);
+                }
+                catch (InterruptedException stop)
+                {
+                    return;
+                }
+                StackTraceElement[] frames = test.getStackTrace();
+                java.awt.image.BufferedImage image =
+                    new java.awt.image.BufferedImage(1900, 20 + 16 * Math.min(frames.length, 70),
+                                                     java.awt.image.BufferedImage.TYPE_INT_RGB);
+                java.awt.Graphics2D g = image.createGraphics();
+                g.setColor(java.awt.Color.WHITE);
+                g.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 13));
+                for (int i = 0; i < Math.min(frames.length, 70); i++)
+                {
+                    g.drawString(frames[i].toString(), 6, 16 + 16 * i);
+                }
+                g.dispose();
+                try
+                {
+                    java.io.File out = new java.io.File("build/reports/preview-ui/0158-lib-stack-" + n + ".png");
+                    out.getParentFile().mkdirs();
+                    javax.imageio.ImageIO.write(image, "png", out);
+                }
+                catch (java.io.IOException ignored)
+                {
+                    return;
+                }
+            }
+        }, "render-watchdog");
+        dog.setDaemon(true);
+        dog.start();
+    }
+
     @Before
     public void picasso()
     {
