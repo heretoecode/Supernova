@@ -1113,9 +1113,14 @@ public final class PreviewMoviePage extends ScrollView {
             fact(key, "Runtime", SharedMetadata.runtime(runtime));
         else if (movie == null) {
             String episodeRuntime = PreviewDetailsFacts.episodeRuntimes(enriched);
+            // TMDB often leaves a show's runtime empty: take it from its episodes instead (D15).
+            if (episodeRuntime.isEmpty() && enrichment != null)
+                episodeRuntime = PreviewDetailsFacts.typicalRuntime(enrichment.episodes.values());
             if (!episodeRuntime.isEmpty())
                 fact(key, "Runtime", "Episodes · " + episodeRuntime);
         }
+        if (enriched != null && (show != null || "tv".equals(remoteKind)) && selectedEpisode == null)
+            fact(key, "Created by", jsonNames(enriched.optJSONArray("created_by"), "name"));
 
         String certificate =
             selectedEpisode == null && seasonNumber < 0 && enrichment != null

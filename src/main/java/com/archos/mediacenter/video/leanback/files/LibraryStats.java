@@ -23,10 +23,19 @@ public final class LibraryStats
         final boolean uhd;
         final boolean hdr;
         final long addedSeconds;
+        /** The picture's height in pixels; 0 when unknown. */
+        final int height;
 
         public Item(String show, long bytes, boolean local, long durationMs, long resumeMs,
                     boolean watched, boolean uhd, boolean hdr, long addedSeconds)
         {
+            this(show, bytes, local, durationMs, resumeMs, watched, uhd, hdr, addedSeconds, uhd ? 2160 : 0);
+        }
+
+        public Item(String show, long bytes, boolean local, long durationMs, long resumeMs,
+                    boolean watched, boolean uhd, boolean hdr, long addedSeconds, int height)
+        {
+            this.height = height;
             this.show = show;
             this.bytes = bytes;
             this.local = local;
@@ -90,6 +99,9 @@ public final class LibraryStats
     public int watchedTitles;
     public long hoursToWatch;
     public int uhdTitles;
+    /** Videos by picture (F21): 4K, 1080p, 720p, SD, then HDR; unknown sizes are not counted. */
+    public final int[] pictures = new int[5];
+    public static final String[] PICTURES = {"4K", "1080p", "720p", "SD", "HDR"};
     public int hdrTitles;
     public int addedThisMonth;
     public final List<Heavy> heaviest = new ArrayList<>();
@@ -116,6 +128,11 @@ public final class LibraryStats
             }
             if (!item.watched)
                 unwatchedMs += Math.max(0, item.durationMs - Math.max(0, item.resumeMs));
+            int picture = picture(item.uhd, item.height);
+            if (picture >= 0)
+                stats.pictures[picture]++;
+            if (item.hdr)
+                stats.pictures[4]++;
             if (item.episode())
             {
                 byShow.computeIfAbsent(item.show, key -> new ArrayList<>()).add(item);
@@ -161,6 +178,37 @@ public final class LibraryStats
             hdrTitles++;
         if (added)
             addedThisMonth++;
+    }
+
+    /** 0 for 4K, 1 for 1080p, 2 for 720p, 3 for SD, -1 when the size is unknown. Pure, for tests. */
+    static int picture(boolean uhd, int height)
+    {
+        if (uhd || height >= 1800)
+            return 0;
+        if (height >= 900)
+            return 1;
+        if (height >= 600)
+            return 2;
+        return height > 0 ? 3 : -1;
+    }
+
+    /** "4K 12 · 1080p 340 · 720p 80 · SD 15 · HDR 30" (every quality, owner idea F21). */
+    public String pictureCounts()
+    {
+        List<String> parts = new ArrayList<>();
+        for (int index = 0; index < PICTURES.length; index++)
+            parts.add(PICTURES[index] + " " + String.format(java.util.Locale.UK, "%,d", pictures[index]));
+        return String.join(" · ", parts);
+    }
+
+    /** "12% 4K · 70% 1080p · 15% 720p · 3% SD · 8% HDR", of the videos whose picture size is known. */
+    public String picturePercents()
+    {
+        int known = pictures[0] + pictures[1] + pictures[2] + pictures[3];
+        List<String> parts = new ArrayList<>();
+        for (int index = 0; index < PICTURES.length; index++)
+            parts.add((known == 0 ? 0 : Math.round(100f * pictures[index] / known)) + "% " + PICTURES[index]);
+        return String.join(" · ", parts);
     }
 
     /** Whole percent of the library's titles, 0 when there are none. */

@@ -136,6 +136,23 @@ final class PreviewDetailsFacts {
         return TextUtils.join(", ", minutes);
     }
 
+    /** "about 47 min": the middle episode runtime across the seasons' episodes, or "" when none is known. */
+    static String typicalRuntime(java.util.Collection<JSONArray> seasons) {
+        java.util.List<Integer> minutes = new java.util.ArrayList<>();
+        for (JSONArray season : seasons) {
+            for (int n = 0; season != null && n < season.length(); n++) {
+                JSONObject episode = season.optJSONObject(n);
+                int value = episode == null ? 0 : episode.optInt("runtime");
+                if (value > 0)
+                    minutes.add(value);
+            }
+        }
+        if (minutes.isEmpty())
+            return "";
+        java.util.Collections.sort(minutes);
+        return "about " + minutes.get(minutes.size() / 2) + " min";
+    }
+
     private PreviewDetailsFacts() {
     }
 }

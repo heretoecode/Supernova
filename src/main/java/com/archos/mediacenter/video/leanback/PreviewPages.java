@@ -2941,7 +2941,7 @@ public final class PreviewPages extends FrameLayout {
                 items.add(new com.archos.mediacenter.video.leanback.files.LibraryStats.Item(
                     show == null || show.isEmpty() ? (video instanceof Episode ? "Unknown" : null) : show,
                     Math.max(0, video.getSize()), video.isLocalFile(), video.getDurationMs(), video.getResumeMs(),
-                    video.isWatched(), uhd, hdr, entry.added));
+                    video.isWatched(), uhd, hdr, entry.added, Math.max(video.getMeasuredHeight(), 0)));
             }
             long monthStart = com.archos.mediacenter.video.leanback.files.FilesPage.monthStart().getTime() / 1000L;
             return com.archos.mediacenter.video.leanback.files.LibraryStats.of(items, monthStart);

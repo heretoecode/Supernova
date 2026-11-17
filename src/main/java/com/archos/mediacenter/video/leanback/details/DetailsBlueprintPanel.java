@@ -165,18 +165,33 @@ final class DetailsBlueprintPanel extends LinearLayout {
         for (String[] field : fields) {
             if (bound.size() > 0 || parent.getChildCount() > 1)
                 line(parent);
-            String value = first(values, Arrays.copyOfRange(field, 1, field.length));
-            bound.put(field[0], fact(parent, field[0], value));
+            String value = first(values, sources(field, values));
+            bound.put(field[0], fact(parent, label(field, values), value));
         }
+    }
+
+    /** A TV show is "Created by" its creators where a movie is "Directed by" (D15). */
+    static String label(String[] field, Map<String, String> values) {
+        return "Directed by".equals(field[0]) && values.containsKey("Created by") ? "Created by" : field[0];
+    }
+
+    private static String[] sources(String[] field, Map<String, String> values) {
+        if ("Created by".equals(label(field, values)))
+            return new String[] {"Created by"};
+        return Arrays.copyOfRange(field, 1, field.length);
     }
 
     private void updateValues(Map<String, TextView> bound, String[][] fields, Map<String, String> values) {
         for (String[] field : fields) {
             TextView view = bound.get(field[0]);
-            String value = first(values, Arrays.copyOfRange(field, 1, field.length));
+            String value = first(values, sources(field, values));
+            String name = label(field, values);
+            if (view != null && view.getParent() instanceof ViewGroup
+                && ((ViewGroup) view.getParent()).getChildAt(0) instanceof TextView)
+                ((TextView) ((ViewGroup) view.getParent()).getChildAt(0)).setText(name);
             if (view != null && !value.contentEquals(view.getText())) {
                 styleValue(view, value);
-                ((View) view.getParent()).setContentDescription(field[0] + ": " + value);
+                ((View) view.getParent()).setContentDescription(name + ": " + value);
             }
         }
     }
