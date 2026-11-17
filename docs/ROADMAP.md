@@ -97,15 +97,26 @@ Bug fixes only (owner, 17 Nov): as many as possible before 0.158. Findings in `d
 
 ## 0.158
 
+All the planned redesigns except Settings, then a bug-fixing phase on a settled design (owner, 18 Nov). Each page
+gets its page sheet before coding (CLAUDE.md, Definition of done).
+
 ### Redesigns
 
+- Library pages (posters, Filters, Sort, Columns, list view, Customise page, empty pages, + page, episode counts;
+  the stats row goes)
 - Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)
-- Library pages (posters, Filters, Sort, Columns, list view, Customise page, empty pages, + page, episode counts)
-- Settings (seven tabs, Backup and Restore, Diagnostics, About)
-- Onboarding (on Home, Start fresh / Restore, smart steps)
 - Search (library first, On your services, recent searches)
 - Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
-- One side margin for every page (Home, library pages, Files, Settings, Search), set with these redesigns
+- One side margin for every page (Home, library pages, Files, Search), set with these redesigns
+
+### Also in 0.158
+- Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
+
+## 0.159
+
+- Settings (seven tabs, Backup and Restore, Diagnostics, About): set aside by the owner (18 Nov); the current
+  Settings works and is rarely visited
+- Onboarding (on Home, Start fresh / Restore, smart steps): it points into Settings and is seen once
 
 ## Parked
 
