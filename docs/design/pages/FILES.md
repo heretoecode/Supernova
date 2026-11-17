@@ -20,7 +20,7 @@ facts on the right of the tabs: read them as This Device, Files, underline tabs,
   page; everything on the row's centre line; black ink on the white focus, icons included (F13, F29, F30, F43).
 
 ## This Device
-- Rows: **Internal storage** (F19) and each USB drive: name, "USB drive · 1,012 videos · 191 GB free of 999 GB", and
+- Rows: **Internal storage** (F19) and each USB drive: name, "USB drive · 1,203 videos · 1.1 TB free of 2 TB", and
   the storage bar on every row (F14). USB-stick icon for drives. OK opens the drive.
 
 ## Browsing a drive, folder or connection

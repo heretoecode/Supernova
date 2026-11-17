@@ -63,7 +63,7 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 - **F17. Up always goes to the open tab** (owner, 16 Nov: agreed): from anywhere in a tab's content, Up into the tab
   row lands on the open tab, never the tab above the focus (today Connections or Library Care + Up opens Your
   Library). Rule for every tab row, Details included. To add to RULES §4.
-- **F18. Tab-row facts removed:** the summary on the right ("1,934 Videos · 3 To Check · …") repeats the Library Care
+- **F18. Tab-row facts removed:** the summary on the right ("n Videos · n To Check · …") repeats the Library Care
   badge, Library Health and Your Library, and won't fit as tabs grow. **Owner (16 Nov): remove; always keep a scan button
   in the tab row, locked right** (until the room is needed for tabs); the badge stays. **17 Nov:** "12 min ago" reads as
   information, not a button: it says **"Scan library"** (every local and network source). While scanning it reads
@@ -76,7 +76,7 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   (e.g. "2024 · 14.2 GB"); size only when the year is unknown. In a folder view the size matters more than the year.
   Replaces `32` (title and year). Folders: count and In library / Excluded / Not added pill on every folder (approved).
 - **F21. Your Library › Picture: show every quality** (owner idea, 16 Nov): 4K, 1080p, 720p, SD and HDR, not only
-  "% 4K · % HDR". (The 0% figures are right: 1 of 420 watched, two titles in 4K.)
+  "% 4K · % HDR". (The 0% figures are right for the owner's library.)
 - **F22. Folder actions not drawn:** the row menu (`28`: Play · Details · Mark as watched · Exclude · Fix match) is for
   files. A folder's menu (e.g. Open · Add to library · Exclude · Scan this folder) needs a mock-up.
 
