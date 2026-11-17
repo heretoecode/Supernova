@@ -1619,22 +1619,6 @@ public final class PreviewPages extends FrameLayout {
             }
         } else if (event.getAction() == KeyEvent.ACTION_DOWN)
             heroOwnsHorizontal = false;
-        if (tab == 0 && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            View focus = findFocus(), item = focus == null ? null : list.findContainingItemView(focus);
-            int position = item == null ? -1 : list.getChildAdapterPosition(item);
-            if (position >= 0 && cells.get(position).type == RAIL && !cells.get(position).homeRowId.isEmpty() &&
-                item instanceof ViewGroup) {
-                RecyclerView rail = railIn(item);
-                if (rail != null) {
-                    View card = rail.findContainingItemView(focus);
-                    if (card != null && rail.getChildAdapterPosition(card) == 0) {
-                        // Hide and Move appear beside the row (0.155 notes #14); no pop-up.
-                        rowMover().reveal((LinearLayout)item, rail, cells.get(position).homeRowId);
-                        return true;
-                    }
-                }
-            }
-        }
         if (tab == 0 && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN &&
             findFocus() != null && "hero:info".equals(findFocus().getTag())) {
             for (int i = 0; i < cells.size(); i++)
@@ -1776,6 +1760,7 @@ public final class PreviewPages extends FrameLayout {
         Object state = layout.onSaveInstanceState();
         cells.clear();
         if (tab == 0) {
+            refreshNextEpisodes();
             if (featured() == null)
                 cells.add(new Cell(HERO, "Featured", HomePlaceholder.Kind.HERO));
             if (featured() != null)
@@ -2252,6 +2237,24 @@ public final class PreviewPages extends FrameLayout {
         quietOrder.clear();
         listMode[tab] = list;
         render("view_change");
+    }
+
+    /**
+     * Move and Hide beside a Home row's heading (page sheet HOME.md; `home-v2/02`): plain buttons, shown when focus
+     * reaches the heading. Down from a card lands on Move; Down again on the next row's first card.
+     */
+    private void addRowControls(LinearLayout heading, String rowId) {
+        HomeRowControls controls = new HomeRowControls(getContext(), rowMover());
+        controls.setAlpha(0f);
+        controls.focusHook = () -> {
+            boolean here = controls.hasFocus() || controls.moving();
+            controls.setAlpha(here ? 1f : 0f);
+            if (here)
+                rowMover().activate(controls, rowId);
+        };
+        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-2, -2);
+        size.leftMargin = dp(14);
+        heading.addView(controls, size);
     }
 
     /**
@@ -2770,10 +2773,11 @@ public final class PreviewPages extends FrameLayout {
     /** Delete file(s): the delete warning, "Keep file" focused first (RULES §7b); then the files go. */
     private void deleteFiles(Entry e) {
         boolean show = e.media instanceof Tvshow;
-        PreviewDialog.confirmDelete(
+        PreviewDialog.warning(
             getContext(), show ? "Delete every episode of " + displayName(e) + "?" : "Delete " + displayName(e) + "?",
             show ? "Every episode file is deleted from its drive or server. This can't be undone."
                  : "The file is deleted from its drive or server. This can't be undone.",
+            show ? "Keep files" : "Keep file", show ? "Delete all episode files" : "Delete file",
             () -> {
                 List<Uri> files = LibraryActions.files(getContext(), e.media);
                 if (files.isEmpty() || !(getContext() instanceof Activity))
@@ -3187,6 +3191,8 @@ public final class PreviewPages extends FrameLayout {
                     if (tab == 0 && !c.headingIcon.isEmpty())
                         MenuFoundation.icon(title, c.headingIcon);
                     v.addView(title);
+                    if (tab == 0 && !c.homeRowId.isEmpty())
+                        addRowControls(v, c.homeRowId);
                 }
             } else if (c.type == RAIL) {
                 v.setPadding(0, 0, 0, dp(10));
@@ -3209,7 +3215,9 @@ public final class PreviewPages extends FrameLayout {
                 rowSize.leftMargin = -list.getPaddingLeft();
                 rowSize.rightMargin = -list.getPaddingRight();
                 v.setLayoutParams(rowSize);
-                v.addView(rail, new LinearLayout.LayoutParams(-1, dp(125)));
+                // Room for the focused card's 10% growth above and below (RULES §3: never crowd a heading).
+                v.addView(rail, new LinearLayout.LayoutParams(
+                    -1, dp(PreviewCardPresenter.Card.ROW_PICTURE_DP + PreviewCardPresenter.Card.ROW_CAPTION_DP + 20)));
             } else if (c.type == STORAGE) {
                 Box b = (Box)c.value;
                 v.setPadding(dp(12), dp(12), dp(12), dp(12));
@@ -3579,7 +3587,7 @@ public final class PreviewPages extends FrameLayout {
 
     class RailAdapter extends RecyclerView.Adapter<Holder> {
         final List<Entry> entries;
-        final PreviewCardPresenter pr = new PreviewCardPresenter(PreviewCardPresenter.Style.CONTINUE);
+        final PreviewCardPresenter pr = new PreviewCardPresenter(PreviewCardPresenter.Style.ROW);
         final boolean resume;
 
         RailAdapter(List<Entry> e, boolean resume) {
@@ -3625,7 +3633,10 @@ public final class PreviewPages extends FrameLayout {
             Holder h = new Holder(card.view);
             h.card = card;
             h.presenter = pr;
-            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(dp(172), dp(105));
+            // One row card size: 400 × 225 at 1080p plus the caption box, 24 px gap (RULES §14).
+            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(
+                dp(PreviewCardPresenter.Card.ROW_WIDTH_DP),
+                dp(PreviewCardPresenter.Card.ROW_PICTURE_DP + PreviewCardPresenter.Card.ROW_CAPTION_DP));
             lp.rightMargin = dp(12);
             h.itemView.setLayoutParams(lp);
             return h;
@@ -3634,6 +3645,7 @@ public final class PreviewPages extends FrameLayout {
         public void onBindViewHolder(Holder h, int p) {
             Entry e = entries.get(p);
             pr.bindEntry(h.card, e);
+            PreviewCardPresenter.bindRowCaption(h.card, LibraryPageModel.rowLine(e), LibraryPageModel.rowProgress(e));
             h.itemView.setTag(e.key());
             h.itemView.setOnClickListener(v -> {
                 if (resume)
@@ -3641,8 +3653,9 @@ public final class PreviewPages extends FrameLayout {
                 else
                     open(e, v);
             });
+            // The library long-press menu beside the card (HOME.md, LIBRARY.md).
             h.itemView.setOnLongClickListener(v -> {
-                contextMenu(e, v, resume);
+                libraryMenu(e, v);
                 return true;
             });
         }

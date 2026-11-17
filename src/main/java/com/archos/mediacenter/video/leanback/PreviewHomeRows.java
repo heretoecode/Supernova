@@ -27,6 +27,9 @@ public final class PreviewHomeRows {
         public String genreRule = "", sort = "added", icon = "";
         public boolean matchAll;
         public int maximum = 0;
+        /** Your rows (0.158 sheet): a year range (0 = open) and a minimum rating (0 = any). */
+        public int yearFrom, yearTo;
+        public double rating;
         public boolean descending = true;
         public final Set<String> members = new LinkedHashSet<>(), calculated = new LinkedHashSet<>();
 
@@ -63,6 +66,9 @@ public final class PreviewHomeRows {
                 r.sort = o.optString("sort", "added");
                 r.icon = o.optString("icon", "");
                 r.matchAll = o.optBoolean("matchAll", false);
+                r.yearFrom = o.optInt("yearFrom", 0);
+                r.yearTo = o.optInt("yearTo", 0);
+                r.rating = o.optDouble("rating", 0);
                 r.descending = o.optBoolean("descending", !r.sort.equals("title"));
                 JSONArray calculated = o.optJSONArray("calculated");
                 if (calculated != null)
@@ -103,6 +109,9 @@ public final class PreviewHomeRows {
                     .put("sort", r.sort)
                     .put("icon", r.icon)
                     .put("matchAll", r.matchAll)
+                    .put("yearFrom", r.yearFrom)
+                    .put("yearTo", r.yearTo)
+                    .put("rating", r.rating)
                     .put("descending", r.descending)
                     .put("calculated", new JSONArray(r.calculated))
                     .put("maximum", r.maximum));
@@ -130,7 +139,12 @@ public final class PreviewHomeRows {
             for (Entry entry : available.values())
                 if ((entry.media instanceof Tvshow ? row.tv
                                                                                                         : row.movies)
-                    && PreviewGenres.matches(entry.genres, genres, row.matchAll))
+                    && PreviewGenres.matches(entry.genres, genres, row.matchAll)
+                    && LibraryFilters.yearMatches(entry, row.yearFrom, row.yearTo)
+                    && (row.rating <= 0 || entry.media instanceof com.archos.mediacenter.video.browser.adapters.object
+                        .Movie && ((com.archos.mediacenter.video.browser.adapters.object.Movie) entry.media)
+                        .getRating() >= row.rating || entry.media instanceof Tvshow
+                        && ((Tvshow) entry.media).getRating() >= row.rating))
                     calculated.add(entry.key());
             if (!row.calculated.equals(calculated)) {
                 row.calculated.clear();
@@ -290,8 +304,9 @@ public final class PreviewHomeRows {
         new PreviewHomeRows(c).editor(changed);
     }
 
+    /** Customise Home (page sheet HOME.md; `home-v2/03`): the floating side panel on the right. */
     private void editor(Runnable changed) {
-        new CustomiseHomeEditor(context, this, changed).show();
+        HomeCustomisePanel.show(context, this, changed);
     }
 
     public static final int[] MAXIMUM_PRESETS = {

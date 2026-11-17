@@ -163,6 +163,43 @@ final class HomeRowMover implements HomeRowControls.Actions {
         host.list().getViewTreeObserver().addOnGlobalFocusChangeListener(focusWatcher);
     }
 
+    /** True while the controls are the ones that live in a row's heading (0.158). */
+    private boolean inline;
+
+    /**
+     * Move and Hide in a row's heading (page sheet HOME.md): focus reached them, so they act on that row. The
+     * heading's row of cards is the one that lifts and moves.
+     */
+    void activate(HomeRowControls headingControls, String id) {
+        if (controls == headingControls) {
+            return;
+        }
+        if (controls != null) {
+            dismiss(false);
+        }
+        int at = first(host.cells(), id);
+        RecyclerView.ViewHolder cards = null;
+        for (int i = Math.max(0, at); at >= 0 && i < host.cells().size(); i++) {
+            if (!id.equals(host.cells().get(i).homeRowId)) {
+                break;
+            }
+            RecyclerView.ViewHolder holder = host.list().findViewHolderForAdapterPosition(i);
+            if (holder != null && PreviewPages.railIn(holder.itemView) != null) {
+                cards = holder;
+            }
+        }
+        if (cards == null || !(cards.itemView instanceof LinearLayout)) {
+            return;
+        }
+        inline = true;
+        controls = headingControls;
+        item = (LinearLayout) cards.itemView;
+        rail = PreviewPages.railIn(item);
+        rowId = id;
+        showHint(null);
+        host.list().getViewTreeObserver().addOnGlobalFocusChangeListener(focusWatcher);
+    }
+
     /** Removes the controls and puts the row back as it was; {@code focusRow} moves focus to its first card. */
     void dismiss(boolean focusRow) {
         if (controls == null) {
@@ -170,6 +207,20 @@ final class HomeRowMover implements HomeRowControls.Actions {
         }
         if (controls.moving()) {
             endMoving();
+        }
+        if (inline) {
+            host.list().getViewTreeObserver().removeOnGlobalFocusChangeListener(focusWatcher);
+            inline = false;
+            controls = null;
+            View first = rail == null || rail.getLayoutManager() == null ? null
+                : rail.getLayoutManager().findViewByPosition(0);
+            if (focusRow && first != null) {
+                first.requestFocus();
+            }
+            item = null;
+            rail = null;
+            rowId = "";
+            return;
         }
         host.list().getViewTreeObserver().removeOnGlobalFocusChangeListener(focusWatcher);
         HomeRowControls gone = controls;
@@ -210,7 +261,17 @@ final class HomeRowMover implements HomeRowControls.Actions {
         undoUntil = SystemClock.elapsedRealtime() + UNDO_MS;
         dismiss(false);
         host.rerender();
-        PreviewNotice.show(context, row.name + " hidden · press Back to undo", false, UNDO_MS);
+        // Hidden at once with an Undo notice; it can come back in Customise Home (approved 18 Nov).
+        String hidden = row.id;
+        UndoNotice.show(context, row.name + " hidden", () -> {
+            PreviewHomeRows again = new PreviewHomeRows(context);
+            PreviewHomeRows.Row back = find(again, hidden);
+            if (back != null) {
+                back.visible = true;
+                again.save();
+                host.rerender();
+            }
+        });
     }
 
     /** Back shortly after Hide brings the row back; returns true when it did. */
@@ -416,7 +477,7 @@ final class HomeRowMover implements HomeRowControls.Actions {
     }
 
     static String statusText(int position, int total) {
-        return "Row " + position + " of " + total + " · ↑ ↓ to move · OK or Back when done";
+        return "Row " + position + " of " + total + " · OK when done";
     }
 
     private void removeStatus() {

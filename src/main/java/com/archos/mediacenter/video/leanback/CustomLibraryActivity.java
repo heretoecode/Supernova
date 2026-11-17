@@ -194,9 +194,10 @@ public final class CustomLibraryActivity extends LeanbackActivity {
 
         /** Delete page: the delete warning ("Keep page" first); the page goes back to "Make this page your own". */
         void delete() {
-            PreviewDialog.confirmPageDelete(
+            PreviewDialog.warning(
                 getContext(), "Delete this page?",
-                "Removes this page only. Your videos, watched state and progress are never deleted.", () -> {
+                "Removes this page only. Your videos, watched state and progress are never deleted.", "Keep page",
+                "Delete page", () -> {
                     if (CustomLibraryPage.delete(getContext())) {
                         closePanel();
                         draft = fresh();

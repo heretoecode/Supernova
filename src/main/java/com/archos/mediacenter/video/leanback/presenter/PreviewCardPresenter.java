@@ -36,7 +36,9 @@ import java.util.Objects;
 /** Lightweight experimental cards: existing library objects and click actions are preserved. */
 public final class PreviewCardPresenter extends Presenter {
     public enum Style {
-        POSTER, CONTINUE, CATEGORY, LIST
+        POSTER, CONTINUE, CATEGORY, LIST,
+        /** Home row cards: 16:9 at 400 × 225 px (1080p), the caption box under the picture (page sheet HOME.md). */
+        ROW
     }
 
     private final Style style;
@@ -58,6 +60,10 @@ public final class PreviewCardPresenter extends Presenter {
         public static final int POSTER_CAPTION_DP = 50;
         /** The caption box's charcoal grey (lighter than the page, darker than a focus box). */
         public static final int POSTER_CAPTION_FILL = 0xFF23262C;
+        /** One row card size everywhere: 400 × 225 px at 1080p (focused 440 × 248); caption box under it. */
+        public static final int ROW_WIDTH_DP = 200;
+        public static final int ROW_PICTURE_DP = 113;
+        public static final int ROW_CAPTION_DP = 40;
         public final ImageView image;
         final TextView title, subtitle;
         /** Library posters: the line that follows the sort, and the tick on a watched title. */
@@ -79,8 +85,10 @@ public final class PreviewCardPresenter extends Presenter {
             super(c);
             this.style = style;
             // Android TV's logical viewport is normally 960 x 540 dp.
-            width = dp(style == Style.LIST ? 860 : style == Style.CONTINUE ? 172 : style == Style.CATEGORY ? 174 : 140);
-            height = dp(style == Style.LIST ? 62 : style == Style.CONTINUE ? 105 : style == Style.CATEGORY ? 86 : 210);
+            width = dp(style == Style.ROW ? ROW_WIDTH_DP : style == Style.LIST ? 860 : style == Style.CONTINUE ? 172
+                : style == Style.CATEGORY ? 174 : 140);
+            height = dp(style == Style.ROW ? ROW_PICTURE_DP : style == Style.LIST ? 62
+                : style == Style.CONTINUE ? 105 : style == Style.CATEGORY ? 86 : 210);
             setFocusable(true);
             setFocusableInTouchMode(true);
             setCardType(CARD_TYPE_MAIN_ONLY);
@@ -110,12 +118,15 @@ public final class PreviewCardPresenter extends Presenter {
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
             if (style == Style.POSTER)
                 bp.height += dp(POSTER_CAPTION_DP);
+            if (style == Style.ROW)
+                bp.height += dp(ROW_CAPTION_DP);
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c);
             image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             body.addView(image,
-                new FrameLayout.LayoutParams(style == Style.LIST ? dp(112) : -1, style == Style.POSTER ? height : -1));
+                new FrameLayout.LayoutParams(style == Style.LIST ? dp(112) : -1,
+                    style == Style.POSTER || style == Style.ROW ? height : -1));
             caption = new LinearLayout(c);
             caption.setOrientation(LinearLayout.VERTICAL);
             caption.setPadding(dp(8), dp(style == Style.POSTER ? 2 : 16), dp(8),
@@ -131,6 +142,15 @@ public final class PreviewCardPresenter extends Presenter {
             title.setTextSize(13);
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
             title.setMaxLines(style == Style.CONTINUE ? 1 : 2);
+            if (style == Style.ROW) {
+                // Home row card: title (bright), one soft line, inset bar; nothing over the artwork (13 Nov).
+                caption.setGravity(Gravity.TOP);
+                title.setLines(1);
+                title.setTextSize(12);
+                title.setIncludeFontPadding(false);
+                caption.setPadding(dp(8), dp(7), dp(8), dp(4));
+                caption.setBackgroundColor(POSTER_CAPTION_FILL);
+            }
             if (style == Style.POSTER) {
                 // Poster and caption are one card (owner, 13 Nov; RULES §14): a charcoal-grey box under the
                 // artwork, the title the only bright line.
@@ -150,6 +170,11 @@ public final class PreviewCardPresenter extends Presenter {
             subtitle.setSingleLine(true);
             subtitle.setEllipsize(TextUtils.TruncateAt.END);
             LinearLayout.LayoutParams secondSize = new LinearLayout.LayoutParams(-1, -2);
+            if (style == Style.ROW) {
+                secondSize.topMargin = dp(4);
+                subtitle.setTextSize(10);
+                subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            }
             if (style == Style.POSTER) {
                 secondSize.topMargin = dp(3);
                 subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
@@ -177,6 +202,8 @@ public final class PreviewCardPresenter extends Presenter {
                 new FrameLayout.LayoutParams(-1, -2, style == Style.LIST ? Gravity.CENTER_VERTICAL : Gravity.BOTTOM);
             if (style == Style.POSTER)
                 captionParams.height = dp(POSTER_CAPTION_DP);
+            if (style == Style.ROW)
+                captionParams.height = dp(ROW_CAPTION_DP);
             if (style == Style.LIST) {
                 caption.setPadding(0, 0, 0, 0);
                 title.setSingleLine(true);
@@ -266,7 +293,7 @@ public final class PreviewCardPresenter extends Presenter {
             // One row card size: 400 × 225, focused 440 × 248 (RULES §14).
             float scale = focused ? (style == Style.POSTER ? POSTER_FOCUS_SCALE : FOCUS_SCALE) : 1f;
             unit.animate().scaleX(scale).scaleY(scale).setDuration(140).start();
-            title.setTextColor(style == Style.POSTER || focused ? Color.WHITE : 0xffc0ccd6);
+            title.setTextColor(style == Style.POSTER || style == Style.ROW || focused ? Color.WHITE : 0xffc0ccd6);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);
         }
@@ -323,7 +350,7 @@ public final class PreviewCardPresenter extends Presenter {
             uri = b.getPosterUri();
             if (item instanceof Video) {
                 Video v = (Video) item;
-                if ((style == Style.CONTINUE || style == Style.LIST) && v.getPreviewBackdrop() != null) {
+                if ((style == Style.CONTINUE || style == Style.ROW || style == Style.LIST) && v.getPreviewBackdrop() != null) {
                     uri = v.getPreviewBackdrop();
                     landscape = true;
                 }
@@ -335,12 +362,12 @@ public final class PreviewCardPresenter extends Presenter {
                     c.subtitle.setText((v.getResumeMs() > 0 ? "Resume · " : "Up Next · ") + "S" + e.getSeasonNumber()
                         + " E" + e.getEpisodeNumber());
                     c.subtitle.setVisibility(View.VISIBLE);
-                    if ((style == Style.CONTINUE || style == Style.LIST) && e.getPictureUri() != null) {
+                    if ((style == Style.CONTINUE || style == Style.ROW || style == Style.LIST) && e.getPictureUri() != null) {
                         uri = e.getPictureUri();
                         landscape = true;
                     }
                 }
-                if (style == Style.CONTINUE || style == Style.LIST) {
+                if (style == Style.CONTINUE || style == Style.ROW || style == Style.LIST) {
                     c.progress.setVisibility(v.getResumeMs() > 0 ? View.VISIBLE : View.GONE);
                     c.progress.setProgress(progress(v.getResumeMs(), v.getDurationMs()));
                 }
@@ -368,13 +395,13 @@ public final class PreviewCardPresenter extends Presenter {
             c.subtitle.setVisibility(detail.isEmpty() ? View.INVISIBLE : View.VISIBLE);
         }
         c.setContentDescription(c.title.getText() + (c.subtitle.length() == 0 ? "" : ", " + c.subtitle.getText()));
-        if (c.preferredArtwork != null && (style == Style.CONTINUE || style == Style.LIST)) {
+        if (c.preferredArtwork != null && (style == Style.CONTINUE || style == Style.ROW || style == Style.LIST)) {
             uri = c.preferredArtwork;
             landscape = true;
         }
         c.hasArtwork |= uri != null;
         c.updateFocus();
-        boolean letterbox = style == Style.POSTER || (style == Style.CONTINUE || style == Style.LIST) && !landscape;
+        boolean letterbox = style == Style.POSTER || (style == Style.CONTINUE || style == Style.ROW || style == Style.LIST) && !landscape;
         c.image.setScaleType(letterbox ? ImageView.ScaleType.FIT_CENTER : ImageView.ScaleType.CENTER_CROP);
         if (uri == null && c.requestedArtwork != null) {
             if (c.artworkTrace != null)
@@ -391,7 +418,7 @@ public final class PreviewCardPresenter extends Presenter {
             final long mediaId = item instanceof Video ? ((Video) item).getId()
                 : item instanceof Tvshow ? ((Tvshow) item).getTvshowId()
                                                        : 0;
-            final String surface = style == Style.CONTINUE ? "home.row"
+            final String surface = style == Style.CONTINUE || style == Style.ROW ? "home.row"
                 : style == Style.LIST ? "library.list"
                 : item instanceof Movie ? "movies.grid"
                                                            : "tv.grid";
@@ -458,6 +485,21 @@ public final class PreviewCardPresenter extends Presenter {
         if (watched)
             words.append(", watched");
         c.setContentDescription(words);
+    }
+
+    /** A Home row card's caption: one soft line (e.g. "S1 E2 · 31 min left") and the inset bar (HOME.md). */
+    public static void bindRowCaption(ViewHolder holder, String line, int progress) {
+        Card c = (Card) holder.view;
+        if (c.style != Style.ROW)
+            return;
+        c.subtitle.setText(line == null ? "" : line);
+        c.subtitle.setVisibility(View.VISIBLE);
+        c.subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        c.progress.setProgress(progress);
+        c.progress.setVisibility(progress > 0 ? View.VISIBLE : View.GONE);
+        c.progress.setProgressTintList(ColorStateList.valueOf(Color.WHITE));
+        c.progress.setProgressBackgroundTintList(ColorStateList.valueOf(0x40FFFFFF));
+        c.setContentDescription(c.title.getText() + (line == null || line.isEmpty() ? "" : ", " + line));
     }
 
     /** The tick on a watched poster: a white disc with a dark tick (`library-pages/27`). */

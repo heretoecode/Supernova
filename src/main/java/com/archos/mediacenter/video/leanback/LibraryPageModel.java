@@ -256,6 +256,41 @@ final class LibraryPageModel
         return "";
     }
 
+    /**
+     * A Home row card's soft line (mock-up `home-v2/01`): an episode "S1 E2 · 31 min left" (or "S1 E2" not yet
+     * started), a started film "42 min left", otherwise a title's year and length or size.
+     */
+    static String rowLine(Entry e)
+    {
+        if (e.media instanceof Episode)
+        {
+            Episode episode = (Episode) e.media;
+            String where = "S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber();
+            if (episode.getResumeMs() > 0 && episode.getDurationMs() > 0)
+            {
+                long left = Math.max(60000, episode.getDurationMs() - episode.getResumeMs());
+                return where + " · " + duration(left) + " left";
+            }
+            return where;
+        }
+        return secondLine(e, null);
+    }
+
+    /** How far into the film or episode, for a Home row card's inset bar. */
+    static int rowProgress(Entry e)
+    {
+        if (!(e.media instanceof Video))
+        {
+            return 0;
+        }
+        Video video = (Video) e.media;
+        if (video.getResumeMs() <= 0 || video.getDurationMs() <= 0 || PreviewLibraryLoader.watched(video))
+        {
+            return 0;
+        }
+        return (int) Math.max(1, Math.min(100, 100L * video.getResumeMs() / video.getDurationMs()));
+    }
+
     /** Caption line three: follows the sort (e.g. "1.0 GB per episode"); empty for Title. */
     static String thirdLine(Context context, PreviewLibraryColumns columns, String key, Entry e)
     {

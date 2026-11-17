@@ -496,7 +496,8 @@ public final class PreviewDialog {
                                        ? "Subtitles"
                                        : labels[i];
                 boolean own = icons != null && i < icons.length && icons[i] != null;
-                icon.setImageDrawable(own ? new PreviewIcon(icons[i])
+                icon.setImageDrawable(own ? (PreviewGenres.known(icons[i]) ? new PreviewGenres.Icon(icons[i])
+                                                           : new PreviewIcon(icons[i]))
                                           : PreviewGenres.known(iconLabel) ? new PreviewGenres.Icon(iconLabel)
                                                                            : new PreviewIcon(iconLabel));
                 row.addView(icon, new LinearLayout.LayoutParams(dp(c, 18), dp(c, 18)));
@@ -773,6 +774,22 @@ public final class PreviewDialog {
             ((TextView)view).setText(label);
             ((View)view.getParent()).setContentDescription(label);
         }
+    }
+
+    /**
+     * The delete warning (RULES §7b): Supernova's own design, left-aligned, the safe choice named and focused first
+     * ("Keep file"), the deletion second.
+     */
+    public static Dialog warning(Context c, String title, String message, String keep, String delete,
+                                 Runnable action) {
+        Dialog dialog = message(c, title, message, false, new String[] {keep, delete}, 0, index -> {
+            if (index == 1)
+                action.run();
+        });
+        TextView remove = dialog.findViewById(android.R.id.content).findViewWithTag("semantic:dialog.action.1");
+        if (remove != null)
+            remove.setTextColor(SupernovaStyle.destructiveContent());
+        return dialog;
     }
 
     public static Dialog confirmPageDelete(Context c, String title, String message, Runnable action) {

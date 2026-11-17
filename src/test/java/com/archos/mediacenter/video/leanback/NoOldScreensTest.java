@@ -86,6 +86,26 @@ public class NoOldScreensTest
         assertTrue("Old screens reachable from a library page: " + found, found.isEmpty());
     }
 
+    /** Never opens from Home (HOME.md): the old Edit row / Home settings dialogs, the old long-press dialog. */
+    static final String[] NEVER_FROM_HOME = {
+        "CustomiseHomeEditor", "contextMenu(", "PreviewDialog.choose(", "InputMethodManager", "showSoftInput",
+    };
+
+    @Test
+    public void homeNamesNoOldScreen() throws IOException
+    {
+        List<String> found = new ArrayList<>();
+        String pages = read(Path.of("src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java"));
+        check("PreviewPages.RailAdapter", between(pages, "class RailAdapter", "private void contextMenu("),
+              NEVER_FROM_HOME, found);
+        check("HomeCustomisePanel", read(Path.of(
+            "src/main/java/com/archos/mediacenter/video/leanback/HomeCustomisePanel.java")), NEVER_FROM_HOME, found);
+        String rows = read(Path.of("src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java"));
+        check("PreviewHomeRows.editor", between(rows, "private void editor(", "MAXIMUM_PRESETS"), NEVER_FROM_HOME,
+              found);
+        assertTrue("Old screens reachable from Home: " + found, found.isEmpty());
+    }
+
     @Test
     public void filesHostOpensNoOldBrowserForADrive() throws IOException
     {

@@ -95,6 +95,12 @@ final class FloatingPanel
 
     private LinearLayout row(String tag, String icon, String label)
     {
+        return row(tag, icon, label, null);
+    }
+
+    /** A row with an optional soft second line under its name (e.g. "Unfinished movies and next episodes"). */
+    private LinearLayout row(String tag, String icon, String label, String second)
+    {
         LinearLayout row = new LinearLayout(context);
         row.setTag(tag);
         row.setGravity(Gravity.CENTER_VERTICAL);
@@ -115,13 +121,27 @@ final class FloatingPanel
         name.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         name.setSingleLine(true);
         name.setIncludeFontPadding(false);
-        LinearLayout.LayoutParams nameSize = new LinearLayout.LayoutParams(-2, -2);
-        nameSize.leftMargin = dp(10);
-        row.addView(name, nameSize);
-        View gap = new View(context);
-        row.addView(gap, new LinearLayout.LayoutParams(0, 1, 1));
-        row.setContentDescription(label);
-        body.addView(row, new LinearLayout.LayoutParams(-1, dp(ROW_DP)));
+        LinearLayout words = new LinearLayout(context);
+        words.setOrientation(LinearLayout.VERTICAL);
+        words.addView(name, new LinearLayout.LayoutParams(-2, -2));
+        if (second != null && !second.isEmpty())
+        {
+            TextView soft = new TextView(context);
+            soft.setText(second);
+            soft.setTag("second");
+            soft.setTextSize(11);
+            soft.setSingleLine(true);
+            soft.setEllipsize(TextUtils.TruncateAt.END);
+            soft.setIncludeFontPadding(false);
+            LinearLayout.LayoutParams softSize = new LinearLayout.LayoutParams(-2, -2);
+            softSize.topMargin = dp(3);
+            words.addView(soft, softSize);
+        }
+        LinearLayout.LayoutParams wordsSize = new LinearLayout.LayoutParams(0, -2, 1);
+        wordsSize.leftMargin = dp(10);
+        row.addView(words, wordsSize);
+        row.setContentDescription(second == null ? label : label + ", " + second);
+        body.addView(row, new LinearLayout.LayoutParams(-1, dp(second == null ? ROW_DP : ROW_DP + 10)));
         return row;
     }
 
@@ -146,6 +166,24 @@ final class FloatingPanel
                 Object tag = child.getTag();
                 boolean value = "value".equals(tag) || "chevron".equals(tag);
                 ((TextView) child).setTextColor(value && !focused ? SupernovaStyle.TEXT_SECONDARY : ink);
+            }
+            if (child instanceof LinearLayout && !"chips".equals(child.getTag()))
+            {
+                LinearLayout words = (LinearLayout) child;
+                for (int n = 0; n < words.getChildCount(); n++)
+                {
+                    TextView text = (TextView) words.getChildAt(n);
+                    boolean soft = "second".equals(text.getTag());
+                    text.setTextColor(soft ? (focused ? SupernovaStyle.TEXT_SECONDARY_ON_FOCUS
+                                                      : SupernovaStyle.TEXT_SECONDARY) : ink);
+                }
+            }
+            if (child instanceof ImageView && ((ImageView) child).getDrawable() instanceof SwitchMark)
+            {
+                SwitchMark mark = (SwitchMark) ((ImageView) child).getDrawable();
+                mark.focused = focused;
+                mark.setColorFilter(null);
+                mark.invalidateSelf();
             }
             if (child instanceof LinearLayout && "chips".equals(child.getTag()))
             {
@@ -280,6 +318,120 @@ final class FloatingPanel
         row.setContentDescription(label + ", " + value);
         paint(row, false, -1);
         return shown;
+    }
+
+    /** An on/off setting: a switch (RULES §8); OK flips it, applied at once. */
+    View toggle(String tag, String icon, String label, String second, boolean on,
+                java.util.function.Consumer<Boolean> changed)
+    {
+        LinearLayout row = row(tag, icon, label, second);
+        SwitchMark mark = new SwitchMark(on);
+        ImageView knob = new ImageView(context);
+        knob.setTag("switch");
+        knob.setImageDrawable(mark);
+        row.addView(knob, new LinearLayout.LayoutParams(dp(StandardSwitchDrawable.WIDTH_DP),
+                                                         dp(StandardSwitchDrawable.HEIGHT_DP)));
+        row.setOnFocusChangeListener((v, has) -> paint(row, has, -1));
+        row.setOnClickListener(v -> {
+            mark.on = !mark.on;
+            mark.invalidateSelf();
+            changed.accept(mark.on);
+        });
+        paint(row, false, -1);
+        return row;
+    }
+
+    /**
+     * A row that opens its own settings (›) and also carries a switch: OK opens, Left / Right turns it on or off
+     * (Your Rows in Customise Home).
+     */
+    View openerWithSwitch(String tag, String icon, String label, String second, boolean on, Runnable open,
+                          java.util.function.Consumer<Boolean> changed)
+    {
+        LinearLayout row = row(tag, icon, label, second);
+        TextView chevron = new TextView(context);
+        chevron.setTag("chevron");
+        chevron.setText("›");
+        chevron.setTextSize(16);
+        LinearLayout.LayoutParams chevronSize = new LinearLayout.LayoutParams(-2, -2);
+        chevronSize.rightMargin = dp(12);
+        row.addView(chevron, chevronSize);
+        SwitchMark mark = new SwitchMark(on);
+        ImageView knob = new ImageView(context);
+        knob.setTag("switch");
+        knob.setImageDrawable(mark);
+        row.addView(knob, new LinearLayout.LayoutParams(dp(StandardSwitchDrawable.WIDTH_DP),
+                                                         dp(StandardSwitchDrawable.HEIGHT_DP)));
+        row.setOnFocusChangeListener((v, has) -> paint(row, has, -1));
+        row.setOnClickListener(v -> open.run());
+        row.setOnKeyListener((v, key, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN
+                && (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT))
+            {
+                boolean next = key == KeyEvent.KEYCODE_DPAD_RIGHT;
+                if (next != mark.on)
+                {
+                    mark.on = next;
+                    mark.invalidateSelf();
+                    changed.accept(next);
+                }
+                return true;
+            }
+            return false;
+        });
+        paint(row, false, -1);
+        return row;
+    }
+
+    /**
+     * The switch (RULES §3): at rest on = white track, dark knob; off = dark track, white knob. On a focused row
+     * on = dark track, white knob; off = light grey track, dark knob.
+     */
+    static final class SwitchMark extends android.graphics.drawable.Drawable
+    {
+        boolean on;
+        boolean focused;
+        private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+
+        SwitchMark(boolean on)
+        {
+            this.on = on;
+        }
+
+        @Override
+        public void draw(android.graphics.Canvas canvas)
+        {
+            android.graphics.Rect b = getBounds();
+            float r = b.height() / 2f;
+            int track = focused ? (on ? SupernovaStyle.FOCUS_TEXT : 0xFFC4C9D2)
+                : (on ? StandardSwitchDrawable.ON_TRACK : StandardSwitchDrawable.OFF);
+            int knob = focused ? (on ? Color.WHITE : SupernovaStyle.FOCUS_TEXT)
+                : (on ? StandardSwitchDrawable.KNOB_ON : Color.WHITE);
+            paint.setColor(track);
+            canvas.drawRoundRect(new android.graphics.RectF(b), r, r, paint);
+            paint.setColor(knob);
+            float inset = r * .22f;
+            float cx = on ? b.right - r : b.left + r;
+            canvas.drawCircle(cx, b.exactCenterY(), r - inset, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha)
+        {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter)
+        {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity()
+        {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
     }
 
     /** A plain action row (e.g. Delete page at the foot). */
