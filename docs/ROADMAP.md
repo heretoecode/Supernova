@@ -21,6 +21,12 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   free space, temperature), smoothness (dropped frames, slow remote response), speed (start-up, page and artwork times),
   playback quality, stability (crashes, freezes, leaks), and a Health summary at the top of each report flagging anything
   over its limit; later the build checks the same limits
+- Top bar and tabs without underlines (owner, 16 Nov, photo from 0.157): the page switches as focus moves (no pause),
+  the white box alone shows focus in the bar; below the bar the current page's word is bright and bolder, the rest soft.
+  Page outline at once, artwork after you stop. Questions: (1) same for the tabs on Details and Files? (2) mock-up with
+  the user switcher in SUPERNOVA's place: in the bar, down in the rows, moving along (with today's underline beside it)
+- Text centred on its letters, not its font box, in every box (buttons, chips, tabs, pills): "TV Shows" sat low in its
+  focus box (owner, 16 Nov). Same photo: grey text in the white box and a blue Home underline; check on 0.157.1
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
@@ -80,6 +86,15 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 - Licences tidied
 - 0.157’s release notes written properly (grouped, one change a line)
 
+## 0.157.2
+
+Bug fixes only (owner, 17 Nov): as many as possible before 0.158. Findings in `docs/0.157/REVIEW_0157_1.md`.
+
+- Every bug from the 0.157.1 review: Files F1–F52, Details D1–D20, Player P1–P5 (`docs/0.157/BRIEF_0157_2.md`)
+- Details tab on one screen (B2), TMDB page in the More menu, trailer pop-up (approved 17 Nov)
+- Background: Home and the three library pages get the same plain charcoal as Files, Settings and Search (the one
+  exception to "no new designs"; their redesigns stay in 0.158)
+
 ## 0.158
 
 ### Redesigns
@@ -89,6 +104,8 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 - Settings (seven tabs, Backup and Restore, Diagnostics, About)
 - Onboarding (on Home, Start fresh / Restore, smart steps)
 - Search (library first, On your services, recent searches)
+- Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
+- One side margin for every page (Home, library pages, Files, Settings, Search), set with these redesigns
 
 ## Parked
 

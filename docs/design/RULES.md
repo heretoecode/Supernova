@@ -22,7 +22,9 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
 
 ## 1. Pages and background
 - **Every page is plain charcoal `#16181C`**, content straight on it, using the full width. No Space Black artwork, no
-  page panels (owner, 7 Nov; §18). Pages change over one by one, after each is reviewed on charcoal.
+  page panels (owner, 7 Nov; §18). Pages change over one by one, after each is reviewed on charcoal. **Exception
+  (owner, 17 Nov):** in 0.157.2 Home and the library pages take the same charcoal background now, ahead of their
+  0.158 redesigns, so every page matches.
 - No page title on a top-level page: the top bar already says where you are.
 - TV safe margins: about 56 px at the sides, 54 px at the bottom.
 - **Typing happens on a page,** not in a side panel: fields on one side, the keyboard on the page, help under it
@@ -69,6 +71,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Focus and path as section 3: focused tab = white box; open tab while you are below = bright underline; open tab
   ahead of the remote = dull underline. The underline never overlaps a separator line.
 - **Moving along tabs switches the page** straight away.
+- **Up into the tab row always lands on the open tab** (owner, 16 Nov), never the tab above the focus.
 - **Down from a tab goes to that tab's first row.** Memory is kept where you jump away directly (closing and
   reopening a panel, the top bar and back), and a row that opens its own list gets focus back on return (P12).
 - Tab titles **never pop in**: the full set is drawn with the page; content fills in inside with "Loading…", then a
@@ -281,6 +284,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Read-only pages (Details tab) have nothing focusable: Down/Up scroll, one more Up returns to the tabs (§1).
 - **Moving things (one gesture app-wide):** OK picks the item up (it lifts, with ⌃⌄), Up/Down moves it, the page behind
   follows live, OK or Back puts it down; focus is locked to the item meanwhile (Home rows, list-view columns) (§19).
+- **No scroll bars anywhere** (owner, 17 Nov; `files-review-0157-1/02` C): when a page or list runs off the screen, a
+  small down arrow sits in the empty right-hand margin at the foot of the list, and an up arrow at the top once there
+  is something above (faint when there isn't). No arrows when everything fits. A row half off the screen stays.
 - Rows a left arrow appears beside: move the whole row right to make room; never just the first card (§19).
 
 ## 17. Motion

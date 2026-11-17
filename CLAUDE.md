@@ -49,7 +49,11 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   seen together on one screen; never one picture per item. Applying agreed rules (`docs/design/RULES.md`) to an
   approved page needs no mock-up (at most one sample screen); only genuinely new pieces are drawn. With each picture,
   one line in the message (not on the picture) says what is new to look at.
-- **The owner approves every signing.** Never sign or publish without being asked.
+- **Reviewing a page (owner, 17 Nov 2026):** one page at a time; when moving to a new page, first send its latest
+  mock-ups (for a side-by-side look) and its checklist from the page sheet (`docs/design/pages/`).
+- **Signing: standing approval (owner, 17 Nov 2026).** Sign every version as soon as the conformance run of the exact
+  same source is green, without asking; tell the owner it is signed and where the APK is. (Replaces "the owner approves
+  every signing".) Publishing anywhere else still needs the owner.
 - **This repository is public** (a GitHub fork of NOVA). Never put the owner's personal details in it: account
   names, email, location (country, city, time zone names), addresses, device names, real storage figures. Say "local
   time". Mock-ups and tests use made-up names (owner, 12 Nov 2026). The owner intends to make it private; it may go
@@ -113,6 +117,30 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - Home and Details heroes the same size (1776×820 at 1080p), with the next row or tabs peeking below; Home has
     carousel dots. Tabs follow the focus-and-path rule above.
   - Missing information says "Unknown"; rows are never removed.
+
+## Definition of done (owner, 17 Nov 2026)
+
+0.157 and 0.157.1 shipped redesigned pages whose buttons still opened old NOVA and three-panel screens, ticked as
+done from still renders. From now on a redesigned page is done only when all of this holds:
+
+1. **One page sheet per page** in `docs/design/pages/` (e.g. `FILES.md`): its latest approved mock-ups, every element,
+   and **every action with where it leads**. Build from the sheet, not from the diaries; when a decision changes, the
+   sheet changes the same day. The sheet wins over older docs (`docs/design/NETWORK_FILES.md` and the like).
+2. **No old screens:** a test lists the NOVA and three-panel screens that may never open from a redesigned page; the
+   build fails if one does.
+3. **Every action pressed:** each row in the sheet's action list is checked with a render of where it leads (and its
+   focus), not only the page at rest. Focus never lands in the top bar unasked.
+4. **Realistic test data:** long names, several drives and connections, empty folders, items needing a look.
+5. **A plain "not built" list before every signing,** sent to the owner, so nothing missing is found on the Shield.
+6. **Smaller versions:** a page and everything behind it is finished before the next page starts.
+
+## Working unattended (owner, 17 Nov 2026)
+
+When the owner sets Supernova Coding going (often overnight), the aim is a signed APK ready when they wake:
+- **Never sit idle while a GitHub build runs.** Start it, carry on with the next item, check the run when it ends.
+- **Don't stop for questions.** Use best judgement, follow the rules and page sheets, and list every judgement call
+  for the owner at the end (with the reason), so they can be changed later.
+- Push after each finished item, so nothing is lost if the session stops.
 
 ## Who does what
 
