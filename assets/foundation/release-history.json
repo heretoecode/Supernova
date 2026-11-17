@@ -8,9 +8,9 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.157.1",
-    "version_code": 1571,
-    "date": "2026-11-16",
+    "version": "0.157.2",
+    "version_code": 1572,
+    "date": "2026-11-18",
     "kind": "In development; not a signed or accepted release",
     "documentation": "docs/0.157/",
     "notes": [
