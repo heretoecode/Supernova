@@ -116,6 +116,7 @@ public class Review01572FilesTest
             usb.performClick();
             waitForFolder(nav, page);
             assertInFiles(nav, page, "Opening a drive");
+            assertOnItem(nav, "Opening a drive");
             save(nav, "01572-files-04-drive-list");
 
             // OK on a folder: opens below the same tab, focus on its first item, never the top bar (F9).
@@ -125,6 +126,7 @@ public class Review01572FilesTest
             movies.performClick();
             waitForFolder(nav, page);
             assertInFiles(nav, page, "Opening a folder");
+            assertOnItem(nav, "Opening a folder");
             save(nav, "01572-files-05-folder-list");
 
             // Long-press on a file: its menu beside it (F16).
@@ -281,6 +283,14 @@ public class Review01572FilesTest
         View focus = nav.findFocus();
         assertNotNull(step + ": nothing focused", focus);
         assertTrue(step + ": focus jumped out of Files to " + focus, FilesPage.isInside(page, focus));
+    }
+
+    /** Focus is on a folder or file (the first item, or the one you came from), not the toolbar. */
+    private static void assertOnItem(View nav, String step)
+    {
+        Object tag = nav.findFocus() == null ? null : nav.findFocus().getTag();
+        assertTrue(step + ": focus is not on an item but " + tag,
+                   tag instanceof String && ((String) tag).startsWith("files.item:"));
     }
 
     private static void press(ActivityController<TopNavigationTest.Host> host, int key, View nav)

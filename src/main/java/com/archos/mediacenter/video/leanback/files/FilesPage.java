@@ -616,48 +616,43 @@ public final class FilesPage extends LinearLayout
         column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
     }
 
+    /**
+     * The tab row's right end (F18, approved 17 Nov 2026): only "⟳ Scan library" (OK scans every source), or
+     * "Scanning · 42%" while a scan runs (OK stops). No facts: the badge, Library Health and Your Library say them.
+     */
     private void showSummary()
     {
         summary.removeAllViews();
-        int toCheck = counts == null ? 0 : counts.toCheck();
-        List<FilesSummary.Fact> facts =
-            FilesSummary.facts(videos, toCheck, lastScanMs, System.currentTimeMillis(), scanning);
-        if (tabs.openTab() == THIS_DEVICE)
+        TextView control = text(scanLabel(scanning, scanPercent()), 18, Color.WHITE);
+        PreviewIcon.apply(control, "scan", 16);
+        summary.addView(control);
+        scanControl(control);
+    }
+
+    /** "Scan library", or "Scanning · 42%" (just "Scanning" until the size is known). Pure, for tests. */
+    public static String scanLabel(boolean running, int percent)
+    {
+        if (!running)
         {
-            long free = 0;
-            long deviceVideos = 0;
-            for (Device device : devices)
-            {
-                free += device.freeBytes;
-                deviceVideos += device.videos;
-            }
-            facts = FilesSummary.deviceFacts(devices.size(), deviceVideos, free);
+            return "Scan library";
         }
-        if (tabs.openTab() == CONNECTIONS)
+        return percent >= 0 ? "Scanning · " + percent + "%" : "Scanning";
+    }
+
+    private static int scanPercent()
+    {
+        try
         {
-            int reachable = 0;
-            for (Connection connection : connections)
+            ScanProgress progress = com.archos.mediacenter.video.leanback.PreviewLibraryScan.progress();
+            if (progress == null || progress.total <= 0)
             {
-                if (Boolean.TRUE.equals(connection.reachable))
-                {
-                    reachable++;
-                }
+                return -1;
             }
-            facts = FilesSummary.connectionFacts(connections.size(), reachable, videos);
+            return (int) Math.max(0, Math.min(100, progress.checked * 100 / progress.total));
         }
-        for (int index = 0; index < facts.size(); index++)
+        catch (RuntimeException unavailable)
         {
-            if (index > 0)
-            {
-                summary.addView(text(" · ", 18, SECOND_LINE));
-            }
-            TextView fact = text(facts.get(index).text, 18, Color.WHITE);
-            PreviewIcon.apply(fact, facts.get(index).icon, 16);
-            summary.addView(fact);
-            if (index == facts.size() - 1 && "scan".equals(facts.get(index).icon))
-            {
-                scanControl(fact);
-            }
+            return -1;
         }
     }
 

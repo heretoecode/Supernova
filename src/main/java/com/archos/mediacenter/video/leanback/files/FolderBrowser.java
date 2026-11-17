@@ -251,8 +251,18 @@ public final class FolderBrowser extends LinearLayout
         {
             return true;
         }
+        if (loading)
+        {
+            // Asked for focus while the folder is still being read: hold it, and give it to the first item
+            // once the folder is shown (never the toolbar, never the top bar).
+            holder.setFocusable(true);
+            holder.setFocusableInTouchMode(true);
+            return holder.requestFocus();
+        }
         return super.onRequestFocusInDescendants(direction, previouslyFocusedRect);
     }
+
+    private boolean loading;
 
     private void enter(Uri folder, String name)
     {
@@ -269,6 +279,7 @@ public final class FolderBrowser extends LinearLayout
         crumb.setText(crumbText());
         // Hold focus on the page while the folder is read, so it never jumps to the top bar (F9, F10).
         boolean parked = park();
+        loading = true;
         items.removeAllViews();
         items.addView(text("Looking in this folder…", 15, SupernovaStyle.TEXT_SECONDARY));
         LIST.submit(() -> {
@@ -287,16 +298,18 @@ public final class FolderBrowser extends LinearLayout
                 {
                     return;
                 }
+                loading = false;
+                boolean holding = parked || holder.isFocused();
                 if (result == null)
                 {
                     items.removeAllViews();
                     items.addView(text("This folder can't be opened right now", 15, SupernovaStyle.TEXT_SECONDARY));
-                    unpark(parked);
+                    unpark(holding);
                     return;
                 }
                 listed = result;
                 render();
-                unpark(parked);
+                unpark(holding);
             });
         });
     }

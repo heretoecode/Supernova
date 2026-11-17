@@ -29,6 +29,11 @@ public final class FilesPageData
                 continue;
             }
             String path = box.getPath();
+            if ((path == null || path.isEmpty()) && id == Box.ID.FOLDERS)
+            {
+                // Internal storage has no path on its box: its space is the device's shared storage (F14).
+                path = android.os.Environment.getExternalStorageDirectory().getPath();
+            }
             long free = 0;
             long total = 0;
             try
@@ -45,7 +50,8 @@ public final class FilesPageData
                 // A drive that was just removed: shown without its space rather than not at all.
             }
             boolean removable = id != Box.ID.FOLDERS;
-            String name = id == Box.ID.FOLDERS ? "This device" : box.getName();
+            // The tab is already This Device, so its row is Internal storage (F19).
+            String name = id == Box.ID.FOLDERS ? "Internal storage" : box.getName();
             String kind = id == Box.ID.USB ? "USB drive" : id == Box.ID.SDCARD ? "Memory card" : "";
             devices.add(new FilesPage.Device(name, kind, removable, countUnder(media, path), free, total));
         }
