@@ -49,7 +49,7 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 - **F15. Scroll bar:** owner (16 Nov): no scroll bar (a PC thing; nothing to click with a remote), but keep a sign
   that there is more below. Soft fade **declined** (17 Nov): the half-cut row already shows it. Owner's idea: a sign in
   the empty right-hand margin. Options drawn (`files-review-0157-1/02`): A one down arrow at the foot of the list;
-  B the arrow with how many are left; C up and down arrows (up faint at the top). Awaiting the owner's pick.
+  B the arrow with how many are left; C up and down arrows (up faint at the top). **Owner (17 Nov): C, for now** (revisit once built); no scroll bar. No arrows when the page fits.
 - **F16. Long-press (approved 17 Nov, `files-review-0157-1/01`):** a folder's menu is Open · Add to library · Scan this
   folder · Exclude; a file's stays Play · Details · Mark as watched · Exclude · Fix match.
   Was: should a long-press of OK open the row's actions menu, as the Menu button does, everywhere
@@ -61,7 +61,7 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   badge, Library Health and Your Library, and won't fit as tabs grow. **Owner (16 Nov): remove; always keep a scan button
   in the tab row, locked right** (until the room is needed for tabs); the badge stays. **17 Nov:** "12 min ago" reads as
   information, not a button: it says **"Scan library"** (every local and network source). While scanning it reads
-  "Scanning · 42%" (OK stops); the last scan time lives in Library Care › Recent scans. Replaces RULES §7b "Tab row facts" and v3/v6/v7. The latest design (v19, `network-files-tabs/44`,
+  "Scanning · 42%" (OK stops); the last scan time lives in Library Care › Recent scans. **Approved 17 Nov.** Replaces RULES §7b "Tab row facts" and v3/v6/v7. The latest design (v19, `network-files-tabs/44`,
   13 Nov) already shows only the scan button on the right ("⟳ 12 min ago": OK scans now, Stop while scanning; "Scanning
   Put.io · 42%" during a scan; §28 of the 0.157 notes). [Remove the facts on every tab; keep that scan button alone.]
 - **F19. "This device" row renamed "Internal storage"** (the tab is already This Device). [Yes.]
@@ -78,11 +78,14 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   added. Approved (`32`, `02`): every folder has its count and its pill, like files.
 - **F24. Folder artwork:** no mosaic yet (see F8). Files not in the library have no TMDB artwork, so v4 approved a
   picture taken from the video file itself (a frame from a few minutes in, like a thumbnail), or a plain card when one
-  can't be made. Owner to test what shows today.
+  can't be made. Owner to test what shows today. For network files this is Settings › Library and Home › "Make
+  thumbnails for network videos" (kept as a switch in the Settings redesign): off means network files get the plain
+  card, because taking a picture means reading part of each file over the network. Plain card drawn
+  (`files-review-0157-1/03`): charcoal-grey card, the film (or folder) icon, name and size, the usual pill.
 - **F25. Sort:** approved menu (`11`): Name A–Z / Z–A, Newest / Oldest first, Largest / Smallest first. Owner asks for
   sort choices plus an ascending / descending button. Library pages already split them (Sort · Order). Drawn (`files-review-0157-1/02` D):
   Sort: Name · Date modified · Size, and an Order button beside it whose words follow the sort (A → Z / Z → A, Newest /
-  Oldest first, Largest / Smallest first). Awaiting the owner.
+  Oldest first, Largest / Smallest first). **Approved 17 Nov.** Folders always first.
 - **F26. List view "not yet":** the fix pass for REVIEW_0157 #25 built the grid and stopped (QUESTIONS #14); it was
   left unfinished, not dropped. List is the default.
 - **F27. Background differs between pages:** Settings, Search and Files share one; Home and the library pages look
