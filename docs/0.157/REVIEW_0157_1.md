@@ -140,5 +140,33 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 - **F42. One side margin for every page (owner, 17 Nov; for 0.158):** Home, library pages and Files each have a
   different margin today (Files the widest). Settle one value with the 0.158 redesigns; in 0.157.2 only the frame goes.
 
+### Library Care tab (17 Nov, about 01:15)
+- Working: the badge (3) matches Missing files (3 files); Check matches runs and its pill updates ("Last: 17 Nov");
+  Scan one source starts a scan without odd pages.
+- **F43. Rows not on their centre line:** pills sit across the row lines and the › arrows are half a row too high
+  (a stray › above the first row). RULES §7.
+- **F44. Check matches opens a page even when nothing changed** ("Everything looks fine: every film still finds its
+  own match"); focus also jumped to Home (F9) and the text says "film" (RULES §6: Movies). Owner wants the result
+  inline. [Run it in the row: progress, then the pill says "No changes · 17 Nov"; only when there are changes does
+  the row say "4 to review" and OK open the review page.]
+- **F45. Missing files, Couldn't be read and Not matched open the old three-panel screen.** Approved: one page each in
+  the tab (`12`, `13`, `14`) with Find it again · Remove / Try again · Exclude / Fix match · Not a movie.
+- **F46. Rows with nothing to show still open** ("None"). RULES §10: never offer what does nothing. [A "None" row has
+  no › and OK does nothing.]
+- **F47. Scan buttons' icons invisible,** focused or not (see F30).
+- **F48. Scan one source shows a "This device" button while not focused;** the other buttons appear only on focus.
+  RULES §7: buttons show on the focused row only.
+- **F49. Two focuses:** moving Up from Scan one source to Check matches leaves the white box on Scan one source.
+  RULES §3: exactly one focus.
+- **F50. Recent scans can't be reached** (each row has a "Done" pill; focus never gets there). Approved: the last three
+  as plain rows, then Show all scans (focusable) for the last ten.
+- **F51. Pressing several scan buttons:** nothing visible happens after the first (queued or ignored?). Approved scan
+  rules: one at a time. [Each pressed source shows "Waiting" in the row until its turn.]
+- **F52. One connection per server (owner idea, 17 Nov):** the owner added Films and TV (one WebDAV server) and Movies
+  and TV Shows (one SFTP server) as four connections, so Scan one source shows four buttons. Proposed: group by server.
+  [A connection is the server and its login; the folders chosen are part of it. Connections shows one row per server
+  (second line lists its folders), Scan one source one button per server, named by the connection's name, not its
+  type, so two WebDAV servers stay apart.] Awaiting the owner; likely 0.158.
+
 ### Confirmed
 - The breadcrumb ("Backup 1 › … › Movies") is a signpost, not focusable; Back goes up one level (v6, 6 Nov).
