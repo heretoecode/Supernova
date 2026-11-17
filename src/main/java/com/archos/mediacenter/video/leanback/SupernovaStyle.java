@@ -85,9 +85,22 @@ public final class SupernovaStyle {
      * selected (not focused) = resting box + thin white outline; disabled = resting at 40%;
      * otherwise resting. The box never changes size between states.
      */
+    /** On artwork (hero buttons): a dark box at about 72% at rest (RULES §12; D13). */
+    public static final int ON_ARTWORK_REST = 0xB816181C;
+
+    /** A button on artwork: the standard button with a dark box at about 72% at rest (RULES §12). */
+    public static void applyArtworkButton(View view) {
+        view.setBackground(button(view.getContext(), Surface.STANDARD, ON_ARTWORK_REST));
+        applyContent(view, true);
+    }
+
     public static StateListDrawable button(Context c, Surface surface) {
-        float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
+        return button(c, surface, rest);
+    }
+
+    private static StateListDrawable button(Context c, Surface surface, int rest) {
+        float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int edge = surface == Surface.TILE || surface == Surface.HUD ? 0x2EFFFFFF : 0;
         int edgeWidth = Math.max(1, dp(c, 1));
         if (surface == Surface.TILE) {

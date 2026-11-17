@@ -46,7 +46,8 @@ final class PreviewLandscapeCard extends LinearLayout {
         body.addView(availability, new FrameLayout.LayoutParams(dp(28), dp(28), Gravity.CENTER));
         setOnFocusChangeListener((v, focus) -> {
             visual.setPresentationFocus(focus);
-            availability.setVisibility(Boolean.TRUE.equals(availability.getTag()) && focus ? VISIBLE : INVISIBLE);
+            // No play icon on library items (D16, RULES §14).
+            availability.setVisibility(INVISIBLE);
         });
     }
 
@@ -66,7 +67,7 @@ final class PreviewLandscapeCard extends LinearLayout {
         metadata.setText(detail);
         metadata.setVisibility(detail == null || detail.isEmpty() ? GONE : VISIBLE);
         availability.setTag(localIndicator);
-        availability.setVisibility(localIndicator && hasFocus() ? VISIBLE : INVISIBLE);
+        availability.setVisibility(INVISIBLE);
         ArtworkRequest.cancel(image);
         ArtworkRequest.cancel(availability);
         availability.setImageDrawable(playGlyph);
