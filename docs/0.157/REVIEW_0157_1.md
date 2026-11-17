@@ -250,4 +250,4 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   (charcoal `#16181C` at 95%, `SupernovaStyle.GLASS`), but `PlaybackSubtitlePanel` also draws a light edge round the
   panel (`GLASS_EDGE`, white at 22%) and a dark glow. RULES §11: over video, no edge. The class still holds old blue
   colour constants (tab border, active tab, focus border); check none is still drawn. The owner sees a difference
-  on the Shield: compare with a photo.
+  on the Shield, even over a black paused frame (18 Nov). **Moved to To discuss on the roadmap** (owner).

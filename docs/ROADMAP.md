@@ -23,6 +23,9 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   over its limit; later the build checks the same limits
 - Text centred on its letters, not its font box, in every box (buttons, chips, tabs, pills): "TV Shows" sat low in its
   focus box (owner, 16 Nov). Same photo: grey text in the white box and a blue Home underline; check on 0.157.1
+- Playback Settings panel looks different from the mock-up even over a black, paused frame (owner, 18 Nov). The code
+  has the same fill (charcoal at 95%) but adds a light edge and a dark glow, and still holds old blue colours; compare
+  side by side with a photo (review P6)
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
