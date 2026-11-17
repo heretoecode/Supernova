@@ -63,12 +63,24 @@ public final class PlaybackParts
             String name = part.name;
             if (part.kind == Kind.CHAPTER) {
                 chapter++;
-                if (name.isEmpty() || name.matches("(?i)chapter\\s*0*[0-9]+"))
+                if (genericName(name))
                     name = "Chapter " + chapter;
             }
             result.add(new Part(name, part.kind, part.startMs, part.endMs));
         }
         return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * A chapter name that only numbers the chapter ("Chapter 3", "Scene 3", "Ch. 3", "3", "00:05:00.000"): it is
+     * renumbered so the list reads Recap · Chapter 1 · Intro · Chapter 2 (0.157 Shield review #14).
+     */
+    static boolean genericName(String name)
+    {
+        String plain = name.trim();
+        return plain.isEmpty()
+            || plain.matches("(?i)(chapter|chap\\.?|ch\\.?|scene|section)?\\s*0*[0-9]+")
+            || plain.matches("[0-9]{1,2}(:[0-9]{2}){1,2}([.,][0-9]+)?");
     }
 
     public PlaybackParts numbered()

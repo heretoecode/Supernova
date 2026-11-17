@@ -142,8 +142,8 @@ public class ReceptionSupplementTest {
         panel.measure(w, h);
         panel.layout(0, 0, 1200, 600);
         View slot = panel.findViewWithTag("details.reception.slot.4");
-        assertTrue(
-            "row keeps a quarter-panel height, not the whole panel", slot.getHeight() < reception.getHeight() / 2);
+        // Details v20: the columns take their content's height, so a lone row is never stretched.
+        assertTrue("row keeps its own height, not the whole panel", slot.getHeight() < panel.getHeight() / 4);
         assertTrue("votes sit close beneath the score", count.getTop() - score.getBottom() < score.getHeight());
     }
 

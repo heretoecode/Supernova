@@ -40,7 +40,11 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     // Approved mock-up colours.
     private static final int TAB_BORDER = 0xff5a7bd8, TAB_ACTIVE = 0xff2f6df0, FOCUS_BORDER = 0xff7fd6ff;
     private static final int HEADING = SupernovaStyle.HEADING, HEADING_RULE = SupernovaStyle.HEADING_LINE;
-    private static final int VALUE = 0xff3fb6ff, META = 0xffb9c7e8, BAR = 0xffcfd8ff, ICON = 0xffe8eeff;
+    /** The faint line under the tab row (about 8% white, as on Search and Files). */
+    private static final int TAB_RULE = 0x24FFFFFF;
+    /** The chosen option's chip in a choice row (player v10 mock-up). */
+    private static final int CHIP = 0xFF3A3E45;
+    private static final int VALUE = 0xffffffff, META = 0xffb9c7e8, ICON = 0xffe8eeff;
     private static final int ROW_HEIGHT = 74, LIST_ROWS_VISIBLE = 7;
 
     static final class Track {
@@ -195,6 +199,14 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return null;
         }
 
+        /** The Playback tab's save row: null when this is not an episode of a known series. */
+        default Boolean seriesPlayback() {
+            return null;
+        }
+
+        default void setSeriesPlayback(boolean enabled) {
+        }
+
         default void setSeriesChoices(boolean enabled) {
         }
 
@@ -313,7 +325,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         this.owner = owner;
         this.backend = backend;
         style = new SubtitlePanelStyle(owner, true, true);
-        k = style.width / 640f;
+        // Player v10/v11 mock-ups: row names about 28px at 1080p (21 reference px x 4/3).
+        k = owner.getResources().getDisplayMetrics().widthPixels / 1920f * (4f / 3f);
         setOrientation(VERTICAL);
         setTag("subtitles.main");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -321,6 +334,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         setBackground(new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26),
                                   Math.max(1, s(2)), 0x66000000, glow));
         setPadding(s(30) + glow, s(30) + glow, s(30) + glow, s(26) + glow);
+        resting = getBackground();
+        restingPadding = new int[] {getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom()};
 
         header = new LinearLayout(owner);
         header.setOrientation(VERTICAL);
@@ -334,8 +349,14 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         for (int i = 0; i < ids.length; i++)
             tabs.addView(tab(i, ids[i], names[i], icons[i]), tabSize(i));
         LayoutParams tabsSize = new LayoutParams(-1, s(72));
-        tabsSize.bottomMargin = s(12);
         header.addView(tabs, tabsSize);
+        // The shared tab row (RULES §3; player v10): a faint line under the row, the open tab underlined on it.
+        View tabRule = new View(owner);
+        tabRule.setBackgroundColor(TAB_RULE);
+        LayoutParams ruleSize = new LayoutParams(-1, Math.max(1, s(2)));
+        ruleSize.bottomMargin = s(12);
+        header.addView(tabRule, ruleSize);
+        getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> paintTabs());
 
         scroll = new MaxHeightScroll(owner);
         scroll.setVerticalScrollBarEnabled(true);
@@ -367,7 +388,26 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     int panelWidth() {
-        return style.width;
+        return widthFor(tab);
+    }
+
+    /**
+     * One size for every tab (P4, the brief's default from the owner's review of 0.157.1): about 40% of the width at
+     * most, like the choice list, the height following the content with arrows for more (RULES §11, §16).
+     */
+    int widthFor(int id) {
+        float screen = owner.getResources().getDisplayMetrics().widthPixels / 1920f;
+        return Math.round(PANEL_WIDTH_1080P * screen);
+    }
+
+    /** 40% of a 1080p screen. */
+    static final int PANEL_WIDTH_1080P = 768;
+
+    private Window placed;
+
+    private void fitWidth() {
+        if (placed != null)
+            placed.setLayout(widthFor(tab), ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     int panelHeight() {
@@ -376,6 +416,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     void place(Window window) {
         style.placeSide(window);
+        placed = window;
+        fitWidth();
     }
 
     int currentTab() {
@@ -415,14 +457,40 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     /** Approved global row focus: white outline, no fill change. */
+    /** Focused rows fill white (P5, RULES §3); their text and icons turn black (see {@link #inkRow}). */
     private Drawable rowFocus() {
-        return SupernovaStyle.rowFocus(owner);
+        return SupernovaStyle.focusFill(owner, 10);
+    }
+
+    private final java.util.Map<TextView, Integer> restingInk = new java.util.WeakHashMap<>();
+
+    /** Black ink on the white box for a focused row's words and icons; their own colours again at rest (P5). */
+    void inkRow(View view, boolean focused) {
+        if (view instanceof TextView) {
+            TextView words = (TextView) view;
+            if (focused) {
+                if (!restingInk.containsKey(words))
+                    restingInk.put(words, words.getCurrentTextColor());
+                words.setTextColor(SupernovaStyle.FOCUS_TEXT);
+            } else if (restingInk.containsKey(words)) {
+                words.setTextColor(restingInk.remove(words));
+            }
+        } else if (view instanceof ImageView) {
+            Drawable d = ((ImageView) view).getDrawable();
+            if (d instanceof SubtitlePanelStyle.Icon)
+                d.setColorFilter(new PorterDuffColorFilter(focused ? SupernovaStyle.FOCUS_TEXT : ICON,
+                                                           PorterDuff.Mode.SRC_IN));
+        } else if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++)
+                inkRow(group.getChildAt(i), focused);
+        }
     }
 
     private LayoutParams tabSize(int index) {
-        LayoutParams size = new LayoutParams(0, -1, 1);
+        LayoutParams size = new LayoutParams(-2, -1);
         if (index > 0)
-            size.leftMargin = s(10);
+            size.leftMargin = s(16);
         return size;
     }
 
@@ -433,6 +501,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         t.setFocusable(true);
         t.setFocusableInTouchMode(true);
         t.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        t.setPadding(s(14), 0, s(14), 0);
         t.addView(icon(iconKind, 22));
         TextView label = text(name, 19, Color.WHITE, true);
         label.setSingleLine(true);
@@ -469,27 +538,60 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private void styleTabs() {
         for (int i = 0; i < tabs.getChildCount(); i++) {
             View t = tabs.getChildAt(i);
-            boolean active = ("playback.tab:" + tab).equals(t.getTag());
-            t.setSelected(active);
-            // Approved global button style: tabs never change size; selected = thin white outline; focus = white box.
-            SupernovaStyle.applyButton(t, SupernovaStyle.Surface.PANEL);
+            t.setSelected(("playback.tab:" + tab).equals(t.getTag()));
+        }
+        paintTabs();
+    }
+
+    /**
+     * Focus and path on the tab row (RULES §3): the focused tab is the white box with black text and icon; the open
+     * tab has a bright underline while the remote is below it and a dull one while the remote is on the tab row.
+     */
+    private void paintTabs() {
+        if (tabs == null)
+            return;
+        boolean inRow = tabs.hasFocus();
+        for (int i = 0; i < tabs.getChildCount(); i++) {
+            ViewGroup t = (ViewGroup) tabs.getChildAt(i);
+            boolean focused = t.isFocused();
+            boolean open = ("playback.tab:" + tab).equals(t.getTag());
+            int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
+            for (int c = 0; c < t.getChildCount(); c++) {
+                View part = t.getChildAt(c);
+                if (part instanceof TextView)
+                    ((TextView) part).setTextColor(ink);
+                else if (part instanceof ImageView && ((ImageView) part).getDrawable() != null)
+                    ((ImageView) part).getDrawable()
+                        .setColorFilter(new PorterDuffColorFilter(focused ? ink : ICON, PorterDuff.Mode.SRC_IN));
+            }
+            if (focused)
+                t.setBackground(SupernovaStyle.rounded(owner, SupernovaStyle.FOCUS_FILL, 10));
+            else if (open)
+                t.setBackground(new com.archos.mediacenter.video.leanback.TabUnderline(
+                    inRow ? com.archos.mediacenter.video.leanback.TabUnderline.DULL
+                          : com.archos.mediacenter.video.leanback.TabUnderline.BRIGHT, Math.max(2, s(3))));
+            else
+                t.setBackground(null);
         }
     }
 
-    /** More-menu heading: sentence case, soft grey, with a thin line alongside. No lines between rows. */
+    /**
+     * Section heading: the shared group heading (RULES §11): Title Case, centred on its line, with a line either
+     * side. No lines between rows.
+     */
     private void section(String title, boolean first) {
-        LinearLayout heading = new LinearLayout(owner);
-        heading.setGravity(Gravity.CENTER_VERTICAL);
+        // The callers pass capitals ("AUDIO SELECTION"); the heading is Title Case ("Audio Selection").
+        String words = title.toLowerCase(java.util.Locale.ROOT);
+        LinearLayout heading = (LinearLayout) SupernovaStyle.groupHeading(owner, words, 11);
         heading.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         heading.setPadding(s(6), s(first ? 10 : 22), s(6), s(6));
         heading.setTag("playback.heading");
-        TextView label = text(sentenceCase(title), 18, HEADING, false);
-        heading.addView(label);
-        View line = new View(owner);
-        line.setBackgroundColor(HEADING_RULE);
-        LayoutParams lineSize = new LayoutParams(0, Math.max(1, s(2)), 1);
-        lineSize.leftMargin = s(14);
-        heading.addView(line, lineSize);
+        for (int i = 0; i < heading.getChildCount(); i++) {
+            View part = heading.getChildAt(i);
+            if (part instanceof TextView)
+                ((TextView) part).setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                                              s(18) * owner.getResources().getConfiguration().fontScale);
+        }
         body.addView(heading, new LayoutParams(-1, -2));
     }
 
@@ -558,7 +660,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         return v;
     }
 
-    /** {@code ‹ value ›}: the value in accent blue between two chevrons. */
+    /** {@code ‹ value ›}: the value in plain white between two chevrons (no blue for values). */
     private TextView stepper(LinearLayout row, float minWidth, Stepper stepper) {
         LinearLayout box = new LinearLayout(owner);
         box.setGravity(Gravity.CENTER_VERTICAL);
@@ -618,6 +720,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return;
         watchingRows = true;
         getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> {
+            if (before != null && before.getParent() == body)
+                inkRow(before, false);
+            if (after != null && after.getParent() == body)
+                inkRow(after, true);
             if (building || after == null || page != null)
                 return;
             View at = after;
@@ -657,6 +763,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 body.addView(none);
             }
             refresh();
+            fitWidth();
             scroll.scrollTo(0, 0);
         } finally {
             building = false;
@@ -671,10 +778,13 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             body.removeViewAt(last);
     }
 
+    /** Playback Settings opens with focus on the open tab (P3), also when asked before the panel is on screen. */
     void focusTab() {
         View t = tabs.findViewWithTag("playback.tab:" + tab);
-        if (t != null)
-            t.requestFocus();
+        if (t == null)
+            return;
+        if (!t.requestFocus() || !t.isAttachedToWindow())
+            t.post(t::requestFocus);
     }
 
     private void focusTop() {
@@ -757,6 +867,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             dim(opacity, available && backend.get("background") != 0);
             dim(delay, available && on);
         });
+        // Owner decision (16 Nov 2026): For This Series is the save row at the bottom of Subtitles and Audio.
+        seriesChoicesRow();
     }
 
     private void buildAudio() {
@@ -768,12 +880,16 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             bindings.add(() -> bindTrack(track, current, backend.audioTracks(), "Audio Track", "—"));
             track.setOnClickListener(v -> openTracks("audio"));
         }
-        seriesChoicesRow();
         boolean adjustments = backend.audioDelay() != null || backend.option("boost") != null ||
                               backend.option("night") != null || backend.option("spatial") != null;
-        if (!adjustments)
-            return;
-        section("AUDIO ADJUSTMENTS", tracks.isEmpty());
+        if (adjustments)
+            audioAdjustments(tracks.isEmpty());
+        // Owner decision (16 Nov 2026): For This Series is the save row at the bottom of Subtitles and Audio.
+        seriesChoicesRow();
+    }
+
+    private void audioAdjustments(boolean first) {
+        section("AUDIO ADJUSTMENTS", first);
         if (backend.audioDelay() != null) {
             LinearLayout delay = row("audio.row.delay", "time", "Audio Delay");
             TextView ms = plusMinus(delay, backend::stepAudioDelay);
@@ -795,8 +911,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private void buildPlayback() {
         boolean picture = !backend.choices("format").isEmpty() || !backend.choices("s3d").isEmpty() ||
                           backend.pictureInPicture() != null;
+        // Player v11 (approved 13 Nov 2026): the Playback tab is one plain list, no section headings.
         if (picture) {
-            section("PICTURE", true);
             choiceStepper("format", "aspect", "Format");
             choiceStepper("s3d", "cube", "3D Mode");
             Runnable pip = backend.pictureInPicture();
@@ -819,21 +935,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             || !backend.choices("skipmode").isEmpty();
         if (!playback)
             return;
-        section("PLAYBACK", !picture);
-        if (backend.speed() != null) {
-            LinearLayout row = row("playback.row.speed", "speed", "Playback Speed");
-            TextView value = stepper(row, 70, direction -> {
-                Float speed = backend.speed();
-                if (speed != null)
-                    backend.setSpeed(speed + direction * SPEED_STEP);
-            });
-            bindings.add(() -> {
-                Float speed = backend.speed();
-                String label = formatSpeed(speed == null ? 1f : speed);
-                value.setText(label);
-                row.setContentDescription("Playback Speed, " + label);
-            });
-        }
+        if (backend.speed() != null)
+            speedChips();
         if (backend.limitsAvailable())
             sleepAndStillWatching();
         choiceStepper("playmode", "repeat", "Play Mode");
@@ -841,6 +944,34 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             choiceStepper("skipmode", "skip", "Skip Intros & Credits");
         else
             option("skip", "skip", "Skip Intros & Credits");
+        seriesPlaybackRow();
+    }
+
+    /**
+     * The Playback tab's save row (player v11, approved 13 Nov 2026): "Use this format and skipping for all of
+     * <show>". While it is on, changing the format or skipping here updates what the series remembers.
+     */
+    private void seriesPlaybackRow() {
+        if (backend.seriesPlayback() == null)
+            return;
+        section("FOR THIS SERIES", false);
+        String name = backend.seriesName().isEmpty() ? "this series" : backend.seriesName();
+        String label = "Use this format and skipping for all of " + name;
+        LinearLayout row = row("playback.row.series", "repeat", label);
+        ImageView value = switchView(row);
+        bindings.add(() -> {
+            Boolean on = backend.seriesPlayback();
+            boolean enabled = on != null && on;
+            if (enabled)
+                backend.setSeriesPlayback(true);
+            value.setImageDrawable(StandardSwitchDrawable.snapshot(owner, enabled));
+            row.setContentDescription(label + ", " + (enabled ? "On" : "Off"));
+        });
+        row.setOnClickListener(v -> {
+            Boolean on = backend.seriesPlayback();
+            backend.setSeriesPlayback(on == null || !on);
+            refresh();
+        });
     }
 
     /** Approved mock-up {@code suggestions/06}: remember this episode's choices for the whole series. */
@@ -894,19 +1025,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     /** Approved mock-up {@code suggestions/02}: five inline choices and a stepper for the episode count. */
     private void sleepAndStillWatching() {
         LinearLayout sleep = row("playback.row.sleep", "moon", "Stop playing at");
-        LinearLayout box = new LinearLayout(owner);
-        box.setGravity(Gravity.CENTER_VERTICAL);
-        sleep.addView(box);
-        TextView[] texts = new TextView[SLEEP_LABELS.length];
-        for (int i = 0; i < SLEEP_LABELS.length; i++) {
-            if (i > 0) {
-                TextView bar = text("|", 20, BAR, false);
-                bar.setPadding(s(9), 0, s(9), 0);
-                box.addView(bar);
-            }
-            texts[i] = text(SLEEP_LABELS[i], 20, Color.WHITE, false);
-            box.addView(texts[i]);
-        }
+        TextView[] texts = chips(sleep, SLEEP_LABELS);
         TextView note = text("", 16, META, false);
         note.setTag("playback.row.sleep.note");
         note.setPadding(s(58), 0, s(16), s(8));
@@ -915,10 +1034,9 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             int choice = backend.sleepChoice();
             String[] labels =
                 stopLabels(System.currentTimeMillis(), choice, backend.sleepEndsAt(), backend.playingEpisode());
-            for (int i = 0; i < texts.length; i++) {
+            for (int i = 0; i < texts.length; i++)
                 texts[i].setText(labels[i]);
-                texts[i].setTextColor(choice == i ? VALUE : Color.WHITE);
-            }
+            paintChips(texts, choice);
             String line = sleepNote(choice, backend.sleepEndsAt());
             note.setText(line);
             note.setVisibility(line.isEmpty() ? GONE : VISIBLE);
@@ -1018,23 +1136,14 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     private void choices(String key, String iconKind, String title, String[] labels, int[] values) {
         LinearLayout row = row("subtitles.row." + key, iconKind, title);
-        LinearLayout box = new LinearLayout(owner);
-        box.setGravity(Gravity.CENTER_VERTICAL);
-        row.addView(box);
-        TextView[] texts = new TextView[labels.length];
-        for (int i = 0; i < labels.length; i++) {
-            if (i > 0) {
-                TextView bar = text("|", 20, BAR, false);
-                bar.setPadding(s(9), 0, s(9), 0);
-                box.addView(bar);
-            }
-            texts[i] = text(labels[i], 20, Color.WHITE, false);
-            box.addView(texts[i]);
-        }
+        TextView[] texts = chips(row, labels);
         bindings.add(() -> {
             int value = backend.get(key);
+            int chosen = -1;
             for (int i = 0; i < values.length; i++)
-                texts[i].setTextColor(value == values[i] ? VALUE : Color.WHITE);
+                if (value == values[i])
+                    chosen = i;
+            paintChips(texts, chosen);
             String spoken = "Custom (" + value + ")";
             for (int i = 0; i < values.length; i++)
                 if (value == values[i])
@@ -1047,6 +1156,37 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         });
         row.setOnKeyListener(
             (v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> stepValue(key, values, direction)));
+    }
+
+    /**
+     * Choice words on a row (RULES: in choice rows the chosen option sits in a small chip; no blue for values;
+     * player v10): evenly spaced, after a gap from the row's name so they never touch it.
+     */
+    private TextView[] chips(LinearLayout row, String[] labels) {
+        LinearLayout box = new LinearLayout(owner);
+        box.setGravity(Gravity.CENTER_VERTICAL);
+        LayoutParams boxSize = new LayoutParams(-2, -2);
+        boxSize.leftMargin = s(24);
+        row.addView(box, boxSize);
+        TextView[] texts = new TextView[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            texts[i] = text(labels[i], 20, Color.WHITE, false);
+            texts[i].setSingleLine(true);
+            texts[i].setPadding(s(12), s(6), s(12), s(6));
+            LayoutParams size = new LayoutParams(-2, -2);
+            if (i > 0)
+                size.leftMargin = s(6);
+            box.addView(texts[i], size);
+        }
+        return texts;
+    }
+
+    private void paintChips(TextView[] texts, int chosen) {
+        for (int i = 0; i < texts.length; i++) {
+            texts[i].setTextColor(Color.WHITE);
+            texts[i].setBackground(i == chosen ? SupernovaStyle.rounded(owner, CHIP, 8) : null);
+            texts[i].setTag(i == chosen ? "value" : null);
+        }
     }
 
     private void swatches() {
@@ -1077,9 +1217,50 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             (v, key, event) -> rowKeys(row, key, event, direction -> stepValue("colour", COLOURS, direction)));
     }
 
+    /** Speed as five choices (player v10): 0.75×, 1×, 1.25×, 1.5×, 2×. Left/Right steps between them. */
+    private void speedChips() {
+        LinearLayout row = row("playback.row.speed", "speed", "Speed");
+        String[] labels = new String[SPEEDS.length];
+        for (int i = 0; i < SPEEDS.length; i++)
+            labels[i] = speedChip(SPEEDS[i]);
+        TextView[] texts = chips(row, labels);
+        bindings.add(() -> {
+            Float speed = backend.speed();
+            int chosen = nearestSpeed(speed == null ? 1f : speed);
+            paintChips(texts, Math.abs(SPEEDS[chosen] - (speed == null ? 1f : speed)) < .01f ? chosen : -1);
+            row.setContentDescription("Speed, " + formatSpeed(speed == null ? 1f : speed));
+        });
+        row.setOnKeyListener((v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> {
+            Float speed = backend.speed();
+            int next = nearestSpeed(speed == null ? 1f : speed) + direction;
+            backend.setSpeed(SPEEDS[Math.max(0, Math.min(SPEEDS.length - 1, next))]);
+        }));
+    }
+
+    static final float[] SPEEDS = {.75f, 1f, 1.25f, 1.5f, 2f};
+
+    static int nearestSpeed(float speed) {
+        int best = 0;
+        for (int i = 1; i < SPEEDS.length; i++)
+            if (Math.abs(SPEEDS[i] - speed) < Math.abs(SPEEDS[best] - speed))
+                best = i;
+        return best;
+    }
+
+    /** "0.75×", "1×", "1.25×", "1.5×", "2×": no trailing zeros. */
+    static String speedChip(float speed) {
+        String plain = new java.math.BigDecimal(Float.toString(speed)).stripTrailingZeros().toPlainString();
+        return plain + "×";
+    }
+
     private void choiceStepper(String key, String iconKind, String title) {
-        if (backend.choices(key).isEmpty())
+        List<Choice> initial = backend.choices(key);
+        if (initial.isEmpty())
             return;
+        if (initial.size() <= 5) {
+            choiceChips(key, iconKind, title, initial);
+            return;
+        }
         LinearLayout row = row("playback.row." + key, iconKind, title);
         TextView value = stepper(row, 70, direction -> {
             List<Choice> options = backend.choices(key);
@@ -1102,6 +1283,43 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             value.setText(label);
             row.setContentDescription(title + ", " + label);
         });
+    }
+
+    /** A short list of choices shown as chips (RULES: up to about five inline; player v10). */
+    private void choiceChips(String key, String iconKind, String title, List<Choice> initial) {
+        LinearLayout row = row("playback.row." + key, iconKind, title);
+        String[] labels = new String[initial.size()];
+        for (int i = 0; i < labels.length; i++)
+            labels[i] = initial.get(i).label;
+        TextView[] texts = chips(row, labels);
+        bindings.add(() -> {
+            List<Choice> options = backend.choices(key);
+            int chosen = -1;
+            String label = "—";
+            for (int i = 0; i < options.size() && i < texts.length; i++) {
+                texts[i].setText(options.get(i).label);
+                texts[i].setAlpha(options.get(i).enabled ? 1f : .42f);
+                if (options.get(i).selected) {
+                    chosen = i;
+                    label = options.get(i).label;
+                }
+            }
+            paintChips(texts, chosen);
+            row.setContentDescription(title + ", " + label);
+        });
+        row.setOnKeyListener((v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> {
+            List<Choice> options = backend.choices(key);
+            int current = -1;
+            for (int i = 0; i < options.size(); i++)
+                if (options.get(i).selected)
+                    current = i;
+            for (int i = current + direction; i >= 0 && i < options.size(); i += direction) {
+                if (options.get(i).enabled) {
+                    options.get(i).select.run();
+                    return;
+                }
+            }
+        }));
     }
 
     private void stepValue(String key, int[] values, int direction) {
@@ -1155,8 +1373,38 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         value.setText(selected == null ? none : selected.label);
         PreviewLanguageIcon.apply(value, selected == null ? null : selected.language, s(30));
         value.setCompoundDrawablePadding(s(10));
-        row.setContentDescription(title + ", " + value.getText() +
+        showTrackPills(value, selected == null || selected.pills == null ? Collections.emptyList() : selected.pills);
+        String pills = selected == null || selected.pills == null || selected.pills.isEmpty() ? ""
+            : ", " + String.join(", ", selected.pills);
+        row.setContentDescription(title + ", " + value.getText() + pills +
                                   ". Left and Right change track; OK shows all tracks.");
+    }
+
+    /**
+     * The chosen track's pills beside its name on the main page, as in the lists (owner, 16 Nov 2026: yes to
+     * REVIEW_0157 #11), e.g. English · Original · SDH.
+     */
+    private void showTrackPills(TextView value, List<String> pills) {
+        if (!(value.getParent() instanceof ViewGroup))
+            return;
+        ViewGroup box = (ViewGroup) value.getParent();
+        for (int i = box.getChildCount() - 1; i >= 0; i--)
+            if ("track.pill".equals(box.getChildAt(i).getTag()))
+                box.removeViewAt(i);
+        int at = box.indexOfChild(value) + 1;
+        for (String pill : pills) {
+            TextView chip = text(pill, 15, Color.WHITE, false);
+            chip.setTag("track.pill");
+            chip.setSingleLine(true);
+            chip.setPadding(s(9), s(2), s(9), s(2));
+            android.graphics.drawable.GradientDrawable edge = new android.graphics.drawable.GradientDrawable();
+            edge.setCornerRadius(s(10));
+            edge.setStroke(Math.max(1, s(1)), 0xAAFFFFFF);
+            chip.setBackground(edge);
+            LayoutParams gap = new LayoutParams(-2, -2);
+            gap.leftMargin = s(8);
+            box.addView(chip, at++, gap);
+        }
     }
 
     // ---- in-panel track list ---------------------------------------------------------------
@@ -1164,6 +1412,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private void openTracks(String which) {
         if (closed)
             return;
+        if (page == null)
+            stackOverPanel();
         building = true;
         try {
             page = which;
@@ -1219,14 +1469,98 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             }
             dropTrailingRule();
             scroll.scrollTo(0, 0);
-            if (initial != null)
+            // While the remote is on the tab row, moving along the tabs keeps it there (P3, RULES §4).
+            boolean onTabs = tabs != null && tabs.hasFocus();
+            if (!onTabs && initial != null)
                 initial.requestFocus();
-            else if (!body.requestFocus())
+            else if (!onTabs && !body.requestFocus())
                 requestFocus();
         } finally {
             building = false;
         }
         scroll.post(this::updateMore);
+    }
+
+    // ---- a list on top of the panel ---------------------------------------------------------
+
+    private final Drawable resting;
+    private final int[] restingPadding;
+
+    /**
+     * A list opened from a row sits on top of the panel (RULES §11, mock-up player/28 bottom): the panel behind is
+     * darkened and pushed back slightly, the list in front is offset a little down and in, with the faint edge and a
+     * deeper shadow. Back closes the list and the panel comes forward again (0.157 Shield review #12, #22).
+     */
+    private void stackOverPanel() {
+        if (getWidth() <= 0 || getHeight() <= 0)
+            return;
+        Bitmap behind = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        draw(new Canvas(behind));
+        int left = Math.round(getWidth() * .12f);
+        int top = restingPadding[1] + header.getHeight();
+        int glow = s(14);
+        setBackground(new StackedList(behind, left, top, glow + s(8), s(22), Math.max(1, s(2)), s(18)));
+        setPadding(left + s(12), top + s(12), glow + s(20), restingPadding[3]);
+    }
+
+    private void unstack() {
+        setBackground(resting);
+        setPadding(restingPadding[0], restingPadding[1], restingPadding[2], restingPadding[3]);
+    }
+
+    /** The panel as it was (pushed back, darkened) with the list's own surface in front of it. */
+    private static final class StackedList extends Drawable {
+        private final Bitmap behind;
+        private final int left, top, right, radius, edge, shadow;
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+
+        StackedList(Bitmap behind, int left, int top, int right, int radius, int edge, int shadow) {
+            this.behind = behind;
+            this.left = left;
+            this.top = top;
+            this.right = right;
+            this.radius = radius;
+            this.edge = edge;
+            this.shadow = shadow;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            Rect b = getBounds();
+            float scale = com.archos.mediacenter.video.leanback.PreviewDialog.BEHIND_SCALE;
+            int saved = canvas.save();
+            canvas.scale(scale, scale, behind.getWidth() / 2f, behind.getHeight() / 2f);
+            paint.setColorFilter(null);
+            canvas.drawBitmap(behind, 0, 0, paint);
+            paint.setColor(com.archos.mediacenter.video.leanback.PreviewDialog.BEHIND_SHADE);
+            canvas.drawRoundRect(new RectF(0, 0, behind.getWidth(), behind.getHeight()), radius, radius, paint);
+            canvas.restoreToCount(saved);
+            RectF card = new RectF(left, top, b.right - right, b.bottom - shadow);
+            paint.setColor(SupernovaStyle.GLASS);
+            paint.setShadowLayer(shadow, 0, shadow / 3f, 0xAA000000);
+            canvas.drawRoundRect(card, radius, radius, paint);
+            paint.clearShadowLayer();
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(edge);
+            paint.setColor(SupernovaStyle.GLASS_EDGE);
+            canvas.drawRoundRect(card, radius, radius, paint);
+            paint.setStyle(Paint.Style.FILL);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
     }
 
     private void removeHeaderPage() {
@@ -1313,6 +1647,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return false;
         String was = page;
         removeHeaderPage();
+        unstack();
         showTab(was.equals("audio") ? TAB_AUDIO : TAB_SUBTITLES);
         View row = body.findViewWithTag(was.equals("audio") ? "audio.row.track" : "subtitles.row.track");
         if (row != null)

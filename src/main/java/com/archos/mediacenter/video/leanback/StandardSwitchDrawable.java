@@ -6,7 +6,8 @@ import android.graphics.drawable.Drawable;
 
 /** The owner's Gemini switch face; focus is drawn separately by the containing row. */
 public final class StandardSwitchDrawable extends Drawable {
-    public static final int ON_START = 0xff00aff0, ON_END = 0xff2559ee, OFF = 0xff20272d;
+    /** No blue (RULES): "on" is a white track with a dark knob; "off" a dark track with a white knob (player v10). */
+    public static final int ON_TRACK = 0xfff4f6fb, KNOB_ON = 0xff16181c, OFF = 0xff3a3e45;
     /**
      * Switch proportions shared by every toggle in the app. Owner decision 2 Nov 2026: the former
      * 70x26dp (2.7:1) face was too wide; 44x26dp (~1.7:1) matches familiar Android/iOS switches.
@@ -92,10 +93,8 @@ public final class StandardSwitchDrawable extends Drawable {
         float w = h * WIDTH_DP / HEIGHT_DP, left = b.exactCenterX() - w / 2;
         RectF track = new RectF(left, b.exactCenterY() - radius, left + w, b.exactCenterY() + radius);
         paint.setStyle(Paint.Style.FILL);
-        paint.setShader(checked
-                ? new LinearGradient(track.left, 0, track.right, 0, ON_START, ON_END, Shader.TileMode.CLAMP)
-                : null);
-        paint.setColor(checked ? Color.WHITE : OFF);
+        paint.setShader(null);
+        paint.setColor(checked ? ON_TRACK : OFF);
         paint.setAlpha(Math.round(alpha * (enabled ? 1f : .4f)));
         c.drawRoundRect(track, radius, radius, paint);
         paint.setShader(null);
@@ -106,7 +105,7 @@ public final class StandardSwitchDrawable extends Drawable {
         c.drawRoundRect(track, radius, radius, paint);
         if (thumb) {
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.WHITE);
+            paint.setColor(checked ? KNOB_ON : Color.WHITE);
             paint.setAlpha(Math.round(alpha * (enabled ? 1f : .4f)));
             c.drawCircle(checked ? track.right - radius : track.left + radius, track.centerY(), h * 10f / 26f, paint);
         }

@@ -669,6 +669,8 @@ public final class PreviewPages extends FrameLayout {
         {
             startHeroClock();
             post(this::recoverLostFocus);
+            // Once more after the page has re-laid itself out (the snapshot may refresh on return).
+            postDelayed(this::recoverLostFocus, 400);
         }
         else {
             heroOwnsHorizontal = false;
@@ -739,7 +741,11 @@ public final class PreviewPages extends FrameLayout {
 
     /** After standby the window can come back with nothing focused: return to the remembered card. */
     private void recoverLostFocus() {
-        if (!isShown() || !hasWindowFocus() || getRootView().findFocus() != null || cells.isEmpty())
+        // Back from a title (D17): focus can come back to nothing, or to this page or its list themselves, which
+        // shows no box and lets Down fall into the top bar. Either way, return to the remembered card.
+        View current = getRootView().findFocus();
+        boolean lost = current == null || current == this || current == list;
+        if (!isShown() || !hasWindowFocus() || !lost || cells.isEmpty() || tab == 3)
         {
             return;
         }
@@ -1050,6 +1056,9 @@ public final class PreviewPages extends FrameLayout {
         setFocusableInTouchMode(true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         list = new FocusRecycler(c, false);
+        // No scroll bars anywhere (owner, 17 Nov 2026; F4, F36).
+        list.setVerticalScrollBarEnabled(false);
+        list.setHorizontalScrollBarEnabled(false);
         list.setClipChildren(false);
         list.setClipToPadding(false);
         setClipChildren(false);
@@ -1191,6 +1200,9 @@ public final class PreviewPages extends FrameLayout {
             while (cursor != null && cursor != item) {
                 if (cursor instanceof PreviewNetworkWorkspace)
                     return ((PreviewNetworkWorkspace)cursor).atTop();
+                // Up from Files' tab row reaches the top bar (F1); from its content it goes to the tabs.
+                if (cursor instanceof com.archos.mediacenter.video.leanback.files.FilesPage)
+                    return ((com.archos.mediacenter.video.leanback.files.FilesPage)cursor).atTop();
                 cursor = cursor.getParent() instanceof View ? (View)cursor.getParent() : null;
             }
             return false;
@@ -1211,10 +1223,16 @@ public final class PreviewPages extends FrameLayout {
     }
 
     public boolean browserBack(Runnable leave) {
+        // Back from the top bar while Files is inside a folder goes up a level there, never out of the app (F10).
+        if (tab == 3 && filesPage != null && filesPage.isShown() && filesPage.back())
+            return true;
         return sharedBrowser != null && sharedBrowser.isShown() && sharedBrowser.browser().back(leave);
     }
 
     public void setTab(int tab) {
+        // Files opens on This Device, at its start, every time it is chosen from the top bar (F2).
+        if (tab == 3 && this.tab != 3 && filesPage != null)
+            filesPage.reset();
         networkEntryPending = tab == 3;
         if (tab == 3)
             loadSources();
@@ -2799,8 +2817,15 @@ public final class PreviewPages extends FrameLayout {
 
         /** The redesigned Files page (step 8 of 0.157); the old screens still open from it. */
         private void filesLayout(LinearLayout container) {
-            container.setLayoutParams(new RecyclerView.LayoutParams(
-                -1, Math.max(dp(360), getHeight() - list.getPaddingTop() - list.getPaddingBottom())));
+            // Files fills the page itself, not a cell inside the old page's padding (F3): the old list's 28 dp each
+            // side is cancelled here and Files keeps the same visible margin on its own, without clipping.
+            RecyclerView.LayoutParams whole = new RecyclerView.LayoutParams(
+                -1, Math.max(dp(360), getHeight() - list.getPaddingTop() - list.getPaddingBottom()));
+            whole.leftMargin = -list.getPaddingLeft();
+            whole.rightMargin = -list.getPaddingRight();
+            container.setLayoutParams(whole);
+            container.setClipChildren(false);
+            container.setClipToPadding(false);
             if (filesPage == null)
                 filesPage = new com.archos.mediacenter.video.leanback.files.FilesPage(getContext());
             if (filesPage.getParent() instanceof ViewGroup)
@@ -2824,34 +2849,22 @@ public final class PreviewPages extends FrameLayout {
             filesPage.setDevices(devices, device -> {
                 for (Box box : files)
                     if (device.name.equals(box.getName()) || !device.removable && box.getBoxId() == Box.ID.FOLDERS) {
-                        click.open(new Presenter.ViewHolder(container), box);
+                        Uri root = storageRoot(box);
+                        // A drive without a folder to open stays where it is: never the old browser.
+                        if (root == null)
+                            return;
+                        // Browsing stays in Files (page sheet, Browsing a drive).
+                        filesPage.browse(root, device.name, (file, inLibrary) -> playFile(file, inLibrary));
                         return;
                     }
             });
             filesPage.setConnections(
                 withReachability(
-                    com.archos.mediacenter.video.leanback.files.FilesPageData.connections(librarySources, media)),
-                new com.archos.mediacenter.video.leanback.files.FilesPage.ConnectionActions() {
-                    @Override public void open(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("library");
-                    }
-
-                    @Override public void tryAgain(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("library");
-                    }
-
-                    @Override public void edit(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("saved");
-                    }
-
-                    @Override public void remove(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("saved");
-                    }
-
-                    @Override public void add() {
-                        networkSection("add");
-                    }
-                });
+                    com.archos.mediacenter.video.leanback.files.FilesPageData.connections(
+                        getContext(), librarySources, media)),
+                // Every connection action now happens on the Files page itself (F31–F35, F40): no route leads to
+                // NOVA's network screens or the three-panel browser.
+                null);
             filesPage.setSources(
                 com.archos.mediacenter.video.leanback.files.FilesPageData.sources(devices, librarySources),
                 source -> {
@@ -2861,6 +2874,17 @@ public final class PreviewPages extends FrameLayout {
                         com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
                 });
             filesPage.setMedia(media);
+            filesPage.setPlayer((file, inLibrary) -> playFile(file, inLibrary));
+            filesPage.setFolderActions(new com.archos.mediacenter.video.leanback.files.FolderBrowser.Actions() {
+                @Override public void details(Base item) {
+                    click.open(new Presenter.ViewHolder(container), item);
+                }
+
+                @Override public void fixMatch(Base item) {
+                    openFixMatch(item);
+                }
+            });
+            filesPage.setStats(libraryStats());
             filesPage.setScanActions(() -> PreviewLibraryScan.request(getContext()),
                                      () -> PreviewLibraryScan.stop(getContext()));
             container.addView(filesPage, new LinearLayout.LayoutParams(-1, -1));
@@ -2883,6 +2907,55 @@ public final class PreviewPages extends FrameLayout {
             }, "FilesUnreadable").start();
         }
 
+        /** Files › Fix match for a title (the approved page under the top bar; Back returns here). */
+        private void openFixMatch(Base item) {
+            if (!(item instanceof Video))
+                return;
+            Intent intent = new Intent(
+                getContext(), com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.class);
+            intent.putExtra(com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.EXTRA_VIDEO,
+                            (Video)item);
+            getContext().startActivity(intent);
+        }
+
+        /** A storage's top folder: its own path, or the device's shared storage for "This device". */
+        private Uri storageRoot(Box box) {
+            String path = box.getPath();
+            if (path != null && !path.isEmpty())
+                return Uri.fromFile(new java.io.File(path));
+            if (box.getBoxId() == Box.ID.FOLDERS)
+                return Uri.fromFile(android.os.Environment.getExternalStorageDirectory());
+            return null;
+        }
+
+        /** Plays a file chosen in the folder grid, from the library entry when it has one. */
+        private void playFile(com.archos.filecorelibrary.MetaFile2 file, Base inLibrary) {
+            Video video = inLibrary instanceof Video
+                ? (Video)inLibrary
+                : new NonIndexedVideo(file.getStreamingUri(), file.getUri(), file.getName(), null);
+            PlayUtils.startVideo((Activity)getContext(), video, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+        }
+
+        /** Files › Your Library: one line per video in the library snapshot (mock-up network-files-tabs/44). */
+        private com.archos.mediacenter.video.leanback.files.LibraryStats libraryStats() {
+            List<com.archos.mediacenter.video.leanback.files.LibraryStats.Item> items = new ArrayList<>();
+            for (Entry entry : snapshot.technical) {
+                if (!(entry.media instanceof Video))
+                    continue;
+                Video video = (Video)entry.media;
+                String show = video instanceof Episode ? ((Episode)video).getShowName() : null;
+                boolean uhd = video.getMeasuredHeight() >= 1800 || video.getMeasuredWidth() >= 3800;
+                String range = video.getPreviewDynamicRange();
+                boolean hdr = !range.isEmpty() && !"SDR".equalsIgnoreCase(range);
+                items.add(new com.archos.mediacenter.video.leanback.files.LibraryStats.Item(
+                    show == null || show.isEmpty() ? (video instanceof Episode ? "Unknown" : null) : show,
+                    Math.max(0, video.getSize()), video.isLocalFile(), video.getDurationMs(), video.getResumeMs(),
+                    video.isWatched(), uhd, hdr, entry.added, Math.max(video.getMeasuredHeight(), 0)));
+            }
+            long monthStart = com.archos.mediacenter.video.leanback.files.FilesPage.monthStart().getTime() / 1000L;
+            return com.archos.mediacenter.video.leanback.files.LibraryStats.of(items, monthStart);
+        }
+
         /** Adds what the last check found (and when each was last seen); starts a check at most once a minute. */
         private List<com.archos.mediacenter.video.leanback.files.FilesPage.Connection> withReachability(
             List<com.archos.mediacenter.video.leanback.files.FilesPage.Connection> plain) {
@@ -2893,7 +2966,7 @@ public final class PreviewPages extends FrameLayout {
                 long seen = c.root == null ? 0
                     : com.archos.mediacenter.video.leanback.files.ConnectionCheck.lastSeen(getContext(), c.root);
                 known.add(new com.archos.mediacenter.video.leanback.files.FilesPage.Connection(
-                    c.name, c.root, state, c.videos, seen));
+                    c.name, c.root, state, c.videos, seen, c.account));
                 if (c.root != null)
                     roots.add(c.root);
             }

@@ -227,13 +227,13 @@ public class PreviewMoviePageTest {
                                 .put("tagline", "A real supplied tagline")
                                 .put("revenue", 1234),
                             "movie", 0);
-            assertNotNull(PreviewPagesTest.findText(page, "Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page, "Technical information"));
             assertNotNull(PreviewPagesTest.findText(page, "Unknown"));
             assertNotNull(PreviewPagesTest.findText(page, "Reception"));
             assertNotNull(PreviewPagesTest.findText(page, "Ratings unavailable"));
             assertNull(PreviewPagesTest.findText(page, "Reviews unavailable"));
             assertNull(PreviewPagesTest.findText(page, "No rating available"));
-            assertNotNull(PreviewPagesTest.findText(page, "Description"));
+            // Details v20: the description is in the hero, so the tab has no Description section.
         } finally {
             host.pause().stop().destroy();
         }
@@ -357,7 +357,7 @@ public class PreviewMoviePageTest {
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             assertSame(page.findViewWithTag("section:Details"), page.findFocus());
             primary.requestFocus();
-            assertNotNull(PreviewPagesTest.findText(page, "SMB · server/movies/film.mkv"));
+            // Details v20 (approved 14 Nov 2026): the technical column ends at Added; the file path is not on the tab.
             assertNotNull(PreviewPagesTest.findText(page, "MKV"));
             ShowTags cast = new ShowTags();
             for (int person = 1; person <= 10; person++)
@@ -424,9 +424,9 @@ public class PreviewMoviePageTest {
             assertTrue(restored.hasFocus());
             restored.performClick();
             PreviewPagesTest.layout(nav);
-            assertNotNull(PreviewPagesTest.findText(page, "Key Information"));
+            assertNotNull(PreviewPagesTest.findText(page, "Key information"));
             assertNotNull(PreviewPagesTest.findText(page, "Reception"));
-            assertNotNull(PreviewPagesTest.findText(page, "Technical Information"));
+            assertNotNull(PreviewPagesTest.findText(page, "Technical information"));
             View keyPanel = page.findViewWithTag("semantic:details.panel.key.information");
             assertNotNull(keyPanel);
             assertFalse(keyPanel.requestFocus());
@@ -438,7 +438,7 @@ public class PreviewMoviePageTest {
             Rect visible = new Rect();
             assertTrue("Information fixture must actually show its panel", keyPanel.getGlobalVisibleRect(visible));
             assertEquals("Entire compact information panel must be visible", keyPanel.getHeight(), visible.height());
-            assertNotNull(PreviewPagesTest.findText(keyPanel, "Release Date"));
+            assertNotNull(PreviewPagesTest.findText(keyPanel, "Released"));
             assertNotNull(PreviewPagesTest.findText(keyPanel, "2024"));
             PreviewPagesTest.capture(nav, "details-information-next");
         } finally {

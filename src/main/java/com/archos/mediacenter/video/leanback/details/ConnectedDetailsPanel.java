@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.*;
 import android.view.View;
 import android.widget.LinearLayout;
-import com.archos.mediacenter.video.leanback.PreviewAccent;
 
 /** One compound perimeter and fill, with an open join beneath the selected tab. */
 final class ConnectedDetailsPanel extends LinearLayout {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Path path = new Path();
     private View selected;
 
     ConnectedDetailsPanel(Context context) {
@@ -26,46 +24,31 @@ final class ConnectedDetailsPanel extends LinearLayout {
         invalidate();
     }
 
-    private void outline() {
-        path.reset();
-        if (selected == null || selected.getParent() == null)
-            return;
-        float stroke = getResources().getDisplayMetrics().density, inset = stroke / 2,
-              top = ((View) selected.getParent()).getBottom(), left = selected.getLeft() + inset,
-              right = selected.getRight() - inset, w = getWidth() - inset, h = getHeight() - inset, r = 4 * stroke;
-        path.moveTo(inset, top);
-        if (left > inset)
-            path.lineTo(left, top);
-        path.lineTo(left, inset + r);
-        path.quadTo(left, inset, left + r, inset);
-        path.lineTo(right - r, inset);
-        path.quadTo(right, inset, right, inset + r);
-        path.lineTo(right, top);
-        path.lineTo(w - r, top);
-        path.quadTo(w, top, w, top + r);
-        path.lineTo(w, h - r);
-        path.quadTo(w, h, w - r, h);
-        path.lineTo(inset + r, h);
-        path.quadTo(inset, h, inset, h - r);
-        path.close();
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        outline();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(0xed0b1622);
-        canvas.drawPath(path, paint);
-    }
-
+    /**
+     * The shared tab row's lines (RULES §3; details-background/21): a faint line across under the tabs and the open
+     * tab underlined on it, bright while the remote is below the row, dull while it is on the row. No box, no fill:
+     * the tab content sits straight on the charcoal page.
+     */
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        outline();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(getResources().getDisplayMetrics().density);
-        paint.setColor(PreviewAccent.color(getContext(), Color.WHITE));
-        canvas.drawPath(path, paint);
+        if (selected == null || !(selected.getParent() instanceof View))
+            return;
+        View row = (View) selected.getParent();
+        float density = getResources().getDisplayMetrics().density;
+        float line = row.getBottom();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(0x24FFFFFF);
+        canvas.drawRect(0, line - Math.max(1, density), getWidth(), line, paint);
+        int[] at = new int[2];
+        int[] mine = new int[2];
+        selected.getLocationInWindow(at);
+        getLocationInWindow(mine);
+        float left = at[0] - mine[0];
+        // The focused tab is the white box alone: no underline under it (D4, RULES §3).
+        if (selected.isFocused())
+            return;
+        paint.setColor(row.hasFocus() ? 0x59FFFFFF : Color.WHITE);
+        canvas.drawRect(left, line - 2 * density, left + selected.getWidth(), line, paint);
     }
 }

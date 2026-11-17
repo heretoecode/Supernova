@@ -33,16 +33,15 @@ public final class CinematicCard extends FrameLayout {
     @Override
     public void requestChildFocus(View child, View focused) {
         super.requestChildFocus(child, focused);
-        setForeground(new PreviewFocusGlow(getContext(), 12));
+        setForeground(new ArtworkEdge(getContext(), 12, false));
     }
 
     @Override
     public void clearChildFocus(View child) {
         super.clearChildFocus(child);
         post(() -> {
-            if (!hasFocus()) {
-                setForeground(null);
-            }
+            // RULES: hero cards always keep the artwork edge; focus shows on their first button, never a glow.
+            setForeground(new ArtworkEdge(getContext(), 12, false));
         });
     }
 

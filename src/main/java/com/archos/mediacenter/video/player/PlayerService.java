@@ -2681,7 +2681,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 if (!segment.contains(position) || !SegmentSkippingPolicy.safe(type, segment, position, duration) ||
                     segment.endMs == mLastAutoSkippedEndMs)
                     continue;
-                SegmentSkippingPolicy.Mode mode = SegmentSkippingPolicy.mode(mPreferences, type);
+                // A series' own skipping choice, when it has one (Playback tab save row).
+                SegmentSkippingPolicy.Mode mode =
+                    SeriesPlaybackChoices.skipFor(type, SegmentSkippingPolicy.mode(mPreferences, type));
                 if (mode == SegmentSkippingPolicy.Mode.PROMPT)
                 {
                     // Asked once per visit: a seek clears this, so rewinding to before the part offers Skip again.

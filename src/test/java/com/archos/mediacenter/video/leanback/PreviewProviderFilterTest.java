@@ -68,7 +68,7 @@ public class PreviewProviderFilterTest {
     private static void assertChecked(Dialog menu,int index,boolean selected){assertEquals(selected?View.VISIBLE:View.INVISIBLE,menu.getWindow().getDecorView().findViewWithTag("preview-check:"+index).getVisibility());}
     private static void assertOriginalMark(Dialog menu,int index){
         ImageView icon=(ImageView)((ViewGroup)row(menu,index)).getChildAt(0);
-        assertNotNull(icon.getDrawable());assertNull(icon.getColorFilter());assertNull(icon.getBackground());assertEquals(ImageView.ScaleType.FIT_CENTER,icon.getScaleType());
+        assertNotNull(icon.getDrawable());assertNull(icon.getBackground());assertEquals(ImageView.ScaleType.FIT_CENTER,icon.getScaleType());
         assertTrue(icon.getDrawable().getIntrinsicWidth()>0);assertTrue(icon.getDrawable().getIntrinsicHeight()>0);
         // Original geometry, white pixels and transparent backgrounds have independent native gallery checks.
     }

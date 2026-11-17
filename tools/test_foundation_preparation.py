@@ -36,8 +36,14 @@ class FoundationPreparationTests(unittest.TestCase):
         data=json.loads((ROOT/'assets/foundation/release-history.json').read_text())
         labels=[x['version'] for x in reversed(data['history'])]
         self.assertEqual(labels,[f'0.{i}' for i in range(1,len(labels)+1)])
-        self.assertEqual(data['current']['version'],f'0.{len(labels)+1}')
-        self.assertEqual(data['current']['version_code'],len(labels)+1)
+        # Owner, 16 Nov 2026: point releases are allowed (0.157.1) and codes are version x 10 from then on
+        # (0.157.1 = 1571, 0.158 = 1580).
+        current=data['current']['version']
+        last=labels[-1]
+        self.assertTrue(current==f'0.{len(labels)+1}' or current.startswith(last+'.'),current)
+        parts=current.split('.')
+        expected=int(parts[1])*10+(int(parts[2]) if len(parts)>2 else 0)
+        self.assertEqual(data['current']['version_code'],expected)
         self.assertIn('0.10',labels)
 
     def test_disclaimers_and_no_parked_provider_credits(self):

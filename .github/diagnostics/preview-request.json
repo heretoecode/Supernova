@@ -1,16 +1,13 @@
 {
- "purpose": "Network & Files: options 2 and 4 with stronger tile outlines",
+ "purpose": "0.157.2 round 7: Details reference at seven people, honest pop-up composites, F24 stills, Files flow",
  "tests": [
-  "com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus"
+  "com.archos.mediacenter.video.leanback.Review01572DetailsTest",
+  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
+  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
+  "com.archos.mediacenter.video.leanback.NoOldScreensTest"
  ],
  "variants": {
-  "option2-edge28": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "47ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
-  "option2-edge40": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "66ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
-  "option3-edge28": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "47ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
-  "option3-edge40": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24",
-                     "SUPERNOVA_PREVIEW_TILE_EDGE": "66ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"}
+  "normal": {}
  }
 }

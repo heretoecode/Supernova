@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.utils.backup;
 
+import com.archos.mediacenter.video.foundation.FoundationVersion;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -401,7 +402,7 @@ public final class LogicalBackupArchive
                 !Boolean.FALSE.equals(manifest.get("credentialsIncluded")) ||
                 !Boolean.FALSE.equals(manifest.get("mediaIncluded")) ||
                 !(manifest.get("applicationVersion") instanceof String) ||
-                !manifest.getString("applicationVersion").matches("0\\.[1-9][0-9]*") ||
+                !manifest.getString("applicationVersion").matches(FoundationVersion.PATTERN) ||
                 !integer(manifest.get("createdUtc")) || manifest.getLong("createdUtc") <= 0)
                 throw new IOException("Unsupported logical backup manifest");
             JSONArray categories = manifest.getJSONArray("categories");

@@ -189,9 +189,11 @@ public class PlayerPartsStripTest
             host.strip.vertical(false, host.strip.tabView(PlayerPartsStrip.EPISODES));
             View playing = host.strip.cardViews().get(1);
             assertTrue(playing.hasFocus());
-            assertTrue(PlayerPartsStripTestText.of(playing).contains("Episode 10"));
-            assertTrue(PlayerPartsStripTestText.of(playing).contains("Playing · 43 min"));
-            assertTrue(PlayerPartsStripTestText.of(host.strip.cardViews().get(0)).contains("Watched · 43 min"));
+            // The episode's name on top; the second line from what is known (0.157 Shield review #15).
+            assertTrue(PlayerPartsStripTestText.of(playing).contains("Name 10"));
+            assertTrue(PlayerPartsStripTestText.of(playing).contains("Playing · Episode 10 · 43 min"));
+            assertTrue(PlayerPartsStripTestText.of(host.strip.cardViews().get(0)).contains("Watched · Episode"));
+            assertFalse(PlayerPartsStripTestText.of(playing).contains("Unknown"));
             host.strip.vertical(true, playing);
             assertTrue(host.strip.tabView(PlayerPartsStrip.EPISODES).hasFocus());
             host.strip.vertical(true, host.strip.tabView(PlayerPartsStrip.EPISODES));

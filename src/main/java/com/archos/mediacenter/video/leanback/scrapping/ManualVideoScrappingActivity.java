@@ -30,7 +30,7 @@ public class ManualVideoScrappingActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Fix match is a side panel over Details (0.156 #40).
+        // Fix match is one page on Files › Library Care (owner, 16 Nov 2026).
         com.archos.mediacenter.video.leanback.PreviewMatchSearch.asSidePanel(this);
         setContentView(R.layout.leanback_manual_video_scrapping_activity);
     }
@@ -53,5 +53,12 @@ public class ManualVideoScrappingActivity extends FragmentActivity {
             }
         }
         return super.onKeyDown(keyCode, event); // default
+    }
+
+    /** After "Match and stay", Files › Library Care opens in place of the title (fix-match-from-details/v2). */
+    @Override
+    public void finish() {
+        com.archos.mediacenter.video.leanback.PreviewMatchSearch.finishTo(this);
+        super.finish();
     }
 }

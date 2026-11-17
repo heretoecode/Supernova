@@ -296,7 +296,8 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         LinearLayout panel = new LinearLayout(getContext());
         panel.setTag("settings.category");
         panel.setOrientation(VERTICAL);
-        panel.setBackground(SupernovaStyle.glass(getContext()));
+        // Flat charcoal page, content straight on it: no page panel (RULES; settings-flat mock-ups).
+        panel.setBackground(null);
         panel.setPadding(dp(14), dp(11), dp(14), dp(8));
         stage.addView(panel, new FrameLayout.LayoutParams(-1, -1));
         LinearLayout head = new LinearLayout(getContext());
@@ -610,8 +611,9 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             super(SettingsWorkspace.this.getContext());
             this.entry = entry;
             this.preference = preference;
-            // One value or switch per row, level with its title; the explanation sits under the title.
-            setOrientation(VERTICAL);
+            // Everything in a row sits on the row's centre line (RULES; 0.157 Shield review #2): the title with its
+            // explanation under it on the left, the value, choices or switch centred on the right.
+            setOrientation(HORIZONTAL);
             setGravity(Gravity.CENTER_VERTICAL);
             setPadding(dp(11), dp(8), dp(11), dp(8));
             setMinimumHeight(Math.max(dp(52), Math.round(48 * getResources().getDisplayMetrics().density)));
@@ -621,11 +623,15 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             Diagnostics.semantic(this, "settings:preference:" + entry.actualKey(getContext()));
             setBackground(SupernovaStyle.rowFocus(getContext()));
             SharedThreePanel.rowSeparator(this);
-            LinearLayout line = new LinearLayout(getContext());
-            line.setGravity(Gravity.CENTER_VERTICAL);
+            LinearLayout words = new LinearLayout(getContext());
+            words.setOrientation(VERTICAL);
+            words.setGravity(Gravity.CENTER_VERTICAL);
             title = text("", 13);
             title.setTypeface(SupernovaStyle.LABEL);
-            line.addView(title, new LayoutParams(0, -2, 1));
+            words.addView(title, new LayoutParams(-1, -2));
+            addView(words, new LayoutParams(0, -2, 1));
+            LinearLayout line = new LinearLayout(getContext());
+            line.setGravity(Gravity.CENTER_VERTICAL);
             value = text("", 12);
             value.setTag("settings.value");
             value.setTextColor(0xFFDFE5F1);
@@ -655,11 +661,11 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             toggleSize.leftMargin = dp(12);
             line.addView(toggle, toggleSize);
             PreviewSettings.styleSwitch(toggle);
-            addView(line, new LayoutParams(-1, -2));
+            addView(line, new LayoutParams(-2, -2));
             description = text("", 10);
             description.setTextColor(SupernovaStyle.TEXT_SECONDARY);
             description.setPadding(0, dp(3), dp(4), 0);
-            addView(description, new LayoutParams(-1, -2));
+            words.addView(description, new LayoutParams(-1, -2));
             setOnClickListener(v -> {
                 if (!preference.isEnabled() || !preference.isSelectable())
                     return;

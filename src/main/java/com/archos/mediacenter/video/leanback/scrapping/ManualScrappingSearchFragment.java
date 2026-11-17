@@ -43,6 +43,8 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.PreviewMatchSearch;
+import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
 import com.archos.mediacenter.video.leanback.ShadowLessListRow;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
@@ -116,7 +118,18 @@ public abstract class ManualScrappingSearchFragment
         previewSearch = new PreviewMatchSearch(
             requireContext(), initialQuery, this::onQueryTextSubmit, this::previewMatch);
         configurePreviewSearch(previewSearch);
-        root.addView(previewSearch, new FrameLayout.LayoutParams(-1, -1));
+        // The page sits under the real top bar with Files chosen (fix-match-from-details/v2), as Library Health
+        // does; choosing another page in the bar leaves the match unchanged.
+        TopNavigation shell = new TopNavigation(requireContext(), previewSearch, index -> {
+            if (index == 3)
+                return;
+            startActivity(new android.content.Intent(requireContext(), MainActivityLeanback.class)
+                              .putExtra("preview_tab", index)
+                              .addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            requireActivity().finish();
+        }, () -> true);
+        shell.selectTab(3);
+        root.addView(shell, new FrameLayout.LayoutParams(-1, -1));
         return root;
     }
 

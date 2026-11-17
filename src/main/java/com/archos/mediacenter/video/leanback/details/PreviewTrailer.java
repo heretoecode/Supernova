@@ -46,44 +46,19 @@ public final class PreviewTrailer {
                 return host == null || !(host.equals("www.youtube.com") || host.equals("www.youtube-nocookie.com"));
             }
         });
+        // Trailers (D19, owner 17 Nov 2026): the video nearly full screen with a small margin round it, the page
+        // blurred behind, no title bar, no buttons and no YouTube controls; the highest quality asked for; Back
+        // closes.
         Dialog dialog = PreviewDialog.create(activity, "trailer");
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setBackgroundColor(0xff0b1b2a);
-        LinearLayout bar = new LinearLayout(activity);
-        bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(dp(activity, 16), dp(activity, 6), dp(activity, 16), dp(activity, 6));
-        layout.addView(bar, new LinearLayout.LayoutParams(-1, dp(activity, 46)));
-        TextView title = new TextView(activity);
-        title.setText("Official trailer · " + trailer.mName);
-        title.setTextSize(14);
-        title.setTextColor(0xffffffff);
-        title.setSingleLine(true);
-        title.setEllipsize(TextUtils.TruncateAt.END);
-        bar.addView(title, new LinearLayout.LayoutParams(0, -2, 1));
-        for (String label : new String[] {
-            "Open YouTube", "Close"
-        }) {
-            TextView button = new TextView(activity);
-            button.setText(label);
-            button.setTextColor(0xffffffff);
-            button.setTextSize(12);
-            button.setPadding(dp(activity, 12), dp(activity, 8), dp(activity, 12), dp(activity, 8));
-            PreviewIcon.apply(button, label, 16);
-            button.setFocusable(true);
-            button.setBackground(PreviewDialog.focus(activity));
-            button.setOnClickListener(v -> {
-                dialog.dismiss();
-                if (label.equals("Open YouTube"))
-                    external(activity, fallback);
-            });
-            bar.addView(button);
-        }
+        FrameLayout layout = new FrameLayout(activity);
+        layout.setBackgroundColor(0xff000000);
         web.setBackgroundColor(0xff000000);
         web.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         web.setWebChromeClient(new WebChromeClient());
-        layout.addView(web, new LinearLayout.LayoutParams(-1, 0, 1));
+        web.setFocusable(false);
+        web.setFocusableInTouchMode(false);
+        layout.addView(web, new FrameLayout.LayoutParams(-1, -1));
         dialog.setContentView(layout);
         dialog.setOnDismissListener(d -> {
             web.stopLoading();
@@ -94,15 +69,35 @@ public final class PreviewTrailer {
         });
         dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         dialog.show();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.getWindow().setDimAmount(.45f);
-        dialog.getWindow().setLayout((int) (activity.getResources().getDisplayMetrics().widthPixels * .94),
-            (int) (activity.getResources().getDisplayMetrics().heightPixels * .92));
+        Window window = dialog.getWindow();
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        window.setDimAmount(.55f);
+        if (android.os.Build.VERSION.SDK_INT >= 31) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+            window.getAttributes().setBlurBehindRadius(dp(activity, 24));
+            window.setAttributes(window.getAttributes());
+        }
+        int[] size = size(activity.getResources().getDisplayMetrics().widthPixels,
+                          activity.getResources().getDisplayMetrics().heightPixels, dp(activity, 24));
+        window.setLayout(size[0], size[1]);
         web.loadDataWithBaseURL("https://" + activity.getPackageName() + "/",
-            "<html style='height:100%'><body style='margin:0;background:#000;height:100%;overflow:hidden'><iframe width='100%' height='100%' src='https://www.youtube.com/embed/"
-                + trailer.mVideoKey
-                + "?playsinline=1&autoplay=1' frameborder='0' allow='autoplay; encrypted-media; fullscreen' allowfullscreen></iframe></body></html>",
+            "<html style='height:100%'><body style='margin:0;background:#000;height:100%;overflow:hidden'>"
+                + "<iframe width='100%' height='100%' src='https://www.youtube.com/embed/" + trailer.mVideoKey
+                + "?playsinline=1&autoplay=1&controls=0&disablekb=1&fs=0&rel=0&modestbranding=1&iv_load_policy=3"
+                + "&vq=hd1080' frameborder='0' allow='autoplay; encrypted-media' ></iframe></body></html>",
             "text/html", "UTF-8", null);
+    }
+
+    /** The largest 16:9 window that leaves {@code margin} round it on the screen. Pure, for tests. */
+    static int[] size(int screenWidth, int screenHeight, int margin) {
+        int width = Math.max(1, screenWidth - 2 * margin);
+        int height = Math.round(width * 9f / 16f);
+        if (height > screenHeight - 2 * margin) {
+            height = Math.max(1, screenHeight - 2 * margin);
+            width = Math.round(height * 16f / 9f);
+        }
+        return new int[] {width, height};
     }
 
     private static int dp(Activity a, int n) {

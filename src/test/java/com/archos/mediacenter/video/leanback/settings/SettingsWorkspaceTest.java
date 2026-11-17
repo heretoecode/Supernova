@@ -147,8 +147,13 @@ public class SettingsWorkspaceTest {
         key(KeyEvent.KEYCODE_DPAD_UP);
         assertTrue("Up from the first row returns to the open tab", first.hasFocus());
         ViewGroup speed = (ViewGroup)tagged("settings.preference.playback_speed");
-        View title = (View)speed.getChildAt(0), toggle = speed.findViewWithTag("settings.switch");
-        assertSame("the switch shares the title's line", title, toggle.getParent());
+        View toggle = speed.findViewWithTag("settings.switch");
+        // Everything in a row sits on the row's centre line (RULES; 0.157 Shield review #2).
+        int[] rowAt = new int[2], toggleAt = new int[2];
+        speed.getLocationInWindow(rowAt);
+        toggle.getLocationInWindow(toggleAt);
+        float rowCentre = rowAt[1] + speed.getHeight() / 2f, toggleCentre = toggleAt[1] + toggle.getHeight() / 2f;
+        assertTrue("the switch is on the row's centre line", Math.abs(rowCentre - toggleCentre) <= 2);
     }
 
     /** Owner rule: up to ~5 short choices sit inline and Left/Right changes them straight away. */
@@ -194,10 +199,9 @@ public class SettingsWorkspaceTest {
             for (int y = 0; y < 100; y++)
                 for (int x = 0; x < 200; x++)
                     colours.add(image.getPixel(x, y));
-            assertTrue("White thumb visible", colours.contains(Color.WHITE));
-            assertTrue("Blue gradient remains visible",
-                       colours.stream().anyMatch(
-                           c -> Color.blue(c) > 180 && Color.red(c) < 100));
+            // No blue (RULES; player v10): on = white track with a dark knob, whatever the accent.
+            assertTrue("White track visible", colours.contains(StandardSwitchDrawable.ON_TRACK));
+            assertTrue("Dark knob visible", colours.contains(StandardSwitchDrawable.KNOB_ON));
             assertNotEquals(Color.WHITE, PreviewAccent.switchTrack(host.get()));
             assertNotEquals(Color.BLACK, PreviewAccent.switchTrack(host.get()));
             if (accent == 0xff62bbf3)
@@ -224,12 +228,14 @@ public class SettingsWorkspaceTest {
                 for (int x = 0; x < 60; x++)
                     if (Color.alpha(image.getPixel(x, y)) > 240)
                         colours.add(image.getPixel(x, y));
-            assertTrue(colours.contains(Color.WHITE));
-            if (checked)
-                assertTrue(colours.stream().anyMatch(
-                    c -> Color.blue(c) > 180 && Color.red(c) < 100));
-            else
+            // No blue (RULES; player v10): on = white track, dark knob; off = dark track, white knob.
+            if (checked) {
+                assertTrue(colours.contains(StandardSwitchDrawable.ON_TRACK));
+                assertTrue(colours.contains(StandardSwitchDrawable.KNOB_ON));
+            } else {
+                assertTrue(colours.contains(Color.WHITE));
                 assertTrue(colours.contains(StandardSwitchDrawable.OFF));
+            }
             box.setEnabled(false);
             image.eraseColor(Color.TRANSPARENT);
             icon = box.getButtonDrawable();
@@ -300,8 +306,8 @@ public class SettingsWorkspaceTest {
             p.setValue("en");
             Dialog dialog = SettingsChoiceDialog.show(host.get(), p);
             for (int n = 0; n < 4; n++) {
-                ViewGroup row = dialog.getWindow().getDecorView().findViewWithTag("settings.choice." + n);
-                Drawable icon = ((ImageView)row.getChildAt(1)).getDrawable();
+                ViewGroup row = dialog.getWindow().getDecorView().findViewWithTag(n);
+                Drawable icon = ((ImageView)row.getChildAt(0)).getDrawable();
                 assertTrue(icon instanceof PreviewLanguageIcon);
                 Object flag = ReflectionHelpers.getField(icon, "flag");
                 if (n < 3)
@@ -455,20 +461,22 @@ public class SettingsWorkspaceTest {
         opener.requestFocus();
         Dialog dialog = SettingsChoiceDialog.show(host.get(), level);
         assertNotNull(dialog);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").requestFocus();
+        dialog.getWindow().getDecorView().findViewWithTag(0).requestFocus();
         String original = level.getValue();
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.cancel").performClick();
+        // The shared choice list has no Cancel button: Back closes it.
+        dialog.onBackPressed();
+        layout();
         assertEquals(original, level.getValue());
         assertTrue(opener.hasFocus());
         level.setOnPreferenceChangeListener((p, value) -> false);
         dialog = SettingsChoiceDialog.show(host.get(), level);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
+        dialog.getWindow().getDecorView().findViewWithTag(0).performClick();
         assertTrue(dialog.isShowing());
         assertEquals(original, level.getValue());
         dialog.dismiss();
         level.setOnPreferenceChangeListener((p, value) -> true);
         dialog = SettingsChoiceDialog.show(host.get(), level);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
+        dialog.getWindow().getDecorView().findViewWithTag(0).performClick();
         layout();
         assertFalse(dialog.isShowing());
         assertEquals(level.getEntryValues()[0].toString(), level.getValue());

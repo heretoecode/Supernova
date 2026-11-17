@@ -23,23 +23,30 @@ import org.robolectric.annotation.Config;
 public class FilesPageTest
 {
     @Test
-    public void opensOnLibraryCareWithCountsSummaryAndBadge()
+    public void opensOnThisDeviceAndLibraryCareSaysNoneWithoutAnArrow()
     {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         FilesPage page = new FilesPage(activity);
         activity.setContentView(page);
+        PageTabs tabs = findTabs(page);
+        // Files opens on This Device every time (F2).
+        assertEquals(FilesPage.THIS_DEVICE, tabs.openTab());
         LibraryCareCounts counts = LibraryCareCounts.count(Collections.emptyList(), false, video -> false);
         page.update(counts, 1808, System.currentTimeMillis() - 12 * 60_000L, false);
+        tabs.select(FilesPage.LIBRARY_CARE);
         View first = page.findViewWithTag("files.row.first");
         assertNotNull(first);
         assertTrue(first.isFocusable());
-        assertTrue(String.valueOf(first.getContentDescription()).startsWith("Missing files"));
-        PageTabs tabs = findTabs(page);
-        assertEquals(FilesPage.LIBRARY_CARE, tabs.openTab());
+        assertEquals("Missing files, None", String.valueOf(first.getContentDescription()));
+        // A "None" row offers nothing: OK does nothing (F46).
+        assertTrue(!first.hasOnClickListeners());
+        // The tab row's right end is only the scan control (F18).
+        assertEquals("Scan library", FilesPage.scanLabel(false, -1));
+        assertEquals("Scanning · 42%", FilesPage.scanLabel(true, 42));
     }
 
     @Test
-    public void scanOneSourceOffersAButtonPerSource()
+    public void scanOneSourceShowsAButtonPerSourceOnlyWhenFocused()
     {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         FilesPage page = new FilesPage(activity);
@@ -49,70 +56,54 @@ public class FilesPageTest
             new FilesPage.Source("This device", android.net.Uri.parse("file:///storage/Movies"), true),
             new FilesPage.Source("Media server", android.net.Uri.parse("smb://server/Films"), false));
         page.setSources(sources, scanned::add);
-        android.view.ViewGroup row = page.findViewWithTag("files.scan.one");
-        assertNotNull(row);
-        View second = null;
-        int buttons = 0;
-        for (int index = 0; index < row.getChildCount(); index++)
-        {
-            View child = row.getChildAt(index);
-            if (child.isFocusable() && child instanceof android.widget.TextView)
-            {
-                buttons++;
-                second = child;
-            }
-        }
-        assertEquals(2, buttons);
-        second.performClick();
+        findTabs(page).select(FilesPage.LIBRARY_CARE);
+        View device = findByDescription(page, "This device, Scan one source");
+        View server = findByDescription(page, "Media server, Scan one source");
+        assertNotNull(server);
+        // Nothing shown at rest (F48).
+        assertEquals(View.GONE, device.getVisibility());
+        server.performClick();
         assertEquals("Media server", scanned.get(0).label);
     }
 
     @Test
-    public void connectionsTabListsConnectionsThenAdd()
+    public void connectionsShowTheLoginAndTheFourButtons()
     {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         FilesPage page = new FilesPage(activity);
         activity.setContentView(page);
-        java.util.List<String> done = new java.util.ArrayList<>();
-        FilesPage.ConnectionActions actions = new FilesPage.ConnectionActions()
-        {
-            @Override
-            public void open(FilesPage.Connection connection)
-            {
-                done.add("open");
-            }
-            @Override
-            public void tryAgain(FilesPage.Connection connection)
-            {
-                done.add("again");
-            }
-            @Override
-            public void edit(FilesPage.Connection connection)
-            {
-                done.add("edit");
-            }
-            @Override
-            public void remove(FilesPage.Connection connection)
-            {
-                done.add("remove");
-            }
-            @Override
-            public void add()
-            {
-                done.add("add");
-            }
-        };
         page.setConnections(java.util.List.of(new FilesPage.Connection(
-            "Office PC", android.net.Uri.parse("sftp://office/videos"), false, 0, 0)), actions);
+            "Office PC", android.net.Uri.parse("sftp://office/videos"), false, 512, 0, "alex")), null);
         findTabs(page).select(FilesPage.CONNECTIONS);
         View first = page.findViewWithTag("files.row.first");
         assertNotNull(first);
-        assertTrue(String.valueOf(first.getContentDescription()).contains("Not reachable"));
-        first.requestFocus();
-        View focused = first.findFocus();
-        assertNotNull(focused);
-        focused.performClick();
-        assertEquals("again", done.get(0));
+        assertEquals("Office PC · alex, Not reachable", String.valueOf(first.getContentDescription()));
+        for (String button : new String[] {"Open", "Edit", "Test", "Remove"})
+        {
+            assertNotNull(button, findByDescription(page, button + ", Office PC"));
+        }
+        assertNotNull(findByDescription(page, "Add a connection"));
+    }
+
+    private static View findByDescription(View view, String start)
+    {
+        if (view.getContentDescription() != null && view.getContentDescription().toString().startsWith(start))
+        {
+            return view;
+        }
+        if (view instanceof android.view.ViewGroup)
+        {
+            android.view.ViewGroup group = (android.view.ViewGroup) view;
+            for (int index = 0; index < group.getChildCount(); index++)
+            {
+                View found = findByDescription(group.getChildAt(index), start);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 
     @Test

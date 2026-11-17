@@ -69,7 +69,8 @@ public final class TopNavigation extends LinearLayout {
         setWillNotDraw(false);
         artwork = new PreviewBackdrop(c);
         artwork.setFoundationHome(BuildConfig.FOUNDATION);
-        setBackground(artwork);
+        // One plain charcoal behind every page, Home and the library pages included (owner, 17 Nov 2026; F27).
+        setBackground(BuildConfig.FOUNDATION ? new PreviewUtilityBackground(c) : artwork);
         bar = new LinearLayout(c);
         bar.setClipChildren(true);
         bar.setClipToPadding(true);
@@ -111,7 +112,9 @@ public final class TopNavigation extends LinearLayout {
             tab.setTextColor(Color.WHITE);
             tab.setTextSize(19 * TvLayout.scale(c));
             tab.setGravity(Gravity.CENTER);
-            tab.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+            // Regular weight (mock-ups top-bar, tab-style): the light weight's thin strokes read as grey on the
+            // white focus box (0.157 Shield review #20).
+            tab.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
             if (index == 6) {
                 tab.setMaxWidth(dp(140));
                 tab.setEllipsize(TextUtils.TruncateAt.END);
@@ -335,6 +338,9 @@ public final class TopNavigation extends LinearLayout {
             boolean focused = tab.isFocused();
             int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
             tab.setTextColor(ink);
+            // The focus box is never dimmed: black ink on solid white (RULES §3).
+            if (tab != tabs[6])
+                tab.setAlpha(focused || tab == selected ? 1f : .78f);
             for (Drawable icon : tab.getCompoundDrawables())
                 if (icon != null)
                     icon.setColorFilter(focused
@@ -497,14 +503,14 @@ public final class TopNavigation extends LinearLayout {
         selectedIndex = index;
         artwork.setPage(index);
         artwork.setFoundationHome(BuildConfig.FOUNDATION && index == 0);
-        setBackground(index >= 3 && index <= 5 ? new PreviewUtilityBackground(getContext()) : artwork);
+        // Plain charcoal on every page (F27): Home and the library pages match Files, Settings and Search exactly.
+        setBackground(BuildConfig.FOUNDATION || index >= 3 && index <= 5 ? new PreviewUtilityBackground(getContext())
+                                                                         : artwork);
         for (TextView t : tabs)
             t.setSelected(false);
         selected = tabs[index];
         selected.setSelected(true);
         refreshPath();
-        for (TextView t : tabs)
-            t.setAlpha(t == selected ? 1f : .78f);
         if (index >= 3 && index <= 5)
             setScrolled(false);
         if (moveNavigationFocus)

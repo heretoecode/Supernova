@@ -44,14 +44,17 @@ public class PreviewMatchPanelTest
         });
         host.setContentView(page);
         page.setSubject("Pressure.2026.2160p.mkv");
-        assertNotNull(PreviewPagesTest.findText(page, "Fix match · File: Pressure.2026.2160p.mkv"));
+        // Opened from a title (fix-match-from-details/v2): the path names the title and says where Back returns.
+        assertNotNull(PreviewPagesTest.findText(page, "Fix match · Pressure"));
+        assertNotNull(PreviewPagesTest.findText(page, "From Pressure · Back returns there"));
         page.setResults(Arrays.asList(movie("Pressure", 2026), movie("Pressure", 2015)));
         PreviewPagesTest.layout(page);
         View keyboard = page.findViewWithTag("semantic:keyboard:T");
         View first = page.findViewWithTag("semantic:match.result:0");
         assertTrue(first.requestFocus());
         PreviewPagesTest.layout(page);
-        assertEquals(View.GONE, ((View) keyboardRoot(keyboard)).getVisibility());
+        // Full page (fix-match-from-details/v2): the keyboard stays in view beside the matches.
+        assertEquals(View.VISIBLE, ((View) keyboardRoot(keyboard)).getVisibility());
         first.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
         PreviewPagesTest.layout(page);
         assertEquals(View.VISIBLE, ((View) keyboardRoot(keyboard)).getVisibility());
@@ -82,13 +85,13 @@ public class PreviewMatchPanelTest
     }
 
     @Test
-    public void sidePanelIsNarrowAndOnTheRight()
+    public void fixMatchIsAFullPageOnCharcoal()
     {
+        // One Fix match page (owner, 12 Nov 2026; network-files-tabs/14b): the 0.156 side panel is retired.
         Activity host = Robolectric.buildActivity(Activity.class).setup().get();
         PreviewMatchSearch.asSidePanel(host);
-        assertEquals(PreviewMatchSearch.PANEL_WIDTH_DP, host.getWindow().getAttributes().width);
-        assertEquals(android.view.Gravity.END | android.view.Gravity.FILL_VERTICAL,
-                     host.getWindow().getAttributes().gravity);
+        assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, host.getWindow().getAttributes().width);
+        assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, host.getWindow().getAttributes().height);
     }
 
     private static Object keyboardRoot(View key)

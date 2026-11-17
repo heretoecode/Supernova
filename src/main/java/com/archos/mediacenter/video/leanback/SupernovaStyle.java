@@ -85,9 +85,22 @@ public final class SupernovaStyle {
      * selected (not focused) = resting box + thin white outline; disabled = resting at 40%;
      * otherwise resting. The box never changes size between states.
      */
+    /** On artwork (hero buttons): a dark box at about 72% at rest (RULES §12; D13). */
+    public static final int ON_ARTWORK_REST = 0xB816181C;
+
+    /** A button on artwork: the standard button with a dark box at about 72% at rest (RULES §12). */
+    public static void applyArtworkButton(View view) {
+        view.setBackground(button(view.getContext(), Surface.STANDARD, ON_ARTWORK_REST));
+        applyContent(view, true);
+    }
+
     public static StateListDrawable button(Context c, Surface surface) {
-        float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
+        return button(c, surface, rest);
+    }
+
+    private static StateListDrawable button(Context c, Surface surface, int rest) {
+        float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int edge = surface == Surface.TILE || surface == Surface.HUD ? 0x2EFFFFFF : 0;
         int edgeWidth = Math.max(1, dp(c, 1));
         if (surface == Surface.TILE) {
@@ -216,6 +229,28 @@ public final class SupernovaStyle {
      * Makes a TextView's compound icons follow the text colour (white at rest, black on focus).
      * Works for the app's own icon drawables too, which ignore Android's tint lists.
      */
+    /**
+     * Paints a label's icons in the given ink. For a label inside a focusable row (the row has the focus, not the
+     * label), so its icon turns black on the white focus box with the text (0.157 Shield review #20).
+     */
+    public static void inkIcons(TextView view, int ink) {
+        Drawable[] sets = concat(view.getCompoundDrawables(), view.getCompoundDrawablesRelative());
+        for (Drawable d : sets) {
+            if (d == null)
+                continue;
+            Drawable icon = d instanceof StateIcon ? ((StateIcon) d).icon() : d;
+            icon.setColorFilter(new PorterDuffColorFilter(ink, PorterDuff.Mode.SRC_IN));
+        }
+        view.invalidate();
+    }
+
+    private static Drawable[] concat(Drawable[] first, Drawable[] second) {
+        Drawable[] all = new Drawable[first.length + second.length];
+        System.arraycopy(first, 0, all, 0, first.length);
+        System.arraycopy(second, 0, all, first.length, second.length);
+        return all;
+    }
+
     public static void tintIcons(TextView view) {
         // Icons may be attached start/end (relative) or left/right (absolute); the relative getter does not
         // report absolute ones, which left icons such as the Home hero's More Info white on the white box.
@@ -448,6 +483,14 @@ public final class SupernovaStyle {
     }
 
     // ---- rows ----------------------------------------------------------------------------------
+
+    /** The white focus box on a plain row or heading, nothing at rest (RULES §3; D5, P5). */
+    public static StateListDrawable focusFill(Context c, float radiusDp) {
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[] {android.R.attr.state_focused}, rounded(c, FOCUS_FILL, radiusDp));
+        states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));
+        return states;
+    }
 
     /** Row focus: white outline, no fill change. Use with {@link #ROW_INSET_DP} padding inside the row. */
     public static StateListDrawable rowFocus(Context c) {
