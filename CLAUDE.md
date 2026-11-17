@@ -132,6 +132,14 @@ done from still renders. From now on a redesigned page is done only when all of 
 5. **A plain "not built" list before every signing,** sent to the owner, so nothing missing is found on the Shield.
 6. **Smaller versions:** a page and everything behind it is finished before the next page starts.
 
+## Working unattended (owner, 17 Nov 2026)
+
+When the owner sets Supernova Coding going (often overnight), the aim is a signed APK ready when they wake:
+- **Never sit idle while a GitHub build runs.** Start it, carry on with the next item, check the run when it ends.
+- **Don't stop for questions.** Use best judgement, follow the rules and page sheets, and list every judgement call
+  for the owner at the end (with the reason), so they can be changed later.
+- Push after each finished item, so nothing is lost if the session stops.
+
 ## Who does what
 
 - **Claude:** everything the user sees (layouts, screens, focus, wording), integration of Codex's work, builds,
