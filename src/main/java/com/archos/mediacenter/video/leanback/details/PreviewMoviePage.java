@@ -2684,8 +2684,10 @@ public final class PreviewMoviePage extends ScrollView {
     }
 
     private String storedRating() {
+        if (movie instanceof Movie)
+            return safe(((Movie)movie).getContentRating());
         if (movie != null)
-            return safe(movie.getContentRating());
+            return "";
         if (show == null)
             return "";
         if (!safe(show.getContentRating()).isEmpty())
