@@ -46,7 +46,9 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
 - **0.158 top bar (owner, 18 Nov; mock-up `files-review-0157-1/08`), replaces the lines above when built:** no SUPERNOVA
   wordmark; places shift left. Media pages (Home, Movies, TV Shows, own pages) open as focus lands on them; tools
   (Files, Search, Settings) need OK. Looks: plain word; white box with black text = focus; soft grey box with a faded
-  word = the open page while focus is elsewhere. No underlines in the top bar. Tabs elsewhere keep §3/§4 for now.
+  word = the open page while focus is elsewhere. No underlines in the top bar. **Every item is a word, tools
+  included (Files · Search · Settings, no icons); one font, weight and size for every word and the clock; words
+  centred on their letters** (owner, 18 Nov; `files-review-0157-1/09` A). Tabs elsewhere keep §3/§4 for now.
 
 ## 3. Focus and "where am I" (the most important rule)
 One brightness scale that follows your path, everywhere, top bar and tabs included (§25; mock-ups

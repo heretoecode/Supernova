@@ -115,8 +115,8 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
   in `TopNavigation`) while the places are regular, which is why it looks skinnier; same font, weight and size for
   every word and the clock. **Text centred on its letters:** labels are centred on the font's box (room kept for
   accents above and descenders below), so words like "Documentaries" sit low with more space above; centre them on
-  the letters themselves. **Tools as words or icons:** options in `files-review-0157-1/09` (A words, B icon and word,
-  C icons); awaiting the owner.
+  the letters themselves. **Tools as words (approved 18 Nov, option A of `files-review-0157-1/09`):** Files · Search ·
+  Settings, no icons, the same as the media pages.
 
 ### Also in 0.158
 - Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
