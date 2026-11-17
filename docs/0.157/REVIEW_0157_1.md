@@ -246,3 +246,10 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   of the width at most, like the choice list), height to its content, arrows for more (RULES §11, §16).] To confirm.
 - **P5. Focus inside Playback Settings is wrong:** focused rows don't fill white and their text and icons don't turn
   black (RULES §3).
+
+## Status in 0.157.2 (overnight, 18 Nov 2026)
+Fixed: F1–F21, F23–F41, F43–F51; D1–D11, D13–D20; P1–P5 (P4 at the recommended 40%). Partly: D6 (no clipping; rows
+still stop at the margin), D9 (better hand-off, untested on a Shield), D15 (Created by and runtime; Rotten Tomatoes
+and Metacritic need the OMDb key), F24 (stills only for files on this device), F36 (Files only), F40 (no login
+prompt on Open). Not done: D12 (needs the Shield). 0.158 as planned: F42, F52. Details:
+`docs/0.157/REPORT_0157_2.md`; judgement calls: `docs/0.157/JUDGEMENT_CALLS_0157_2.md`.
