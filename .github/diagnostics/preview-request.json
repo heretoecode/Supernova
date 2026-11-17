@@ -1,12 +1,15 @@
 {
- "purpose": "0.157.2 round 4: Details tab on one screen (B2), age rating, Back to a library page, Extras cards",
+ "purpose": "0.157.2 round 5: Details B2, age rating fix, trailer, brand logos",
  "tests": [
   "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
   "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest",
   "com.archos.mediacenter.video.leanback.NoOldScreensTest",
   "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
   "com.archos.mediacenter.video.leanback.PreviewPagesTest",
-  "com.archos.mediacenter.video.leanback.files.LibraryStatsTest"
+  "com.archos.mediacenter.video.leanback.files.LibraryStatsTest",
+  "com.archos.mediacenter.video.streaming.Supernova139ProviderMarksTest",
+  "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+  "com.archos.mediacenter.video.diagnostics.DiagnosticsTest"
  ],
  "variants": {
   "normal": {}
