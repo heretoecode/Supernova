@@ -1191,6 +1191,9 @@ public final class PreviewPages extends FrameLayout {
             while (cursor != null && cursor != item) {
                 if (cursor instanceof PreviewNetworkWorkspace)
                     return ((PreviewNetworkWorkspace)cursor).atTop();
+                // Up from Files' tab row reaches the top bar (F1); from its content it goes to the tabs.
+                if (cursor instanceof com.archos.mediacenter.video.leanback.files.FilesPage)
+                    return ((com.archos.mediacenter.video.leanback.files.FilesPage)cursor).atTop();
                 cursor = cursor.getParent() instanceof View ? (View)cursor.getParent() : null;
             }
             return false;
@@ -1211,10 +1214,16 @@ public final class PreviewPages extends FrameLayout {
     }
 
     public boolean browserBack(Runnable leave) {
+        // Back from the top bar while Files is inside a folder goes up a level there, never out of the app (F10).
+        if (tab == 3 && filesPage != null && filesPage.isShown() && filesPage.back())
+            return true;
         return sharedBrowser != null && sharedBrowser.isShown() && sharedBrowser.browser().back(leave);
     }
 
     public void setTab(int tab) {
+        // Files opens on This Device, at its start, every time it is chosen from the top bar (F2).
+        if (tab == 3 && this.tab != 3 && filesPage != null)
+            filesPage.reset();
         networkEntryPending = tab == 3;
         if (tab == 3)
             loadSources();
@@ -2799,8 +2808,15 @@ public final class PreviewPages extends FrameLayout {
 
         /** The redesigned Files page (step 8 of 0.157); the old screens still open from it. */
         private void filesLayout(LinearLayout container) {
-            container.setLayoutParams(new RecyclerView.LayoutParams(
-                -1, Math.max(dp(360), getHeight() - list.getPaddingTop() - list.getPaddingBottom())));
+            // Files fills the page itself, not a cell inside the old page's padding (F3): the old list's 28 dp each
+            // side is cancelled here and Files keeps the same visible margin on its own, without clipping.
+            RecyclerView.LayoutParams whole = new RecyclerView.LayoutParams(
+                -1, Math.max(dp(360), getHeight() - list.getPaddingTop() - list.getPaddingBottom()));
+            whole.leftMargin = -list.getPaddingLeft();
+            whole.rightMargin = -list.getPaddingRight();
+            container.setLayoutParams(whole);
+            container.setClipChildren(false);
+            container.setClipToPadding(false);
             if (filesPage == null)
                 filesPage = new com.archos.mediacenter.video.leanback.files.FilesPage(getContext());
             if (filesPage.getParent() instanceof ViewGroup)
@@ -2867,6 +2883,15 @@ public final class PreviewPages extends FrameLayout {
                         com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
                 });
             filesPage.setMedia(media);
+            filesPage.setFolderActions(new com.archos.mediacenter.video.leanback.files.FolderBrowser.Actions() {
+                @Override public void details(Base item) {
+                    click.open(new Presenter.ViewHolder(container), item);
+                }
+
+                @Override public void fixMatch(Base item) {
+                    openFixMatch(item);
+                }
+            });
             filesPage.setStats(libraryStats());
             filesPage.setScanActions(() -> PreviewLibraryScan.request(getContext()),
                                      () -> PreviewLibraryScan.stop(getContext()));
@@ -2888,6 +2913,17 @@ public final class PreviewPages extends FrameLayout {
                 int unreadable = com.archos.mediacenter.video.leanback.files.FilesPageData.unreadable(app);
                 page.post(() -> page.setUnreadable(unreadable));
             }, "FilesUnreadable").start();
+        }
+
+        /** Files › Fix match for a title (the approved page under the top bar; Back returns here). */
+        private void openFixMatch(Base item) {
+            if (!(item instanceof Video))
+                return;
+            Intent intent = new Intent(
+                getContext(), com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.class);
+            intent.putExtra(com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.EXTRA_VIDEO,
+                            (Video)item);
+            getContext().startActivity(intent);
         }
 
         /** A storage's top folder: its own path, or the device's shared storage for "This device". */

@@ -1,16 +1,8 @@
 {
- "purpose": "round 12: Fix match white focus and keyboard, Reception captions wrap",
+ "purpose": "0.157.2 round 1: Files fills the page, focus never jumps, folder browser (list, sort, menus)",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review0157RenderTest",
-  "com.archos.mediacenter.video.player.Playback141RenderTest",
-  "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest.render1080p",
-  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest.moviePageDelegatesPlaybackAndRenders",
-  "com.archos.mediacenter.video.leanback.settings.Review0157SettingsRenderTest",
-  "com.archos.mediacenter.video.player.NextHudTest.rowAt1080p",
-  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
-  "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
-  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest.okOpensTheTrackListInsideThePanelAndBackReturns",
-  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest.playbackTabRowsAndControls"
+  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
+  "com.archos.mediacenter.video.leanback.Review0157RenderTest"
  ],
  "variants": {
   "normal": {}

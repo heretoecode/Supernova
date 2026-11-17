@@ -375,6 +375,21 @@ public final class PreviewDialog {
 
     public static Dialog choose(Context c, String title, String[] labels, int selected, Set<Integer> checked,
                                 boolean dismissOnSelect, IntConsumer action) {
+        return choose(c, title, labels, null, selected, checked, dismissOnSelect, null, action);
+    }
+
+    /**
+     * A menu beside the button that opened it (RULES §10; D1, F6, F16): an icon per item (no two alike), the tick on
+     * the right for the current choice, as wide as its longest item. Labels starting with "— " are group headings.
+     */
+    public static Dialog menu(Context c, View anchor, String title, String[] labels, String[] icons, int ticked,
+                              IntConsumer action) {
+        Set<Integer> checked = ticked < 0 ? Collections.emptySet() : Collections.singleton(ticked);
+        return choose(c, title, labels, icons, ticked, checked, true, anchor, action);
+    }
+
+    private static Dialog choose(Context c, String title, String[] labels, String[] icons, int selected,
+                                 Set<Integer> checked, boolean dismissOnSelect, View anchor, IntConsumer action) {
         Dialog d = create(c, "choice");
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = new LinearLayout(c);
@@ -439,8 +454,10 @@ public final class PreviewDialog {
                                    : title.equals(c.getString(com.archos.mediacenter.video.R.string.menu_subtitles))
                                        ? "Subtitles"
                                        : labels[i];
-                icon.setImageDrawable(PreviewGenres.known(iconLabel) ? new PreviewGenres.Icon(iconLabel)
-                                                                     : new PreviewIcon(iconLabel));
+                boolean own = icons != null && i < icons.length && icons[i] != null;
+                icon.setImageDrawable(own ? new PreviewIcon(icons[i])
+                                          : PreviewGenres.known(iconLabel) ? new PreviewGenres.Icon(iconLabel)
+                                                                           : new PreviewIcon(iconLabel));
                 row.addView(icon, new LinearLayout.LayoutParams(dp(c, 18), dp(c, 18)));
             }
             TextView label = new TextView(c);
@@ -510,6 +527,17 @@ public final class PreviewDialog {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = Math.max(dp(c, 14), screenWidth - width - Math.round(screenWidth * 28f / 960f));
         params.y = top;
+        if (anchor != null && anchor.isAttachedToWindow()) {
+            // Beside its button, never in a corner (D1): to the right if there is room, else left, below, above.
+            int[] at = new int[2];
+            anchor.getLocationOnScreen(at);
+            int[] place = PreviewMenuPlacement.place(width, menuHeight, at[0], at[1], at[0] + anchor.getWidth(),
+                                                     at[1] + anchor.getHeight(), screenWidth, screenHeight,
+                                                     dp(c, 14), dp(c, 8));
+            params.x = place[0];
+            params.y = place[1];
+            menuHeight = Math.min(menuHeight, place[3]);
+        }
         w.setAttributes(params);
         w.setDimAmount(.35f);
         // The search line sits above the list, so the list's own area is that much shorter.

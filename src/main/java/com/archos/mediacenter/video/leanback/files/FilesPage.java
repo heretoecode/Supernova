@@ -38,9 +38,20 @@ public final class FilesPage extends LinearLayout
     static final int SECOND_LINE = 0xFFC9D3E6;
     static final int LINE = 0x14FFFFFF;
 
+    /**
+     * Side margin (owner, 17 Nov 2026, F3): 96 px at 1080p, lined up with the top bar. Files fills the page itself;
+     * the margin is inside it, so a grown card or ring may reach into it and the scroll arrows sit there.
+     */
+    static final int SIDE_DP = 48;
+
     private final PageTabs tabs;
+    private final LinearLayout top;
     private final LinearLayout summary;
     private final FrameLayout body;
+    /** Holds focus for a moment while a tab's content is rebuilt, so it never jumps to the top bar (F9). */
+    private final View holder;
+    /** What was last focused in the content, so a return (from the player, from another page) lands there (F11). */
+    private View lastFocused;
     private LibraryCareCounts counts;
     private int videos;
     private long lastScanMs;
@@ -51,10 +62,15 @@ public final class FilesPage extends LinearLayout
         super(context);
         setOrientation(VERTICAL);
         setBackgroundColor(0xFF16181C);
+        setClipChildren(false);
+        setClipToPadding(false);
         // Content lines up with the top bar (mock-up network-files-tabs/39: 96px from the edge at 1080p).
-        int side = SupernovaStyle.dp(context, 20);
-        setPadding(side, SupernovaStyle.dp(context, 8), side, 0);
-        LinearLayout top = new LinearLayout(context);
+        int side = SupernovaStyle.dp(context, SIDE_DP);
+        setPadding(0, SupernovaStyle.dp(context, 8), 0, 0);
+        top = new LinearLayout(context);
+        top.setPadding(side, 0, side, 0);
+        top.setClipChildren(false);
+        top.setClipToPadding(false);
         top.setGravity(Gravity.CENTER_VERTICAL);
         tabs = new PageTabs(context, TABS, TAB_ICONS, this::show);
         top.addView(tabs, new LayoutParams(-2, -2));
@@ -62,15 +78,184 @@ public final class FilesPage extends LinearLayout
         summary = new LinearLayout(context);
         summary.setGravity(Gravity.CENTER_VERTICAL);
         top.addView(summary, new LayoutParams(-2, -2));
+        holder = new View(context);
+        holder.setFocusable(false);
+        top.addView(holder, new LayoutParams(1, 1));
         addView(top, new LayoutParams(-1, -2));
         View line = new View(context);
         line.setBackgroundColor(LINE);
-        addView(line, new LayoutParams(-1, Math.max(1, SupernovaStyle.dp(context, 1))));
+        LayoutParams lineSize = new LayoutParams(-1, Math.max(1, SupernovaStyle.dp(context, 1)));
+        lineSize.leftMargin = side;
+        lineSize.rightMargin = side;
+        addView(line, lineSize);
         body = new FrameLayout(context);
+        body.setClipChildren(false);
+        body.setClipToPadding(false);
         addView(body, new LayoutParams(-1, 0, 1));
         tabs.setDown(this::focusContent);
-        getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> tabs.refresh());
-        tabs.select(LIBRARY_CARE);
+        tabs.setReselected(index -> {
+            browsers.remove(index);
+            browser = null;
+            if (index == LIBRARY_CARE)
+            {
+                matchPage = false;
+            }
+            show(index);
+        });
+        getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> {
+            tabs.refresh();
+            if (after != null && after != holder && isInside(body, after))
+            {
+                lastFocused = after;
+            }
+        });
+        // Files opens on This Device every time (F2).
+        tabs.select(THIS_DEVICE);
+    }
+
+    /** Opening Files from the top bar: This Device, at its start (F2, F12). */
+    public void reset()
+    {
+        browsers.clear();
+        browser = null;
+        matchPage = false;
+        lastFocused = null;
+        tabs.select(THIS_DEVICE);
+    }
+
+    /** True when the remote is in the tab row, so Up goes on to the top bar (F1). */
+    public boolean atTop()
+    {
+        View focus = findFocus();
+        return focus == null || isInside(top, focus);
+    }
+
+    /**
+     * Back from anywhere on the page (also from the top bar): up one folder, or out of a page inside a tab.
+     * False when there is nothing to go back from.
+     */
+    public boolean back()
+    {
+        if (browser != null)
+        {
+            if (!browser.up())
+            {
+                browsers.remove(tabs.openTab());
+                browser = null;
+                show(tabs.openTab());
+            }
+            focusContent();
+            return true;
+        }
+        if (matchPage)
+        {
+            matchPage = false;
+            refreshMatches();
+            focusContent();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean onRequestFocusInDescendants(int direction, android.graphics.Rect previouslyFocusedRect)
+    {
+        // Coming back (from the player, Details or the top bar): to what was focused, else the first row.
+        if (lastFocused != null && lastFocused.isShown() && isInside(body, lastFocused) && lastFocused.requestFocus())
+        {
+            return true;
+        }
+        View first = body.findViewWithTag("files.row.first");
+        if (first == null)
+        {
+            first = body.findViewWithTag("files.folder.card");
+        }
+        if (first != null && first.isShown() && first.requestFocus())
+        {
+            return true;
+        }
+        return super.onRequestFocusInDescendants(direction, previouslyFocusedRect);
+    }
+
+    public static boolean isInside(View parent, View child)
+    {
+        for (View view = child; view != null; view = view.getParent() instanceof View ? (View) view.getParent() : null)
+        {
+            if (view == parent)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Parks focus while the content is rebuilt; true when it was in the content. */
+    private boolean park()
+    {
+        View focus = findFocus();
+        if (focus == null || !isInside(body, focus))
+        {
+            return false;
+        }
+        holder.setFocusable(true);
+        holder.setFocusableInTouchMode(true);
+        holder.requestFocus();
+        return true;
+    }
+
+    private void unpark(boolean parked, String key)
+    {
+        if (!parked)
+        {
+            return;
+        }
+        View again = key == null ? null : findByKey(body, key);
+        if (again != null && again.requestFocus())
+        {
+            holder.setFocusable(false);
+            return;
+        }
+        focusContent();
+        holder.setFocusable(false);
+        if (holder.isFocused())
+        {
+            tabs.tab(tabs.openTab()).requestFocus();
+        }
+    }
+
+    /** What identifies a focused view across a rebuild: its spoken name, else its words. */
+    private static String keyOf(View view)
+    {
+        if (view == null)
+        {
+            return null;
+        }
+        if (view.getContentDescription() != null)
+        {
+            return view.getContentDescription().toString();
+        }
+        return view instanceof TextView ? ((TextView) view).getText().toString() : null;
+    }
+
+    private static View findByKey(View view, String key)
+    {
+        if (view.isFocusable() && key.equals(keyOf(view)))
+        {
+            return view;
+        }
+        if (view instanceof android.view.ViewGroup)
+        {
+            android.view.ViewGroup group = (android.view.ViewGroup) view;
+            for (int index = 0; index < group.getChildCount(); index++)
+            {
+                View match = findByKey(group.getChildAt(index), key);
+                if (match != null)
+                {
+                    return match;
+                }
+            }
+        }
+        return null;
     }
 
     /** A place Supernova scans: this device's folders, or one network connection. */
@@ -220,16 +405,30 @@ public final class FilesPage extends LinearLayout
 
     private void show(int tab)
     {
-        browser = null;
+        View focus = findFocus();
+        String key = focus != null && isInside(body, focus) ? keyOf(focus) : null;
+        boolean parked = park();
         body.removeAllViews();
         showSummary();
+        browser = browsers.get(tab);
+        if (browser != null)
+        {
+            body.addView(browser, new FrameLayout.LayoutParams(-1, -1));
+            unpark(parked, key);
+            return;
+        }
         ScrollView scroll = new ScrollView(getContext());
         scroll.setClipToPadding(false);
+        scroll.setClipChildren(false);
+        scroll.setVerticalScrollBarEnabled(false);
         LinearLayout column = new LinearLayout(getContext());
         column.setOrientation(VERTICAL);
-        column.setPadding(0, SupernovaStyle.dp(getContext(), 24), 0, SupernovaStyle.dp(getContext(), 27));
+        column.setClipChildren(false);
+        int side = SupernovaStyle.dp(getContext(), SIDE_DP);
+        column.setPadding(side, SupernovaStyle.dp(getContext(), 24), side, SupernovaStyle.dp(getContext(), 27));
         scroll.addView(column);
         body.addView(scroll, new FrameLayout.LayoutParams(-1, -1));
+        body.addView(new ScrollArrows(getContext(), scroll, side), new FrameLayout.LayoutParams(-1, -1));
         if (tab == LIBRARY_CARE)
         {
             libraryCare(column);
@@ -246,22 +445,48 @@ public final class FilesPage extends LinearLayout
         {
             yourLibrary(column);
         }
+        unpark(parked, key);
     }
 
     private FolderBrowser browser;
+    /** The folder each tab is browsing, kept while moving along the tabs (F11); OK on the tab clears it (F12). */
+    private final java.util.Map<Integer, FolderBrowser> browsers = new java.util.HashMap<>();
 
     /** Opens a storage in the folder grid, under the tabs (mock-up network-files-tabs/32). */
     public void browse(android.net.Uri root, String name, FolderBrowser.Opener opener)
     {
+        browse(root, name, opener, folderActions);
+    }
+
+    private FolderBrowser.Actions folderActions;
+
+    /** What Details and Fix match in a file's menu open (supplied by the hosting page). */
+    public void setFolderActions(FolderBrowser.Actions actions)
+    {
+        folderActions = actions;
+    }
+
+    public void browse(android.net.Uri root, String name, FolderBrowser.Opener opener, FolderBrowser.Actions actions)
+    {
+        int tab = tabs.openTab();
+        boolean parked = park();
         browser = new FolderBrowser(getContext(), opener, () -> {
+            browsers.remove(tab);
             browser = null;
             show(tabs.openTab());
         });
+        browsers.put(tab, browser);
+        browser.setActions(actions);
         browser.setLibrary(media);
         body.removeAllViews();
         body.addView(browser, new FrameLayout.LayoutParams(-1, -1));
         browser.start(root, name);
         browser.requestFocus();
+        holder.setFocusable(false);
+        if (parked && !browser.hasFocus())
+        {
+            browser.requestFocus();
+        }
     }
 
     /** The library's figures for Files › Your Library. */
@@ -934,22 +1159,23 @@ public final class FilesPage extends LinearLayout
     @Override
     public boolean dispatchKeyEvent(android.view.KeyEvent event)
     {
-        if (browser != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK)
+        View focus = findFocus();
+        if (event.getAction() == android.view.KeyEvent.ACTION_DOWN
+            && event.getKeyCode() == android.view.KeyEvent.KEYCODE_DPAD_UP && focus != null && isInside(body, focus))
         {
-            if (event.getAction() == android.view.KeyEvent.ACTION_UP && !browser.up())
+            // Up out of the content lands on the open tab (F17), never on the scan button or the top bar (F9).
+            View next = focus.focusSearch(View.FOCUS_UP);
+            if (next == null || !isInside(body, next))
             {
-                browser = null;
-                show(tabs.openTab());
-                focusContent();
+                tabs.tab(tabs.openTab()).requestFocus();
+                return true;
             }
-            return true;
         }
-        if (matchPage && event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK)
+        if ((browser != null || matchPage) && event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK)
         {
             if (event.getAction() == android.view.KeyEvent.ACTION_UP)
             {
-                matchPage = false;
-                refreshMatches();
+                back();
             }
             return true;
         }
@@ -970,6 +1196,11 @@ public final class FilesPage extends LinearLayout
 
     private void focusContent()
     {
+        if (browser != null)
+        {
+            browser.requestFocus();
+            return;
+        }
         View first = body.findViewWithTag("files.row.first");
         if (first != null)
         {
