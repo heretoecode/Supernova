@@ -114,6 +114,22 @@ and how the owner works. **If you are new: read this file, then the "Start here"
     carousel dots. Tabs follow the focus-and-path rule above.
   - Missing information says "Unknown"; rows are never removed.
 
+## Definition of done (owner, 17 Nov 2026)
+
+0.157 and 0.157.1 shipped redesigned pages whose buttons still opened old NOVA and three-panel screens, ticked as
+done from still renders. From now on a redesigned page is done only when all of this holds:
+
+1. **One page sheet per page** in `docs/design/pages/` (e.g. `FILES.md`): its latest approved mock-ups, every element,
+   and **every action with where it leads**. Build from the sheet, not from the diaries; when a decision changes, the
+   sheet changes the same day. The sheet wins over older docs (`docs/design/NETWORK_FILES.md` and the like).
+2. **No old screens:** a test lists the NOVA and three-panel screens that may never open from a redesigned page; the
+   build fails if one does.
+3. **Every action pressed:** each row in the sheet's action list is checked with a render of where it leads (and its
+   focus), not only the page at rest. Focus never lands in the top bar unasked.
+4. **Realistic test data:** long names, several drives and connections, empty folders, items needing a look.
+5. **A plain "not built" list before every signing,** sent to the owner, so nothing missing is found on the Shield.
+6. **Smaller versions:** a page and everything behind it is finished before the next page starts.
+
 ## Who does what
 
 - **Claude:** everything the user sees (layouts, screens, focus, wording), integration of Codex's work, builds,
