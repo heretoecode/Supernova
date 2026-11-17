@@ -34,11 +34,11 @@ Empty tabs hide and the rest close up; all tabs are drawn at once, never popping
 ## Tabs
 - Plain words with icons; focus is the white box; the open tab's underline as RULES §3/§4. Moving along switches the
   tab at once. Up into the tab row lands on the open tab. Down from a tab goes to its first row.
-- **Details:** three columns with icon headings: Reception (IMDb, Rotten Tomatoes, Metacritic, TMDB, awards; icons,
+- **Details (one screen, no scrolling; owner, 17 Nov; mock-up `files-review-0157-1/06` B2):** three columns with icon headings: Reception (IMDb, Rotten Tomatoes, Metacritic, TMDB, awards; icons,
   no written names) · Key information · Technical information. Soft labels, white values, faint row lines, no column
   lines; "Unknown" for missing values. Then Cast and Crew: 2:3 portrait cards, rounded, artwork edge, name and role
-  underneath, initials when no photo, eight each. **Nothing focusable:** Down / Up scroll; one more Up returns to
-  the tabs.
+  underneath, initials when no photo, **seven each, Cast and Crew side by side** under the columns. Everything fits
+  on one 1080p screen (smaller text, tighter rows than `21`). **Nothing focusable;** Up returns to the tabs.
 - **Episodes:** on a show, one Home-style row per season (season heading lined up with the cards); on a season or
   episode, that season's episodes. Cards 16:9 with the caption box (title, one line, progress bar).
 - **Extras:** Home-row cards, one row per kind, Trailers first; most specific first (episode, season, show).
@@ -55,6 +55,7 @@ group then disappears).
 | Playback | Restart episode / Restart movie (only when started) |
 | Library | Mark as watched / Mark as unwatched · Fix match · Remove from library |
 | Files & Media | Subtitles · Artwork · Full description · Delete file |
+| (foot, set apart by a line) | TMDB page (QR icon) |
 
 ## Actions and where they lead
 
@@ -73,9 +74,10 @@ group then disappears).
 | Delete file | One warning in Supernova's design: name, text, switches for Supernova history and Trakt history (off), "Keep file" focused first, then Delete |
 | OK on a season heading | That season's page (not on single-season shows) |
 | OK on an episode card | That episode's page (To discuss on the roadmap: OK plays, long-press menu) |
-| OK on an Extras card | Plays that video |
+| TMDB page | Pop-up sized to its content: one line "Scan to open the TMDB page" and the QR code (170 px); the page blurred behind; Back closes (`files-review-0157-1/07`) |
+| OK on an Extras card | Plays the video nearly full screen with a small margin, the page blurred behind, no title bar and no player controls; Back closes |
 | OK on More Like This (library) | That title's Details page |
-| OK on More Like This (service) | The title in that service's app |
+| OK on More Like This (service) | The title in that service's app straight away (no Supernova page) |
 | Back | From deep in a tab: to the tab row first; then to where Details was opened from, focus restored |
 
 ## Never opens from Details

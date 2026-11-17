@@ -218,7 +218,7 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   `files-review-0157-1/05` (two layouts). **Owner (17 Nov): layout B (Cast and Crew side by side), with seven people
   each, larger portraits and roomier columns:** redrawn as B2 (`06`). New idea: a QR code to the title's TMDB page;
   two places drawn in `06`: (1) under Reception on the page, (2) More › TMDB page opens a pop-up with the one code
-  (RULES §20). Idea 2 drawn as a flow (`07`): More menu, TMDB page at its foot set apart by a line, then the pop-up
+  (RULES §20). **B2 approved 17 Nov** (seven each, larger portraits, roomier columns). Idea 2 drawn as a flow (`07`): More menu, TMDB page at its foot set apart by a line, then the pop-up
   with the page blurred behind; Back closes. **Approved 17 Nov** with one change: the pop-up has no title, only one
   line, "Scan to open the TMDB page", above the code (sized to its content).
 - **D19. Trailers (owner, 17 Nov):** play in the pop-up with no title bar (no "Open YouTube" / Close) and no YouTube
