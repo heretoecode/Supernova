@@ -1,5 +1,8 @@
 # 0.157.1 on the Shield: the owner's review (started 16 Nov 2026)
 
+**Plan (owner, 17 Nov):** fix as many bugs as possible in **0.157.2** before 0.158 starts. No new designs in 0.157.2,
+with one exception: the background (F27).
+
 The owner installed 0.157.1 (code 1571): "a lot better than it was; not perfect". Reviewed one redesigned area at a
 time (Files, then Details, Player, shared pieces). Numbered F1… for Files. "Decided" names where it was already
 settled; "To decide" waits for the owner. Photos are taken at an angle: alignment is checked in renders.
@@ -44,23 +47,28 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 
 ### To decide (Claude's recommendation in brackets)
 - **F15. Scroll bar:** owner (16 Nov): no scroll bar (a PC thing; nothing to click with a remote), but keep a sign
-  that there is more below; a row half on the screen already does it. [Lay pages out so a row always peeks at the
-  bottom edge when there is more, with a soft fade over it; no bar. Mock-up to follow.]
-- **F16. Long-press:** should a long-press of OK open the row's actions menu, as the Menu button does, everywhere
+  that there is more below. Soft fade **declined** (17 Nov): the half-cut row already shows it. Owner's idea: a sign in
+  the empty right-hand margin. Options drawn (`files-review-0157-1/02`): A one down arrow at the foot of the list;
+  B the arrow with how many are left; C up and down arrows (up faint at the top). Awaiting the owner's pick.
+- **F16. Long-press (approved 17 Nov, `files-review-0157-1/01`):** a folder's menu is Open · Add to library · Scan this
+  folder · Exclude; a file's stays Play · Details · Mark as watched · Exclude · Fix match.
+  Was: should a long-press of OK open the row's actions menu, as the Menu button does, everywhere
   (Files grid and list, libraries)? [Yes, one gesture app-wide. Release without holding still plays.]
 - **F17. Up always goes to the open tab** (owner, 16 Nov: agreed): from anywhere in a tab's content, Up into the tab
   row lands on the open tab, never the tab above the focus (today Connections or Library Care + Up opens Your
   Library). Rule for every tab row, Details included. To add to RULES §4.
 - **F18. Tab-row facts removed:** the summary on the right ("1,934 Videos · 3 To Check · …") repeats the Library Care
   badge, Library Health and Your Library, and won't fit as tabs grow. **Owner (16 Nov): remove; always keep a scan button
-  in the tab row, locked right** (until the room is needed for tabs); the badge stays. Replaces RULES §7b "Tab row facts" and v3/v6/v7. The latest design (v19, `network-files-tabs/44`,
+  in the tab row, locked right** (until the room is needed for tabs); the badge stays. **17 Nov:** "12 min ago" reads as
+  information, not a button: it says **"Scan library"** (every local and network source). While scanning it reads
+  "Scanning · 42%" (OK stops); the last scan time lives in Library Care › Recent scans. Replaces RULES §7b "Tab row facts" and v3/v6/v7. The latest design (v19, `network-files-tabs/44`,
   13 Nov) already shows only the scan button on the right ("⟳ 12 min ago": OK scans now, Stop while scanning; "Scanning
   Put.io · 42%" during a scan; §28 of the 0.157 notes). [Remove the facts on every tab; keep that scan button alone.]
 - **F19. "This device" row renamed "Internal storage"** (the tab is already This Device). [Yes.]
 
-- **F20. File captions (owner, 16 Nov):** title alone on line one (long titles end in "…"); line two "year · size"
+- **F20. File captions (approved 17 Nov):** title alone on line one (long titles end in "…"); line two "year · size"
   (e.g. "2024 · 14.2 GB"); size only when the year is unknown. In a folder view the size matters more than the year.
-  Replaces `32` (title and year).
+  Replaces `32` (title and year). Folders: count and In library / Excluded / Not added pill on every folder (approved).
 - **F21. Your Library › Picture: show every quality** (owner idea, 16 Nov): 4K, 1080p, 720p, SD and HDR, not only
   "% 4K · % HDR". (The 0% figures are right: 1 of 420 watched, two titles in 4K.)
 - **F22. Folder actions not drawn:** the row menu (`28`: Play · Details · Mark as watched · Exclude · Fix match) is for
@@ -68,16 +76,19 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 
 - **F23. Folders have no count and no pill:** a folder shows neither "86 videos" nor In library / Excluded / Not
   added. Approved (`32`, `02`): every folder has its count and its pill, like files.
-- **F24. Folder artwork:** no mosaic yet (see F8). Files not in the library: approved a still from the video where
-  one can be made (v4); owner to test what shows today.
+- **F24. Folder artwork:** no mosaic yet (see F8). Files not in the library have no TMDB artwork, so v4 approved a
+  picture taken from the video file itself (a frame from a few minutes in, like a thumbnail), or a plain card when one
+  can't be made. Owner to test what shows today.
 - **F25. Sort:** approved menu (`11`): Name A–Z / Z–A, Newest / Oldest first, Largest / Smallest first. Owner asks for
-  sort choices plus an ascending / descending button. Library pages already split them (Sort · Order). [Same here:
-  Sort by Name · Date modified · Size, and an Order button.]
+  sort choices plus an ascending / descending button. Library pages already split them (Sort · Order). Drawn (`files-review-0157-1/02` D):
+  Sort: Name · Date modified · Size, and an Order button beside it whose words follow the sort (A → Z / Z → A, Newest /
+  Oldest first, Largest / Smallest first). Awaiting the owner.
 - **F26. List view "not yet":** the fix pass for REVIEW_0157 #25 built the grid and stopped (QUESTIONS #14); it was
   left unfinished, not dropped. List is the default.
 - **F27. Background differs between pages:** Settings, Search and Files share one; Home and the library pages look
-  different. Expected for now: Home and library pages keep Space Black until their 0.158 redesign moves them to
-  charcoal (CLAUDE.md, 7 Nov). To confirm in the code.
+  different (no longer Space Black, but not the same either). **Owner (17 Nov): in 0.157.2, Home and the three library
+  pages get the same plain charcoal background as Files, so Settings, Search, Files, Home and every library page match
+  exactly.** Only the background changes; their redesigns stay in 0.158.
 - **F28. Screen went blank for a moment at about 23:39 local time,** then came back (no reload). For the diagnostics.
 
 ### Confirmed

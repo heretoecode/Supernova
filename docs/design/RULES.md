@@ -22,7 +22,9 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
 
 ## 1. Pages and background
 - **Every page is plain charcoal `#16181C`**, content straight on it, using the full width. No Space Black artwork, no
-  page panels (owner, 7 Nov; §18). Pages change over one by one, after each is reviewed on charcoal.
+  page panels (owner, 7 Nov; §18). Pages change over one by one, after each is reviewed on charcoal. **Exception
+  (owner, 17 Nov):** in 0.157.2 Home and the library pages take the same charcoal background now, ahead of their
+  0.158 redesigns, so every page matches.
 - No page title on a top-level page: the top bar already says where you are.
 - TV safe margins: about 56 px at the sides, 54 px at the bottom.
 - **Typing happens on a page,** not in a side panel: fields on one side, the keyboard on the page, help under it

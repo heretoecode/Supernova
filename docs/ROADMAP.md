@@ -86,6 +86,14 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 - Licences tidied
 - 0.157’s release notes written properly (grouped, one change a line)
 
+## 0.157.2
+
+Bug fixes only (owner, 17 Nov): as many as possible before 0.158. Findings in `docs/0.157/REVIEW_0157_1.md`.
+
+- Every Files bug from the 0.157.1 review (F1–F28 as decided)
+- Background: Home and the three library pages get the same plain charcoal as Files, Settings and Search (the one
+  exception to "no new designs"; their redesigns stay in 0.158)
+
 ## 0.158
 
 ### Redesigns
