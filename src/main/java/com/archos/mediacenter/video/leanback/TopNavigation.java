@@ -398,6 +398,7 @@ public final class TopNavigation extends LinearLayout {
     }
 
     /** A top-bar word centred on its letters. */
+    @android.annotation.SuppressLint("AppCompatCustomView")
     static final class BarWord extends TextView {
         BarWord(Context context) {
             super(context);
@@ -414,6 +415,7 @@ public final class TopNavigation extends LinearLayout {
     }
 
     /** The clock, in the bar's one font and centred on its digits like the words. */
+    @android.annotation.SuppressLint("AppCompatCustomView")
     static final class BarClock extends TextClock {
         BarClock(Context context) {
             super(context);
