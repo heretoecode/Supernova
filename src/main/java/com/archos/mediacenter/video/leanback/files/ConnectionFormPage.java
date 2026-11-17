@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.files;
 
+import com.archos.mediacenter.video.leanback.TvLayout;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -74,7 +75,7 @@ public final class ConnectionFormPage extends LinearLayout
         super(context);
         this.saved = saved;
         setOrientation(HORIZONTAL);
-        int side = dp(FilesPage.SIDE_DP);
+        int side = TvLayout.sideMargin(getContext());
         setPadding(side, dp(20), side, 0);
         setClipChildren(false);
         LinearLayout left = new LinearLayout(context);

@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.files;
 
+import com.archos.mediacenter.video.leanback.TvLayout;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -128,7 +129,7 @@ public final class FolderBrowser extends LinearLayout
         setOrientation(VERTICAL);
         setClipChildren(false);
         setClipToPadding(false);
-        int side = dp(FilesPage.SIDE_DP);
+        int side = TvLayout.sideMargin(getContext());
         LinearLayout header = new LinearLayout(context);
         header.setGravity(Gravity.CENTER_VERTICAL);
         header.setPadding(side, 0, side, 0);

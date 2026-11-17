@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.files;
 
+import com.archos.mediacenter.video.leanback.TvLayout;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -37,11 +38,8 @@ public final class FilesPage extends LinearLayout
     static final int SECOND_LINE = 0xFFC9D3E6;
     static final int LINE = 0x14FFFFFF;
 
-    /**
-     * Side margin (owner, 17 Nov 2026, F3): 96 px at 1080p, lined up with the top bar. Files fills the page itself;
-     * the margin is inside it, so a grown card or ring may reach into it and the scroll arrows sit there.
-     */
-    static final int SIDE_DP = 48;
+    // Side margin: TvLayout.sideMargin, the top bar's edges (owner, 18 Nov 2026). Files fills the page itself; the
+    // margin is inside it, so a grown card or ring may reach into it.
 
     private final PageTabs tabs;
     private final LinearLayout top;
@@ -63,8 +61,8 @@ public final class FilesPage extends LinearLayout
         setBackgroundColor(0xFF16181C);
         setClipChildren(false);
         setClipToPadding(false);
-        // Content lines up with the top bar (mock-up network-files-tabs/39: 96px from the edge at 1080p).
-        int side = SupernovaStyle.dp(context, SIDE_DP);
+        // Content lines up with the top bar's edges (one side margin, owner 18 Nov 2026; RULES §1).
+        int side = TvLayout.sideMargin(context);
         setPadding(0, SupernovaStyle.dp(context, 8), 0, 0);
         top = new LinearLayout(context);
         top.setPadding(side, 0, side, 0);
@@ -456,7 +454,7 @@ public final class FilesPage extends LinearLayout
         LinearLayout column = new LinearLayout(getContext());
         column.setOrientation(VERTICAL);
         column.setClipChildren(false);
-        int side = SupernovaStyle.dp(getContext(), SIDE_DP);
+        int side = TvLayout.sideMargin(getContext());
         column.setPadding(side, SupernovaStyle.dp(getContext(), 24), side, SupernovaStyle.dp(getContext(), 27));
         scroll.addView(column);
         body.addView(scroll, new FrameLayout.LayoutParams(-1, -1));

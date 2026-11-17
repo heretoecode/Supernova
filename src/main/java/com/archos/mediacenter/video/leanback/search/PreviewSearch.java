@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback.search;
 
 import android.app.Activity;
+import com.archos.mediacenter.video.leanback.TvLayout;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -110,7 +111,7 @@ public final class PreviewSearch extends LinearLayout {
         this.activity = activity;
         this.mode = mode;
         setOrientation(VERTICAL);
-        setPadding(dp(28), dp(8), dp(28), dp(14));
+        setPadding(TvLayout.sideMargin(getContext()), dp(8), TvLayout.sideMargin(getContext()), dp(14));
         setBackgroundColor(Color.TRANSPARENT);
         // Approved 0.156 Search (mock-ups search/01-07): one charcoal panel, keyboard left, results right.
         LinearLayout panel = new LinearLayout(activity);

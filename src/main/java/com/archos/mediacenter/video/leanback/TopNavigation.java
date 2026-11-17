@@ -74,7 +74,7 @@ public final class TopNavigation extends LinearLayout {
         bar.setClipChildren(true);
         bar.setClipToPadding(true);
         bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(dp(26), 0, dp(26), 0);
+        bar.setPadding(TvLayout.sideMargin(c), 0, TvLayout.sideMargin(c), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
         // 0.158 top bar (owner, 18 Nov 2026; RULES §2): no SUPERNOVA wordmark, the places start at the bar's edge.
         group = new PreviewFocusRail(c);

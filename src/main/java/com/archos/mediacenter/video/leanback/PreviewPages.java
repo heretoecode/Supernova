@@ -1062,7 +1062,7 @@ public final class PreviewPages extends FrameLayout {
         list.setClipChildren(false);
         list.setClipToPadding(false);
         setClipChildren(false);
-        list.setPadding(dp(28), dp(10), dp(28), dp(12));
+        list.setPadding(TvLayout.sideMargin(c), dp(10), TvLayout.sideMargin(c), dp(12));
         layout = new GridLayoutManager(c, 120) {
             @Override
             public boolean onRequestChildFocus(RecyclerView parent, RecyclerView.State state, View child,
@@ -1155,7 +1155,8 @@ public final class PreviewPages extends FrameLayout {
 
     public void setNavigationInset(int inset) {
         navigationInset = inset;
-        list.setPadding(dp(28), inset + (tab == 1 || tab == 2 ? 0 : dp(10)), dp(28), dp(12));
+        int side = TvLayout.sideMargin(getContext());
+        list.setPadding(side, inset + (tab == 1 || tab == 2 ? 0 : dp(10)), side, dp(12));
     }
 
     public void setScrollListener(Consumer<Boolean> listener) {

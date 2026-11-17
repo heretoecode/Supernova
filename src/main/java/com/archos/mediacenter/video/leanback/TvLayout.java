@@ -31,6 +31,14 @@ public final class TvLayout {
         return px(c, baseline * scale(c));
     }
 
+    /**
+     * One side margin (owner, 18 Nov 2026; RULES §1): the top bar's own edges. The bar's first word box starts here
+     * and the clock ends here; library pages, Files and Search line their content up with it. Home has none.
+     */
+    public static int sideMargin(Context c) {
+        return dimension(c, 26);
+    }
+
     public static int safeWidth(Context c) {
         return Math.max(1, px(c, width(c)) - 2 * dimension(c, 28));
     }
