@@ -111,6 +111,12 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
   while focus is elsewhere in the bar). No underlines in the top bar. Tabs on Details and Files stay as they are
   until the bar has proven itself. Mock-up `files-review-0157-1/08`. The freed space leaves room for more library
   pages. Coding settles loading (outline at once, artwork once you stop) and the exact shade.
+  Also (owner, 18 Nov): **one font for the whole bar** — the clock is drawn in the light weight ("sans-serif-light"
+  in `TopNavigation`) while the places are regular, which is why it looks skinnier; same font, weight and size for
+  every word and the clock. **Text centred on its letters:** labels are centred on the font's box (room kept for
+  accents above and descenders below), so words like "Documentaries" sit low with more space above; centre them on
+  the letters themselves. **Tools as words or icons:** options in `files-review-0157-1/09` (A words, B icon and word,
+  C icons); awaiting the owner.
 
 ### Also in 0.158
 - Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
