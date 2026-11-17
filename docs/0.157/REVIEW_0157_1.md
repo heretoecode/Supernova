@@ -215,8 +215,15 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
 ### To decide
 - **D18. Details tab on one screen (owner, 17 Nov):** no scrolling: Reception, Key information, Technical information,
   Cast and Crew all visible at once, with smaller text, tighter rows and smaller portraits. Mock-up
-  `files-review-0157-1/05` (two layouts).
+  `files-review-0157-1/05` (two layouts). **Owner (17 Nov): layout B (Cast and Crew side by side), with seven people
+  each, larger portraits and roomier columns:** redrawn as B2 (`06`). New idea: a QR code to the title's TMDB page;
+  two places drawn in `06`: (1) under Reception on the page, (2) More › TMDB page opens a pop-up with the one code
+  (RULES §20). Awaiting the owner.
 - **D19. Trailers (owner, 17 Nov):** play in the pop-up with no title bar (no "Open YouTube" / Close) and no YouTube
   controls; always the highest quality. Note: YouTube's embedded player can hide its controls; quality can only be
   requested (it follows the player's size), so the pop-up should be large enough for HD. Back closes it.
+  **Owner (17 Nov):** the video takes the space the title bar had (it plays at 720p today; a larger player should get
+  HD); nearly full screen with a small margin round it; the app behind is blurred, so it feels like a video on top of
+  the page; no buttons or controls at all.
+- **D20. Service logos are still monochrome** (More Like This and elsewhere). RULES §13: full colour, no background.
 
