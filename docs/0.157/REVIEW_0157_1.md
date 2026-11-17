@@ -118,11 +118,13 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   "WebDAV · 1,204 videos" underneath; the build shows the title only.
 - **F39. Add a connection, changed (owner, 17 Nov):** no inline type buttons and no extra button to name: the row
   itself opens the form (› on the right, RULES §8). The form starts with a **Type** row (Computer or NAS · WebDAV ·
-  SFTP · FTP, inline chips since there are four), and the fields below follow the type. Replaces v8's inline types
+  SFTP · FTP, inline chips since there are four), and the fields below follow the type. **Owner (17 Nov): "Computer or
+  NAS" renamed "Shared folders (SMB)"**, named by connection type like the others. Replaces v8's inline types
   (`06`). Mock-up `files-review-0157-1/04` (2). Awaiting the owner.
 - **F40. Found on your network opens to browse (owner, 17 Nov):** NOVA browses a found device straight away; Supernova
   should too. OK (Open) browses it in Files like a drive, asking for a username and password only if the device needs
-  them; **Add** saves it as a connection (form with address and type filled in). The › is right because OK opens it.
+  them; **Add** saves it as a connection (form with address and type filled in); once saved it moves up into Your
+  connections and leaves Found on your network (owner, 17 Nov; no "Added" rows). The › is right because OK opens it.
   Replaces `25` (Add only; its › on unfocused "New" rows was inconsistent). Mock-up `files-review-0157-1/04` (1).
 - **F41. Photos 00:25–00:27:** Open on a connection shows NOVA's "Library Sources" cards, then the old three-panel
   browser (F33); Add a connection shows "Saved Locations › Browse a network share", then the old pop-up and Android's
