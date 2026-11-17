@@ -388,6 +388,35 @@ public final class PreviewDialog {
         return choose(c, title, labels, icons, ticked, checked, true, anchor, action);
     }
 
+    /**
+     * A menu that drops down under the toolbar button that opened it (library pages: "menus open under the button
+     * pressed"), with any number of ticks and the focus on {@code focus}. A label of just "— " is a plain line that
+     * sets the foot action apart (RULES §10).
+     */
+    public static Dialog menuBelow(Context c, View anchor, String title, String[] labels, String[] icons,
+                                   Set<Integer> ticked, int focus, boolean dismissOnSelect, IntConsumer action) {
+        return menuBelow(c, anchor, title, labels, icons, ticked, focus, dismissOnSelect, false, action);
+    }
+
+    /** As above; {@code searchable} lists (genres, services) gain the search line above 12 items (RULES §9). */
+    public static Dialog menuBelow(Context c, View anchor, String title, String[] labels, String[] icons,
+                                   Set<Integer> ticked, int focus, boolean dismissOnSelect, boolean searchable,
+                                   IntConsumer action) {
+        dropBelow = true;
+        menuSearch = searchable;
+        try {
+            return choose(c, title, labels, icons, focus, ticked, dismissOnSelect, anchor, action);
+        } finally {
+            dropBelow = false;
+            menuSearch = true;
+        }
+    }
+
+    /** Set only while {@link #menuBelow} builds its menu. */
+    private static boolean dropBelow;
+    /** Grouped menus such as Sort never get the search line (RULES §9). */
+    private static boolean menuSearch = true;
+
     private static Dialog choose(Context c, String title, String[] labels, String[] icons, int selected,
                                  Set<Integer> checked, boolean dismissOnSelect, View anchor, IntConsumer action) {
         Dialog d = create(c, "choice");
@@ -418,7 +447,7 @@ public final class PreviewDialog {
         rows.setOrientation(android.widget.LinearLayout.VERTICAL);
         rows.setTag(CHOICE_ROWS);
         scroll.addView(rows);
-        TextView search = ChoiceListSearch.shown(labels) ? searchRow(c, title) : null;
+        TextView search = menuSearch && ChoiceListSearch.shown(labels) ? searchRow(c, title) : null;
         if (search != null)
             panel.addView(search, new LinearLayout.LayoutParams(-1, dp(c, 37)));
         panel.addView(scroll, new LinearLayout.LayoutParams(-1, -2));
@@ -428,6 +457,18 @@ public final class PreviewDialog {
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
             boolean group = labels[i].startsWith("— ");
+            if (labels[i].equals("— ")) {
+                // A single action at the foot is set apart by a plain line, no heading (RULES §10).
+                View line = new View(c);
+                line.setTag(i);
+                line.setBackgroundColor(SupernovaStyle.HEADING_LINE);
+                LinearLayout.LayoutParams lineSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(c, 1) / 2));
+                lineSize.topMargin = dp(c, 6);
+                lineSize.bottomMargin = dp(c, 6);
+                rows.addView(line, lineSize);
+                height += 13;
+                continue;
+            }
             boolean enabled = !group && !labels[i].endsWith(" (unavailable)") &&
                               !labels[i].endsWith(" — unavailable") && !labels[i].contains("Coming soon");
             if (group) {
@@ -527,7 +568,15 @@ public final class PreviewDialog {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = Math.max(dp(c, 14), screenWidth - width - Math.round(screenWidth * 28f / 960f));
         params.y = top;
-        if (anchor != null && anchor.isAttachedToWindow()) {
+        if (dropBelow && anchor != null && anchor.isAttachedToWindow()) {
+            // Under the toolbar button pressed, its left edge on the button's (library pages).
+            int[] at = new int[2];
+            anchor.getLocationOnScreen(at);
+            int below = at[1] + anchor.getHeight() + dp(c, 6);
+            params.x = Math.max(dp(c, 14), Math.min(at[0], screenWidth - width - dp(c, 14)));
+            params.y = below;
+            menuHeight = Math.min(menuHeight, screenHeight - below - dp(c, 14));
+        } else if (anchor != null && anchor.isAttachedToWindow()) {
             // Beside its button, never in a corner (D1): to the right if there is room, else left, below, above.
             int[] at = new int[2];
             anchor.getLocationOnScreen(at);

@@ -59,6 +59,33 @@ public class NoOldScreensTest
         assertTrue("Old screens reachable from Details: " + found, found.isEmpty());
     }
 
+    /**
+     * Never opens from a library page (LIBRARY.md): NOVA's old browse screens, the old Edit library / Edit page panel,
+     * the old long-press dialog, the Fix match side panel, Android's keyboard.
+     */
+    static final String[] NEVER_FROM_LIBRARY = {
+        "EditPagePanel", "PreviewMatchSearch", "InputMethodManager", "showSoftInput", "VideosByListActivity",
+        "CategoryBrowseFragment", "SeasonActivity", "contextMenu(", "PreviewDialog.choose(", "networkSection(",
+        "LibraryPageHeader",
+    };
+
+    @Test
+    public void libraryPagesNameNoOldScreen() throws IOException
+    {
+        List<String> found = new ArrayList<>();
+        String pages = read(Path.of("src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java"));
+        check("PreviewPages.library", between(pages, "// ---- 0.158 library page", "private TextView text("),
+              NEVER_FROM_LIBRARY, found);
+        String[] files = {"CustomLibraryActivity", "LibraryCustomisePanel", "LibraryFilters", "LibraryActions",
+                          "FloatingPanel", "UndoNotice"};
+        for (String file : files)
+        {
+            check(file, read(Path.of("src/main/java/com/archos/mediacenter/video/leanback/" + file + ".java")),
+                  NEVER_FROM_LIBRARY, found);
+        }
+        assertTrue("Old screens reachable from a library page: " + found, found.isEmpty());
+    }
+
     @Test
     public void filesHostOpensNoOldBrowserForADrive() throws IOException
     {

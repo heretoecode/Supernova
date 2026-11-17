@@ -26,6 +26,7 @@ import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.ArtworkEdge;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.archos.mediacenter.video.leanback.SupernovaStyle;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -51,8 +52,17 @@ public final class PreviewCardPresenter extends Presenter {
     public static final class Card extends BaseCardView {
         /** 400 to 440 px wide when focused. */
         public static final float FOCUS_SCALE = 1.1f;
+        /** Library posters: the whole card (artwork and caption) grows about 8% (page sheet LIBRARY.md). */
+        public static final float POSTER_FOCUS_SCALE = 1.08f;
+        /** The library poster's caption box: three lines under the artwork (`library-pages/27`). */
+        public static final int POSTER_CAPTION_DP = 50;
+        /** The caption box's charcoal grey (lighter than the page, darker than a focus box). */
+        public static final int POSTER_CAPTION_FILL = 0xFF23262C;
         public final ImageView image;
         final TextView title, subtitle;
+        /** Library posters: the line that follows the sort, and the tick on a watched title. */
+        TextView third;
+        ImageView tick;
         final LinearLayout caption;
         final ProgressBar progress;
         final Style style;
@@ -99,7 +109,7 @@ public final class PreviewCardPresenter extends Presenter {
             BaseCardView.LayoutParams bp = new BaseCardView.LayoutParams(width, height);
             bp.viewType = BaseCardView.LayoutParams.VIEW_TYPE_MAIN;
             if (style == Style.POSTER)
-                bp.height += dp(30);
+                bp.height += dp(POSTER_CAPTION_DP);
             bp.width = width;
             addView(body, bp);
             image = new ImageView(c);
@@ -122,12 +132,14 @@ public final class PreviewCardPresenter extends Presenter {
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
             title.setMaxLines(style == Style.CONTINUE ? 1 : 2);
             if (style == Style.POSTER) {
-                caption.setGravity(Gravity.CENTER_VERTICAL);
+                // Poster and caption are one card (owner, 13 Nov; RULES §14): a charcoal-grey box under the
+                // artwork, the title the only bright line.
+                caption.setGravity(Gravity.TOP);
                 title.setLines(1);
                 title.setTextSize(11);
                 title.setIncludeFontPadding(false);
-                caption.setPadding(dp(5), dp(3), dp(5), dp(2));
-                caption.setBackgroundColor(0xc00b1b29);
+                caption.setPadding(dp(7), dp(6), dp(7), dp(4));
+                caption.setBackgroundColor(POSTER_CAPTION_FILL);
             }
             title.setEllipsize(TextUtils.TruncateAt.END);
             caption.addView(title, new LinearLayout.LayoutParams(-1, -2));
@@ -137,11 +149,34 @@ public final class PreviewCardPresenter extends Presenter {
             subtitle.setIncludeFontPadding(false);
             subtitle.setSingleLine(true);
             subtitle.setEllipsize(TextUtils.TruncateAt.END);
-            caption.addView(subtitle, new LinearLayout.LayoutParams(-1, -2));
+            LinearLayout.LayoutParams secondSize = new LinearLayout.LayoutParams(-1, -2);
+            if (style == Style.POSTER) {
+                secondSize.topMargin = dp(3);
+                subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            }
+            caption.addView(subtitle, secondSize);
+            if (style == Style.POSTER) {
+                third = new TextView(c);
+                third.setTextSize(9);
+                third.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+                third.setIncludeFontPadding(false);
+                third.setSingleLine(true);
+                third.setEllipsize(TextUtils.TruncateAt.END);
+                LinearLayout.LayoutParams thirdSize = new LinearLayout.LayoutParams(-1, -2);
+                thirdSize.topMargin = dp(3);
+                caption.addView(third, thirdSize);
+                tick = new ImageView(c);
+                tick.setImageDrawable(new WatchedTick());
+                tick.setVisibility(View.GONE);
+                FrameLayout.LayoutParams tickSize = new FrameLayout.LayoutParams(dp(16), dp(16),
+                    Gravity.TOP | Gravity.END);
+                tickSize.setMargins(0, dp(7), dp(7), 0);
+                body.addView(tick, tickSize);
+            }
             FrameLayout.LayoutParams captionParams =
                 new FrameLayout.LayoutParams(-1, -2, style == Style.LIST ? Gravity.CENTER_VERTICAL : Gravity.BOTTOM);
             if (style == Style.POSTER)
-                captionParams.height = dp(30);
+                captionParams.height = dp(POSTER_CAPTION_DP);
             if (style == Style.LIST) {
                 caption.setPadding(0, 0, 0, 0);
                 title.setSingleLine(true);
@@ -163,7 +198,8 @@ public final class PreviewCardPresenter extends Presenter {
                 ColorStateList.valueOf(PreviewAccent.color(c)));
             progress.setProgressBackgroundTintList(ColorStateList.valueOf(0xff627386));
             FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(-1, dp(3), Gravity.BOTTOM);
-            pp.setMargins(dp(8), 0, dp(8), dp(5));
+            // Inset in the caption, never touching the ring (sheet).
+            pp.setMargins(dp(8), 0, dp(8), dp(style == Style.POSTER ? 4 : 5));
             body.addView(progress, pp);
             progress.setVisibility(View.GONE);
             setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
@@ -185,7 +221,7 @@ public final class PreviewCardPresenter extends Presenter {
             if (style == Style.POSTER) {
                 int w = getChildAt(0).getLayoutParams().width;
                 int poster = Math.round(w * 1.5f);
-                getChildAt(0).getLayoutParams().height = poster + dp(30);
+                getChildAt(0).getLayoutParams().height = poster + dp(POSTER_CAPTION_DP);
                 image.getLayoutParams().height = poster;
             }
             super.onMeasure(widthSpec, heightSpec);
@@ -228,9 +264,9 @@ public final class PreviewCardPresenter extends Presenter {
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
             image.setAlpha(1f);
             // One row card size: 400 × 225, focused 440 × 248 (RULES §14).
-            float scale = focused ? FOCUS_SCALE : 1f;
+            float scale = focused ? (style == Style.POSTER ? POSTER_FOCUS_SCALE : FOCUS_SCALE) : 1f;
             unit.animate().scaleX(scale).scaleY(scale).setDuration(140).start();
-            title.setTextColor(focused ? Color.WHITE : 0xffc0ccd6);
+            title.setTextColor(style == Style.POSTER || focused ? Color.WHITE : 0xffc0ccd6);
             // Poster names remain accessible without permanently covering the artwork.
             caption.setVisibility(View.VISIBLE);
         }
@@ -392,6 +428,74 @@ public final class PreviewCardPresenter extends Presenter {
                     trace.failed(error == null ? "unknown" : error.getClass().getSimpleName(), c.hasArtwork);
                 }
             });
+        }
+    }
+
+    /**
+     * A library poster's caption (RULES §14; `library-pages/27`): line two the size or progress, line three follows
+     * the sort, the inset bar for a started title and the tick on a watched one.
+     */
+    public static void bindLibraryCaption(ViewHolder holder, String second, String third, int progress,
+                                          boolean watched) {
+        Card c = (Card) holder.view;
+        if (c.style != Style.POSTER)
+            return;
+        c.subtitle.setText(second == null ? "" : second);
+        c.subtitle.setVisibility(View.VISIBLE);
+        c.subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        c.third.setText(third == null ? "" : third);
+        c.third.setVisibility(View.VISIBLE);
+        c.progress.setProgress(progress);
+        c.progress.setVisibility(progress > 0 ? View.VISIBLE : View.GONE);
+        c.progress.setProgressTintList(ColorStateList.valueOf(Color.WHITE));
+        c.progress.setProgressBackgroundTintList(ColorStateList.valueOf(0x40FFFFFF));
+        c.tick.setVisibility(watched ? View.VISIBLE : View.GONE);
+        StringBuilder words = new StringBuilder(c.title.getText());
+        if (second != null && !second.isEmpty())
+            words.append(", ").append(second);
+        if (third != null && !third.isEmpty())
+            words.append(", ").append(third);
+        if (watched)
+            words.append(", watched");
+        c.setContentDescription(words);
+    }
+
+    /** The tick on a watched poster: a white disc with a dark tick (`library-pages/27`). */
+    static final class WatchedTick extends android.graphics.drawable.Drawable {
+        private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+
+        @Override
+        public void draw(Canvas canvas) {
+            android.graphics.Rect b = getBounds();
+            float r = Math.min(b.width(), b.height()) / 2f;
+            paint.setStyle(android.graphics.Paint.Style.FILL);
+            paint.setColor(0xF2FFFFFF);
+            canvas.drawCircle(b.exactCenterX(), b.exactCenterY(), r, paint);
+            paint.setStyle(android.graphics.Paint.Style.STROKE);
+            paint.setStrokeWidth(r * .18f);
+            paint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
+            paint.setStrokeJoin(android.graphics.Paint.Join.ROUND);
+            paint.setColor(SupernovaStyle.FOCUS_TEXT);
+            Path tick = new Path();
+            tick.moveTo(b.left + r * .55f, b.top + r * 1.02f);
+            tick.lineTo(b.left + r * .88f, b.top + r * 1.35f);
+            tick.lineTo(b.left + r * 1.48f, b.top + r * .7f);
+            canvas.drawPath(tick, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
         }
     }
 
