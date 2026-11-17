@@ -16,6 +16,14 @@ For a fresh **discussion** session (designs, ideas, planning; no coding). Read `
 - Waiting for the owner: the diagnostics report (crashes about 23:09 and 23:14, blank screen about 23:39, 16 Nov);
   P4 (Playback Settings size); go-ahead to sign 0.157.2 when it is ready.
 
+## 18 Nov
+- 0.157.2 signed and installed (run 44020349261): much better. Owner: redesign first, then fix bugs on settled designs.
+- **0.158 = library pages, Home, Search** + the new top bar (approved, mock-ups `files-review-0157-1/08`, `09` A),
+  one side margin (the top bar's edges), connections by server, the full Player review. Settings and onboarding: 0.159.
+- **Page sheets ready for 0.158:** `docs/design/pages/LIBRARY.md`, `HOME.md`, `SEARCH.md` (plus FILES, DETAILS).
+  The owner won't critique Home or the library pages until the redesigns are built.
+- Next: the owner reads the sheets, then gives the go-ahead for 0.158; write its brief then.
+
 ## Earlier (16 Nov), still current
 ## Ready (designed and approved)
 - **Media Transfers** — complete: `docs/0.158/MEDIA_TRANSFERS.md`, mock-ups `docs/design/proposals/transfers-settings/`.
