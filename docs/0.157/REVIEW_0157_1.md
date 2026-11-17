@@ -94,5 +94,26 @@ settled; "To decide" waits for the owner. Photos are taken at an angle: alignmen
   exactly.** Only the background changes; their redesigns stay in 0.158.
 - **F28. Screen went blank for a moment at about 23:39 local time,** then came back (no reload). For the diagnostics.
 
+### Connections tab (17 Nov, from about 00:13)
+- **F29. The Reachable pill jumps left on the focused row** to make room for the buttons. Approved (`04`): the pills
+  sit in one fixed column on every row, focused or not (RULES §7).
+- **F30. Row buttons wrong:** Open's icon is invisible; Edit and Remove icons are white on the light buttons; Edit has
+  a list icon (approved: pencil); Test is missing. Approved (`04`): Open · Edit · Test · Remove, icons inverting with
+  the text (RULES §12). Focused-row text and pill are grey, not black (see F13).
+- **F31. Remove empties the page** (about 00:24): only the top bar is left; Up goes to Documentaries; choosing Files
+  again brings it back. Approved (`24`): the row goes at once with an Undo notice.
+- **F32. Edit does the same** (page vanishes). Approved (`08`): the connection's form as a page in the tab.
+- **F33. Open shows an old NOVA screen, then the old three-panel browser.** Approved (`16`): the connection opens in
+  Files like a drive (breadcrumb, list / grid).
+- **F34. Add a connection opens NOVA's "Browse network share" page, then the old "Add a network source" pop-up** with
+  Android's keyboard and old Show password · Save password · Cancel · OK. Approved (v8): focusing Add a connection
+  shows the types inline on its row (Computer or NAS · WebDAV · SFTP · FTP); each opens its form page with the one
+  keyboard (RULES §15: Phone key, eye on password), Test connection and Save and browse (`08`, drawn before the
+  keyboard rule: the app uses the one keyboard).
+- **F35. Found on your network: every device opens the same NOVA page.** Approved (`25`): the focused device shows
+  Add, which opens the form with its address filled in; already added ones say Added.
+- **F36. Scroll arrows everywhere (owner, 17 Nov):** option C (F15) is the rule app-wide; no scroll bars anywhere.
+- **F37. Your Library:** looks right (read-only, nothing focusable) apart from the scroll bar (F36).
+
 ### Confirmed
 - The breadcrumb ("Backup 1 › … › Movies") is a signpost, not focusable; Back goes up one level (v6, 6 Nov).
