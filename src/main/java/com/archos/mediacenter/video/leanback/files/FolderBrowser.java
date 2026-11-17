@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -989,6 +990,15 @@ public final class FolderBrowser extends LinearLayout
         {
             pictures.add(((Video) inLibrary).getPreviewBackdrop().toString());
         }
+        boolean still = pictures.isEmpty() && !folder && playable && "file".equals(file.getUri().getScheme());
+        if (still)
+        {
+            // A video on this device that isn't in the library: a still taken from it (F24), the plain card meanwhile.
+            ImageView frame = new ImageView(getContext());
+            frame.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            card.addView(frame, new FrameLayout.LayoutParams(-1, -1));
+            requestStill(file.getUri().getPath(), frame);
+        }
         if (pictures.isEmpty())
         {
             TextView icon = new TextView(getContext());
@@ -1049,6 +1059,72 @@ public final class FolderBrowser extends LinearLayout
         });
         wire(card, file, inLibrary);
         return card;
+    }
+
+    private static final ExecutorService STILLS = Executors.newSingleThreadExecutor();
+    private static final android.util.LruCache<String, android.graphics.Bitmap> STILL_CACHE =
+        new android.util.LruCache<>(48);
+
+    /** A frame from a tenth of the way in, 480 px wide, made off the main thread and kept for the session. */
+    private void requestStill(String path, ImageView frame)
+    {
+        android.graphics.Bitmap known = STILL_CACHE.get(path);
+        if (known != null)
+        {
+            frame.setImageBitmap(known);
+            return;
+        }
+        int asked = generation;
+        STILLS.submit(() -> {
+            android.graphics.Bitmap made = null;
+            android.media.MediaMetadataRetriever retriever = new android.media.MediaMetadataRetriever();
+            try
+            {
+                retriever.setDataSource(path);
+                String length = retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION);
+                long at = length == null ? 60_000_000L : Long.parseLong(length) * 100L;
+                android.graphics.Bitmap whole = retriever.getFrameAtTime(
+                    at, android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                if (whole != null && whole.getWidth() > 0)
+                {
+                    int height = Math.max(1, Math.round(480f * whole.getHeight() / whole.getWidth()));
+                    made = android.graphics.Bitmap.createScaledBitmap(whole, 480, height, true);
+                }
+            }
+            catch (RuntimeException unreadable)
+            {
+                made = null;
+            }
+            finally
+            {
+                try
+                {
+                    retriever.release();
+                }
+                catch (Exception ignored)
+                {
+                    // Nothing to release.
+                }
+            }
+            android.graphics.Bitmap result = made;
+            if (result == null)
+            {
+                return;
+            }
+            STILL_CACHE.put(path, result);
+            main.post(() -> {
+                if (asked == generation)
+                {
+                    frame.setImageBitmap(result);
+                    View icon = ((ViewGroup) frame.getParent()).getChildAt(
+                        ((ViewGroup) frame.getParent()).indexOfChild(frame) + 1);
+                    if (icon instanceof TextView)
+                    {
+                        icon.setVisibility(GONE);
+                    }
+                }
+            });
+        });
     }
 
     /** One picture fills the card; two to four share it in a grid. */
