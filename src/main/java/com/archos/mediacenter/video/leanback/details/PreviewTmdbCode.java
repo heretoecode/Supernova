@@ -49,7 +49,11 @@ public final class PreviewTmdbCode
         line.setText(LINE);
         line.setTextSize(16);
         line.setTextColor(Color.WHITE);
+        line.setSingleLine(true);
         panel.addView(line);
+        // Sized to its content: at least as wide as its one line.
+        int lineWidth = Math.round(line.getPaint().measureText(LINE));
+        panel.setMinimumWidth(lineWidth + 2 * pad);
         ImageView image = new ImageView(context);
         image.setImageBitmap(code);
         int size = SupernovaStyle.dp(context, 85);
@@ -62,7 +66,8 @@ public final class PreviewTmdbCode
         if (window != null)
         {
             window.setBackgroundDrawableResource(android.R.color.transparent);
-            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setLayout(lineWidth + 2 * pad + SupernovaStyle.dp(context, 8),
+                             WindowManager.LayoutParams.WRAP_CONTENT);
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             window.setDimAmount(0.45f);
             if (Build.VERSION.SDK_INT >= 31)
