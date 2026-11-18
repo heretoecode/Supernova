@@ -37,18 +37,45 @@ jobs:
         run: |
           python3 - <<'PY'
           import pathlib
+          # Streamed line by line: a hung test can leave a log of several gigabytes.
           for path in sorted(pathlib.Path('evidence').rglob('*conformance.log')):
-              lines=path.read_text(errors='replace').splitlines()
               count=0
               seen=set()
-              for i,line in enumerate(lines):
-                  text=line.strip()
-                  if (' error: ' in text or text.endswith('FAILED')) and text not in seen:
-                      seen.add(text)
-                      count+=1
-                      print('E| '+text[-330:])
-                      if ' error: ' in text and i+1 < len(lines): print('     '+lines[i+1].strip()[:200])
+              previous_error=False
+              with path.open(errors='replace') as log:
+                  for line in log:
+                      text=line.strip()
+                      if previous_error:
+                          print('     '+text[:200])
+                          previous_error=False
+                      if (' error: ' in text or text.endswith('FAILED')) and text not in seen and count < 300:
+                          seen.add(text)
+                          count+=1
+                          print('E| '+text[-330:])
+                          previous_error=' error: ' in text
               print(f'{count} compile error or failed-task lines in {path.name}')
+      - name: Print where hung tests were (watchdog thread dumps)
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          # The conformance watchdog dumps every test JVM after 50 minutes; print each test thread's app frames.
+          for path in sorted(pathlib.Path('evidence').rglob('*.txt')) + sorted(pathlib.Path('evidence').rglob('*.log')):
+              shown=0
+              block=[]
+              with path.open(errors='replace') as log:
+                  for line in log:
+                      if line.startswith('"'):
+                          if any('com.archos' in b for b in block) and ('Test worker' in block[0] or 'main' in block[0]):
+                              print('T| '+path.name+' '+block[0].strip()[:120])
+                              for b in [b for b in block if 'com.archos' in b][:25]:
+                                  print('     '+b.strip()[:200])
+                              shown+=1
+                          block=[line]
+                          if shown >= 12:
+                              break
+                      elif block:
+                          block.append(line)
+          PY
           PY
       - name: Print failing tests only
         run: |
