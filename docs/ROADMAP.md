@@ -41,7 +41,11 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   enough. [One height and fully rounded ends for every small box on a row (buttons, pills, chips, tab and top-bar
   focus), tighter side padding; fill tells an action from information. Large things (rows, cards, heroes) keep
   their gentler corners.] Owner: the matched shapes look more uniform; corner strength A 12 · B 20 · C fully
-  round compared; **owner, 18 Nov: B (20 px)**. Density compared next (`tv3-1`–`3`: 13, 20, 26 grains per 1,000 px).
+  round compared; **owner, 18 Nov: B (20 px)**. Density compared (`tv3-1`–`3`: 13, 20, 26 grains per 1,000 px): **owner, 18 Nov: 20, the current one (`tv3-2`)**;
+  26 still too much. Base `#111215`; grains mostly 7–22% white, about 1 in 7 brighter (45%); fixed seed; no pane.
+  For coding: one shared drawable through `PreviewUtilityBackground` (today it paints charcoal), drawn once at the
+  screen's own size, no filtering; pages that paint their own charcoal (Files, folder browser, top bar's solid
+  strip, the library pages' fade under the top bar) switch to it; panels, menus and caption boxes stay solid.
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
