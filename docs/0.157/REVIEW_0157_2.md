@@ -133,6 +133,17 @@ where the owner must decide.
   balanced lines; at most two lines, shrinking if needed. **Logo placement is often wrong** (owner): the owner will
   send photos; likely causes are empty space inside the logo image, scaling to a fixed width, and no fixed anchor.
   [Trim the empty space, fit each logo to a box by its shape, pin it bottom-left on the details line.]
+  **Owner's photos (18 Nov evening, three Home / Details heroes):**
+  - A wide, spaced logo is scaled to fill the width: far too big, with a large empty gap under it, so the details
+    line floats low. Pale logo on bright artwork with no shade behind it: hard to read.
+  - Two tall, stacked logos are scaled by height: tall towers, each a different weight from the next.
+  - The details line moves from title to title, so it jumps as the Home hero cross-fades.
+  - **Proposed fix (drawn, picture kept out of the repo):** trim the logo's empty space; fit every logo to the same
+    area inside a 900 × 240 box (wide ones capped by width, tall ones by height); its foot on one line 24 px above
+    the details line, so the details line is in the same place for every title; a soft dark shade from the left
+    behind the text block on bright artwork.
+  - Also seen: **two heroes show a tagline** instead of the description (RULES §14: no tagline anywhere); the focused
+    "More info" has grey text on the white box (RULES §3: black). Home is rebuilt in 0.158 part A: check both there.
 - **R2. Third library page:** a solid bar behind the top bar when scrolling (Movies and TV Shows blur). The same page
   code should behave the same (check after 0.158's library pages).
 - **R3. Season Details pages have no artwork** (seasons 2 and 3 of one show; another show likewise). Use the season's
