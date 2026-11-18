@@ -342,7 +342,7 @@ public class Supernova138UiTest {
             filters.requestFocus();
             filters.performClick();
             Dialog dialog = ShadowDialog.getLatestDialog();
-            assertNotNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Clear Filters"));
+            assertNotNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Clear filters"));
             assertNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Page Details"));
             assertEquals(0, edited[0]);
             dialog.cancel();

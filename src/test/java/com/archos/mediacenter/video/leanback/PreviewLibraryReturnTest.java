@@ -46,14 +46,14 @@ public class PreviewLibraryReturnTest {
             // 60 records sorted newest first, plus the summary and toolbar cells.
             int position=28;layout.scrollToPositionWithOffset(position,120);PreviewPagesTest.layout(container);
             View item=list.findViewHolderForAdapterPosition(position).itemView;assertEquals("v34",item.getTag());assertTrue(item.requestFocus());settle(container);
-            int top=item.getTop();int first=layout.findFirstVisibleItemPosition();assertTrue(first>2);assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(position));
+            int top=item.getTop();int first=layout.findFirstVisibleItemPosition();assertTrue(first>2);assertEquals(table?PreviewPages.SPANS:PreviewPages.SPANS/PreviewPages.POSTERS_A_ROW,layout.getSpanSizeLookup().getSpanSize(position));
             item.performClick();assertEquals(34,opened[0]);
             child.setVisibility(View.VISIBLE);assertTrue(child.requestFocus());assertFalse(pages.hasFocus());
             pages.setSnapshot(snapshot(true));PreviewPagesTest.layout(container);assertSame(child,container.findFocus());
             child.setVisibility(View.GONE);pages.requestFocus();settle(container);
             assertNotNull(pages.findFocus());assertEquals("v34",pages.findFocus().getTag());
             View restored=list.findContainingItemView(pages.findFocus());assertEquals("Centred row may round by one pixel",top,restored.getTop(),1);assertEquals(first,layout.findFirstVisibleItemPosition());
-            assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
+            assertEquals(table?PreviewPages.SPANS:PreviewPages.SPANS/PreviewPages.POSTERS_A_ROW,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
         }finally{host.pause().stop().destroy();}
     }
     private void settle(View root){for(int i=0;i<6;i++){PreviewPagesTest.layout(root);Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));}}
