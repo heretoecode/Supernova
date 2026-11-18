@@ -346,6 +346,7 @@ public class FoundationHomeRegressionTest {
             assertEquals("Film 24", title);
             assertTrue(pages.findViewWithTag("hero:info").requestFocus());
             assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_RIGHT));
             for (int i = 0; i < 8; i++)
                 PreviewPagesTest.layout(pages);
             assertEquals("Film 23", ((TextView) pages.findViewWithTag("semantic:featured.title")).getText().toString());
