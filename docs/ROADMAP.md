@@ -32,6 +32,14 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   black-sand beach: a darker base with fine, faint white grains, fixed to the screen (never moving or shimmering),
   for the whole app. Also hides banding in dark gradients. Mock-ups `background-speckle/01` faint (today's
   charcoal), `02` medium (darker), `03` strong (darkest, closest to the sand); owner to judge on the TV
+  **On the TV (owner, 18 Nov):** medium liked on Files, Settings and Home ("distant stars"; even, no light and dark
+  patches); text pops more than on charcoal; plain speckle on its own may be a little busy. Asks: a panel or outline
+  behind the lists on Files and Settings? (RULES §1 today: no page panels.) 4K versions offered.
+- **Buttons, pills and focus boxes (owner, 18 Nov):** the focused Open button is bigger and less rounded than the
+  Reachable pill beside it; focus boxes round words (Files, Connections, Open) feel too big with corners not rounded
+  enough. [One height and fully rounded ends for every small box on a row (buttons, pills, chips, tab and top-bar
+  focus), tighter side padding; fill tells an action from information. Large things (rows, cards, heroes) keep
+  their gentler corners.]
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
