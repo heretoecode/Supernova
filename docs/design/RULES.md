@@ -297,7 +297,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   original titles, TMDB / IMDb / TVDB / Trakt numbers (Files v11).
 
 ## 16. Moving around (remote behaviour)
-- Back from the middle of a long page first jumps to the top, then to the top bar (§23.3).
+- **Back and page position (owner, 18 Nov; replaces "Back first jumps to the top, then to the top bar", §23.3):**
+  Back from anywhere on a top-level page goes straight to the top bar; the page stays where it was underneath, so
+  Down returns to it. **Opening another page and coming back starts that page at its top.** Going deeper and back
+  (a poster → Details → Back) returns to the item you came from, focus on it.
 - **Reopening (owner, 18 Nov):** after the app was closed fully it opens on Home; when it was only in the background
   it returns where you left it, focus restored. (Replaces: reopen where you were after Android ends it, §23.2.)
 - **Age rating (owner, 18 Nov):** the badge is always the first item of a title's details line (Preparing playback,
@@ -411,6 +414,8 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - Settled 12–13 Nov: Details headings (icons, no underline) and Details lines (faint row lines, no column lines).
 
 ## Replaced rules (do not use)
+- Back from the middle of a long page first jumps to the top, then to the top bar → straight to the top bar; a page
+  left for another page reopens at its top (§16, 18 Nov).
 - Plain charcoal `#16181C` behind every page → the speckled background, §1 (18 Nov; from 0.158 part B).
 - Navy glass at 97% with a light outline for panels → 90% `#16181C`, no outline (5 Nov).
 - White outline as row focus; blue glow focus → filled white box (5 Nov).

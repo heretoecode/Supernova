@@ -312,6 +312,11 @@ is ever wanted back.
     Guest; Guest can't delete files, change Settings, edit tags or connections; **Clear guest** in the user menu wipes
     the guest's progress and list when they leave (like deleting a streaming profile); switching away from Guest is
     open to anyone unless the owner later wants a PIN.] Needs a mock-up.
+    **Owner agreed (18 Nov):** Trakt off for Guest; Guest watches anything but can't change Settings, delete, or edit
+    tags or connections; the options stay where they are and pressing one shows a short notice ("Not available for
+    Guest"); **Clear guest** resets it without deleting the user.
+  - **"Watch without Alex?" stays** (round 7, `06-v6-01`): opening a Together title alone asks Wait for Alex · Watch
+    now · We're both here.
 
 ## Panels whose rows change with a choice (owner, 16 Nov 2026)
 - Idea from the Trakt list row: a choice at the top of a panel ("Row from: Your library · Trakt list") swaps the rows
