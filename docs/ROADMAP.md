@@ -34,12 +34,14 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   charcoal), `02` medium (darker), `03` strong (darkest, closest to the sand); owner to judge on the TV
   **On the TV (owner, 18 Nov):** medium liked on Files, Settings and Home ("distant stars"; even, no light and dark
   patches); text pops more than on charcoal; plain speckle on its own may be a little busy. Asks: a panel or outline
-  behind the lists on Files and Settings? (RULES §1 today: no page panels.) 4K versions offered.
+  behind the lists on Files and Settings? Tried in 4K (`tv2-1`–`4`); **decided (owner, 18 Nov): no pane**: text pops
+  more straight on the speckle, washed out on the pane (RULES §1 stands). Lighter grain (a third fewer) in `tv2`.
 - **Buttons, pills and focus boxes (owner, 18 Nov):** the focused Open button is bigger and less rounded than the
   Reachable pill beside it; focus boxes round words (Files, Connections, Open) feel too big with corners not rounded
   enough. [One height and fully rounded ends for every small box on a row (buttons, pills, chips, tab and top-bar
   focus), tighter side padding; fill tells an action from information. Large things (rows, cards, heroes) keep
-  their gentler corners.]
+  their gentler corners.] Owner: the matched shapes look more uniform; corner strength A 12 · B 20 · C fully
+  round being compared.
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
