@@ -147,6 +147,12 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 ### Also in 0.158
 - Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
 
+### 0.158 part B (owner, 18 Nov)
+- **First, the new look, so everything after it is checked on it:** the speckled background app-wide (density 20,
+  `background-speckle/tv3-2`, no pane) and one shape for every small box (buttons, pills, chips, tab and top-bar
+  focus: one height, 20 px corners, tighter padding; `tv3-*`). Recipe under To discuss › Background speckle.
+- Then the owner's 0.157.2 review (`docs/0.157/REVIEW_0157_2.md`), Playback Settings first.
+
 ## 0.159
 
 - Settings (seven tabs, Backup and Restore, Diagnostics, About): set aside by the owner (18 Nov); the current
