@@ -62,6 +62,8 @@ public final class PreviewSearch extends LinearLayout {
         int rank;
         long showId;
         boolean people;
+        /** For a person match, who and why: "Taylor Sheridan · director" (SEARCH.md). */
+        String reason = "";
 
         Result(Video video, String genres) {
             this.video = video;
@@ -644,6 +646,17 @@ public final class PreviewSearch extends LinearLayout {
                                         PreviewSearchText.rankFields(value, Collections.emptyList(), searchable,
                                                                      "") > 0;
                         result.showId = longCell(cursor, VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID);
+                        if (result.people) {
+                            List<String> columns = new ArrayList<>();
+                            List<String> values = new ArrayList<>();
+                            for (String column : extra)
+                                if (!column.endsWith("genres") &&
+                                    !column.equals(VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID)) {
+                                    columns.add(column);
+                                    values.add(cell(cursor, column));
+                                }
+                            result.reason = reason(value, columns, values);
+                        }
                         found.add(result);
                     }
                 }
@@ -684,6 +697,8 @@ public final class PreviewSearch extends LinearLayout {
                             if (rank > 0) {
                                 Result result = new Result(show, "");
                                 result.rank = rank;
+                                result.reason = reason(value, Arrays.asList("actors", "studio"),
+                                                       Arrays.asList(show.getActors(), show.getStudio()));
                                 result.people = PreviewSearchText.rankFields(value, titles,
                                                                              Collections.emptyList(), "") == 0 &&
                                                 PreviewSearchText.rankFields(value, Collections.emptyList(),
@@ -910,6 +925,30 @@ public final class PreviewSearch extends LinearLayout {
      * Pills in a fixed column (RULES §7; sheet): "Resume S5 E3" (or "Resume" for a film), "Watched", "Unwatched";
      * plain text in a thin outline, no colour; never "In library" (the heading says so).
      */
+    /**
+     * Who matched and as what (SEARCH.md: "Taylor Sheridan · creator"): the first name in cast, crew or studio that the
+     * typed words find, with its role from the field.
+     */
+    static String reason(String typed, List<String> columns, List<String> values) {
+        for (int i = 0; i < columns.size() && i < values.size(); i++) {
+            String value = values.get(i);
+            if (value == null || value.trim().isEmpty())
+                continue;
+            for (String part : value.split("[,|]")) {
+                String name = part.replaceAll("\\(.*?\\)", "").trim();
+                if (name.isEmpty() || PreviewSearchText.rank(typed, name) <= 0)
+                    continue;
+                String column = columns.get(i).toLowerCase(Locale.ROOT);
+                String role = column.contains("director") ? "director"
+                              : column.contains("writer") ? "writer"
+                              : column.contains("studio") ? "studio"
+                                                          : "cast";
+                return name + " · " + role;
+            }
+        }
+        return "";
+    }
+
     private void bindPill(TextView pill, Video video) {
         android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
         shape.setCornerRadius(dp(12));
@@ -1006,7 +1045,8 @@ public final class PreviewSearch extends LinearLayout {
                 String seasons = show.getSeasonCount() > 0
                                      ? show.getSeasonCount() + (show.getSeasonCount() == 1 ? " season" : " seasons")
                                      : "";
-                h.metadata.setText(details("TV show", 0, seasons, ""));
+                h.metadata.setText(r.reason.isEmpty() ? details("TV show", 0, seasons, "")
+                                                      : r.reason + " · " + details("TV show", 0, seasons, ""));
                 h.pill.setVisibility(GONE);
                 if (show.getPosterUri() != null)
                     ArtworkRequest.load(
@@ -1039,7 +1079,8 @@ public final class PreviewSearch extends LinearLayout {
             } else {
                 int year = video instanceof Movie ? ((Movie)video).getYear() : 0;
                 h.title.setText(withYear(highlighted(video.getName(), typed), year));
-                h.metadata.setText(details("Film", minutes, PreviewVariants.label(video), r.genres));
+                String about = details("Movie", minutes, PreviewVariants.label(video), r.genres);
+                h.metadata.setText(r.reason.isEmpty() ? about : r.reason + " · " + about);
             }
             bindPill(h.pill, video);
             Uri art = video instanceof Episode ? ((Episode)video).getPictureUri() : video.getPosterUri();
