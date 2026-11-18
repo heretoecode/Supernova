@@ -26,6 +26,7 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 - Playback Settings panel looks different from the mock-up even over a black, paused frame (owner, 18 Nov). The code
   has the same fill (charcoal at 95%) but adds a light edge and a dark glow, and still holds old blue colours; compare
   side by side with a photo (review P6)
+- Title logo artwork vs one font for every title (owner idea, 18 Nov; mock-up `review-0157-2/01` 5)
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157

@@ -29,7 +29,8 @@ where the owner must decide.
   every card has the edge; focus thickens it.
 - **PL7. Seek previews don't work** and the switch can't be found in Settings. The seek card shows the chapter's
   picture, or grey. Diagnostics: 109 preview errors (X3). The switch exists: Settings › System › Advanced › "Seek
-  previews (experimental)" (hard to find). Fix the engine; move the switch to the player settings with 0.159.
+  previews (experimental)" in the code, but **it isn't there on the Shield** (owner checked System › Advanced, 18 Nov):
+  the code lists it under Advanced › Video Compatibility, yet the page doesn't show it. Bring it back; fix the engine.
 - **PL8. Skip button** is larger than Settings and doesn't sit in line with the controls. Approved (`player/29`, `30`):
   alone on screen it sits in its place; with controls shown it joins their line and the seek bar shortens.
 - Working: soft dark fade behind the controls; seek card no longer cut off by subtitles; Episodes row; Chapters have
@@ -60,7 +61,8 @@ where the owner must decide.
 - **DT3. Invisible frame still clips** focused cards at both sides on Episodes; rows should run off the edges (D6).
 - **DT4. Gap from a season's row to the next season's heading** −50%.
 - **DT5. One row design for Episodes, Extras and More Like This** (heading, icon, spacing, card). Owner idea: More
-  Like This in rows by service (Netflix, Prime Video, Disney+), plus In your library. Needs a mock-up.
+  Like This in rows by service (Netflix, Prime Video, Disney+), plus In your library. Mock-up `review-0157-2/01` 1–2.
+  Owner: use the service's **official colour logo** as the row heading's icon (RULES §13 logos everywhere).
 - **DT6. Artwork:** More › Artwork opens a sub-menu in the top-right corner, then the old grid. Approved: the side
   panel (D3). Artwork, Posters and Backdrops have placeholder icons.
 - **DT7. Full description pop-up (owner, 18 Nov):** only the text: no title, no Close, no Copy. Replaces RULES §10's
@@ -72,7 +74,8 @@ where the owner must decide.
   Your Library). It must clip below the toolbar / tab row.
 - **FL2. "Looking in this folder…" text** replaced the placeholder cards that showed while a folder loaded (owner liked
   them). Bring back the placeholders (outline at once, filled as it loads).
-- **FL3. Turn a connection off without removing it (owner idea):** its titles leave the library, the settings stay;
+- **FL3. Turn a connection off without removing it (owner idea; mock-up `review-0157-2/01` 3 approved 18 Nov; in the
+  next version):** its titles leave the library, the settings stay;
   turn back on later. [A switch-like "Turn off" / "Turn on" button on the focused row; the row shows "Off".] Needs a
   mock-up; 0.158 part B or later.
 - **FL4. Connection form scrolls** (Remember password, Test, Save below the fold). Fit it on one screen.
@@ -94,14 +97,14 @@ where the owner must decide.
   background → where you left it.** Replaces RULES §16's reopen rule.
 
 ## Elsewhere
-- **R1. Title logos vs one font (owner idea):** mock-up comparing the logo artwork with titles set in one fine font.
+- **R1. Title logos vs one font (owner idea):** mock-up `review-0157-2/01` 5 drawn; **still to discuss** (roadmap).
 - **R2. Third library page:** a solid bar behind the top bar when scrolling (Movies and TV Shows blur). The same page
   code should behave the same (check after 0.158's library pages).
 - **R3. Season Details pages have no artwork** (seasons 2 and 3 of one show; another show likewise). Use the season's
   poster, else the show's.
 - **R4. Season More menu:** opens top right (old menu: "Series details", "Episodes"); no Delete season. Approved: the
   Details More menu beside its button; add **Delete season** (with the delete warning).
-- **R5. Choose a version (owner idea):** with two or more files for one title (4K, 1080p, sizes), Play asks which.
+- **R5. Choose a version (owner idea; mock-up `review-0157-2/01` 4 approved 18 Nov; in the next version):** with two or more files for one title (4K, 1080p, sizes), Play asks which.
   [Play opens a small menu beside it: "4K · HDR · 18.2 GB", "1080p · 6.1 GB"; the last choice is remembered per title
   and marked.] Needs a mock-up.
 
