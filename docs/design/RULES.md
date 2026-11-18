@@ -25,6 +25,11 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   page panels (owner, 7 Nov; §18). Pages change over one by one, after each is reviewed on charcoal. **Exception
   (owner, 17 Nov):** in 0.157.2 Home and the library pages take the same charcoal background now, ahead of their
   0.158 redesigns, so every page matches.
+- **Speckled background (owner, 18 Nov; from 0.158 part B, replaces plain charcoal behind pages):** base `#111215` with
+  fine, faint white grains (about 20 in every 1,000 pixels, mostly 7–22% white, about 1 in 7 at 45%), drawn once at
+  the screen's own size with a fixed pattern, never moving, never smoothed (`background-speckle/tv3-2`). Content
+  sits straight on it: **no pane behind lists** (tried and declined, 18 Nov). The tone to aim for: **elegant and
+  cinematic**. Panels, menus and caption boxes stay solid as before. After it lands, every page is checked on it.
 - No page title on a top-level page: the top bar already says where you are.
 - TV safe margins: about 56 px at the sides, 54 px at the bottom. **One side margin (owner, 18 Nov):** every page's
   content lines up with the top bar's edges (the clock's right edge); Home's rows alone run off the edge.
@@ -73,6 +78,11 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **No NOVA screen may run hidden behind a Supernova screen** (owner, 12 Nov). Hidden NOVA screens steal focus (the
   hidden grid; the search screen behind Fix match). When coding starts: one sweep finds them all and removes them,
   each with a build and tests; anything not obviously dead goes to the owner as a list first.
+
+- **One shape for every small box (owner, 18 Nov; 0.158 part B):** buttons, pills, chips and the focus and open boxes
+  in tabs and the top bar share one height on a row (52 px), **20 px corners** and tight side padding (about 22 px);
+  solid fill = something to press, outline = information. Rows, cards and heroes keep their own corners
+  (`background-speckle/tv3-*`; corner choice `radii` B).
 
 ## 4. Tabs
 - Plain words on one line, each with its own icon (Details tabs, Files tabs; §18), under the top bar.
@@ -316,8 +326,12 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ## 19. Player
 - **Title logo:** wherever a title is shown large (Home and Details heroes, the compact Details logo, Preparing playback,
   the player) it is the title's **official logo artwork**; when a title has none, its name in the house style (owner, 18
-  Nov: style A–D of `title-style/` still to pick; breaks after a colon, else the last comma, else balanced; two lines
-  at most). Logo placement to be fixed (owner's photos to come). Mock-ups draw
+  Nov: **style A Modern block**: heavy capitals, white, no glow; a colon title splits as C, the part before the colon
+  small and spaced above; else breaks after the last comma, else two balanced lines; two lines at most, shrinking if
+  needed). **Logo placement (owner, 18 Nov; 0.158 part B):** the logo's empty space trimmed; every logo fitted to the
+  same area inside a 900 × 240 box (wide ones capped by width, tall ones by height); its foot on one line 24 px above
+  the details line, so the details line never moves between titles; a soft dark shade from the left behind the text
+  block. Mock-ups draw
   the name as a stand-in.
 - Title block in one fixed place, the same on Preparing playback and the HUD; the age rating alone top left for the
   first 6–8 s; logo and episode line appear with it, then fade together (REVIEW_0156, §23.11).
@@ -397,6 +411,7 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - Settled 12–13 Nov: Details headings (icons, no underline) and Details lines (faint row lines, no column lines).
 
 ## Replaced rules (do not use)
+- Plain charcoal `#16181C` behind every page → the speckled background, §1 (18 Nov; from 0.158 part B).
 - Navy glass at 97% with a light outline for panels → 90% `#16181C`, no outline (5 Nov).
 - White outline as row focus; blue glow focus → filled white box (5 Nov).
 - Open tab as a grey chip; plain-underline tabs → the focus-and-path rule (12 Nov).

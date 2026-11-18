@@ -26,7 +26,7 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 - Playback Settings panel looks different from the mock-up even over a black, paused frame (owner, 18 Nov). The code
   has the same fill (charcoal at 95%) but adds a light edge and a dark glow, and still holds old blue colours; compare
   side by side with a photo (review P6)
-- Titles in one house style instead of logo artwork (owner, 18 Nov: leaning to it; clean, no glow; "Modern block",
+- [Moved to 0.158 part B, 18 Nov] Titles in one house style instead of logo artwork (owner, 18 Nov: leaning to it; clean, no glow; "Modern block",
   styles Bold clean / Two-line / Modern bold). Mock-ups drawn 18 Nov: `title-style/01`–`03` (A Modern block · B Bold clean · C Two-line · D Modern bold on Home, Details, player); decided 18 Nov: official logo for now, house style as the fallback (style still to pick); logo placement to fix from the owner's photos
 - **Background speckle (owner, 18 Nov):** charcoal feels bland; the old Space Black was too patchy. Idea from a
   black-sand beach: a darker base with fine, faint white grains, fixed to the screen (never moving or shimmering),
@@ -151,6 +151,11 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - **First, the new look, so everything after it is checked on it:** the speckled background app-wide (density 20,
   `background-speckle/tv3-2`, no pane) and one shape for every small box (buttons, pills, chips, tab and top-bar
   focus: one height, 20 px corners, tighter padding; `tv3-*`). Recipe under To discuss › Background speckle.
+- Titles (approved 18 Nov): the logo placement fix and the house style A (with C's colon split) for titles
+  without a logo (RULES §19).
+- **A look sweep once the background is in:** render every page on it and fix what it changes (faint row lines,
+  grey second lines, the open-page grey box, outlined pills and chips at rest, "Unknown", panels now lighter than
+  the page, the keyboard's keys, loading placeholders, disabled rows). Only what fails gets changed.
 - Then the owner's 0.157.2 review (`docs/0.157/REVIEW_0157_2.md`), Playback Settings first.
 
 ## 0.159
