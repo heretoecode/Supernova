@@ -354,9 +354,12 @@ public class FoundationHomeRegressionTest {
             pages.findViewWithTag("hero:info").performClick();
             android.app.Dialog more = org.robolectric.shadows.ShadowDialog.getLatestDialog();
             assertNotNull(more);
-            View details = Review0158Fixture.byText(more.getWindow().getDecorView(), "Details");
-            assertNotNull(details);
-            details.performClick();
+            View details = menuLabel(more.getWindow().getDecorView(), "Details");
+            assertNotNull("More lists Details", details);
+            View row = details;
+            while (!row.isClickable() && row.getParent() instanceof View)
+                row = (View) row.getParent();
+            row.performClick();
             assertSame(source.recent.get(10).media, opened.get(0));
             if (more.isShowing())
                 more.dismiss();
@@ -569,5 +572,19 @@ public class FoundationHomeRegressionTest {
             }
             ReflectionHelpers.setField(http, "interceptors", old);
         }
+    }
+
+    private static View menuLabel(View view, String words) {
+        if (view instanceof TextView && words.equals(((TextView) view).getText().toString()))
+            return view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View match = menuLabel(group.getChildAt(i), words);
+                if (match != null)
+                    return match;
+            }
+        }
+        return null;
     }
 }
