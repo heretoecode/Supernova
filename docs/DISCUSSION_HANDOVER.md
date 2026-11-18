@@ -66,5 +66,10 @@ session's branch is `claude/design-planning-discussion-9poejm`; everything below
 - Revisit later: captions under the player's cards (match Home rows); panels whose rows swap with a choice (app-wide).
 
 ## Practical
+- **Videos (owner, 18 Nov):** the Claude app takes photos only. For behaviour (focus jumps, timing, flicker) the owner
+  puts a video in Google Drive › Supernova and names it; Claude downloads it and cuts frames with ffmpeg (about 5 a
+  second). Photos plus a line of description for looks. Ask for a note of what to watch and roughly when.
+- **Mock-ups for the TV go to Google Drive › Supernova** in a dated folder (owner, 18 Nov; first:
+  "Mock-ups for the TV — Background speckle"), viewed full screen via Solid Explorer.
 - Push check: after every push confirm `git ls-remote` matches HEAD (a restart once left commits unpushed).
 - Owner's notes while Claude is unavailable: `docs/INBOX.md` or a GitHub issue titled "Inbox: …".
