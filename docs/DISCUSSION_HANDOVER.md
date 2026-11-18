@@ -66,10 +66,14 @@ session's branch is `claude/design-planning-discussion-9poejm`; everything below
 - Revisit later: captions under the player's cards (match Home rows); panels whose rows swap with a choice (app-wide).
 
 ## Practical
-- **Videos (owner, 18 Nov):** the Claude app takes photos only. For behaviour (focus jumps, timing, flicker) the owner
-  puts a video in Google Drive › Supernova and names it; Claude downloads it and cuts frames with ffmpeg (about 5 a
-  second). Photos plus a line of description for looks. Ask for a note of what to watch and roughly when.
-- **Mock-ups for the TV go to Google Drive › Supernova** in a dated folder (owner, 18 Nov; first:
-  "Mock-ups for the TV — Background speckle"), viewed full screen via Solid Explorer.
+- **Media swap in Google Drive (owner, 18 Nov):** `Supernova › Media` has two folders.
+  - **From Claude (to view on the TV):** mock-ups to judge full screen (via Solid Explorer), one dated subfolder per
+    topic (e.g. "2026-11-18 Background speckle"), files numbered in viewing order; 4K (3840 × 2160) when fine detail
+    matters. Small comparisons the owner can judge on the iPad are sent in chat instead.
+  - **For Claude (screenshots and videos from the Shield):** the owner's own screen captures (the Shield records
+    screenshots and videos exactly as shown, unlike a camera). The owner names the file; Claude downloads it, and cuts
+    videos into frames with ffmpeg (about 5 a second). Ask what to watch for and roughly when.
+  - The Claude app takes photos only, so videos always come this way. Photos plus a line for looks; video for
+    behaviour (focus jumps, timing, flicker).
 - Push check: after every push confirm `git ls-remote` matches HEAD (a restart once left commits unpushed).
 - Owner's notes while Claude is unavailable: `docs/INBOX.md` or a GitHub issue titled "Inbox: …".
