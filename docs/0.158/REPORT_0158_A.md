@@ -83,7 +83,8 @@ Home has no margin, its rows run off both edges.
 - **Search streaming groups for TV shows and people** ("Stream more related to …", "Stream more from <person>"):
   TMDB has no spin-off links and the 0.157 related-titles service mixes in "similar" titles, which the sheet rules
   out for Search. Films get their group (below).
-- **Genre and service lists' "Selected" group** gliding to the top: ticks stay in place.
+- **Genre list's "Selected" group:** the genre list keeps Match: Any · All at its top (as drawn), so ticks stay in
+  place there; the services list has its Selected group.
 - **Connections grouped by server (F52)**: not reached (the brief's "if time remains").
 - **Settings and onboarding**: 0.159, as planned.
 
