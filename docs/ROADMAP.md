@@ -28,6 +28,10 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   side by side with a photo (review P6)
 - Titles in one house style instead of logo artwork (owner, 18 Nov: leaning to it; clean, no glow; "Modern block",
   styles Bold clean / Two-line / Modern bold). Mock-ups drawn 18 Nov: `title-style/01`–`03` (A Modern block · B Bold clean · C Two-line · D Modern bold on Home, Details, player); decided 18 Nov: official logo for now, house style as the fallback (style still to pick); logo placement to fix from the owner's photos
+- **Background speckle (owner, 18 Nov):** charcoal feels bland; the old Space Black was too patchy. Idea from a
+  black-sand beach: a darker base with fine, faint white grains, fixed to the screen (never moving or shimmering),
+  for the whole app. Also hides banding in dark gradients. Mock-ups `background-speckle/01` faint (today's
+  charcoal), `02` medium (darker), `03` strong (darkest, closest to the sand); owner to judge on the TV
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157

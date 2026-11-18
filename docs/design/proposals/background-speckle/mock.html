@@ -1,0 +1,61 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2d33;font-family:Inter,sans-serif;color:#fff;padding:8px;width:1940px}
+.frame{width:1920px;height:1080px;position:relative;overflow:hidden;border:2px solid #b9bec7}
+canvas{position:absolute;inset:0}
+svg{stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.top{position:absolute;left:56px;right:56px;top:28px;height:64px;display:flex;align-items:center;gap:14px;font-size:32px}
+.top span{padding:8px 18px;border-radius:12px;color:#e8ebf2}.top .open{background:rgba(255,255,255,.16);color:rgba(255,255,255,.72)}
+.top .sp{flex:1;padding:0}
+.hero{position:absolute;left:72px;top:118px;width:1776px;height:620px;border-radius:28px;overflow:hidden;
+  background:radial-gradient(ellipse 60% 80% at 72% 45%,hsla(32,35%,45%,.9),hsla(32,30%,14%,.97) 60%,#121418 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 30px rgba(0,0,0,.5)}
+.t{position:absolute;left:60px;top:64px;font-family:'Inter Display';font-weight:900;font-size:100px;line-height:.98;
+  text-transform:uppercase;color:#F4F6FB}
+.meta{position:absolute;left:60px;top:270px;font-size:30px;display:flex;align-items:center;gap:8px}
+.badge{display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff;border-radius:6px;
+  padding:0 8px;height:36px;font-size:24px;font-weight:600;margin-right:4px}
+.desc{position:absolute;left:60px;top:326px;font-size:28px;line-height:40px;width:1060px;color:#e9ecf2}
+.hb{position:absolute;bottom:56px;height:64px;padding:0 26px;border-radius:12px;display:flex;align-items:center;gap:12px;
+  font-size:30px;font-weight:500}
+.rowh{position:absolute;left:96px;display:flex;gap:14px;align-items:center;font-size:32px;font-weight:500}
+.cards{position:absolute;left:96px;display:flex;gap:24px}
+.card{width:400px;flex:0 0 400px}
+.pic{height:225px;border-radius:14px 14px 0 0;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 18px rgba(0,0,0,.5)}
+.capb{background:rgba(34,37,43,.96);border-radius:0 0 14px 14px;padding:12px 18px 16px;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.18)}
+.capb b{display:block;font-size:28px;font-weight:600}.capb i{display:block;font-style:normal;font-size:22px;color:#C9D3E6}
+.bar{height:4px;background:rgba(255,255,255,.25);border-radius:2px;margin-top:10px}.bar u{display:block;height:4px;background:#fff;border-radius:2px}
+.foc{transform:scale(1.1);transform-origin:0 0;box-shadow:0 0 0 6px #fff;border-radius:14px}
+</style></head><body><div class="frame" id="f"><canvas id="c" width="1920" height="1080"></canvas></div><script>
+// Charcoal speckle: tiny fixed grains, mostly faint grey, a rare brighter one; drawn once, never animated.
+const O={faint:{base:'#16181C',p:.018,lo:.05,hi:.16,rare:.002,rareA:.32},
+ medium:{base:'#111215',p:.03,lo:.07,hi:.22,rare:.004,rareA:.45},
+ strong:{base:'#0C0D0F',p:.05,lo:.09,hi:.3,rare:.007,rareA:.6}}[location.hash.slice(1)||'medium'];
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const c=document.getElementById('c').getContext('2d');c.fillStyle=O.base;c.fillRect(0,0,1920,1080);
+const img=c.getImageData(0,0,1920,1080),d=img.data;
+for(let i=0;i<1920*1080;i++){const r=rnd();let a=0;
+ if(r<O.rare)a=O.rareA*(.7+.3*rnd());else if(r<O.p)a=O.lo+(O.hi-O.lo)*rnd()*rnd();
+ if(a){const k=i*4;for(let j=0;j<3;j++)d[k+j]=d[k+j]+(232-d[k+j])*a}}
+c.putImageData(img,0,0);
+const ic={play:'<svg width="28" height="28" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>',
+ info:'<svg width="28" height="28" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+ cw:'<svg width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z"/></svg>'};
+const bg=h=>`radial-gradient(ellipse 60% 70% at 50% 40%,hsla(${h},35%,45%,.85),hsla(${h},30%,14%,.95) 60%,#121418 100%)`;
+const cards=[['Tidelands','S1 E2 · 31 min left',.3,12],['Paper Harbour','42 min left',.55,210],['Northern Lights',
+ 'S2 E5 · 18 min left',.8,120],['Cold Iron','1 h 2 min left',.2,330],['Glass Valley','S1 E1 · 50 min left',.1,170]];
+document.getElementById('f').insertAdjacentHTML('beforeend',`<div class="top">${['Home','Movies','TV Shows',
+ 'Documentaries'].map(w=>`<span class="${w==='Home'?'open':''}">${w}</span>`).join('')}<span class="sp"></span>
+ <span>Files</span><span>Search</span><span>Settings</span><span>21:40</span></div>
+ <div class="hero"><div class="t">Harrow Point:<br>The Long Winter</div>
+ <div class="meta"><span class="badge">15</span>2025 · 3 seasons · Drama, Mystery</div>
+ <div class="desc">A lighthouse keeper's daughter returns to the island she fled, the winter the ferry stops running and
+ the first of the old families goes missing.</div>
+ <div class="hb" style="left:60px;background:#F4F6FB;color:#0B0D12">${ic.play}Resume S3 E2 · 31 min left</div>
+ <div class="hb" style="left:520px">${ic.info}More info</div></div>
+ <div class="rowh" style="top:780px">${ic.cw}Continue Watching</div>
+ <div class="cards" style="top:836px">${cards.map(k=>`<div class="card"><div class="pic" style="background:${bg(k[3])}">
+ </div><div class="capb"><b>${k[0]}</b><i>${k[1]}</i><div class="bar"><u style="width:${k[2]*100}%"></u></div></div>
+ </div>`).join('')}</div>`);
+</script></body></html>

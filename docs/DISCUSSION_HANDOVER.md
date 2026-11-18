@@ -21,6 +21,7 @@ session's branch is `claude/design-planning-discussion-9poejm`; everything below
 - **Still to discuss:**
   1. **Titles in one house style instead of logo artwork:** owner leans to it (clean, no glow; likes "Modern block",
      styles Bold clean, Two-line, Modern bold). Decided 18 Nov: official logos for now, house style as the fallback (pick A–D still open); owner to send photos of badly placed logos. Next after that: the 0.158 part A checklist when the owner says the APK has landed.
+  1b. **Background speckle** (roadmap To discuss): mock-ups `background-speckle/01`–`03`; owner to judge on the TV.
   2. Playback Settings panel colour (roadmap To discuss, P6/PS10).
   3. Anything else under To discuss on the roadmap (users and tags, episodes, network statistics, diagnostics health).
 - **Page sheets** (build from these): `docs/design/pages/FILES.md`, `DETAILS.md`, `LIBRARY.md`, `HOME.md`, `SEARCH.md`.
