@@ -327,25 +327,10 @@ final class HomeCustomisePanel
      */
     private void chooseIcon(Row row, Runnable done)
     {
-        List<String> labels = new ArrayList<>();
-        List<String> icons = new ArrayList<>();
-        labels.add("Automatic");
-        icons.add("custom row");
-        int tick = 0;
-        for (String genre : PreviewGenres.NAMES)
-        {
-            if (genre.equals(row.icon))
-            {
-                tick = labels.size();
-            }
-            labels.add(genre);
-            icons.add(genre);
-        }
-        PreviewDialog.menuBelow(context, null, "Icon", labels.toArray(new String[0]), icons.toArray(new String[0]),
-                                Collections.singleton(tick), tick, true, true, n -> {
-                                    row.icon = n == 0 ? "" : labels.get(n);
-                                    done.run();
-                                });
+        HomeIconPicker.show(context, PreviewGenres.known(row.icon) ? row.icon : "", icon -> {
+            row.icon = icon;
+            done.run();
+        });
     }
 
     private void chooseGenres(Row row, Runnable done)
