@@ -2284,6 +2284,17 @@ public final class PreviewPages extends FrameLayout {
         card.setLayoutParams(lp);
     }
 
+    /**
+     * The shared toolbar restyles what it holds (a box at rest, an icon guessed from the words); library buttons keep
+     * their own icon and are plain until focused (RULES §12).
+     */
+    private void keepOwnLook(TextView button) {
+        Object icon = button.getTag(com.archos.mediacenter.video.R.id.supernova_toolbar_icon);
+        if (icon instanceof String)
+            PreviewIcon.apply(button, (String)icon, Math.round(18 * TvLayout.scale(getContext())));
+        SupernovaStyle.applyPlainButton(button);
+    }
+
     private TextView toolbarButton(String label, String icon, Consumer<View> action) {
         TextView[] made = {null};
         made[0] = TvButton.create(getContext(), label, () -> {
@@ -2293,6 +2304,7 @@ public final class PreviewPages extends FrameLayout {
         PreviewIcon.apply(made[0], icon, Math.round(18 * TvLayout.scale(getContext())));
         SupernovaStyle.applyPlainButton(made[0]);
         made[0].setContentDescription(label);
+        made[0].setTag(com.archos.mediacenter.video.R.id.supernova_toolbar_icon, icon);
         return made[0];
     }
 
@@ -2325,10 +2337,12 @@ public final class PreviewPages extends FrameLayout {
             control.setTag(customLibrary == null ? "control:" + i : "custom.control." + controlIds[i]);
             Diagnostics.semantic(control, "library.toolbar." + controlIds[i]);
             controls.addView(control, lp);
+            keepOwnLook(control);
         }
         TextView customise = toolbarButton("Customise page", "edit", b -> customisePage());
         customise.setTag(customLibrary == null ? "control:customise" : "custom.control.edit");
         v.addView(PreviewToolbar.withTrailingAction(controls, customise));
+        keepOwnLook(customise);
         View divider = new View(getContext());
         divider.setTag("library.toolbar.divider");
         divider.setBackgroundColor(0x14FFFFFF);

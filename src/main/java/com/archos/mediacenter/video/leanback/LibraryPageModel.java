@@ -143,7 +143,7 @@ final class LibraryPageModel
     /** The order icon: mirrored for the two directions (RULES §10). */
     static String orderIcon(boolean ascending)
     {
-        return ascending ? "ascending" : "descending";
+        return ascending ? "arrow-up" : "arrow-down";
     }
 
     /** "1 h 24 min", "42 min". */
