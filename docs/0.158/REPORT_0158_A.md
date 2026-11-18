@@ -77,6 +77,10 @@ Home has no margin, its rows run off both edges.
   the open-in-app icon; OK opens it in the service's app. Only with Where to Watch on, and only when a library film
   matched. The old filter chips no longer come back when results arrive.
 
+**Files › Connections (F52)** — one row per server and login, its folders on the second line ("WebDAV · Films,
+TV"); Open asks which folder when there are several; Remove takes the whole server, with Undo; Scan one source has one
+button per server, named by the connection's name.
+
 ## Not built (and why)
 - **A true shared-element glide** from the Home hero into Details: Details now opens from the hero with no slide or
   fade, so the card (same size and place on both pages) stays put; a moving glide needs checking on the Shield.
@@ -85,7 +89,8 @@ Home has no margin, its rows run off both edges.
   out for Search. Films get their group (below).
 - **Genre list's "Selected" group:** the genre list keeps Match: Any · All at its top (as drawn), so ticks stay in
   place there; the services list has its Selected group.
-- **Connections grouped by server (F52)**: not reached (the brief's "if time remains").
+- **Icon picker tile width:** the longest genre names ("Action & Adventure") are cut short in their tile; a wider
+  tile for those comes in 0.158.1.
 - **Settings and onboarding**: 0.159, as planned.
 
 ## Judgement calls
