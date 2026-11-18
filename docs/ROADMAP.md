@@ -14,7 +14,8 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### To discuss (owner, 16 Nov)
 
-- Episodes: OK plays; long-press menu (Play, Show details, Delete episode); deleting one offers earlier episodes of the season, each your choice
+- Episodes (answered 18 Nov; mock-up next): OK on an episode card plays it; long-press opens the same menu as More;
+  deleting one offers the earlier episodes of the season: only this one · all · choose (with Select all)
 - Network statistics: split by source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library
 - Feature blueprint (research): pick ideas to take forward (`docs/research/FEATURE_BLUEPRINT.md`)
 - Diagnostics that catch problems before you notice them: a health snapshot (memory, threads, caches, database,
@@ -46,7 +47,7 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   For coding: one shared drawable through `PreviewUtilityBackground` (today it paints charcoal), drawn once at the
   screen's own size, no filtering; pages that paint their own charcoal (Files, folder browser, top bar's solid
   strip, the library pages' fade under the top bar) switch to it; panels, menus and caption boxes stay solid.
-- Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
+- Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6). Last questions answered 18 Nov: opens as the default user; progress and watchlist per user; a Guest user (mock-up next)
 
 ## 0.157
 
