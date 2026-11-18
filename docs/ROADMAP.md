@@ -155,7 +155,10 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
   without a logo (RULES §19).
 - **A look sweep once the background is in:** render every page on it and fix what it changes (faint row lines,
   grey second lines, the open-page grey box, outlined pills and chips at rest, "Unknown", panels now lighter than
-  the page, the keyboard's keys, loading placeholders, disabled rows). Only what fails gets changed.
+  the page, the keyboard's keys, loading placeholders, disabled rows). Only what fails gets changed. The Playback
+  Settings panel colour (P6/PS10) is judged in this sweep (owner, 18 Nov).
+- **Text centred on its letters in every box** (the 0.158 top bar fix, applied to every button, pill, chip and tab
+  with the new shape; owner's "TV Shows sat low", 16 Nov). The shape alone doesn't fix it.
 - Then the owner's 0.157.2 review (`docs/0.157/REVIEW_0157_2.md`), Playback Settings first.
 
 ## 0.159
