@@ -2656,7 +2656,8 @@ public final class PreviewPages extends FrameLayout {
             for (int i = 0; i < ids.size(); i++)
                 if (chosen.contains(ids.get(i)))
                     now.add(i);
-            PreviewDialog.updateChecks(list[0], now);
+            // Ticked services glide up under Selected, A–Z (RULES §9; mock-up library-pages/24).
+            PreviewDialog.updateChecksSelectedFirst(list[0], now, labels.toArray(new String[0]));
             providers[tab] = TextUtils.join("|", chosen);
             quietOrder.clear();
             render("filter_services");
@@ -2664,6 +2665,8 @@ public final class PreviewPages extends FrameLayout {
         });
         for (int i = 0; i < selected.size(); i++)
             PreviewProviderIcons.bindProvider(list[0], i, selected.get(i), "library.filters");
+        if (!ticked.isEmpty())
+            PreviewDialog.updateChecksSelectedFirst(list[0], ticked, labels.toArray(new String[0]));
     }
 
     /** Customise page: the floating side panel on the right (sheet), for Movies, TV Shows and your own page. */
