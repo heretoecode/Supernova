@@ -129,7 +129,7 @@ where the owner must decide.
   spaced on top; titles without a colon stay on one line. Owner to choose.
   **Decided (owner, 18 Nov evening): keep the official logo for now; develop the house style as the fallback for
   titles with no logo** (RULES §19 unchanged in substance). Tested on five of the owner's own titles, short to very
-  long (picture kept out of the public repo). Text line breaks: after a colon, else after the last comma, else two
+  long (redrawn with made-up titles: `title-style/05-logo-placement`). Text line breaks: after a colon, else after the last comma, else two
   balanced lines; at most two lines, shrinking if needed. **Logo placement is often wrong** (owner): the owner will
   send photos; likely causes are empty space inside the logo image, scaling to a fixed width, and no fixed anchor.
   [Trim the empty space, fit each logo to a box by its shape, pin it bottom-left on the details line.]

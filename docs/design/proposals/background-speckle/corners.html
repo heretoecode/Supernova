@@ -1,0 +1,42 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2d33;font-family:Inter,sans-serif;color:#fff;padding:20px;width:1960px}
+.cap{font-size:30px;color:#e6e9ef;margin:18px 0 10px 4px}
+.f{width:1920px;height:430px;position:relative;overflow:hidden;border:2px solid #b9bec7}
+canvas{position:absolute;inset:0;width:1920px;height:430px;image-rendering:pixelated}
+.l{position:absolute;left:56px;right:56px;display:flex;align-items:center;gap:14px;font-size:32px}
+.it{height:52px;display:flex;align-items:center;padding:0 22px;color:#e8ebf2}
+.open{background:rgba(255,255,255,.16);color:rgba(255,255,255,.72)}
+.foc{background:#F4F6FB;color:#0B0D12}
+.row{position:absolute;left:56px;right:56px;height:120px;display:flex;align-items:center;padding:0 28px;
+  background:#F4F6FB;color:#0B0D12;border-radius:14px}
+.row b{font-size:36px;font-weight:500;display:block}.row i{font-style:normal;font-size:27px;color:#3a4150}
+.pill{height:52px;width:180px;border:2px solid #0B0D12;display:flex;align-items:center;justify-content:center;font-size:25px}
+.btn{height:52px;padding:0 22px;display:flex;align-items:center;font-size:27px}
+.dark{background:#0B0D12;color:#fff}
+.chip{height:52px;padding:0 22px;display:flex;align-items:center;font-size:30px}
+.ring{border:2px solid rgba(255,255,255,.75)}
+</style></head><body><div id="g"></div><script>
+const V=[['A · Gentle corners',12],['B · Rounder',20],['C · Fully round (as in 6–9)',26]];
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+document.getElementById('g').innerHTML=V.map(([n,r],i)=>`<div class="cap">${n}</div><div class="f" id="f${i}">
+ <canvas width="1920" height="430"></canvas>
+ <div class="l" style="top:24px">${['Home','Movies','TV Shows'].map((w,j)=>`<div class="it ${j==1?'foc':''}"
+  style="border-radius:${r}px">${w}</div>`).join('')}<div style="flex:1"></div><div class="it open" style="border-radius:${r}px">Files</div>
+  <div class="it">Search</div><div class="it">Settings</div></div>
+ <div class="l" style="top:104px;font-size:30px"><div class="it open" style="border-radius:${r}px">Connections</div>
+  <div class="it">Library Care</div><div class="it">Your Library</div>
+  <div style="flex:1"></div><div class="chip">Off</div><div class="chip ring" style="border-radius:${r}px">Button</div>
+  <div class="chip">Automatic</div></div>
+ <div class="row" style="top:196px"><div style="flex:1"><b>Home server · alex</b><i>SFTP · 512 videos</i></div>
+  <div class="pill" style="border-radius:${r}px;margin-right:14px">Reachable</div>
+  <div class="btn dark" style="border-radius:${r}px">Open</div><div class="btn">Edit</div><div class="btn">Test</div>
+  <div class="btn">Remove</div><div style="width:40px"></div>
+  <div class="chip dark" style="border-radius:${r}px">Ask</div><div class="chip">Always</div></div>
+ </div>`).join('');
+// the speckle, same as 6-9
+document.querySelectorAll('canvas').forEach(cv=>{const c=cv.getContext('2d');c.fillStyle='#111215';c.fillRect(0,0,1920,430);
+ const im=c.getImageData(0,0,1920,430),d=im.data;for(let k=0;k<1920*430;k++){const x=rnd();let a=0;
+ if(x<.0027)a=.45*(.7+.3*rnd());else if(x<.02)a=.07+.15*rnd()*rnd();if(a){for(let j=0;j<3;j++)d[k*4+j]+=(232-d[k*4+j])*a}}
+ c.putImageData(im,0,0)});
+</script></body></html>

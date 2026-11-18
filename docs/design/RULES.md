@@ -82,7 +82,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **One shape for every small box (owner, 18 Nov; 0.158 part B):** buttons, pills, chips and the focus and open boxes
   in tabs and the top bar share one height on a row (52 px), **20 px corners** and tight side padding (about 22 px);
   solid fill = something to press, outline = information. Rows, cards and heroes keep their own corners
-  (`background-speckle/tv3-*`; corner choice `radii` B).
+  (`background-speckle/tv3-*`; corners `background-speckle/corners-A-B-C`, B chosen).
 
 ## 4. Tabs
 - Plain words on one line, each with its own icon (Details tabs, Files tabs; §18), under the top bar.
@@ -331,7 +331,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   needed). **Logo placement (owner, 18 Nov; 0.158 part B):** the logo's empty space trimmed; every logo fitted to the
   same area inside a 900 × 240 box (wide ones capped by width, tall ones by height); its foot on one line 24 px above
   the details line, so the details line never moves between titles; a soft dark shade from the left behind the text
-  block. Mock-ups draw
+  block (`title-style/04-house-style-lengths`, `05-logo-placement`). Mock-ups draw
   the name as a stand-in.
 - Title block in one fixed place, the same on Preparing playback and the HUD; the age rating alone top left for the
   first 6–8 s; logo and episode line appear with it, then fade together (REVIEW_0156, §23.11).

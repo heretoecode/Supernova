@@ -1,0 +1,42 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2d33;font-family:Inter,sans-serif;color:#fff;padding:24px;width:4560px}
+.grid{display:grid;grid-template-columns:repeat(4,1100px);gap:28px 28px}
+.cap{font-size:34px;color:#e6e9ef;margin:0 0 4px 4px}
+.cell{width:1100px;height:400px;position:relative;overflow:hidden;border:2px solid #b9bec7;border-radius:4px}
+.tx{position:absolute;left:60px;top:56px;width:980px}
+.t{color:#F4F6FB;text-wrap:balance}.l1{display:none}
+.meta{font-size:30px;display:flex;align-items:center;gap:8px;margin-top:22px}
+.badge{display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff;border-radius:6px;
+  padding:0 8px;height:36px;font-size:24px;font-weight:600;margin-right:4px}
+.s-block .t{font-family:'Inter Display';font-weight:900;text-transform:uppercase;letter-spacing:.005em;line-height:.98}
+.s-clean .t{font-family:'Inter Display';font-weight:700;letter-spacing:-.02em;line-height:1.02}
+.s-two .t{font-family:'Inter Display';font-weight:800;letter-spacing:-.015em;line-height:1.02}
+.s-two .l1{display:block;font-family:Inter;font-weight:600;font-size:30px!important;letter-spacing:.34em;
+  text-transform:uppercase;margin-bottom:10px;color:#E2E6EE}
+.s-two .l1:empty{display:none}
+.s-bold .t{font-family:'Inter Display';font-weight:800;text-transform:uppercase;letter-spacing:.07em;line-height:1.06}
+</style></head><body><div class="grid" id="g"></div><script>
+const S=[['block','A · Modern block',108],['clean','B · Bold clean',104],['two','C · Two-line',100],['bold','D · Modern bold',88]];
+const M=[['The Quay','','The Quay','15','2011 · 2 h 4 min · Crime, Thriller',210],
+ ['Father Frost: The Movie','Father Frost','The Movie','U','1986 · 1 h 47 min · Family, Fantasy',0],
+ ['Ironclad 2: Reckoning Day','Ironclad 2','Reckoning Day','15','1992 · 2 h 15 min · Action, Science Fiction',20],
+ ['Kingdom of the Valley of the Wolves','','Kingdom of the Valley of the Wolves','12A',
+  '2024 · 2 h 21 min · Science Fiction, Adventure',120],
+ ['Stay Calm, Keep Going, Don\'t Stop','','Stay Calm, Keep Going, Don\'t Stop','','2026',280]];
+const bg=h=>`radial-gradient(ellipse 70% 90% at 80% 40%,hsla(${h},35%,42%,.85),hsla(${h},30%,13%,.95) 60%,#121418 100%)`;
+let h='';
+for(const m of M)for(const [k,n,sz] of S){
+ const two=k==='two';const l1=two?m[1]:'';let main=two?m[2]:m[0];
+ // Break rule: after a colon; else after the last comma; else balanced lines.
+ if(main.includes(':'))main=main.replace(': ',':<br>');
+ else if(main.includes(','))main=main.replace(/,\s(?=[^,]*$)/,',<br>');
+ h+=`<div><div class="cap">${n} · ${m[0]}</div><div class="cell s-${k}" style="background:${bg(m[5])}">
+ <div class="tx"><div class="t" style="font-size:${sz}px"><span class="l1">${l1}</span><span class="m">${main}</span></div>
+ <div class="meta">${m[3]?`<span class="badge">${m[3]}</span>`:''}${m[4]}</div></div></div></div>`}
+document.getElementById('g').innerHTML=h;
+// Rule drawn: at most two lines; if longer, the title shrinks until it fits two lines.
+for(const t of document.querySelectorAll('.t')){const m=t.querySelector('.m');let s=parseFloat(t.style.fontSize);
+ const lh=()=>parseFloat(getComputedStyle(t).lineHeight)||s;
+ while(m.getBoundingClientRect().height>2.2*s*1.06&&s>40){s-=2;t.style.fontSize=s+'px'}}
+</script></body></html>
