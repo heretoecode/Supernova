@@ -37,6 +37,7 @@ where the owner must decide.
   names and pictures; focus ring on cards.
 
 ## Playback Settings
+**Owner (18 Nov): the worst of the three; fix it first in part B.**
 - **PS1. Tabs use the new top bar focus (owner, 18 Nov: approved):** white box on the focused tab; once focus goes
   down, the open tab keeps a soft grey box with faded text; no underlines.
 - **PS2. Tab line and the first heading's line sit too close** (two lines together). Same fix as Files: a clear gap
@@ -121,7 +122,9 @@ where the owner must decide.
 
 ## Elsewhere
 - **R1. Title logos vs one font (owner idea):** mock-up `review-0157-2/01` 5 drawn; **still to discuss** (roadmap). Owner gathered examples (18 Nov): serif, block, glow; and nine styles
-  (bold clean, spaced letters, two-line with a small spaced first line, outline, condensed…).
+  (bold clean, spaced letters, two-line with a small spaced first line, outline, condensed…). **Owner (18 Nov):
+  one consistent look for every title (no logo artwork), clean, no glow; likes "Modern block" best, and of the
+  nine styles 1 Bold clean, 4 Two-line and 2 Modern bold.** Next: a mock-up of those on Home, Details and the player.
 - **R2. Third library page:** a solid bar behind the top bar when scrolling (Movies and TV Shows blur). The same page
   code should behave the same (check after 0.158's library pages).
 - **R3. Season Details pages have no artwork** (seasons 2 and 3 of one show; another show likewise). Use the season's

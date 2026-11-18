@@ -1,20 +1,34 @@
-# Discussion handover (updated 17 Nov 2026, early hours)
+# Discussion handover (updated 18 Nov 2026, evening)
 
 For a fresh **discussion** session (designs, ideas, planning; no coding). Read `CLAUDE.md`, then this, then
-`docs/ROADMAP.md` and `docs/design/RULES.md`. The coding session is called **Supernova Coding**.
+`docs/ROADMAP.md` and `docs/design/RULES.md`. The coding session is called **Supernova Coding**. This discussion
+session's branch is `claude/design-planning-discussion-9poejm`; everything below is pushed there.
 
-## Where things stand (17 Nov)
-- **0.157.1** (code 1571) is installed: much better, not right yet. The owner reviewed **Files** and **Details** in
-  full and the **Player** briefly: `docs/0.157/REVIEW_0157_1.md` (F1–F52, D1–D20, P1–P5).
-- **Next: 0.157.2, bug fixes only** (plus the Home and library background). Brief for Supernova Coding:
-  `docs/0.157/BRIEF_0157_2.md`. It starts by merging this branch (`claude/design-planning-discussion-9poejm`).
-- **New way of working (CLAUDE.md, 17 Nov):** the Definition of done, and **page sheets** in `docs/design/pages/`
-  (Files, Details so far): every element and every action with where it leads. Reviewing a page: send its latest
-  mock-ups and its checklist first, one page at a time.
-- Still to review on the Shield: the Player properly, then the shared pieces. Settings, Home, library pages, Search and
-  onboarding wait for their 0.158 redesigns.
-- Waiting for the owner: the diagnostics report (crashes about 23:09 and 23:14, blank screen about 23:39, 16 Nov);
-  P4 (Playback Settings size); go-ahead to sign 0.157.2 when it is ready.
+## Where things stand (18 Nov)
+- **Installed:** 0.157.2 (code 1572). **Supernova Coding is building 0.158 part A** (`docs/0.158/BRIEF_0158_A.md`):
+  top bar, one side margin, library pages, Home, Search are built with tests; its full checks are failing and being
+  fixed; not signed yet. Its report: `docs/0.158/` on the working branch.
+- **Owner's review of 0.157.2:** `docs/0.157/REVIEW_0157_2.md` (PP, PL, PS, DT, FL, R, X numbers), with the
+  diagnostics read (crashes at 23:09 / 23:14 on 16 Nov explained: X1; new Scan this folder crash: X2; seek previews
+  engine broken: X3). **This becomes 0.158 part B. Playback Settings is the worst; fix it first.** No brief for part B
+  yet: write `docs/0.158/BRIEF_0158_B.md` from the review when the owner says go (Coding must merge this branch again
+  first: part A only merged it up to 17 Nov 12:30).
+- **Approved for part B (beyond bug fixes):** turn a connection off (FL3) and choose a version on Play (R5), mock-up
+  `docs/design/proposals/review-0157-2/01` (3, 4); one row design on Details' Episodes / Extras / More Like This, More
+  Like This in rows by service with the service's colour logo on the heading (DT5; same mock-up 1, 2). Decisions of
+  18 Nov are in the review and in RULES (badge first everywhere; reopen on Home after a full close; Full description is
+  the text alone).
+- **Still to discuss:**
+  1. **Titles in one house style instead of logo artwork:** owner leans to it (clean, no glow; likes "Modern block",
+     styles Bold clean, Two-line, Modern bold). Next: mock-up of those on Home, Details and the player.
+  2. Playback Settings panel colour (roadmap To discuss, P6/PS10).
+  3. Anything else under To discuss on the roadmap (users and tags, episodes, network statistics, diagnostics health).
+- **Page sheets** (build from these): `docs/design/pages/FILES.md`, `DETAILS.md`, `LIBRARY.md`, `HOME.md`, `SEARCH.md`.
+  Player has no sheet yet; reference pictures `docs/design/proposals/player/26`–`28` and `player-current/01`.
+- **Checklist for reviewing builds:** artifact https://claude.ai/artifact/JV3yiiYJexfrQC1Jxc2YpF (copy
+  `docs/0.157/review-0157-2-checklist.html`).
+- **How the owner reviews when Claude is unavailable:** dictates into iOS Notes, one note per page, photos, times of
+  crashes; pastes them in later (or `docs/INBOX.md` / an "Inbox:" issue). Plus the diagnostics export.
 
 ## 18 Nov
 - 0.157.2 signed and installed (run 44020349261): much better. Owner: redesign first, then fix bugs on settled designs.
