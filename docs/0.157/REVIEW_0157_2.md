@@ -52,6 +52,24 @@ where the owner must decide.
   85%, where it reappears in the top black bar. Subtitles must stay on top at every position.
 - **PS8. Track list on top:** the panel behind shrinks by about a quarter and changes width. Approved: darkened and
   pushed back slightly (about 96%), same width.
+- **PS11. From the owner's photos (18 Nov), "not structured" explained:**
+  - Rows mix three kinds of control: chips (Speed, Text size), ‹ value › steppers (Format "‹ Original ›", Still
+    watching? "‹ Off ›", Vertical position "‹ Raised 5% ›", Background opacity "‹ 75% ›") and a stray "‹" before the
+    track names. Approved: chips (Format Fit · Fill · Zoom · Stretch; Still watching? Off · 2 episodes · 3 episodes ·
+    2 hours · 3 hours; Background opacity 25 · 50 · 75 · 100%), − + for Vertical position, › for rows that open a list;
+    no ‹ › arrows (RULES §8).
+  - **Two rows have no name:** Stop playing at (moon icon only) and Play mode (icon only). Play mode's last chip is
+    cut ("Repe…"); "Skip Intros…" is cut short.
+  - **Audio boost is a switch;** approved chips Off · Low · Medium · High. Text size lacks Extra large.
+  - **Subtitle delay sits at the end of Appearance;** approved in Subtitle Selection (timing is judged against the
+    subtitles). For This Series wording: "Use these choices for Dexter: Resurrection" plus a help line; approved "Use
+    these subtitles for all of …" (Audio: "… this audio …"), no help line.
+  - **Focused rows:** the name turns thin and grey instead of black at the same weight; pills lose their outline (PS5);
+    switches as PS4.
+  - **Download subtitles list:** has a "‹ Download Subtitles" header (RULES §9: none), a blue-outlined search box and
+    a white outline as focus (RULES §3: white box, black text); raw file names; the panel behind isn't darkened.
+  - **Track list on top (PS8 confirmed):** the panel behind collapses to a short clipped strip.
+  - **Panel edge (P6 confirmed):** a light outline round the panel; over video, none.
 - **PS9. Playback tab "not very structured":** after PS1–PS6, look again with a photo.
 - **PS10. Panel colour** (roadmap To discuss, P6): still different from the mock-up.
 
@@ -62,12 +80,17 @@ where the owner must decide.
 - **DT4. Gap from a season's row to the next season's heading** −50%.
 - **DT5. One row design for Episodes, Extras and More Like This** (heading, icon, spacing, card). Owner idea: More
   Like This in rows by service (Netflix, Prime Video, Disney+), plus In your library. Mock-up `review-0157-2/01` 1–2.
-  Owner: use the service's **official colour logo** as the row heading's icon (RULES §13 logos everywhere).
+  **Agreed (owner, 18 Nov):** the service's official colour logo as the row heading's icon.
 - **DT6. Artwork:** More › Artwork opens a sub-menu in the top-right corner, then the old grid. Approved: the side
   panel (D3). Artwork, Posters and Backdrops have placeholder icons.
 - **DT7. Full description pop-up (owner, 18 Nov):** only the text: no title, no Close, no Copy. Replaces RULES §10's
   "Full description keeps its heading".
 - **DT8. More menu has no Fix match** (D2).
+- **DT9. From the owner's photos (a movie, 18 Nov):** rows on the Details tab are tall (about twice B2's), so Cast and
+  Crew fall below the fold; cast portraits are smaller than crew portraits (one size for both); names cut short ("Hugh
+  Jack…"). Values: "2h 3m" (approved "2 h 3 min"), "$25,000,000.00" (whole numbers: "$25 million"), Subtitles "ara"
+  (a bare code: "Arabic"). The focused tab's word is grey on the white box (RULES §3: black). Content scrolls up under
+  the tab line (as FL1).
 
 ## Files
 - **FL1. Content scrolls under the breadcrumb, toolbar, tabs and top bar** and stays visible (folders, Library Care,
@@ -97,7 +120,8 @@ where the owner must decide.
   background → where you left it.** Replaces RULES §16's reopen rule.
 
 ## Elsewhere
-- **R1. Title logos vs one font (owner idea):** mock-up `review-0157-2/01` 5 drawn; **still to discuss** (roadmap).
+- **R1. Title logos vs one font (owner idea):** mock-up `review-0157-2/01` 5 drawn; **still to discuss** (roadmap). Owner gathered examples (18 Nov): serif, block, glow; and nine styles
+  (bold clean, spaced letters, two-line with a small spaced first line, outline, condensed…).
 - **R2. Third library page:** a solid bar behind the top bar when scrolling (Movies and TV Shows blur). The same page
   code should behave the same (check after 0.158's library pages).
 - **R3. Season Details pages have no artwork** (seasons 2 and 3 of one show; another show likewise). Use the season's
