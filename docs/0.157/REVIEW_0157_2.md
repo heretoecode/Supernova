@@ -8,11 +8,12 @@ where the owner must decide.
 ## Preparing playback
 - **PP1. Age rating pops in late** and pushes the lines apart when it arrives. Keep its space from the start.
 - **PP2. The badge sits alone on its own line** with no reasons (reasons are rarely found). Owner: put it inline:
-  `[18] · Season 2 · Episode 3 · Title` on one line under the logo. [Badge first on the episode line, as on Details;
-  reasons, when known, go after the genres line in soft text; no line of its own.] Replaces player v11's own line.
+  `[18] · Season 2 · Episode 3 · Title` on one line under the logo. **Decided (owner, 18 Nov): the badge is always the
+  first item of the details line, everywhere (Preparing playback, player, Details); no reasons shown** (they are found
+  too rarely). Replaces player v11's own line.
 - **PP3. Title block not in the top left** as on the HUD. Owner unsure the two need to match (playback starts with
   nothing on screen, unlike Home hero → Details). [Keep them identical anyway: one block, one place, no second design
-  to maintain.] To decide.
+  to maintain.] **Agreed (owner, 18 Nov).**
 - Working: the Supernova rings on Preparing playback ("love it").
 
 ## Player
@@ -23,11 +24,12 @@ where the owner must decide.
   40–45% up the screen with Chapters open; the two cuts bring everything down.
 - **PL4. Controls linger** looks wrong when focus is on the seek bar (fine on Settings and the tabs). Check the 3 s.
 - **PL5. A 2-second first chapter:** "Episode · From 0:00", then "Recap · From 0:02". [Merge any chapter under 10 s
-  into the next.]
+  into the next.] **Agreed (owner, 18 Nov):** no "From 0:00" stub chapters.
 - **PL6. Chapter and Episode cards lack the artwork edge** at rest (Home rows and library posters have it). RULES §14:
   every card has the edge; focus thickens it.
 - **PL7. Seek previews don't work** and the switch can't be found in Settings. The seek card shows the chapter's
-  picture, or grey. Diagnostics: 109 preview errors (X3). Restore the switch and fix the engine.
+  picture, or grey. Diagnostics: 109 preview errors (X3). The switch exists: Settings › System › Advanced › "Seek
+  previews (experimental)" (hard to find). Fix the engine; move the switch to the player settings with 0.159.
 - **PL8. Skip button** is larger than Settings and doesn't sit in line with the controls. Approved (`player/29`, `30`):
   alone on screen it sits in its place; with controls shown it joins their line and the seek bar shortens.
 - Working: soft dark fade behind the controls; seek card no longer cut off by subtitles; Episodes row; Chapters have
@@ -82,12 +84,14 @@ where the owner must decide.
   a tab has something (its badge).
 - **FL9. OK on Check matches moves focus to Missing files.** Focus stays on the row pressed.
 - **FL10. Show all scans: focus jumps to Home**; the list can't be scrolled. [A read-only page like Your Library: Down /
-  Up scroll, arrows show more, Back returns to Show all scans.]
+  Up scroll, arrows show more, Back returns to Show all scans.] **Agreed (owner, 18 Nov):** focus stays on the page and
+  moves through the scans; nothing to press.
 - **FL11. Scan library:** yes, it scans this device and every connection. While scanning it reads "Scanning · 42%"
   and OK stops it (approved 17 Nov). Owner suggests an extra pill. [The button's own words already say it; keep
   them; make sure it never looks like a plain "Scan library" while running.]
 - **FL12. App reopens on the last page** even after closing it fully. RULES §16: after **Android** ends it, reopen where
-  you were; a first launch after a reboot opens Home. [When you close it yourself, open Home.] To decide.
+  you were; a first launch after a reboot opens Home. **Decided (owner, 18 Nov): closed fully → Home; only in the
+  background → where you left it.** Replaces RULES §16's reopen rule.
 
 ## Elsewhere
 - **R1. Title logos vs one font (owner idea):** mock-up comparing the logo artwork with titles set in one fine font.

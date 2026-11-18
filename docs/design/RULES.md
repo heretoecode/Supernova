@@ -288,8 +288,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 
 ## 16. Moving around (remote behaviour)
 - Back from the middle of a long page first jumps to the top, then to the top bar (§23.3).
-- After Android ends the app it reopens on the same page with focus restored; a first launch after a reboot opens
-  Home (§23.2).
+- **Reopening (owner, 18 Nov):** after the app was closed fully it opens on Home; when it was only in the background
+  it returns where you left it, focus restored. (Replaces: reopen where you were after Android ends it, §23.2.)
+- **Age rating (owner, 18 Nov):** the badge is always the first item of a title's details line (Preparing playback,
+  player, Details, heroes); no reasons line.
 - Read-only pages (Details tab) have nothing focusable: Down/Up scroll, one more Up returns to the tabs (§1).
 - **Moving things (one gesture app-wide):** OK picks the item up (it lifts, with ⌃⌄), Up/Down moves it, the page behind
   follows live, OK or Back puts it down; focus is locked to the item meanwhile (Home rows, list-view columns) (§19).
