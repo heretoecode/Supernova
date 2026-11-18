@@ -27,7 +27,7 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   has the same fill (charcoal at 95%) but adds a light edge and a dark glow, and still holds old blue colours; compare
   side by side with a photo (review P6)
 - Titles in one house style instead of logo artwork (owner, 18 Nov: leaning to it; clean, no glow; "Modern block",
-  styles Bold clean / Two-line / Modern bold). Next: mock-up on Home, Details and the player (`review-0157-2/01` 5)
+  styles Bold clean / Two-line / Modern bold). Mock-ups drawn 18 Nov: `title-style/01`–`03` (A Modern block · B Bold clean · C Two-line · D Modern bold on Home, Details, player); owner to pick one
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157

@@ -124,7 +124,9 @@ where the owner must decide.
 - **R1. Title logos vs one font (owner idea):** mock-up `review-0157-2/01` 5 drawn; **still to discuss** (roadmap). Owner gathered examples (18 Nov): serif, block, glow; and nine styles
   (bold clean, spaced letters, two-line with a small spaced first line, outline, condensed…). **Owner (18 Nov):
   one consistent look for every title (no logo artwork), clean, no glow; likes "Modern block" best, and of the
-  nine styles 1 Bold clean, 4 Two-line and 2 Modern bold.** Next: a mock-up of those on Home, Details and the player.
+  nine styles 1 Bold clean, 4 Two-line and 2 Modern bold.** Mock-ups `title-style/01` Home, `02` Details, `03` player, each
+  with A Modern block · B Bold clean · C Two-line · D Modern bold. Two-line puts the part before a colon small and
+  spaced on top; titles without a colon stay on one line. Owner to choose.
 - **R2. Third library page:** a solid bar behind the top bar when scrolling (Movies and TV Shows blur). The same page
   code should behave the same (check after 0.158's library pages).
 - **R3. Season Details pages have no artwork** (seasons 2 and 3 of one show; another show likewise). Use the season's

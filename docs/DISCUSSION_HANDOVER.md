@@ -20,7 +20,7 @@ session's branch is `claude/design-planning-discussion-9poejm`; everything below
   the text alone).
 - **Still to discuss:**
   1. **Titles in one house style instead of logo artwork:** owner leans to it (clean, no glow; likes "Modern block",
-     styles Bold clean, Two-line, Modern bold). Next: mock-up of those on Home, Details and the player.
+     styles Bold clean, Two-line, Modern bold). Mock-ups drawn: `title-style/01`–`03`; waiting for the owner's pick.
   2. Playback Settings panel colour (roadmap To discuss, P6/PS10).
   3. Anything else under To discuss on the roadmap (users and tags, episodes, network statistics, diagnostics health).
 - **Page sheets** (build from these): `docs/design/pages/FILES.md`, `DETAILS.md`, `LIBRARY.md`, `HOME.md`, `SEARCH.md`.
