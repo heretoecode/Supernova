@@ -41,7 +41,8 @@ decide quickly.
     Container and Path "A → Z / Z → A".
 14. **Counts in menu rows** are written after the name ("Unwatched · 35 titles") because the shared menu has one line
     per row; mock-up 23 puts them on a second line.
-15. **Year filter: From and To** each open a list of the years that hold titles, instead of − / + steppers.
+15. **Year filter: From and To** step with Left / Right through the years that hold titles (the sheet), shown as
+    "From · 1994" rather than "− 1994 +"; OK also opens the list of years.
 16. **Genre and service lists** tick in place; the "Selected" group gliding to the top (RULES §9) is not used in these
     two lists.
 17. **Columns: hiding a column.** OK on a shown column picks it up; moving it down past the last shown column hides
@@ -66,7 +67,11 @@ decide quickly.
     and Down from the row above land on Move, as the sheet says).
 27. **Your Rows in Customise Home** carry a switch as in mock-up `03`: OK opens the row's settings, Left / Right turns
     it on or off.
-28. **Icon picker** is a list of the genre icons with their names (tick on the current one) rather than a grid.
+28. **Icon picker "Automatic"** uses the sparkle icon, as mock-up `07` shows.
+33. **Moving rows in Customise Home** starts with a long press of OK, because OK already opens a row's settings or
+    flips its switch. Your rows move among your rows, built-in rows among built-in rows.
+34. **Toolbar buttons:** the shared toolbar boxes its buttons; on library pages they keep their own icons and are
+    plain until focused (RULES §12). Order uses mirrored up / down arrows.
 29. **Row settings: Years** offers the quick choices (any year, this year, last five years, decades); no own range.
 30. **Customise Home reopens on the row you left** (kept from 0.157's focus audit).
 

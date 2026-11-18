@@ -28,7 +28,8 @@ Home has no margin, its rows run off both edges.
 - Toolbar: Filters · Sort: <choice> · Order · List view / Grid view (· Columns in list view), Customise page on the
   right; menus drop down under the button pressed.
 - Filters: Watched · Genre (Match Any / All, genre icons) · Year (quick choices that hold titles, then From / To) ·
-  Streaming services; counts on every choice; Clear filters apart by a line. Choices apply live.
+  Streaming services; counts on every choice; Clear filters apart by a line. Choices apply live. From and To step
+  with Left / Right through the years that hold titles (OK opens the list).
 - Sort: grouped menu (General · Trakt when connected · Files · Series, not on Movies), tick on the current choice, no
   Year sort. Order's words follow the sort (A → Z, Newest first, Largest first, Longest first, Most first, Highest
   ranked first …).
@@ -55,8 +56,10 @@ Home has no margin, its rows run off both edges.
 - Move and Hide beside the row's heading, plain buttons (Hide a minus circle), shown when focus reaches the heading;
   Move lifts the row ("Row 1 of 6 · OK when done"), Up / Down moves it, OK or Back puts it down; Hide has Undo.
 - Customise Home: floating panel on the right — Your Rows (› opens settings; Left / Right switches), Add a row,
-  Built-In Rows with a switch each. A row's settings open on top: Row name, Icon, Includes, Genres (+ Match), Years,
-  Minimum rating, Sort by, Order, Maximum items (10–30), Add new titles automatically, Delete row (warning).
+  Built-In Rows with a switch each, in Home's order; a long press of OK picks a row up, Up / Down moves it (Home
+  follows live), OK or Back puts it down. A row's settings open on top: Row name, Icon, Includes, Genres (+ Match), Years,
+  Minimum rating, Sort by, Order, Maximum items (10–30), Add new titles automatically, Delete row (warning). Icon
+  opens the grid picker (five a row, icon and name, tick on the current one).
 - Long-press on a card opens the library long-press menu. The old Home editor is gone.
 
 **Search** (`Review0158SearchTest`)
@@ -69,15 +72,12 @@ Home has no margin, its rows run off both edges.
 ## Not built (and why)
 - **Hero redesign on Home** (Details-style hero, cross-fade with preloaded artwork, glide into Details): the existing
   hero stays; the change is a large piece of motion work that needs its own render checks.
-- **Ordering rows inside Customise Home** with the move gesture: rows are moved on Home itself (Move); the panel
-  lists them in Home order.
-- **Search streaming groups** ("Stream more from the world of …", "… related to …", "… from <person>"): need the
-  related-titles data per library match, not built yet; Search shows library results only.
+- **Search streaming groups** ("Stream more from the world of …", "… related to …", "… from <person>"): the
+  related-titles service built in 0.157 mixes in "similar" titles, which the sheet rules out for Search, and has no
+  sequels / spin-offs / collection data; Search shows library results only until that data exists.
 - **Search pills in a fixed column for people matches** ("Taylor Sheridan · creator" reason line): people still match,
   without the reason wording.
-- **Year filter steppers** (− 1994 +): From / To pick from the years present instead (judgement call 15).
 - **Genre and service lists' "Selected" group** gliding to the top: ticks stay in place.
-- **Icon picker as a grid**: a list with icons and names.
 - **Connections grouped by server (F52)**: not reached (the brief's "if time remains").
 - **Settings and onboarding**: 0.159, as planned.
 
