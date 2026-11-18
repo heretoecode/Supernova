@@ -41,7 +41,7 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
   enough. [One height and fully rounded ends for every small box on a row (buttons, pills, chips, tab and top-bar
   focus), tighter side padding; fill tells an action from information. Large things (rows, cards, heroes) keep
   their gentler corners.] Owner: the matched shapes look more uniform; corner strength A 12 · B 20 · C fully
-  round being compared.
+  round compared; **owner, 18 Nov: B (20 px)**. Density compared next (`tv3-1`–`3`: 13, 20, 26 grains per 1,000 px).
 - Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
 
 ## 0.157
