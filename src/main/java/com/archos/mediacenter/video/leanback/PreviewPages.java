@@ -330,6 +330,9 @@ public final class PreviewPages extends FrameLayout {
     }
 
     private final Runnable centreLibraryRow = this::centreFocusedLibraryRow;
+    /** The card the last centring scroll was for, and where the list was then (see centreFocusedLibraryRow). */
+    private View lastCentred;
+    private int lastCentredOffset = -1;
 
     private void centreFocusedLibraryRow() {
         if (tab != 1 && tab != 2 || !list.hasFocus() || list.hasPendingAdapterUpdates())
@@ -346,6 +349,13 @@ public final class PreviewPages extends FrameLayout {
             return;
         }
         int delta = Math.round((item.getTop() + item.getBottom()) / 2f - (list.getPaddingTop() + viewportBottom) / 2f);
+        // Stop when the last centring scroll for this card didn't move the list (it is as centred as it can be);
+        // otherwise each finished scroll asks for another and the page never rests.
+        int offset = list.computeVerticalScrollOffset();
+        if (item == lastCentred && offset == lastCentredOffset)
+            return;
+        lastCentred = item;
+        lastCentredOffset = offset;
         if (Math.abs(delta) > 1 && list.canScrollVertically(delta > 0 ? 1 : -1)) {
             list.stopScroll();
             list.removeCallbacks(centreLibraryRow);
