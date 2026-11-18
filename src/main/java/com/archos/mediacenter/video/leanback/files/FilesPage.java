@@ -278,12 +278,20 @@ public final class FilesPage extends LinearLayout
         public final String label;
         public final android.net.Uri root;
         public final boolean local;
+        /** Every folder of this server and login (F52): one Scan one source button scans them all. */
+        public final List<android.net.Uri> roots;
 
         public Source(String label, android.net.Uri root, boolean local)
+        {
+            this(label, root, local, java.util.Collections.singletonList(root));
+        }
+
+        public Source(String label, android.net.Uri root, boolean local, List<android.net.Uri> roots)
         {
             this.label = label;
             this.root = root;
             this.local = local;
+            this.roots = java.util.Collections.unmodifiableList(new java.util.ArrayList<>(roots));
         }
     }
 
@@ -344,6 +352,8 @@ public final class FilesPage extends LinearLayout
         public final long lastSeenMs;
         /** The login's user name ("alex"), shown after the name (F38); empty when there is none. */
         public final String account;
+        /** The folders chosen on this server with this login (F52); one row shows them all. */
+        public final List<android.net.Uri> folders;
 
         public Connection(String name, android.net.Uri root, Boolean reachable, long videos, long lastSeenMs)
         {
@@ -353,6 +363,14 @@ public final class FilesPage extends LinearLayout
         public Connection(String name, android.net.Uri root, Boolean reachable, long videos, long lastSeenMs,
                           String account)
         {
+            this(name, root, reachable, videos, lastSeenMs, account,
+                 root == null ? java.util.Collections.emptyList() : java.util.Collections.singletonList(root));
+        }
+
+        public Connection(String name, android.net.Uri root, Boolean reachable, long videos, long lastSeenMs,
+                          String account, List<android.net.Uri> folders)
+        {
+            this.folders = java.util.Collections.unmodifiableList(new java.util.ArrayList<>(folders));
             this.account = account == null ? "" : account;
             this.name = name;
             this.root = root;
@@ -1221,14 +1239,15 @@ public final class FilesPage extends LinearLayout
             String scheme = connection.root == null ? "" : connection.root.getScheme();
             String key = connection.root == null ? connection.name : connection.root.toString();
             List<Action> actions = new java.util.ArrayList<>();
-            actions.add(new Action("Open", "folder", () -> openConnection(connection.root, connection.name)));
+            actions.add(new Action("Open", "folder", () -> openServer(connection)));
             actions.add(new Action("Edit", "edit", () -> openForm(connection.root, connection.name)));
             actions.add(new Action("Test", "done", () -> testConnection(connection.root, key)));
             actions.add(new Action("Remove", "discard", () -> removeConnection(connection)));
             String title = connection.account == null || connection.account.isEmpty()
                 ? connection.name : connection.name + " · " + connection.account;
             String second = outcomes.containsKey(key) ? outcomes.get(key)
-                : ConnectionLine.kind(scheme) + " · " + count(connection.videos, "video");
+                : ConnectionLine.kind(scheme) + " · " + (connection.folders.size() > 1
+                    ? FilesPageData.folderNames(connection.folders) : count(connection.videos, "video"));
             actionRow(column, ConnectionLine.kind(scheme).equals("WebDAV") ? "cloud" : "integration", title, second,
                       connection.reachable == null ? null : ConnectionLine.pill(connection.reachable), actions, true);
         }
@@ -1264,6 +1283,25 @@ public final class FilesPage extends LinearLayout
     }
 
     /** Open (or OK) on a connection or a found device: browse it like a drive (F33, F40). */
+    /** Open: one folder opens straight away; several (F52) ask which, in a menu beside the row. */
+    private void openServer(Connection connection)
+    {
+        if (connection.folders.size() <= 1)
+        {
+            openConnection(connection.root, connection.name);
+            return;
+        }
+        String[] labels = new String[connection.folders.size()];
+        String[] icons = new String[labels.length];
+        for (int i = 0; i < labels.length; i++)
+        {
+            labels[i] = FilesPageData.folderName(connection.folders.get(i));
+            icons[i] = i == 0 ? "folder" : i == 1 ? "files" : "file";
+        }
+        com.archos.mediacenter.video.leanback.PreviewDialog.menu(getContext(), findFocus(), connection.name, labels,
+            icons, -1, n -> openConnection(connection.folders.get(n), labels[n]));
+    }
+
     private void openConnection(android.net.Uri root, String name)
     {
         if (root == null)
@@ -1344,7 +1382,12 @@ public final class FilesPage extends LinearLayout
         {
             return;
         }
-        if (!LibraryChanges.apply(getContext(), selection -> selection.remove(connection.root)))
+        if (!LibraryChanges.apply(getContext(), selection -> {
+            for (android.net.Uri folder : connection.folders)
+            {
+                selection.remove(folder);
+            }
+        }))
         {
             outcomes.put(connection.root.toString(), "Couldn't remove it just now");
             show(CONNECTIONS);
@@ -1354,7 +1397,12 @@ public final class FilesPage extends LinearLayout
         connections.remove(connection);
         notice = connection.name + " removed";
         undo = () -> {
-            if (LibraryChanges.apply(getContext(), selection -> selection.include(connection.root)))
+            if (LibraryChanges.apply(getContext(), selection -> {
+                for (android.net.Uri folder : connection.folders)
+                {
+                    selection.include(folder);
+                }
+            }))
             {
                 connections.add(Math.max(0, Math.min(at, connections.size())), connection);
             }

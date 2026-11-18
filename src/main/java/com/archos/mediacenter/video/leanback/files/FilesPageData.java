@@ -134,6 +134,9 @@ public final class FilesPageData
         {
             sources.add(new FilesPage.Source("This device", Uri.parse("file:///"), true));
         }
+        // One button per server (F52), named by the connection's name, so two WebDAV servers stay apart.
+        java.util.LinkedHashMap<String, List<Uri>> servers = new java.util.LinkedHashMap<>();
+        java.util.Map<String, String> names = new java.util.HashMap<>();
         for (Shortcut shortcut : shortcuts)
         {
             if (shortcut.getUri() != null)
@@ -141,10 +144,86 @@ public final class FilesPageData
                 String name = shortcut.getName() == null || shortcut.getName().isEmpty()
                     ? shortcut.getUri().getHost()
                     : shortcut.getName();
-                sources.add(new FilesPage.Source(name, shortcut.getUri(), false));
+                String key = serverKey(shortcut.getUri(), shortcut.getUri().getUserInfo());
+                servers.computeIfAbsent(key, k -> new ArrayList<>()).add(shortcut.getUri());
+                names.putIfAbsent(key, name);
             }
         }
+        for (java.util.Map.Entry<String, List<Uri>> server : servers.entrySet())
+        {
+            sources.add(new FilesPage.Source(names.get(server.getKey()), server.getValue().get(0), false,
+                                             server.getValue()));
+        }
         return sources;
+    }
+
+    /** The server and login a folder belongs to (F52): scheme, host, port and user name. */
+    static String serverKey(Uri root, String account)
+    {
+        if (root == null)
+        {
+            return "";
+        }
+        return root.getScheme() + "://" + (account == null ? "" : account) + "@" + root.getHost() + ":" + root.getPort();
+    }
+
+    /** "Films" from webdavs://webdav.put.io/Films/ ; the server's name for its top folder. */
+    public static String folderName(Uri root)
+    {
+        java.util.List<String> parts = root.getPathSegments();
+        return parts == null || parts.isEmpty() ? root.getHost() : parts.get(parts.size() - 1);
+    }
+
+    /** "Films, TV". */
+    public static String folderNames(java.util.List<Uri> folders)
+    {
+        java.util.List<String> names = new ArrayList<>();
+        for (Uri folder : folders)
+        {
+            names.add(folderName(folder));
+        }
+        return android.text.TextUtils.join(", ", names);
+    }
+
+    /**
+     * One connection per server and login (F52, approved 17 Nov): the folders chosen are part of it. Named by the
+     * first folder's given name; reachable if any folder answered; videos add up.
+     */
+    public static List<FilesPage.Connection> byServer(List<FilesPage.Connection> connections)
+    {
+        java.util.LinkedHashMap<String, List<FilesPage.Connection>> groups = new java.util.LinkedHashMap<>();
+        for (FilesPage.Connection connection : connections)
+        {
+            String key = connection.root == null ? "#" + groups.size() : serverKey(connection.root,
+                                                                                   connection.account);
+            groups.computeIfAbsent(key, k -> new ArrayList<>()).add(connection);
+        }
+        List<FilesPage.Connection> result = new ArrayList<>();
+        for (List<FilesPage.Connection> members : groups.values())
+        {
+            FilesPage.Connection first = members.get(0);
+            List<Uri> folders = new ArrayList<>();
+            long videos = 0;
+            long seen = 0;
+            Boolean reachable = Boolean.FALSE;
+            for (FilesPage.Connection member : members)
+            {
+                folders.addAll(member.folders);
+                videos += Math.max(0, member.videos);
+                seen = Math.max(seen, member.lastSeenMs);
+                if (Boolean.TRUE.equals(member.reachable))
+                {
+                    reachable = Boolean.TRUE;
+                }
+                else if (member.reachable == null && !Boolean.TRUE.equals(reachable))
+                {
+                    reachable = null;
+                }
+            }
+            result.add(new FilesPage.Connection(first.name, first.root, reachable, videos, seen, first.account,
+                                                folders));
+        }
+        return result;
     }
 
     /** Worker thread only: how many files MediaLib recorded as unreadable. */

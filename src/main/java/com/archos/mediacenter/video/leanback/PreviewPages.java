@@ -3490,9 +3490,9 @@ public final class PreviewPages extends FrameLayout {
                     }
             });
             filesPage.setConnections(
-                withReachability(
+                com.archos.mediacenter.video.leanback.files.FilesPageData.byServer(withReachability(
                     com.archos.mediacenter.video.leanback.files.FilesPageData.connections(
-                        getContext(), librarySources, media)),
+                        getContext(), librarySources, media))),
                 // Every connection action now happens on the Files page itself (F31–F35, F40): no route leads to
                 // NOVA's network screens or the three-panel browser.
                 null);
@@ -3502,7 +3502,8 @@ public final class PreviewPages extends FrameLayout {
                     if (source.local)
                         PreviewLibraryScan.request(getContext());
                     else
-                        com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
+                        for (Uri folder : source.roots)
+                            com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), folder);
                 });
             filesPage.setMedia(media);
             filesPage.setPlayer((file, inLibrary) -> playFile(file, inLibrary));
