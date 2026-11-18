@@ -71,25 +71,30 @@ final class HomeCustomisePanel
             {
                 continue;
             }
-            panel.openerWithSwitch("home.customise.row:" + row.id, PreviewHomeRows.iconName(row), row.name,
-                                   summary(row), row.visible, () -> rowSettings(row, false), on -> {
-                                       row.visible = on;
-                                       save();
-                                   });
+            android.view.View line = panel.openerWithSwitch(
+                "home.customise.row:" + row.id, PreviewHomeRows.iconName(row), row.name, summary(row), row.visible,
+                () -> rowSettings(row, false), on -> {
+                    row.visible = on;
+                    save();
+                });
+            panel.movable(line, (v, direction) -> move(row, direction));
         }
         panel.action("home.customise.add", "plus", "Add a row", this::addRow);
         panel.heading("Built-In Rows");
-        for (String[] builtIn : BUILT_IN)
+        // Built-in rows in Home's own order, so moving one here moves it on Home (live).
+        for (Row row : new ArrayList<>(model.rows))
         {
-            Row row = find(builtIn[0]);
-            if (row == null)
+            String[] builtIn = builtIn(row.id);
+            if (row.custom() || builtIn == null)
             {
                 continue;
             }
-            panel.toggle("home.customise.builtin:" + row.id, builtIn[3], builtIn[1], builtIn[2], row.visible, on -> {
-                row.visible = on;
-                save();
-            });
+            android.view.View line = panel.toggle("home.customise.builtin:" + row.id, builtIn[3], builtIn[1],
+                                                  builtIn[2], row.visible, on -> {
+                                                      row.visible = on;
+                                                      save();
+                                                  });
+            panel.movable(line, (v, direction) -> move(row, direction));
         }
         android.content.SharedPreferences prefs =
             androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
@@ -110,6 +115,37 @@ final class HomeCustomisePanel
             }
         }
         panel.show(remembered == null ? null : panel.body.findViewWithTag(remembered));
+    }
+
+    private static String[] builtIn(String id)
+    {
+        for (String[] row : BUILT_IN)
+        {
+            if (row[0].equals(id))
+            {
+                return row;
+            }
+        }
+        return null;
+    }
+
+    /** Swaps a row with its neighbour of the same kind (your rows among themselves, built-in among built-in). */
+    private boolean move(Row row, int direction)
+    {
+        int at = model.rows.indexOf(row);
+        for (int i = at + direction; i >= 0 && i < model.rows.size(); i += direction)
+        {
+            Row other = model.rows.get(i);
+            if (other.custom() != row.custom() || !row.custom() && builtIn(other.id) == null)
+            {
+                continue;
+            }
+            model.rows.set(i, row);
+            model.rows.set(at, other);
+            save();
+            return true;
+        }
+        return false;
     }
 
     private Row find(String id)

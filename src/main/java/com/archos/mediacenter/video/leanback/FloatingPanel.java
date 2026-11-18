@@ -61,6 +61,9 @@ final class FloatingPanel
         scroll.addView(body);
         dialog.setContentView(scroll);
         dialog.setOnDismissListener(d -> closed.run());
+        // The move gesture (RULES §16): while a row is picked up, Up / Down move it and OK or Back puts it down;
+        // the dialog sees the keys before the rows, so the row's own keys wait meanwhile.
+        dialog.setOnKeyListener((d, key, event) -> moving != null && carry(key, event));
     }
 
     void onClosed(Runnable action)
@@ -432,6 +435,91 @@ final class FloatingPanel
         {
             return android.graphics.PixelFormat.TRANSLUCENT;
         }
+    }
+
+    /** Moves a picked-up row one place; returns false when it can go no further that way. */
+    interface Mover
+    {
+        boolean step(View row, int direction);
+    }
+
+    private View moving;
+    private Mover mover;
+
+    /**
+     * The row can be picked up with a long press of OK (it lifts, with ⌃⌄), moved with Up / Down, the page behind
+     * following live, and put down with OK or Back (RULES §16; Customise Home "order with the move gesture").
+     */
+    void movable(View row, Mover how)
+    {
+        row.setOnLongClickListener(v -> {
+            pickUp(row, how);
+            return true;
+        });
+    }
+
+    boolean moving()
+    {
+        return moving != null;
+    }
+
+    void pickUp(View row, Mover how)
+    {
+        moving = row;
+        mover = how;
+        TextView label = row.findViewWithTag("label");
+        if (label != null && !label.getText().toString().endsWith("  ⌃⌄"))
+        {
+            label.setText(label.getText() + "  ⌃⌄");
+        }
+        row.setTranslationY(-dp(2));
+        row.setElevation(dp(6));
+    }
+
+    private void putDown()
+    {
+        View row = moving;
+        moving = null;
+        mover = null;
+        TextView label = row.findViewWithTag("label");
+        if (label != null)
+        {
+            label.setText(label.getText().toString().replace("  ⌃⌄", ""));
+        }
+        row.setTranslationY(0);
+        row.setElevation(0);
+        row.requestFocus();
+    }
+
+    private boolean carry(int key, KeyEvent event)
+    {
+        if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN)
+        {
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+            {
+                return true;
+            }
+            int direction = key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1;
+            int at = body.indexOfChild(moving);
+            int to = at + direction;
+            if (to >= 0 && to < body.getChildCount() && body.getChildAt(to).isFocusable()
+                && mover.step(moving, direction))
+            {
+                body.removeViewAt(at);
+                body.addView(moving, to);
+                moving.requestFocus();
+            }
+            return true;
+        }
+        if (key == KeyEvent.KEYCODE_BACK || key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER)
+        {
+            if (event.getAction() == KeyEvent.ACTION_UP)
+            {
+                putDown();
+            }
+            return true;
+        }
+        return true;
     }
 
     /** A plain action row (e.g. Delete page at the foot). */
