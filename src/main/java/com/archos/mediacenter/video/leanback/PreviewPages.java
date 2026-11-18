@@ -3282,7 +3282,9 @@ public final class PreviewPages extends FrameLayout {
                     // are, the figures moved to Files › Your Library).
                     v.setPadding(0, 0, 0, 0);
                     v.setMinimumHeight(0);
-                    v.setLayoutParams(new RecyclerView.LayoutParams(-1, 0));
+                    // One pixel, not zero: RecyclerView's scroll estimate skips a zero-height first item and would
+                    // report the page as scrolled at its top (the top bar's fade showing on arrival).
+                    v.setLayoutParams(new RecyclerView.LayoutParams(-1, 1));
                 }
             } else if (c.type == PLACEHOLDERS) {
                 v.setPadding(0, 0, 0, dp(10));

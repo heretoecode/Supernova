@@ -94,3 +94,5 @@ decide quickly.
     a film of the collection that is in the library but didn't match the words could appear.
 40. **A person match** shows "Name · role" before the usual line; the role comes from the field that matched (cast,
     director, writer, studio).
+41. **The first Home row peeks about 40% below the hero** (it was 60% with the old, shorter cards). HOME.md asks only
+    that it peeks; showing more would shrink the hero, which RULES ties to the Details hero's size.

@@ -155,7 +155,8 @@ public class FoundationHomeRegressionTest {
             int[] homeAt = new int[2];
             home.getLocationOnScreen(homeAt);
             assertTrue(a[1] > homeAt[1] + home.getHeight());
-            assertNull(nav.findViewWithTag("hero:play"));
+            // 0.158 (HOME.md): the hero's buttons are Play (or Resume) then More.
+            assertNotNull(nav.findViewWithTag("hero:play"));
             assertNotNull(nav.findViewWithTag("hero:info"));
             assertTrue(background.stream().allMatch(Objects::isNull));
             RecyclerView list = (RecyclerView) pages.getChildAt(0);
@@ -167,7 +168,8 @@ public class FoundationHomeRegressionTest {
             int[] cardAt = new int[2];
             card.getLocationOnScreen(cardAt);
             float visible = (540 - cardAt[1]) / (float) card.getHeight();
-            assertTrue("Artwork teaser 55–65%, got " + visible, visible >= .55f && visible <= .65f);
+            // 0.158: the first row peeks below the hero (HOME.md); its cards are taller with the caption box under.
+            assertTrue("First row peeks below the hero, got " + visible, visible >= .30f && visible <= .65f);
             View second = layout.findViewByPosition(3);
             if (second != null) {
                 int[] at = new int[2];
