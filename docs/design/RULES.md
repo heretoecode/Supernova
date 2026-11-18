@@ -192,7 +192,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **A single action at the foot of a panel (Delete row, Delete page, Clear filters) has no heading:** a plain line
   sets it apart (owner, 13 Nov).
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
-  such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
+  such as Artwork); warnings keep their heading because it is content. **The Full description pop-up is the text alone: no title,
+  no Close, no Copy** (owner, 18 Nov; replaces its heading). Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
 - **Small menus fold inline (owner, 16 Nov 2026):** if a menu's choices would add only a button or two to the row that
   opens it (for example Boost → "This copy · Everything queued" on a row with Pause and Cancel), put them inline on the
