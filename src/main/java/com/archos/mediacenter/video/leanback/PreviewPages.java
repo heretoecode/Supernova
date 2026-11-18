@@ -1030,6 +1030,10 @@ public final class PreviewPages extends FrameLayout {
         if (anchors[tab] != null)
             anchors[tab].token = Diagnostics.focusEntry(v, "details");
         click.open(new Presenter.ViewHolder(v), e.media);
+        // Home hero to Details (HOME.md): both heroes have the same size and place (RULES §14), so the screen changes
+        // without a slide or fade and the card stays exactly where it is.
+        if (tab == 0 && inside(v, findViewWithTag("semantic:home.featured")) && getContext() instanceof Activity)
+            ((Activity)getContext()).overridePendingTransition(0, 0);
     }
 
     private void play(Entry e, View v) {

@@ -71,16 +71,14 @@ Home has no margin, its rows run off both edges.
 - Before typing: Recent searches as rows with a magnifying glass, Clear history (✕, plain until focused) with Undo;
   What you can search as plain tips (Titles · People · Genres · Years · Your services only with Where to Watch on).
 - Results under one "In your library" heading with outlined pills: Resume S5 E3 · Watched · Unwatched; "Nothing in
-  your library matches …" when nothing does.
+  your library matches …" when nothing does. A person match says who and as what ("Avery Lindqvist · director").
 
 ## Not built (and why)
-- **The Home-to-Details glide** (the hero card staying exactly where it is going into Details): Details still opens
-  as before. The hero's dots, metadata row and preloading are as they were in 0.157.
+- **A true shared-element glide** from the Home hero into Details: Details now opens from the hero with no slide or
+  fade, so the card (same size and place on both pages) stays put; a moving glide needs checking on the Shield.
 - **Search streaming groups** ("Stream more from the world of …", "… related to …", "… from <person>"): the
   related-titles service built in 0.157 mixes in "similar" titles, which the sheet rules out for Search, and has no
   sequels / spin-offs / collection data; Search shows library results only until that data exists.
-- **Search pills in a fixed column for people matches** ("Taylor Sheridan · creator" reason line): people still match,
-  without the reason wording.
 - **Genre and service lists' "Selected" group** gliding to the top: ticks stay in place.
 - **Connections grouped by server (F52)**: not reached (the brief's "if time remains").
 - **Settings and onboarding**: 0.159, as planned.
