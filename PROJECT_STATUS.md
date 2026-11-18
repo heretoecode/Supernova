@@ -1,6 +1,16 @@
 # Supernova — project status
 
-Updated 18 November 2026 (overnight 0.157.2 session). Keep this page short and current: update it at the end of every session.
+Updated 18 November 2026 (0.158 part A session). Keep this page short and current: update it at the end of every session.
+
+## In progress: 0.158 (code 1580), part A
+
+Built from `docs/0.158/BRIEF_0158_A.md` and the page sheets (LIBRARY, HOME, SEARCH): the 0.158 top bar, one side
+margin, the library pages, Home (rows, Move and Hide, Customise Home, hero), Search, and F52 (connections grouped by
+server). Every action in the sheets is pressed in `Review0158*Test` with renders on `previews/claude`. Report and
+"not built" list: `docs/0.158/REPORT_0158_A.md`; judgement calls: `docs/0.158/JUDGEMENT_CALLS_0158_A.md`.
+Signing: as soon as conformance on the exact source is green (standing approval); the run link goes in the report.
+Work is on `claude/0158-part-a-signed-apk-woiqj6`, brought onto the working branch for builds and signing. Next:
+part B (the owner's 0.157.2 review) as 0.158.1.
 
 ## Released
 
