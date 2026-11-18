@@ -75,12 +75,26 @@ public final class PreviewSearch extends LinearLayout {
             this.genres = genres;
         }
 
+        /** A title to stream, under its group's heading ("Stream more from the world of …"). */
+        SearchStreaming.Title stream;
+        String streamHeading = "";
+
+        Result(SearchStreaming.Title stream, String heading) {
+            this.stream = stream;
+            this.streamHeading = heading;
+            this.genres = "";
+        }
+
         long id() {
+            if (stream != null)
+                return -2_000_000_000L - stream.id;
             return show == null ? video.getId() : -show.getTvshowId() - 2;
         }
 
         /** Films · TV shows · Episodes · People (matched by cast, crew or studio rather than the title). */
         String group() {
+            if (stream != null)
+                return STREAM;
             if (people)
                 return PEOPLE;
             if (show != null)
@@ -101,6 +115,7 @@ public final class PreviewSearch extends LinearLayout {
     static final String SHOWS = "TV shows";
     static final String EPISODES = "Episodes";
     static final String PEOPLE = "People";
+    static final String STREAM = "Stream";
     static final String[] FILTERS = {ALL, FILMS, SHOWS, EPISODES, PEOPLE};
     static final String RECENT_KEY = "preview_search_recent";
     static final int RECENT_MAX = 8;
@@ -423,7 +438,7 @@ public final class PreviewSearch extends LinearLayout {
     List<Result> visible() {
         List<Result> shown = new ArrayList<>();
         Map<String, Integer> counts = new HashMap<>();
-        for (String group : new String[] {FILMS, SHOWS, EPISODES, PEOPLE})
+        for (String group : new String[] {FILMS, SHOWS, EPISODES, PEOPLE, STREAM})
             for (Result result : items) {
                 if (!group.equals(result.group()))
                     continue;
@@ -734,7 +749,9 @@ public final class PreviewSearch extends LinearLayout {
                 items.addAll(found);
                 lastQuery = value;
                 results.setVisibility(items.isEmpty() ? GONE : VISIBLE);
-                filters.setVisibility(items.isEmpty() ? GONE : VISIBLE);
+                // No filter chips on the 0.158 Search (page sheet): one list, library first.
+                filters.setVisibility(GONE);
+                loadStreaming(found, request);
                 guidancePanel.setVisibility(GONE);
                 setFilter(filter);
                 Diagnostics.uiRebuild(results, "search.results", "query_result", previous, items.size(), false);
@@ -926,6 +943,72 @@ public final class PreviewSearch extends LinearLayout {
      * plain text in a thin outline, no colour; never "In library" (the heading says so).
      */
     /**
+     * A title to stream (SEARCH.md): name and year, "Movie · sequel", the service's pill with the open-in-app icon;
+     * OK opens it in the service's app (its own link where there is one), never a Supernova page.
+     */
+    private void bindStream(Holder h, SearchStreaming.Title title) {
+        Diagnostics.semantic(h.itemView, "search.result.stream." + title.id);
+        ArtworkRequest.cancel(h.image);
+        h.image.setImageDrawable(null);
+        h.title.setText(withYear(title.name, title.year));
+        h.metadata.setText(title.relation.isEmpty() ? "Movie" : "Movie · " + title.relation);
+        android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
+        shape.setCornerRadius(dp(12));
+        shape.setColor(Color.TRANSPARENT);
+        shape.setStroke(Math.max(1, dp(1)), 0x80FFFFFF);
+        h.pill.setText(title.service);
+        h.pill.setTextColor(SupernovaStyle.TEXT);
+        h.pill.setBackground(shape);
+        PreviewIcon.apply(h.pill, "external", 12);
+        h.pill.setVisibility(VISIBLE);
+        if (!title.poster.isEmpty()) {
+            Uri art = Uri.parse("https://image.tmdb.org/t/p/w185" + title.poster);
+            ArtworkRequest.load(h.image, art, title.id, "search.results", "poster",
+                                Picasso.get().load(art).resize(dp(32), dp(48)).centerCrop().noFade());
+        }
+        h.itemView.setOnFocusChangeListener(null);
+        h.itemView.setOnClickListener(v -> {
+            remember(activity, lastQuery);
+            if (!title.link.isEmpty())
+                com.archos.mediacenter.video.streaming.StreamingActions.openWeb(activity, title.link);
+            else
+                com.archos.mediacenter.video.streaming.StreamingActions.openApp(activity, title.service);
+        });
+    }
+
+    /** After the library results: the film's streaming group, if its story has titles on your services. */
+    private void loadStreaming(List<Result> found, int request) {
+        if (!com.archos.mediacenter.video.streaming.StreamingRepository.enabled(activity))
+            return;
+        Movie source = null;
+        java.util.Set<Long> owned = new java.util.HashSet<>();
+        for (Result result : found)
+            if (result.video instanceof Movie && ((Movie)result.video).getOnlineId() > 0) {
+                owned.add(((Movie)result.video).getOnlineId());
+                if (source == null && !result.people)
+                    source = (Movie)result.video;
+            }
+        if (source == null)
+            return;
+        Movie film = source;
+        Context app = activity.getApplicationContext();
+        worker.execute(() -> {
+            SearchStreaming.Group group = SearchStreaming.worldOf(app, film.getOnlineId(), film.getName(),
+                                                                  film.getYear(), owned, () -> request != generation);
+            if (group == null)
+                return;
+            main.post(() -> {
+                if (request != generation || !isAttachedToWindow())
+                    return;
+                items.removeIf(item -> item.stream != null);
+                for (SearchStreaming.Title title : group.titles)
+                    items.add(new Result(title, group.heading));
+                adapter.notifyDataSetChanged();
+            });
+        });
+    }
+
+    /**
      * Who matched and as what (SEARCH.md: "Taylor Sheridan · creator"): the first name in cast, crew or studio that the
      * typed words find, with its role from the field.
      */
@@ -981,18 +1064,28 @@ public final class PreviewSearch extends LinearLayout {
             paint.setTextSize(16 * activity.getResources().getDisplayMetrics().scaledDensity);
         }
 
-        /** One heading, "In your library", above the first result (sheet: the library is the key). */
+        /**
+         * "In your library" above the first result (sheet: the library is the key), then each streaming group's own
+         * heading ("Stream more from the world of …") above its first title.
+         */
         private String heading(int position) {
             List<Result> shown = visible();
-            if (position != 0 || shown.isEmpty())
+            if (position < 0 || position >= shown.size())
                 return null;
-            return "In your library";
+            Result here = shown.get(position);
+            if (here.stream != null)
+                return position == 0 || shown.get(position - 1).stream == null ||
+                           !shown.get(position - 1).streamHeading.equals(here.streamHeading)
+                    ? here.streamHeading : null;
+            return position == 0 ? "In your library" : null;
         }
 
         @Override
         public void getItemOffsets(android.graphics.Rect out, View view, RecyclerView parent,
                                    RecyclerView.State state) {
-            out.set(0, heading(parent.getChildAdapterPosition(view)) == null ? 0 : dp(36), 0, 0);
+            int at = parent.getChildAdapterPosition(view);
+            // A later group's heading sits clearly apart from the group above (RULES §5).
+            out.set(0, heading(at) == null ? 0 : at == 0 ? dp(36) : dp(58), 0, 0);
         }
 
         @Override
@@ -1001,7 +1094,7 @@ public final class PreviewSearch extends LinearLayout {
                 View child = parent.getChildAt(i);
                 String text = heading(parent.getChildAdapterPosition(child));
                 if (text != null) {
-                    PreviewIcon books = new PreviewIcon("library");
+                    PreviewIcon books = new PreviewIcon(text.startsWith("Stream") ? "cloud" : "library");
                     int size = dp(16);
                     int top = child.getTop() - dp(13) - size;
                     books.setBounds(child.getLeft() + dp(4), top, child.getLeft() + dp(4) + size, top + size);
@@ -1034,6 +1127,10 @@ public final class PreviewSearch extends LinearLayout {
 
         public void onBindViewHolder(Holder h, int position) {
             Result r = visible().get(position);
+            if (r.stream != null) {
+                bindStream(h, r.stream);
+                return;
+            }
             Diagnostics.semantic(h.itemView, "search.result." + (r.show == null ? "video." : "series.") +
                                                  (r.show == null ? r.video.getId() : r.show.getTvshowId()));
             String typed = query.getText().toString();

@@ -72,13 +72,17 @@ Home has no margin, its rows run off both edges.
   What you can search as plain tips (Titles · People · Genres · Years · Your services only with Where to Watch on).
 - Results under one "In your library" heading with outlined pills: Resume S5 E3 · Watched · Unwatched; "Nothing in
   your library matches …" when nothing does. A person match says who and as what ("Avery Lindqvist · director").
+- Films: "Stream more from the world of <title>" (cloud icon) lists the other films of its story — its TMDB
+  collection, sequels and prequels — that you don't own and that are on your services, with the service's pill and
+  the open-in-app icon; OK opens it in the service's app. Only with Where to Watch on, and only when a library film
+  matched. The old filter chips no longer come back when results arrive.
 
 ## Not built (and why)
 - **A true shared-element glide** from the Home hero into Details: Details now opens from the hero with no slide or
   fade, so the card (same size and place on both pages) stays put; a moving glide needs checking on the Shield.
-- **Search streaming groups** ("Stream more from the world of …", "… related to …", "… from <person>"): the
-  related-titles service built in 0.157 mixes in "similar" titles, which the sheet rules out for Search, and has no
-  sequels / spin-offs / collection data; Search shows library results only until that data exists.
+- **Search streaming groups for TV shows and people** ("Stream more related to …", "Stream more from <person>"):
+  TMDB has no spin-off links and the 0.157 related-titles service mixes in "similar" titles, which the sheet rules
+  out for Search. Films get their group (below).
 - **Genre and service lists' "Selected" group** gliding to the top: ticks stay in place.
 - **Connections grouped by server (F52)**: not reached (the brief's "if time remains").
 - **Settings and onboarding**: 0.159, as planned.

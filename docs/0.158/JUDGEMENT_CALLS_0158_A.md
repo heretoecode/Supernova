@@ -89,3 +89,8 @@ decide quickly.
     there is never an empty frame; the new picture drifts 10 px into place.
 38. **F52 grouping** is how Connections and Scan one source are shown: each saved folder stays as it was underneath,
     so Edit opens the first folder's form and Remove removes every folder of that server (with Undo).
+39. **"Stream more from the world of"** uses the film's TMDB collection (the same story), at most six titles, the top
+    service from Your services, "prequel" or "sequel" by release year. "Owned" means the films your search found, so
+    a film of the collection that is in the library but didn't match the words could appear.
+40. **A person match** shows "Name · role" before the usual line; the role comes from the field that matched (cast,
+    director, writer, studio).

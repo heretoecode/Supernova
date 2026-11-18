@@ -217,6 +217,17 @@ public final class StreamingRepository
         return result;
     }
 
+    /**
+     * A TMDB collection (the films of one story: sequels and prequels), read-only through the same client and cache
+     * (Search: "Stream more from the world of …"). Never "similar" titles.
+     */
+    public static JSONObject collection(Context context, long id) throws Exception
+    {
+        if (id <= 0)
+            throw new IOException("Invalid collection request");
+        return PreviewMetadataCache.load(context, "collection", id, "", () -> api(context, "collection/" + id, null));
+    }
+
     /** TMDB user reviews, existing application API access only. Bounded pages; no account flow. */
     public static JSONObject reviews(Context context, String kind, long id, int page) throws Exception
     {
