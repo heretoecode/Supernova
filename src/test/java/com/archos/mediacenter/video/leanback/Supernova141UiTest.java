@@ -126,12 +126,16 @@ public class Supernova141UiTest {
             View info = pages.findViewWithTag("hero:info");
             assertNotNull(info);
             info.requestFocus();
+            // 0.158: Right on More shows the next hero, Left reaches Play, Left on Play the previous, Right back to More.
+            int[] keys = {KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_LEFT,
+                          KeyEvent.KEYCODE_DPAD_RIGHT};
+            int[] shown = {1, 1, 0, 0};
             for (int i = 0; i < 24; i++) {
-                int key = i % 2 == 0 ? KeyEvent.KEYCODE_DPAD_RIGHT : KeyEvent.KEYCODE_DPAD_LEFT;
+                int key = keys[i % 4];
                 pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, key));
                 pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, key));
                 PreviewPagesTest.layout(pages);
-                assertEquals(i % 2 == 0 ? 1 : 0, (int)ReflectionHelpers.getField(pages, "featuredIndex"));
+                assertEquals(shown[i % 4], (int)ReflectionHelpers.getField(pages, "featuredIndex"));
             }
             settle(pages);
             View card = pages.findViewWithTag("semantic:featured.active");

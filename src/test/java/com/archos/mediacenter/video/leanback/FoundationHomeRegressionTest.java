@@ -242,7 +242,7 @@ public class FoundationHomeRegressionTest {
                         assertEquals(baseline, meta.getTop());
                 } else
                     assertEquals("No unverified series score reserves a metadata row", View.GONE, meta.getVisibility());
-                assertNull(card.findViewWithTag("hero:play"));
+                assertNotNull("0.158: the hero has Play before More", card.findViewWithTag("hero:play"));
                 PreviewPagesTest.capture(card, "foundation-home-logo-" + dimensions[0]);
             }
         } finally {
@@ -350,11 +350,28 @@ public class FoundationHomeRegressionTest {
                 PreviewPagesTest.layout(pages);
             assertEquals("Film 23", ((TextView) pages.findViewWithTag("semantic:featured.title")).getText().toString());
             assertTrue(pages.findViewWithTag("hero:info").hasFocus());
+            // 0.158: More opens beside the button with Details first.
             pages.findViewWithTag("hero:info").performClick();
+            android.app.Dialog more = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            assertNotNull(more);
+            View details = Review0158Fixture.byText(more.getWindow().getDecorView(), "Details");
+            assertNotNull(details);
+            details.performClick();
             assertSame(source.recent.get(10).media, opened.get(0));
+            if (more.isShowing())
+                more.dismiss();
+            // Left on More reaches Play; Left on Play shows the previous hero; Right comes back to More.
+            assertTrue(pages.findViewWithTag("hero:info").requestFocus());
             assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_LEFT));
+            assertTrue(pages.findViewWithTag("hero:play").hasFocus());
+            assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_LEFT));
             for (int i = 0; i < 8; i++)
                 PreviewPagesTest.layout(pages);
+            assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_RIGHT));
+            assertTrue(pages.findViewWithTag("hero:info").hasFocus());
             assertEquals(title, ((TextView) pages.findViewWithTag("semantic:featured.title")).getText().toString());
             assertSame(rowAdapter, rail.getAdapter());
             assertSame(firstCard, rail.findViewHolderForAdapterPosition(0).itemView);
