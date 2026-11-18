@@ -2532,8 +2532,10 @@ public final class PreviewPages extends FrameLayout {
                 range[1] == yearTo[tab])
                 ticked.add(i);
         }
-        PreviewDialog.menuBelow(getContext(), null, "Year", labels.toArray(new String[0]), icons, ticked, 1, true,
-                                n -> {
+        int fromRow = labels.size() - 2;
+        int toRow = labels.size() - 1;
+        Dialog yearMenu = PreviewDialog.menuBelow(getContext(), null, "Year", labels.toArray(new String[0]), icons,
+                                                  ticked, 1, true, n -> {
             int[] range = ranges.get(n);
             if (range == null)
                 return;
@@ -2561,6 +2563,37 @@ public final class PreviewPages extends FrameLayout {
             quietOrder.clear();
             render("filter_years");
             refreshMenu.run();
+        });
+        // Left / Right on From or To steps through the years that hold titles, applied at once (sheet).
+        yearMenu.setOnKeyListener((d, key, event) -> {
+            if (key != KeyEvent.KEYCODE_DPAD_LEFT && key != KeyEvent.KEYCODE_DPAD_RIGHT)
+                return false;
+            View focused = yearMenu.getCurrentFocus();
+            if (focused == null || !(focused.getTag() instanceof Integer))
+                return false;
+            int row = (Integer)focused.getTag();
+            if (row != fromRow && row != toRow)
+                return false;
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return true;
+            int direction = key == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1;
+            if (row == fromRow) {
+                yearFrom[tab] = LibraryFilters.stepYear(present, yearFrom[tab], direction, true);
+                if (yearFrom[tab] > 0 && yearTo[tab] > 0 && yearTo[tab] < yearFrom[tab])
+                    yearTo[tab] = yearFrom[tab];
+            } else {
+                yearTo[tab] = LibraryFilters.stepYear(present, yearTo[tab], direction, false);
+                if (yearFrom[tab] > 0 && yearTo[tab] > 0 && yearTo[tab] < yearFrom[tab])
+                    yearFrom[tab] = yearTo[tab];
+            }
+            PreviewDialog.updateLabel(yearMenu, fromRow, "From · " + (yearFrom[tab] > 0 ? yearFrom[tab] : "Any"));
+            PreviewDialog.updateLabel(yearMenu, toRow, "To · " + (yearTo[tab] > 0 ? yearTo[tab] : "Any"));
+            selectedYears[tab] = "";
+            years[tab] = 0;
+            quietOrder.clear();
+            render("filter_years");
+            refreshMenu.run();
+            return true;
         });
     }
 

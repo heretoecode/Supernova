@@ -139,6 +139,47 @@ final class LibraryFilters
         }
     }
 
+    /**
+     * Left / Right on From or To (sheet: "Left / Right steps"): the next year that holds titles, earlier or later;
+     * stepping past the oldest (From) or newest (To) year gives Any (0).
+     */
+    static int stepYear(List<Integer> present, int current, int direction, boolean from)
+    {
+        List<Integer> ascending = new ArrayList<>(present);
+        Collections.sort(ascending);
+        if (ascending.isEmpty())
+        {
+            return 0;
+        }
+        if (current <= 0)
+        {
+            if (from && direction > 0)
+            {
+                return ascending.get(0);
+            }
+            if (!from && direction < 0)
+            {
+                return ascending.get(ascending.size() - 1);
+            }
+            return 0;
+        }
+        int at = ascending.indexOf(current);
+        if (at < 0)
+        {
+            at = 0;
+            while (at < ascending.size() && ascending.get(at) < current)
+            {
+                at++;
+            }
+            at = direction > 0 ? at : at - 1;
+        }
+        else
+        {
+            at += direction;
+        }
+        return at < 0 || at >= ascending.size() ? 0 : ascending.get(at);
+    }
+
     /** One year from those that hold titles (newest first), or Any. */
     static void chooseYear(Context context, List<Integer> present, String title, int current, IntConsumer chosen)
     {
