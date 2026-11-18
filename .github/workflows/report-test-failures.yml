@@ -55,6 +55,7 @@ jobs:
                           previous_error=' error: ' in text
               print(f'{count} compile error or failed-task lines in {path.name}')
       - name: Print where hung tests were (watchdog thread dumps)
+        continue-on-error: true
         run: |
           python3 - <<'PY'
           import pathlib
@@ -75,7 +76,6 @@ jobs:
                               break
                       elif block:
                           block.append(line)
-          PY
           PY
       - name: Print failing tests only
         run: |
