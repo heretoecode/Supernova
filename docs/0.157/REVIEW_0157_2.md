@@ -127,6 +127,12 @@ where the owner must decide.
   nine styles 1 Bold clean, 4 Two-line and 2 Modern bold.** Mock-ups `title-style/01` Home, `02` Details, `03` player, each
   with A Modern block · B Bold clean · C Two-line · D Modern bold. Two-line puts the part before a colon small and
   spaced on top; titles without a colon stay on one line. Owner to choose.
+  **Decided (owner, 18 Nov evening): keep the official logo for now; develop the house style as the fallback for
+  titles with no logo** (RULES §19 unchanged in substance). Tested on five of the owner's own titles, short to very
+  long (picture kept out of the public repo). Text line breaks: after a colon, else after the last comma, else two
+  balanced lines; at most two lines, shrinking if needed. **Logo placement is often wrong** (owner): the owner will
+  send photos; likely causes are empty space inside the logo image, scaling to a fixed width, and no fixed anchor.
+  [Trim the empty space, fit each logo to a box by its shape, pin it bottom-left on the details line.]
 - **R2. Third library page:** a solid bar behind the top bar when scrolling (Movies and TV Shows blur). The same page
   code should behave the same (check after 0.158's library pages).
 - **R3. Season Details pages have no artwork** (seasons 2 and 3 of one show; another show likewise). Use the season's
