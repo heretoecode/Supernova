@@ -61,6 +61,10 @@ Home has no margin, its rows run off both edges.
   Minimum rating, Sort by, Order, Maximum items (10–30), Add new titles automatically, Delete row (warning). Icon
   opens the grid picker (five a row, icon and name, tick on the current one).
 - Long-press on a card opens the library long-press menu. The old Home editor is gone.
+- Hero: the description on two lines (never the tagline); buttons Play (or "Resume S1 E5 · 16 min left" /
+  "Resume · 42 min left") then More (beside the button: Details, then the library menu's items); a change of hero
+  cross-fades the old picture out over the new one (about 450 ms, slight drift), never an empty frame; no movement
+  when animations are off.
 
 **Search** (`Review0158SearchTest`)
 - Plain charcoal page, no panel: field and keyboard on the left, focus on T.
@@ -70,8 +74,8 @@ Home has no margin, its rows run off both edges.
   your library matches …" when nothing does.
 
 ## Not built (and why)
-- **Hero redesign on Home** (Details-style hero, cross-fade with preloaded artwork, glide into Details): the existing
-  hero stays; the change is a large piece of motion work that needs its own render checks.
+- **The Home-to-Details glide** (the hero card staying exactly where it is going into Details): Details still opens
+  as before. The hero's dots, metadata row and preloading are as they were in 0.157.
 - **Search streaming groups** ("Stream more from the world of …", "… related to …", "… from <person>"): the
   related-titles service built in 0.157 mixes in "similar" titles, which the sheet rules out for Search, and has no
   sequels / spin-offs / collection data; Search shows library results only until that data exists.

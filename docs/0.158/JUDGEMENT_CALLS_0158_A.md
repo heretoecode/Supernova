@@ -80,3 +80,12 @@ decide quickly.
     "Films, series, people…".
 32. **One "In your library" heading** above every library result (films, shows, episodes and people together, in
     that order); the old filter chips are gone.
+35. **Hero buttons and Left / Right:** Right from Play reaches More and Left comes back; Left on Play shows the
+    previous hero and Right on More the next (the sheet's "Left / Right changes the hero" would otherwise leave More
+    out of reach). Focus stays on the same button.
+36. **Hero More** opens beside the button with Details first (OK on the hero plays, so Details needs a way in), then
+    the library long-press menu's Library and Files & Media items; the Details page's own More menu needs that page.
+37. **The cross-fade** fades a picture of the old hero over the new one, so the frame, edge and buttons stay put and
+    there is never an empty frame; the new picture drifts 10 px into place.
+38. **F52 grouping** is how Connections and Scan one source are shown: each saved folder stays as it was underneath,
+    so Edit opens the first folder's form and Remove removes every folder of that server (with Undo).

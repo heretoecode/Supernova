@@ -22,6 +22,16 @@ import java.util.*;
 /** Fixed exposed-card composition from HOME §11. Neighbours are affordances, never focus peers. */
 final class PreviewFeaturedCard extends FrameLayout {
     PreviewFeaturedCard(Context c, List<Entry> entries, int index, Runnable info, Runnable play) {
+        this(c, entries, index, info, play, view -> info.run(), entry -> "Play");
+    }
+
+    /**
+     * The Home hero, the same design as Details (page sheet HOME.md): logo artwork or the name, the metadata row, the
+     * description on two lines (never the tagline), buttons fixed at the bottom left: Play (or "Resume S1 E5 · 16 min
+     * left"), then More, which opens its menu beside the button.
+     */
+    PreviewFeaturedCard(Context c, List<Entry> entries, int index, Runnable info, Runnable play,
+                        java.util.function.Consumer<View> more, java.util.function.Function<Entry, String> playLabel) {
         super(c);
         setClipChildren(false);
         setClipToPadding(false);
@@ -86,15 +96,11 @@ final class PreviewFeaturedCard extends FrameLayout {
             : entry.media instanceof Tvshow ? ((Tvshow) entry.media).getPlot()
             : entry.media instanceof Video ? ((Video) entry.media).getDescriptionBody()
                                             : "";
-        String tagline = entry == null ? "" : entry.tagline;
-        if (tagline != null && !tagline.trim().isEmpty())
-            plot = tagline;
         if (plot == null)
             plot = "";
-        boolean hasTagline = tagline != null && !tagline.trim().isEmpty();
         TextView synopsis = text(plot, 16);
-        // Tagline on one line; without one, the synopsis on two (owner, 3 Nov 2026).
-        synopsis.setMaxLines(hasTagline ? 1 : 2);
+        // The description on two lines; no tagline anywhere (owner, 13 Nov 2026; RULES §14).
+        synopsis.setMaxLines(2);
         synopsis.setLineSpacing(dp(2), 1);
         if (plot.trim().isEmpty())
             synopsis.setVisibility(GONE);
@@ -109,9 +115,18 @@ final class PreviewFeaturedCard extends FrameLayout {
         LinearLayout actions = new LinearLayout(c);
         actions.setClipChildren(false);
         copy.addView(actions, new LinearLayout.LayoutParams(-1, dp(44)));
-        TextView more = action("More Info", info);
-        more.setTag("hero:info");
-        actions.addView(more, new LinearLayout.LayoutParams(-2, -1));
+        TextView start = action(entry == null ? "Play" : playLabel.apply(entry), play);
+        PreviewIcon.apply(start, "play", 18);
+        start.setTag("hero:play");
+        actions.addView(start, new LinearLayout.LayoutParams(-2, -1));
+        TextView[] holder = {null};
+        holder[0] = action("More", () -> more.accept(holder[0]));
+        PreviewIcon.apply(holder[0], "more", 18);
+        // Kept as the hero's second focus target for Down-then-Up and the Details glide (tag shared with 0.157).
+        holder[0].setTag("hero:info");
+        LinearLayout.LayoutParams moreSize = new LinearLayout.LayoutParams(-2, -1);
+        moreSize.leftMargin = dp(10);
+        actions.addView(holder[0], moreSize);
     }
 
     @Override

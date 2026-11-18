@@ -1617,6 +1617,18 @@ public final class PreviewPages extends FrameLayout {
         if (tab == 0 && (remoteKey == KeyEvent.KEYCODE_DPAD_LEFT || remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT)) {
             View focused = findFocus();
             String tag = focused == null ? "" : String.valueOf(focused.getTag());
+            // Play then More (page sheet HOME.md): Right from Play reaches More; Left on Play shows the previous hero
+            // and Right on More the next, focus staying on the same button.
+            boolean between = "hero:play".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT
+                              || "hero:info".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_LEFT;
+            if (between && !heroOwnsHorizontal) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    View other = findViewWithTag("hero:play".equals(tag) ? "hero:info" : "hero:play");
+                    if (other != null)
+                        other.requestFocus();
+                }
+                return true;
+            }
             if (heroOwnsHorizontal || tag.startsWith("hero:") ||
                 restoringFocus && anchors[0] != null && anchors[0].cell.equals(HERO + ":Featured")) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -2728,6 +2740,12 @@ public final class PreviewPages extends FrameLayout {
         List<Runnable> commands = new ArrayList<>();
         boolean show = e.media instanceof Tvshow;
         boolean watched = LibraryPageModel.watched(e);
+        if (heroDetails != null) {
+            Runnable details = heroDetails;
+            labels.add("Details");
+            icons.add("details");
+            commands.add(details);
+        }
         labels.add("— Playback");
         icons.add(null);
         commands.add(null);
@@ -2785,6 +2803,74 @@ public final class PreviewPages extends FrameLayout {
                                    commands.get(n).run();
                            });
     }
+
+    static final int HERO_FADE_MS = 450;
+
+    /** The hero as it looks now, for the cross-fade; null when it has no size yet. */
+    private android.graphics.drawable.BitmapDrawable snapshot(View hero) {
+        if (hero.getWidth() <= 0 || hero.getHeight() <= 0 || ((ViewGroup)hero).getChildCount() == 0)
+            return null;
+        android.graphics.Bitmap picture = android.graphics.Bitmap.createBitmap(
+            hero.getWidth(), hero.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
+        hero.draw(new Canvas(picture));
+        android.graphics.drawable.BitmapDrawable drawable =
+            new android.graphics.drawable.BitmapDrawable(getResources(), picture);
+        drawable.setBounds(0, 0, hero.getWidth(), hero.getHeight());
+        return drawable;
+    }
+
+    /**
+     * The changing hero (page sheet HOME.md; owner §11): the frame stays still while the old picture fades out over the
+     * new one (about 450 ms), the new one drifting in slightly; the text follows just after. Never an empty frame.
+     */
+    private void crossFade(LinearLayout hero, PreviewFeaturedCard incoming, android.graphics.drawable.BitmapDrawable
+                           outgoing, int direction) {
+        hero.getOverlay().add(outgoing);
+        incoming.setTranslationX(dp(10) * direction);
+        incoming.animate().translationX(0).setDuration(HERO_FADE_MS).start();
+        android.animation.ValueAnimator fade = android.animation.ValueAnimator.ofInt(255, 0);
+        fade.setDuration(HERO_FADE_MS);
+        fade.addUpdateListener(step -> outgoing.setAlpha((int)step.getAnimatedValue()));
+        fade.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                hero.getOverlay().remove(outgoing);
+                outgoing.getBitmap().recycle();
+            }
+        });
+        fade.start();
+    }
+
+    /** "Play", "Resume · 42 min left" or "Resume S1 E5 · 16 min left" (RULES §6 wording). */
+    String heroPlayLabel(Entry e) {
+        Entry next = e.media instanceof Tvshow ? nextEpisodes.get(((Tvshow)e.media).getTvshowId()) : null;
+        if (next != null && next.media instanceof Episode) {
+            Episode episode = (Episode)next.media;
+            String where = "Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber();
+            long left = episode.getDurationMs() - episode.getResumeMs();
+            return episode.getResumeMs() > 0 && left > 0 ? where + " · " + LibraryPageModel.duration(left) + " left"
+                                                        : where;
+        }
+        if (e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !LibraryPageModel.watched(e)) {
+            Video video = (Video)e.media;
+            long left = video.getDurationMs() - video.getResumeMs();
+            return left > 0 ? "Resume · " + LibraryPageModel.duration(left) + " left" : "Resume";
+        }
+        return "Play";
+    }
+
+    /**
+     * The hero's More: beside the button, Details first (OK on the hero plays), then the library menu's Library and
+     * Files & Media items.
+     */
+    private void heroMenu(Entry e, View anchor) {
+        heroDetails = () -> open(e, anchor);
+        libraryMenu(e, anchor);
+        heroDetails = null;
+    }
+
+    /** Set only while the hero's More builds its menu: adds Details at the top. */
+    private Runnable heroDetails;
 
     private Entry firstEpisode(Entry show) {
         Entry first = null;
@@ -2938,7 +3024,8 @@ public final class PreviewPages extends FrameLayout {
             if (!heroWindow.containsKey(key)) {
                 PreviewFeaturedCard card =
                     new PreviewFeaturedCard(getContext(), entries, index,
-                                            () -> open(candidate, cardAnchor()), () -> play(candidate, cardAnchor()));
+                                            () -> open(candidate, cardAnchor()), () -> play(candidate, cardAnchor()),
+                                            button -> heroMenu(candidate, button), this::heroPlayLabel);
                 card.measure(
                     View.MeasureSpec.makeMeasureSpec(
                         Math.max(dp(320), list.getWidth() - list.getPaddingLeft() - list.getPaddingRight()),
@@ -3144,6 +3231,9 @@ public final class PreviewPages extends FrameLayout {
                     return;
                 }
             }
+            // Changing hero (HOME.md): keep a picture of the outgoing one to fade out over the new one.
+            android.graphics.drawable.BitmapDrawable outgoing =
+                tab == 0 && c.type == HERO && featuredDirection != 0 && motionAllowed() ? snapshot(v) : null;
             v.removeAllViews();
             v.setFocusable(false);
             v.setOnClickListener(null);
@@ -3176,12 +3266,10 @@ public final class PreviewPages extends FrameLayout {
                     v.animate().cancel();
                     v.setAlpha(1f);
                     v.setTranslationX(0);
-                    if (featuredDirection != 0 && motionAllowed()) {
-                        v.setTranslationX(dp(36) * featuredDirection);
-                        v.setAlpha(1f);
-                        v.animate().translationX(0).setDuration(220).start();
-                        featuredDirection = 0;
+                    if (outgoing != null) {
+                        crossFade(v, featured, outgoing, featuredDirection);
                     }
+                    featuredDirection = 0;
                 } else {
                     // No page title and no statistics row on a library page (sheet; the top bar says where you
                     // are, the figures moved to Files › Your Library).
