@@ -85,13 +85,13 @@ const play=f=>`${tabs('Playback')}${h('Picture and Speed')}
  ${row(ic.moon,'Stop playing at',cyc(f?'11:40':'Off'),f)}
  ${row(ic.q,'Still watching?',cyc('Off'))}
  ${row(ic.rp,'Play mode',cyc('Play next'))}
- ${row(ic.sk,'Skip intros &amp; credits',ch(['Off','Show button','Automatic'],'Show button'))}
+ ${row(ic.sk,'Skipping',ch(['Off','Show button','Automatic'],'Show button'))}
  ${h('This Show')}
  ${row(ic.rp,'Remember for this show',sw(0))}`;
 const stopList=`<div class="list">${h('Stop Playing At')}${[['Off',1],['End of this episode',0],['11:10',0],['11:40',0],['12:10',0],['00:10',0]]
  .map(([n,f])=>`<div class="r${f?' f':''}"><div class="n">${n}</div>${f?'✓':''}</div>`).join('')}</div>`;
 const F=[['1 · Subtitles: Text size focused (‹ › only on the focused row)',subs,''],['2 · Audio: Audio boost focused',audio,''],
- ['3 · Playback: Stop playing at focused, Right pressed twice',play(1),''],['4 · Playback at rest: values only; Skip keeps its chips',play(0),'']];
+ ['3 · Playback: Stop playing at focused, Right pressed twice',play(1),''],['4 · Playback at rest: values only; Skipping keeps its chips',play(0),'']];
 document.getElementById('g').innerHTML=F.map(([c,p,l])=>`<div><div class="cap">${c}</div><div class="fr">
  <div class="sub">Who you really are, and why you use it.</div><div class="panel${l?' dim':''}">${p}</div>${l}</div></div>`).join('');
 
