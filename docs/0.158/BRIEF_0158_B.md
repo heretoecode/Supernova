@@ -53,6 +53,11 @@ darkened at about 96% and the same width (PS8), and all of PS11 (chips instead o
 position, names on the two nameless rows, Audio boost chips, Extra large, Subtitle delay in Subtitle Selection, For
 This Series wording, the Download subtitles list). Then PS9: render the Playback tab and tidy what is left.
 
+### Settings wording seen on the Shield (owner, 19 Nov, 0.158.3)
+The Playback tab's skip rows still show NOVA's names "Play normally · Show skip (5 s) · Auto skip · Smart". Use the
+sheet's: **Off · Show button · Skip · Skip when binge-watching** (SETTINGS.md › Playback › Skipping). Check every
+Settings row's wording against the sheet while finishing Settings.
+
 ### Playback Settings, round two (owner, 19 Nov; build this before anything else still open)
 `player/33-v15-playback-settings-step.png` and REVIEW_0157_2 PS9: panel **820 px**, 99%, rows 62 px, every tab fits
 with no scrolling, every row on one line with its value on the centre line; **no line under the tab row**; named
