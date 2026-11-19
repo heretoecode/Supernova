@@ -14,7 +14,8 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### To discuss (owner, 16 Nov)
 
-- Episodes: OK plays; long-press menu (Play, Show details, Delete episode); deleting one offers earlier episodes of the season, each your choice
+- [Moved to 0.158 part B, 19 Nov] Episodes (answered 18 Nov): OK on an episode card plays it; long-press opens the same menu as More;
+  deleting one offers the earlier episodes of the season: only this one · all · choose (with Select all)
 - Network statistics: split by source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library
 - Feature blueprint (research): pick ideas to take forward (`docs/research/FEATURE_BLUEPRINT.md`)
 - Diagnostics that catch problems before you notice them: a health snapshot (memory, threads, caches, database,
@@ -26,7 +27,27 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 - Playback Settings panel looks different from the mock-up even over a black, paused frame (owner, 18 Nov). The code
   has the same fill (charcoal at 95%) but adds a light edge and a dark glow, and still holds old blue colours; compare
   side by side with a photo (review P6)
-- Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6; a few questions open)
+- [Moved to 0.158 part B, 18 Nov] Titles in one house style instead of logo artwork (owner, 18 Nov: leaning to it; clean, no glow; "Modern block",
+  styles Bold clean / Two-line / Modern bold). Mock-ups drawn 18 Nov: `title-style/01`–`03` (A Modern block · B Bold clean · C Two-line · D Modern bold on Home, Details, player); decided 18 Nov: official logo for now, house style as the fallback (style still to pick); logo placement to fix from the owner's photos
+- **Background speckle (owner, 18 Nov):** charcoal feels bland; the old Space Black was too patchy. Idea from a
+  black-sand beach: a darker base with fine, faint white grains, fixed to the screen (never moving or shimmering),
+  for the whole app. Also hides banding in dark gradients. Mock-ups `background-speckle/01` faint (today's
+  charcoal), `02` medium (darker), `03` strong (darkest, closest to the sand); owner to judge on the TV
+  **On the TV (owner, 18 Nov):** medium liked on Files, Settings and Home ("distant stars"; even, no light and dark
+  patches); text pops more than on charcoal; plain speckle on its own may be a little busy. Asks: a panel or outline
+  behind the lists on Files and Settings? Tried in 4K (`tv2-1`–`4`); **decided (owner, 18 Nov): no pane**: text pops
+  more straight on the speckle, washed out on the pane (RULES §1 stands). Lighter grain (a third fewer) in `tv2`.
+- **Buttons, pills and focus boxes (owner, 18 Nov):** the focused Open button is bigger and less rounded than the
+  Reachable pill beside it; focus boxes round words (Files, Connections, Open) feel too big with corners not rounded
+  enough. [One height and fully rounded ends for every small box on a row (buttons, pills, chips, tab and top-bar
+  focus), tighter side padding; fill tells an action from information. Large things (rows, cards, heroes) keep
+  their gentler corners.] Owner: the matched shapes look more uniform; corner strength A 12 · B 20 · C fully
+  round compared; **owner, 18 Nov: B (20 px)**. Density compared (`tv3-1`–`3`: 13, 20, 26 grains per 1,000 px): **owner, 18 Nov: 20, the current one (`tv3-2`)**;
+  26 still too much. Base `#111215`; grains mostly 7–22% white, about 1 in 7 brighter (45%); fixed seed; no pane.
+  For coding: one shared drawable through `PreviewUtilityBackground` (today it paints charcoal), drawn once at the
+  screen's own size, no filtering; pages that paint their own charcoal (Files, folder browser, top bar's solid
+  strip, the library pages' fade under the top bar) switch to it; panels, menus and caption boxes stay solid.
+- Users and tags instead of profiles: user switcher in the top bar (no SUPERNOVA name), user and general tags, views, default user, delete options, editable tags, in Backup (mock-ups v4–v6). Last questions answered 18 Nov: opens as the default user; progress and watchlist per user; a Guest user (mock-up next)
 
 ## 0.157
 
@@ -127,10 +148,27 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 ### Also in 0.158
 - Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
 
+### 0.158 part B (owner, 18 Nov)
+- **First, the new look, so everything after it is checked on it:** the speckled background app-wide (density 20,
+  `background-speckle/tv3-2`, no pane) and one shape for every small box (buttons, pills, chips, tab and top-bar
+  focus: one height, 20 px corners, tighter padding; `tv3-*`). Recipe under To discuss › Background speckle.
+- Titles (approved 18 Nov): the logo placement fix and the house style A (with C's colon split) for titles
+  without a logo (RULES §19).
+- **A look sweep once the background is in:** render every page on it and fix what it changes (faint row lines,
+  grey second lines, the open-page grey box, outlined pills and chips at rest, "Unknown", panels now lighter than
+  the page, the keyboard's keys, loading placeholders, disabled rows). Only what fails gets changed. The Playback
+  Settings panel colour (P6/PS10) is judged in this sweep (owner, 18 Nov).
+- **Text centred on its letters in every box** (the 0.158 top bar fix, applied to every button, pill, chip and tab
+  with the new shape; owner's "TV Shows sat low", 16 Nov). The shape alone doesn't fix it.
+- **Back and page position** (RULES §16, 18 Nov): Back goes straight to the top bar; a page left for another one
+  reopens at its top; Details → Back returns to the poster.
+- Then the owner's 0.157.2 review (`docs/0.157/REVIEW_0157_2.md`), Playback Settings first.
+- **Episodes** (OK plays; long-press = the More menu; deleting offers earlier episodes) and **the Settings redesign**
+  (moved from 0.159 by the owner, 19 Nov: the last major redesign). Brief: `docs/0.158/BRIEF_0158_B.md`.
+
 ## 0.159
 
-- Settings (seven tabs, Backup and Restore, Diagnostics, About): set aside by the owner (18 Nov); the current
-  Settings works and is rarely visited
+- [Moved to 0.158 part B, 19 Nov] Settings (seven tabs, Backup and Restore, Diagnostics, About)
 - Onboarding (on Home, Start fresh / Restore, smart steps): it points into Settings and is seen once
 
 ## Parked

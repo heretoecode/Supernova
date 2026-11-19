@@ -19,6 +19,11 @@ investigating, ask the owner for their existing Supernova research document and 
    episode · Show details · Delete episode. **Deleting an episode** offers to delete earlier episodes of the same
    season that are in the library too (e.g. deleting episode 3 offers 1 and 2): the owner picks which, confirms, and
    nothing earlier is ever deleted without approval. Needs investigation, mock-up and discussion.
+   **Owner, 18 Nov:** "OK plays" means OK on an episode card in the Episodes row (Details) plays that episode at once.
+   The card's long-press (or Menu button) opens **the same menu as More**, not a different list (as library
+   posters, 0.158 part A). Deleting episode 3 when 1 and 2 are still there: one warning, "You also have episodes 1
+   and 2 of this season": Delete episode 3 only · Delete all three · Choose… (ticks, with **Select all**); Keep file
+   first as every delete warning. Needs a mock-up.
 3. **Network statistics on Files:** check whether storage figures are split by protocol (WebDAV, SFTP, SMB, others)
    or lumped as "Network"; ideally indexed media per protocol, and if possible per source; confirm the figures are
    real indexed media, not estimated capacity.

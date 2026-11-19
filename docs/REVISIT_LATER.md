@@ -299,6 +299,25 @@ is ever wanted back.
   for details. (7) **Seasonal Home row** liked in theory; mock-ups `06-v6-02`–`04` (Tags list in Edit users and views;
   Edit a tag: Show on Home Off · Always · In season, From, Until). (8) Guest view: owner asked what it does.
 
+- **Owner, 18 Nov (round 8), the three open questions answered:**
+  - **No "Ask every time":** the app opens as the **default user**, chosen in the user menu in the top bar.
+  - **Progress is per user:** resume points (and watched state) belong to each user. Any user can still open any title
+    (e.g. a partner's title found through the library filters); its progress is then kept for whoever is watching.
+    Example: one user is 50 min into a concert film; another starts it from the beginning, reaches 25 min; each
+    resumes from their own point.
+  - **Watchlist per user:** each user's own list (and its Home row).
+  - **Guest user wanted** (e.g. a pet sitter while the owners are away): sees the whole library, tags included; its
+    own progress and list, kept between launches; can be made the **default user**, so the app reopens as Guest;
+    touches nobody else's progress, list or watched state. [Claude's recommendations, for the owner: Trakt off for
+    Guest; Guest can't delete files, change Settings, edit tags or connections; **Clear guest** in the user menu wipes
+    the guest's progress and list when they leave (like deleting a streaming profile); switching away from Guest is
+    open to anyone unless the owner later wants a PIN.] Needs a mock-up.
+    **Owner agreed (18 Nov):** Trakt off for Guest; Guest watches anything but can't change Settings, delete, or edit
+    tags or connections; the options stay where they are and pressing one shows a short notice ("Not available for
+    Guest"); **Clear guest** resets it without deleting the user.
+  - **"Watch without Alex?" stays** (round 7, `06-v6-01`): opening a Together title alone asks Wait for Alex · Watch
+    now · We're both here.
+
 ## Panels whose rows change with a choice (owner, 16 Nov 2026)
 - Idea from the Trakt list row: a choice at the top of a panel ("Row from: Your library · Trakt list") swaps the rows
   under it. The owner likes it, but only as an app-wide rule if adopted, not a one-off; today only Customise page's

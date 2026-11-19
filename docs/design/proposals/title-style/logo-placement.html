@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2d33;font-family:Inter,sans-serif;color:#fff;padding:24px;width:3456px}
+.grid{display:grid;grid-template-columns:repeat(3,1100px);gap:28px}
+.cap{font-size:34px;color:#e6e9ef;margin:0 0 4px 4px}
+.cell{width:1100px;height:470px;position:relative;overflow:hidden;border:2px solid #b9bec7;border-radius:4px}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,12,16,.82),rgba(10,12,16,.55) 38%,rgba(10,12,16,0) 70%)}
+.tx{position:absolute;left:60px;top:50px}
+.box{position:relative}
+.meta{font-size:30px;display:flex;align-items:center;gap:8px;margin-top:24px;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff;border-radius:6px;
+  padding:0 8px;height:36px;font-size:24px;font-weight:600;margin-right:4px}
+.lg{display:inline-block;transform-origin:0 0;white-space:nowrap}
+.kingdom{font-family:'DejaVu Serif';font-size:100px;letter-spacing:.42em;color:#EADFB8;line-height:1}
+.slow{font-family:'Inter Display';font-weight:900;font-size:120px;line-height:.86;color:#fff;transform:scaleX(.62)}
+.heart{font-family:'Inter Display';font-weight:900;font-size:110px;line-height:.86;color:#fff}
+.heart small{font-size:36px;line-height:.9;display:inline-block;vertical-align:top;margin-left:6px}
+</style></head><body><div class="grid" id="g"></div><script>
+const L=[['Meridian','kingdom','MERIDIAN','','2025 · 1 season · 4 episodes · Documentary',
+  'linear-gradient(180deg,#d9a0a8 0%,#e8c98a 45%,#d9d08a 60%,#5c6a3c 85%)'],
+ ['Cold Harbour','slow','COLD<br>HARBOUR','15','2022 · Drama, Mystery, Crime',
+  'radial-gradient(ellipse 60% 90% at 55% 40%,#7fa9b5,#3e6170 55%,#1f3540)'],
+ ['Heart of the Valley','heart','HEART<small>OF<br>THE</small><br>VALLEY','15A','2026 · Adventure, Thriller',
+  'radial-gradient(ellipse 60% 90% at 65% 40%,#8c9a90,#4b5a58 55%,#263232)']];
+let h='';
+for(const fixed of [0,1])for(const l of L){
+ h+=`<div><div class="cap">${fixed?'Fixed':'Today'} · ${l[0]}</div><div class="cell" style="background:${l[5]}">
+ ${fixed?'<div class="shade"></div>':''}<div class="tx"><div class="box" data-f="${fixed}" data-k="${l[1]}">
+ <span class="lg ${l[1]}">${l[2]}</span></div>
+ <div class="meta">${l[3]?`<span class="badge">${l[3]}</span>`:''}${l[4]}</div></div></div></div>`}
+document.getElementById('g').innerHTML=h;
+// Today: as in the photos. Wide logos fill the width with empty space under them; tall ones are scaled by height.
+// Fixed: the empty space trimmed; every logo fitted to the same area inside a 900 x 240 box, its foot on one line
+// 24 px above the details line, so the details line sits in the same place for every title.
+for(const b of document.querySelectorAll('.box')){
+ const lg=b.querySelector('.lg');const r=lg.getBoundingClientRect();const k=b.dataset.k;
+ let s;
+ if(b.dataset.f==='0'){
+  s={kingdom:1000/r.width,slow:300/r.height,heart:270/r.height}[k];
+  b.style.height=(r.height*s+(k==='kingdom'?150:0))+'px';
+ }else{
+  const A=900*240*0.42;const ar=r.width/r.height;let hh=Math.sqrt(A/ar);let w=ar*hh;
+  if(w>900){w=900;hh=w/ar}if(hh>240){hh=240;w=hh*ar}s=hh/r.height;
+  b.style.height='240px';lg.style.position='absolute';lg.style.left='0';lg.style.top=(240-r.height*s)+'px';
+ }
+ const base=getComputedStyle(lg).transform;const sx=k==='slow'?.62:1;
+ lg.style.transform=`scale(${s*sx},${s})`;
+}
+</script></body></html>

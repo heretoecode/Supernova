@@ -25,6 +25,11 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   page panels (owner, 7 Nov; §18). Pages change over one by one, after each is reviewed on charcoal. **Exception
   (owner, 17 Nov):** in 0.157.2 Home and the library pages take the same charcoal background now, ahead of their
   0.158 redesigns, so every page matches.
+- **Speckled background (owner, 18 Nov; from 0.158 part B, replaces plain charcoal behind pages):** base `#111215` with
+  fine, faint white grains (about 20 in every 1,000 pixels, mostly 7–22% white, about 1 in 7 at 45%), drawn once at
+  the screen's own size with a fixed pattern, never moving, never smoothed (`background-speckle/tv3-2`). Content
+  sits straight on it: **no pane behind lists** (tried and declined, 18 Nov). The tone to aim for: **elegant and
+  cinematic**. Panels, menus and caption boxes stay solid as before. After it lands, every page is checked on it.
 - No page title on a top-level page: the top bar already says where you are.
 - TV safe margins: about 56 px at the sides, 54 px at the bottom. **One side margin (owner, 18 Nov):** every page's
   content lines up with the top bar's edges (the clock's right edge); Home's rows alone run off the edge.
@@ -72,6 +77,11 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **No NOVA screen may run hidden behind a Supernova screen** (owner, 12 Nov). Hidden NOVA screens steal focus (the
   hidden grid; the search screen behind Fix match). When coding starts: one sweep finds them all and removes them,
   each with a build and tests; anything not obviously dead goes to the owner as a list first.
+
+- **One shape for every small box (owner, 18 Nov; 0.158 part B):** buttons, pills, chips and the focus and open boxes
+  in tabs and the top bar share one height on a row (52 px), **20 px corners** and tight side padding (about 22 px);
+  solid fill = something to press, outline = information. Rows, cards and heroes keep their own corners
+  (`background-speckle/tv3-*`; corners `background-speckle/corners-A-B-C`, B chosen).
 
 ## 4. Tabs
 - Plain words on one line, each with its own icon (Details tabs, Files tabs; §18), under the top bar.
@@ -191,7 +201,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **A single action at the foot of a panel (Delete row, Delete page, Clear filters) has no heading:** a plain line
   sets it apart (owner, 13 Nov).
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
-  such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
+  such as Artwork); warnings keep their heading because it is content. **The Full description pop-up is the text alone: no title,
+  no Close, no Copy** (owner, 18 Nov; replaces its heading). Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
 - **Small menus fold inline (owner, 16 Nov 2026):** if a menu's choices would add only a button or two to the row that
   opens it (for example Boost → "This copy · Everything queued" on a row with Pause and Cancel), put them inline on the
@@ -285,9 +296,14 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   original titles, TMDB / IMDb / TVDB / Trakt numbers (Files v11).
 
 ## 16. Moving around (remote behaviour)
-- Back from the middle of a long page first jumps to the top, then to the top bar (§23.3).
-- After Android ends the app it reopens on the same page with focus restored; a first launch after a reboot opens
-  Home (§23.2).
+- **Back and page position (owner, 18 Nov; replaces "Back first jumps to the top, then to the top bar", §23.3):**
+  Back from anywhere on a top-level page goes straight to the top bar; the page stays where it was underneath, so
+  Down returns to it. **Opening another page and coming back starts that page at its top.** Going deeper and back
+  (a poster → Details → Back) returns to the item you came from, focus on it.
+- **Reopening (owner, 18 Nov):** after the app was closed fully it opens on Home; when it was only in the background
+  it returns where you left it, focus restored. (Replaces: reopen where you were after Android ends it, §23.2.)
+- **Age rating (owner, 18 Nov):** the badge is always the first item of a title's details line (Preparing playback,
+  player, Details, heroes); no reasons line.
 - Read-only pages (Details tab) have nothing focusable: Down/Up scroll, one more Up returns to the tabs (§1).
 - **Moving things (one gesture app-wide):** OK picks the item up (it lifts, with ⌃⌄), Up/Down moves it, the page behind
   follows live, OK or Back puts it down; focus is locked to the item meanwhile (Home rows, list-view columns) (§19).
@@ -311,7 +327,13 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 
 ## 19. Player
 - **Title logo:** wherever a title is shown large (Home and Details heroes, the compact Details logo, Preparing playback,
-  the player) it is the title's **official logo artwork**; when a title has none, its name in plain text. Mock-ups draw
+  the player) it is the title's **official logo artwork**; when a title has none, its name in the house style (owner, 18
+  Nov: **style A Modern block**: heavy capitals, white, no glow; a colon title splits as C, the part before the colon
+  small and spaced above; else breaks after the last comma, else two balanced lines; two lines at most, shrinking if
+  needed). **Logo placement (owner, 18 Nov; 0.158 part B):** the logo's empty space trimmed; every logo fitted to the
+  same area inside a 900 × 240 box (wide ones capped by width, tall ones by height); its foot on one line 24 px above
+  the details line, so the details line never moves between titles; a soft dark shade from the left behind the text
+  block (`title-style/04-house-style-lengths`, `05-logo-placement`). Mock-ups draw
   the name as a stand-in.
 - Title block in one fixed place, the same on Preparing playback and the HUD; the age rating alone top left for the
   first 6–8 s; logo and episode line appear with it, then fade together (REVIEW_0156, §23.11).
@@ -391,6 +413,9 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - Settled 12–13 Nov: Details headings (icons, no underline) and Details lines (faint row lines, no column lines).
 
 ## Replaced rules (do not use)
+- Back from the middle of a long page first jumps to the top, then to the top bar → straight to the top bar; a page
+  left for another page reopens at its top (§16, 18 Nov).
+- Plain charcoal `#16181C` behind every page → the speckled background, §1 (18 Nov; from 0.158 part B).
 - Navy glass at 97% with a light outline for panels → 90% `#16181C`, no outline (5 Nov).
 - White outline as row focus; blue glow focus → filled white box (5 Nov).
 - Open tab as a grey chip; plain-underline tabs → the focus-and-path rule (12 Nov).
