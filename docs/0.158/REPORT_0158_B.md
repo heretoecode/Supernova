@@ -25,8 +25,12 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
   `supernova-0157-signed-qa` (`Supernova_0.158.4.apk`). Playback Settings round two, panels at 99%, FL9.
 - **0.158.5** (code 1585) — not signed: a render check found Settings would not open in it (a list declared after
   the code that fills it). Its build was cancelled and everything in it goes into 0.158.6.
-- **0.158.6** (code 1586) — 0.158.4 plus everything since: the Settings wording, Home Hero's two new rows, the episodes
-  feature, R3, R4, R5, DT1, DT3, DT5, DT6, titles, PL8, X4, FL1–FL5, FL7, FL8, FL10, FL12. Building.
+- **0.158.6** (code 1586) — not signed: the renders found Settings still wouldn't open (its registry expects an
+  exact number of rows, and the four new rows weren't counted). Cancelled; everything goes into 0.158.7.
+- **0.158.7** (code 1587) — 0.158.4 plus everything since: the Settings wording and new rows (Home Hero, Keep
+  diagnostics for, When a video was started), Save a diagnostic report in its row, the OpenSubtitles panel, the Trakt
+  sign-in look, the episodes feature, R3, R4, R5, DT1, DT3, DT5, DT6, titles, PL8, X4, FL1–FL5, FL7, FL8, FL10, FL12.
+  Building once the render check of the fix is green.
 
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the
@@ -171,7 +175,9 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
   Built this session: the wording and choice names, Home Hero's two rows, Keep diagnostics for, When a video was
   started (Ask · Resume · Start over), Save a diagnostic report in its row, verbs on action rows, the OpenSubtitles
   panel.
-- **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.
+- **Look sweep** — rendered on the speckle and checked: Playback Settings (matches v15), Files (connections, the
+  form, Library Care), Details (the Details tab on one screen). The renders found and fixed: the form still too
+  tall, labels cut, the fifth connection button cut, and two Settings faults that would have stopped Settings opening.
 - **X4** — built (0.158.6) as a new MediaLib patch: a scan waits its turn for the scan lock before its five-minute
   clock starts (a one-hour bound covers the wait), so queued scans no longer fail with "scan lock wait interrupted".
   Needs a diagnostics report from the Shield to confirm.
@@ -192,7 +198,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 ## For the next session
 - Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
   when a build is due (a push there starts conformance; signing accepts only the working branch).
-- 0.158.6 is building from the working branch; see Signed APKs above.
+- 0.158.7 is the next build; see Signed APKs above.
 - Still to do, in the brief's order: the look sweep renders (item 4),   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
 
 ## Judgement calls
