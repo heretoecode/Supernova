@@ -105,30 +105,29 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         String legacy = fragment.requireActivity().getIntent().getStringExtra("preview_settings_category");
         if (fragment.requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false) ||
             "Streaming".equals(legacy))
-            requested = 3;
+            requested = 4;
         else if (legacy != null) {
             if (Arrays.asList("Playback", "Video").contains(legacy))
                 requested = 0;
-            else if (Arrays.asList("Audio", "Subtitles").contains(legacy))
+            else if (legacy.equals("Audio"))
                 requested = 1;
-            else if (Arrays.asList("Home", "Library & Metadata", "Library").contains(legacy))
+            else if (legacy.equals("Subtitles"))
                 requested = 2;
-            else if (legacy.equals("Appearance"))
-                requested = 4;
+            else if (Arrays.asList("Home", "Library & Metadata", "Library").contains(legacy))
+                requested = 3;
             else if (Arrays.asList("Network", "Integrations").contains(legacy))
+                requested = 4;
+            else if (Arrays.asList("Advanced", "Appearance").contains(legacy))
                 requested = 5;
-            else if (legacy.equals("Advanced")) {
-                requested = 6;
-                requestedSection = "Diagnostics";
-            } else if (legacy.equals("About"))
+            else if (legacy.equals("About"))
                 requested = 7;
         }
         fragment.requireActivity().getIntent().removeExtra("preview_settings_category");
         fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");
-        if (requested >= 0 && requested < 8)
-            open(requested, requestedSection);
-        else
-            showGrid();
+        // 0.158 (page sheet SETTINGS.md): no landing tiles; Settings opens on Playback, or the tab last used.
+        if (requested == 6 || requested < 0 || requested > 7)
+            requested = 0;
+        open(requested, requestedSection);
     }
 
     @Override
@@ -286,75 +285,55 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         category = index;
         gridSelection = index;
         List<String> names = registry.sections(index);
-        section = requestedSection != null && names.contains(requestedSection)
+        section = requestedSection != null && names.contains(requestedSection) && index != 7
                       ? requestedSection
-                      : sections.getOrDefault(index, names.get(0));
-        if (!names.contains(section))
-            section = names.get(0);
-        // 0.156 page pattern (owner-approved mock-ups settings/03–05): one panel; the page title once with its
-        // tabs at the right as one control; a rule; then the rows.
+                      : ALL;
+        if (index == 7)
+            section = requestedSection != null && names.contains(requestedSection) ? requestedSection : names.get(0);
+        // 0.158 (page sheet SETTINGS.md): a full page with tabs, like Files; no tiles, no panel, no page title.
         LinearLayout panel = new LinearLayout(getContext());
         panel.setTag("settings.category");
         panel.setOrientation(VERTICAL);
-        // Flat charcoal page, content straight on it: no page panel (RULES; settings-flat mock-ups).
         panel.setBackground(null);
         panel.setPadding(dp(14), dp(11), dp(14), dp(8));
         stage.addView(panel, new FrameLayout.LayoutParams(-1, -1));
-        LinearLayout head = new LinearLayout(getContext());
-        head.setTag("settings.header");
-        head.setGravity(Gravity.CENTER_VERTICAL);
-        head.setPadding(dp(5), 0, dp(5), dp(8));
-        LinearLayout titles = new LinearLayout(getContext());
-        titles.setOrientation(VERTICAL);
-        TextView crumb = text("Settings", 10);
-        crumb.setTextColor(SupernovaStyle.HEADING);
-        titles.addView(crumb);
-        TextView identity = text(SettingsRegistry.LABELS[index], 18);
-        identity.setTag("settings.title");
-        identity.setTypeface(SupernovaStyle.LABEL);
-        identity.setPadding(0, dp(1), 0, 0);
-        titles.addView(identity);
-        head.addView(titles, new LayoutParams(0, -2, 1));
         rail = new LinearLayout(getContext());
         rail.setTag("settings.tabs");
         rail.setGravity(Gravity.CENTER_VERTICAL);
-        head.addView(rail, new LayoutParams(-2, -2));
-        panel.addView(head, new LayoutParams(-1, -2));
-        View rule = new View(getContext());
-        rule.setBackgroundColor(SupernovaStyle.HEADING_LINE);
-        LayoutParams ruleSize = new LayoutParams(-1, Math.max(1, dp(.5f)));
-        ruleSize.leftMargin = dp(3);
-        ruleSize.rightMargin = dp(3);
-        ruleSize.bottomMargin = dp(4);
-        panel.addView(rule, ruleSize);
+        LayoutParams railSize = new LayoutParams(-1, -2);
+        railSize.bottomMargin = dp(13);
+        panel.addView(rail, railSize);
         right = new LinearLayout(getContext());
         right.setTag("settings.content");
         right.setOrientation(VERTICAL);
         panel.addView(right, new LayoutParams(-1, 0, 1));
-        for (String name : names) {
-            TextView tab = text(SettingsLayout.label(name), 12);
-            tab.setTag("settings.section." + name);
-            PreviewIcon.apply(tab, subsectionIcon(name), Math.round(14 * scale()));
+        for (int t = 0; t < SettingsLayout.TABS.length; t++) {
+            final int tabCategory = SettingsLayout.TABS[t];
+            String name = SettingsLayout.TAB_NAMES[t];
+            TextView tab = text(name, 12);
+            tab.setTag("settings.tab." + tabCategory);
+            PreviewIcon.apply(tab, SettingsLayout.TAB_ICONS[t], Math.round(14 * scale()));
             tab.setFocusable(true);
             tab.setFocusableInTouchMode(true);
             tab.setSingleLine(true);
-            SupernovaStyle.applyButton(tab, SupernovaStyle.Surface.PANEL);
+            SupernovaStyle.applyButton(tab, SupernovaStyle.Surface.STANDARD);
             tab.setPadding(dp(11), 0, dp(11), 0);
             tab.setGravity(Gravity.CENTER_VERTICAL);
-            tab.setMinHeight(dp(32));
-            LayoutParams size = new LayoutParams(-2, dp(32));
+            tab.setMinHeight(dp(SupernovaStyle.SMALL_BOX_HEIGHT_DP));
+            LayoutParams size = new LayoutParams(-2, dp(SupernovaStyle.SMALL_BOX_HEIGHT_DP));
             if (!railButtons.isEmpty())
                 size.leftMargin = dp(6);
             rail.addView(tab, size);
             railButtons.add(tab);
             tab.setOnFocusChangeListener((v, yes) -> {
-                // While the rows are rebuilt, focus can pass over a tab for a moment; that must not switch page.
-                if (yes && !rebuilding && !section.equals(name))
-                    select(name);
+                // Moving along the tabs switches the page at once (RULES §4); a rebuild passing over is ignored.
+                if (yes && !rebuilding && category != tabCategory)
+                    switchTab(tabCategory);
+                post(this::paintRail);
             });
             tab.setOnClickListener(v -> {
-                if (!section.equals(name))
-                    select(name);
+                if (category != tabCategory)
+                    switchTab(tabCategory);
                 enter();
             });
             tab.setOnKeyListener((v, key, event) -> {
@@ -379,9 +358,42 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
 
     private TextView selectedRail() {
         for (TextView v : railButtons)
-            if (("settings.section." + section).equals(v.getTag()))
+            if (("settings.tab." + category).equals(v.getTag()))
                 return v;
         return railButtons.get(0);
+    }
+
+    /** Shows another tab's rows; the tab row stays as it is so focus never moves. */
+    private void switchTab(int tabCategory) {
+        remember();
+        category = tabCategory;
+        gridSelection = tabCategory;
+        List<String> names = registry.sections(tabCategory);
+        select(tabCategory == 7 ? names.get(0) : ALL);
+    }
+
+    /**
+     * The tabs follow the 0.158 top bar (PS1 / DT2; page sheet): the white box where the remote is; once focus
+     * goes down, the open tab keeps a soft grey box with a faded word; no underlines.
+     */
+    private void paintRail() {
+        boolean inRail = rail != null && rail.hasFocus();
+        for (TextView v : railButtons) {
+            boolean open = ("settings.tab." + category).equals(v.getTag());
+            v.setSelected(false);
+            if (v.isFocused()) {
+                SupernovaStyle.applyButton(v, SupernovaStyle.Surface.STANDARD);
+                v.setBackground(SupernovaStyle.focusFill(getContext(), SupernovaStyle.SMALL_BOX_RADIUS_DP));
+            } else if (open && !inRail) {
+                v.setBackground(SupernovaStyle.rounded(getContext(), 0x26FFFFFF, SupernovaStyle.SMALL_BOX_RADIUS_DP));
+                v.setTextColor(0xB8FFFFFF);
+                SupernovaStyle.inkIcons(v, 0xB8FFFFFF);
+            } else {
+                v.setBackground(null);
+                v.setTextColor(SupernovaStyle.buttonContent());
+                SupernovaStyle.tintIcons(v);
+            }
+        }
     }
 
     private void select(String name) {
@@ -400,12 +412,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             .getIntent()
             .putExtra("supernova_settings_category", category)
             .putExtra("supernova_settings_section", section);
-        for (TextView v : railButtons) {
-            boolean selected = ("settings.section." + section).equals(v.getTag());
-            // The open tab is a lighter charcoal; the focused tab is the white focus box.
-            v.setSelected(selected);
-            v.setBackground(SupernovaStyle.tab(getContext(), selected));
-        }
+        paintRail();
         if (category == 7) {
             LinearLayout shadowRail = new LinearLayout(getContext()), host = new LinearLayout(getContext());
             right.addView(host, new LayoutParams(-1, -1));
@@ -455,6 +462,21 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     private String subsectionIcon(String name) {
         switch (name) {
             case "Playback": return "play";
+            case "General": return "settings.gear";
+            case "Resume": return "resume";
+            case "Picture": return "tv";
+            case "Language": return "audio";
+            case "Sound": return "audio";
+            case "When To Show": return "sub";
+            case "Languages": return "sub";
+            case "Downloading": return "sub";
+            case "Default Appearance": return "edit";
+            case "Your Library": return "library";
+            case "Details": return "details";
+            case "Home Hero": return "home";
+            case "Viewing History": return "history";
+            case "Where To Watch": return "streaming";
+            case "Ratings": return "details";
             case "Resume & Progress": return "resume";
             case "Skipping": return "next";
             case "Video & Display": return "tv";
@@ -478,6 +500,10 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     }
 
     private boolean integrationDisabled() {
+        return integrationDisabled(section);
+    }
+
+    private boolean integrationDisabled(String section) {
         return section.equals("Trakt") && !prefs.getBoolean("supernova_integration_trakt", true) ||
             (section.equals("IntroDB") || section.equals("Skipping")) &&
                 !prefs.getBoolean(SegmentSkippingPolicy.MASTER, true);
@@ -524,13 +550,32 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         if (body == null || special())
             return;
         refreshStoredValues();
+        // 0.158 page sheet: a tab shows every one of its sections, each under its heading.
+        List<String> shownSections = ALL.equals(section) ? registry.sections(category)
+                                                          : java.util.Collections.singletonList(section);
+        List<Object> items = new ArrayList<>();
         List<SettingsRegistry.Entry> candidates = new ArrayList<>();
-        if (!integrationDisabled())
-            for (SettingsRegistry.Entry e : registry.in(category, section)) {
-                Preference p = e.resolve(fragment.getPreferenceScreen());
-                if (SettingsRegistry.visible(p, e.integration()))
-                    candidates.add(e);
-            }
+        for (String s : shownSections) {
+            boolean link = s.equals("Backup & restore") || s.equals("OpenSubtitles");
+            List<SettingsRegistry.Entry> found = new ArrayList<>();
+            if (!link && !integrationDisabled(s))
+                for (SettingsRegistry.Entry e : registry.in(category, s)) {
+                    Preference p = e.resolve(fragment.getPreferenceScreen());
+                    if (SettingsRegistry.visible(p, e.integration()))
+                        found.add(e);
+                }
+            boolean block = s.equals("Default Appearance");
+            if (found.isEmpty() && !link && !block)
+                continue;
+            if (ALL.equals(section))
+                items.add(new Heading(s));
+            if (block)
+                items.add(new StyleBlock());
+            if (link)
+                items.add(new Link(s));
+            items.addAll(found);
+            candidates.addAll(found);
+        }
         List<String> ids = new ArrayList<>();
         for (SettingsRegistry.Entry e : candidates)
             ids.add(e.id);
@@ -549,20 +594,29 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             bindings.clear();
             rebuilding = true;
             body.removeAllViews();
-            // Approved 0.156 Style tab: the live sample and the player's own style controls come first.
-            if (section.equals("Subtitle style"))
-                body.addView(new SubtitleStyleBlock(getContext()), new LayoutParams(-1, -2));
-            for (SettingsRegistry.Entry e : candidates) {
-                Preference p = e.resolve(fragment.getPreferenceScreen());
-                Row row = previous.get(e.id);
-                if (row == null || row.preference != p)
-                    row = new Row(e, p);
-                bindings.put(e.id, row);
-                body.addView(row, new LayoutParams(-1, -2));
+            boolean first = true;
+            for (Object item : items) {
+                if (item instanceof Heading) {
+                    body.addView(heading(((Heading) item).name, first));
+                    first = false;
+                } else if (item instanceof StyleBlock) {
+                    // The player's own Subtitle Appearance rows, one for one (page sheet: Default Appearance).
+                    body.addView(new SubtitleStyleBlock(getContext()), new LayoutParams(-1, -2));
+                } else if (item instanceof Link) {
+                    body.addView(linkRow(((Link) item).name), new LayoutParams(-1, -2));
+                } else {
+                    SettingsRegistry.Entry e = (SettingsRegistry.Entry) item;
+                    Preference p = e.resolve(fragment.getPreferenceScreen());
+                    Row row = previous.get(e.id);
+                    if (row == null || row.preference != p)
+                        row = new Row(e, p);
+                    bindings.put(e.id, row);
+                    body.addView(row, new LayoutParams(-1, -2));
+                }
             }
-            if (candidates.isEmpty())
+            if (items.isEmpty())
                 body.addView(text(
-                    integrationDisabled()
+                    integrationDisabled(section)
                         ? "This service is disabled. Enable it in Service integrations to use its options."
                         : "No additional options apply to this device or account. Existing saved values are retained.",
                     16));
@@ -582,6 +636,64 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         }
         for (Row row : bindings.values())
             row.refresh();
+    }
+
+    private static final class Heading {
+        final String name;
+
+        Heading(String name) {
+            this.name = name;
+        }
+    }
+
+    private static final class StyleBlock {
+    }
+
+    private static final class Link {
+        final String name;
+
+        Link(String name) {
+            this.name = name;
+        }
+    }
+
+    /**
+     * A section heading with its icon (RULES §5): clearly closer to its own rows (26 px) than to the section above
+     * (64 px); never a line.
+     */
+    private View heading(String name, boolean first) {
+        TextView heading = text(SettingsLayout.label(name), 12);
+        heading.setTag("settings.heading." + name);
+        heading.setTextColor(SupernovaStyle.HEADING);
+        heading.setTypeface(SupernovaStyle.LABEL);
+        PreviewIcon.apply(heading, subsectionIcon(name), Math.round(14 * scale()));
+        SupernovaStyle.inkIcons(heading, SupernovaStyle.HEADING);
+        heading.setCompoundDrawablePadding(dp(7));
+        heading.setFocusable(false);
+        heading.setPadding(dp(8), first ? dp(4) : dp(32), dp(8), dp(13));
+        return heading;
+    }
+
+    /** A row that opens a view of its own (Backup, OpenSubtitles): its name, a plain second line and ›. */
+    private View linkRow(String name) {
+        boolean backupRow = name.equals("Backup & restore");
+        TextView row = text((backupRow ? "Back up and restore" : "OpenSubtitles") + "   ›", 14);
+        row.setTag("settings.link." + name);
+        row.setFocusable(true);
+        row.setFocusableInTouchMode(true);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setMinHeight(dp(44));
+        row.setPadding(dp(12), 0, dp(12), 0);
+        SupernovaStyle.applyButton(row, SupernovaStyle.Surface.STANDARD);
+        row.setBackground(SupernovaStyle.focusFill(getContext(), SupernovaStyle.SMALL_BOX_RADIUS_DP));
+        PreviewIcon.apply(row, subsectionIcon(name), Math.round(16 * scale()));
+        SupernovaStyle.tintIcons(row);
+        row.setOnClickListener(v -> {
+            remember();
+            select(name);
+            enter();
+        });
+        return row;
     }
 
     /** Short choices are shown inline as a segmented control and changed with Left/Right (owner rule: ≤ ~5). */
@@ -818,9 +930,22 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             return backup.back();
         if (about != null && about.handleBack())
             return true;
-        showGrid();
-        return true;
+        // A backup or OpenSubtitles view opened from its row goes back to the tab's rows (page sheet).
+        if (!ALL.equals(section) && category != 7) {
+            select(ALL);
+            enter();
+            return true;
+        }
+        // From the rows to the open tab; from the tabs to the top bar.
+        if (right != null && right.hasFocus()) {
+            selectedRail().requestFocus();
+            return true;
+        }
+        return false;
     }
+
+    /** The whole tab: every section of it, one under the other with its heading (0.158 page sheet). */
+    static final String ALL = "*";
 
     void save(Bundle out) {
         remember();
