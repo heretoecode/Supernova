@@ -19,7 +19,11 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
   [44500505615](https://github.com/heretoecode/Supernova/actions/runs/44500505615) on source `4d310f4`. Artifact
   `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`), kept until 3 Dec 2026. **Install this one.** 0.158.2 plus the
   Settings redesign, DT4, DT8, the row lines and pages reopening at their top.
-- On the branch after 0.158.3, not in any APK yet: FL9 (focus stays on Check matches).
+- **0.158.4** (code 1584) — Playback Settings round two and panels at 99% (plus FL9). Conformance run
+  [44521801198](https://github.com/heretoecode/Supernova/actions/runs/44521801198) on source `ef5af36`; signing
+  follows when green.
+- **0.158.5** (code 1585) — 0.158.4 plus the Settings wording, Home Hero's two new rows, DT3, the episodes feature,
+  R3 and R4. Built after 0.158.4.
 
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the
@@ -105,6 +109,33 @@ next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
 - DT8: Fix match in More for TV shows. DT4: the gap above each season's heading halved.
 - RULES §16: a page left for another reopens at its top (Back already went straight to the top bar).
 
+### Part B continued (second session, 19 Nov)
+- **Playback Settings, round two** (`player/33-v15`; 0.158.4): panel 820 px at 1080p, #16181C at 99%; every size
+  from the mock-up (rows 62 px), so every tab fits with no scrolling; every row on one line; no line under the tabs;
+  a faint line between rows that steps aside beside the focused row. Text size, Background opacity, Audio boost,
+  Format, Speed, Stop playing at, Still watching? and Play mode step with Left / Right, the value alone at rest and
+  ‹ › only on the focused row; OK steps on and goes round. **Skipping** keeps its chips Off · Show button · Skip.
+  Headings Picture and Speed · Playing On · This Show; "Remember for this show" on all three tabs.
+- **Panels** (RULES §11; 0.158.4): one value for every pop-up, menu and side panel, #16181C at 99%, no outline, no
+  glow; the old navy menu surface and the old Playback Settings shell use it too.
+- **Settings wording** (0.158.5): skip rows read Off · Show button · Skip · Skip when binge-watching (chips); Skip
+  when binge-watching skips every part when binge-watching and shows the button otherwise. Every row's name checked
+  against the sheet and the NOVA ones renamed (Automatic refresh rate, Dolby Vision, Audio decoder, Full subtitles
+  when the audio is in your language, Font, Use the black bars, Text encoding, Write .nfo files …, Recently added,
+  Trending on Trakt, Popular on Trakt, Trakt, Send / Fetch everything …, OMDb ratings key, Clear diagnostics, Video
+  decoder, Parser synchronisation, Stream buffer, Max I-frame size, Audio interface, Automatic audio delay); choices
+  have plain names (Automatic · Hardware · Software and so on). Home Hero gains **Because you watched** and **Change
+  every** (8 s · 12 s · 20 s); the last source can't be turned off. Diagnostics gains **Keep diagnostics for**.
+- **DT3** (0.158.5): a grown card and its ring are no longer cut at the sides of Details rows.
+- **Episodes** (0.158.5): OK on an episode card plays it at once; long-press or Menu opens its menu beside the card
+  (Resume or Play, Restart episode · Mark as watched, Fix match · Delete episode). Deleting an episode with earlier
+  ones of the season in the library: one warning, "You also have episodes 1 and 2 of this season.", with Keep file ·
+  Delete episode 3 only · Delete all three · Choose…; Choose… is the shared choice list with Select all at its top
+  and Done at its foot, then the same warning for what's ticked. No renders yet (no mock-up; see judgement call 41).
+- **R3** (0.158.5): season pages show the show's backdrop, else an episode's picture, else the poster.
+- **R4** (0.158.5): the season page's More menu opens beside More: Series details · Episodes · Delete season (with
+  the delete warning, Keep files first).
+
 ## Look sweep (Group 1)
 The speckle, the one box shape and the letter centring went in through the shared pieces, so every page picked
 them up at once; the Playback Settings panel colour (`#16181C` at 90%, no outline, no glow) is settled. Renders of the top bar, library pages (grid and list), Home and
@@ -114,20 +145,18 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 
 ## Not built (plain list, before you install)
 - **Settings, still to do from the sheet:** the in-row backup flow (What to back up chips, progress and Restart now in
-  the row), the OpenSubtitles and Trakt panels redrawn, Home Hero's "Change every" and "Because you watched",
-  "Also translate other languages". Backup and OpenSubtitles open their existing views from a row.
+  the row), the OpenSubtitles and Trakt panels redrawn, "Also translate other languages", Reports folder, "When a
+  video was started" as three chips (Ask · Resume · Start over; it is still a switch, "Ask when a video was
+  started"). Backup and OpenSubtitles open their existing views from a row.
 - **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.
-- **PS9** (Playback tab looked at again after PS1–PS6) — needs your photo of the new panel.
 - **X4** — scans still wait for each other instead of queueing (the lock is in MediaLib's build patches; its own job).
-- **X5** — no separate focus work beyond the groups' own fixes.
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
 - **PL8** — the skip button doesn't yet join the controls' line.
-- **Details:** DT1 (Details tab on one screen), DT3 (rows clipped at the sides), DT5 (one
-  row design; More Like This by service), DT6 (artwork side panel), R3 (season
-  artwork), R4 (season More menu), R5 (choose a version), **episodes** (OK plays, long-press menu, deleting with
-  earlier episodes).
+- **Details:** DT1 (Details tab on one screen), DT3's second half (rows running to the screen's edge; the clipping
+  is fixed), DT5 (one row design; More Like This by service), DT6 (artwork side panel), R5 (choose a version).
+  Episodes: built, but not yet checked in renders.
 - **Group 6, titles** — logo placement fix and house style A: not started.
-- **Group 7, Files** — FL6 done; FL1–FL5, FL7–FL12 not started.
+- **Group 7, Files** — FL6 and FL9 done; FL1–FL5, FL7, FL8, FL10–FL12 not started.
 - **Group 8** — R2 (the own page's bar) not done; Back and page position done.
 
 ## Judgement calls
