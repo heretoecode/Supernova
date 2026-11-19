@@ -170,7 +170,7 @@ public final class FolderBrowser extends LinearLayout
         addView(header, headerSize);
         FrameLayout frame = new FrameLayout(context);
         frame.setClipChildren(false);
-        scroll = new ScrollView(context);
+        scroll = new BelowBarScroll(context);
         scroll.setClipChildren(false);
         scroll.setClipToPadding(false);
         scroll.setVerticalScrollBarEnabled(false);

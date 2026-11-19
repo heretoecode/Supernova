@@ -465,7 +465,7 @@ public final class FilesPage extends LinearLayout
             unpark(parked, key);
             return;
         }
-        ScrollView scroll = new ScrollView(getContext());
+        ScrollView scroll = new BelowBarScroll(getContext());
         scroll.setClipToPadding(false);
         scroll.setClipChildren(false);
         scroll.setVerticalScrollBarEnabled(false);
