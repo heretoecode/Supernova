@@ -1,6 +1,9 @@
 # Discussion handover (updated 19 Nov 2026)
 
 ## 19 Nov — start here
+- **Owner, 19 Nov (afternoon): no Shield review until part B is finished.** Then make one whole-app walkthrough
+  checklist from the final signed build (the report's "Review build" line), listing only what is built, with a short
+  "not built" box per page. The 0.158.3 checklist (`docs/0.158/review-0158-3-checklist.html`) is superseded.
 - **Installed: 0.158.3.** Supernova Coding is running the continuation of part B in a new window (prompt: merge this
   branch before each item; order in `docs/0.158/BRIEF_0158_B.md`, Playback Settings round two first).
 - **Decided today:** panels `#16181C` at 99% (RULES §11); Playback Settings v15 (`player/33-v15`: 820 px, one line,

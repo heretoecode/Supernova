@@ -131,6 +131,11 @@ screen: `b2`–`b5`, e.g. `16-b3-your-services`, `18-b3-backup-choose-restore`, 
 Users and tags, Guest (still being designed). Onboarding (later). The Trakt list row and Media Transfers (Ready, no version yet).
 
 ## Finish with
+**The review build (owner, 19 Nov):** the owner will not review on the Shield until part B is finished; they will
+install the last signed APK and walk the whole app. So finish every group, sign the final build, and put one line at
+the top of the report: "**Review build: 0.158.x** (run …)". The discussion session then makes the whole-app
+walkthrough checklist from that exact build.
+
 `docs/0.158/REPORT_0158_B.md`: what each signed APK contains, the look-sweep changes, the "not built" list (plain,
 for the owner, before they install), the judgement calls file, the run links; update `PROJECT_STATUS.md` and the
 roadmap. The owner will send a fresh diagnostics report from 0.158; it is read in the next session.
