@@ -252,8 +252,10 @@ public final class ConnectionFormPage extends LinearLayout
         return type == 3 ? "Encryption (FTPS)" : null;
     }
 
-    /** Row height: 40 (was 46) so every row, the switches and both buttons fit on one screen (FL4). */
-    static final int ROW_DP = 40;
+    /** Row height: 32 (was 46) so every row, the switches and both buttons fit on one 1080p screen (FL4). */
+    static final int ROW_DP = 32;
+    /** Wide enough for "Encryption (HTTPS)" and "Remember password" whole (render check, 19 Nov 2026). */
+    static final int LABEL_DP = 150;
 
     private void build()
     {
@@ -262,7 +264,7 @@ public final class ConnectionFormPage extends LinearLayout
         LinearLayout chips = new LinearLayout(getContext());
         chips.setGravity(Gravity.CENTER_VERTICAL);
         chips.setPadding(dp(14), 0, dp(14), 0);
-        chips.addView(text("Type", 16, SupernovaStyle.TEXT_SECONDARY), new LayoutParams(dp(84), -2));
+        chips.addView(text("Type", 16, SupernovaStyle.TEXT_SECONDARY), new LayoutParams(dp(LABEL_DP), -2));
         for (int index = 0; index < TYPES.length; index++)
         {
             chips.addView(chip(index), chipSize());
@@ -408,7 +410,7 @@ public final class ConnectionFormPage extends LinearLayout
         row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         row.setContentDescription(label);
         TextView name = text(label, 16, SupernovaStyle.TEXT_SECONDARY);
-        row.addView(name, new LayoutParams(dp(104), -2));
+        row.addView(name, new LayoutParams(dp(LABEL_DP), -2));
         return row;
     }
 

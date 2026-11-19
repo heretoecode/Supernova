@@ -139,7 +139,7 @@ decide quickly.
     can mix both.
 46. **FL10:** on All scans the remote moves through the scans so the list scrolls; the focused scan has a soft grey
     box rather than the white one, because there is nothing to press.
-47. **FL4:** the connection form's rows are 40 high (were 46) with smaller gaps above and below, which by the
+47. **FL4:** the connection form's rows are 32 high (were 46; 40 was still too tall in the render), labels 150 wide so none are cut, with smaller gaps above and below, which by the
     numbers fits Type, every field, both switches and the two buttons on one 1080p screen. The form still scrolls if
     a larger text size is set on the device.
 48. **FL2:** while a folder is read it shows two rows of four outline cards (grid) or four outline rows (list), a
