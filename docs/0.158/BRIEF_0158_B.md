@@ -165,7 +165,8 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   end of `library()`, or a hierarchy-change listener on the stage. **Prove it:** a Robolectric test that the own
   page's stage is laid out from y = 0 with the inset on its `PreviewPages` (it fails today), and renders of Movies
   and the own page scrolled, side by side.
-- **S1:** Settings' tabs as tall as every other tab box (RULES §3). **S3:** scroll arrows on Settings tabs that
+- **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
+  box; RULES "Page tabs"), not the plain row; wait for the Settings mock-up before building. **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).
 - **FL2** (already in group 7): placeholder rows instead of "Looking in this folder…".
 Not for Coding yet (design to settle first): L1 caption space, R6 one row design, S2, A2, Files' tab underline.

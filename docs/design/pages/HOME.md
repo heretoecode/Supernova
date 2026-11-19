@@ -17,6 +17,12 @@ underline, this sheet wins.
 - **Same design as Details** (1776×820 at 1080p): logo artwork (or the name), metadata row (Age rating · Year · Length ·
   Genres), two-line description, no tagline, one button fixed at the bottom left, **More** (owner, 19 Nov: replaces "Play / Resume, then More";
   its menu: Details, Play / Resume, Library, Files & Media), artwork edge, the first row peeking below (at least its heading, any amount of its cards; never only the hero; owner, 19 Nov). **Carousel dots** under the hero.
+- **TV shows on the hero (owner, 19 Nov):** a new episode appears **as that episode** ("Next Episode · S2 E5")
+  only when you are watching the show and have watched up to the episode before it (built this way: every earlier
+  episode of the season watched, the new one added after your last watch). A new episode of a show you haven't
+  started never appears as that episode. Trending and Popular on Trakt are separate and may show any show.
+  Open (owner to answer): may an unstarted show itself still appear from Recently added when an episode is added;
+  a new season's first episode after you finished the last season; how long ago "watching" may be.
 - **Changing hero (§11):** the frame, edge and buttons stay still; the next and previous artwork are loaded first, so
   there's never an empty frame; the picture cross-fades (about 450 ms) with a slight drift; text fades out and back in
   just after; focus stays on the same button; dots glide; presses during a change finish it at once; automatic changes

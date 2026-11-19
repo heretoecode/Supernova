@@ -78,3 +78,12 @@ The owner will do the full walk-through when part B is finished; these are thing
   **Movies and TV Shows are right:** scrolled down, the artwork runs on behind the top bar under its soft fade and
   blends behind the words. **Your own page (Documentaries) is wrong:** the posters stop under a solid dark band.
   No solid band on any library page. Recorded in RULES §2 and LIBRARY.md so it can't be lost again.
+
+### Later notes, 19 Nov evening
+- **H5. "Because you watched" is missing from Settings › Library › Home Hero** on 0.158.4 (Featured, Recently
+  added, Trending, Popular only). [Claude: added in 0.158.5's work, so it arrives in 0.158.7; check then.]
+- **H6. TV shows on the hero:** the owner's rule recorded in HOME.md (next episode only while watching the show).
+- **S1 decided the other way (owner, 19 Nov): Files' tab look is preferred.** The line under Files' tab row sets
+  the tabs apart from the top bar; Settings' plain row of words with icons reads as a second top bar and looks
+  unfinished. Settings' tabs take Files' look (size, line under the row, white focus box). Mock-up of the whole
+  Settings page as it should be, when mock-ups resume. Open: Details' tabs (also the plain look now).

@@ -423,6 +423,10 @@ own library page, scrolled content runs on **behind** the top bar and blends beh
 fade (TopNavigation's fade, approved 4 Nov, `top-bar/01`–`04`). **Never a solid band** and never content clipped
 below the bar. Movies and TV Shows (0.158.4) are the reference.
 
+**Page tabs (owner, 19 Nov):** tabs on a full page (Files, Settings) use Files' look: the same box size as the top
+bar, a line under the tab row, the white focus box; never a plain row of words that reads as a second top bar.
+Panels (Playback Settings) keep their own. Details' tabs: to confirm.
+
 ## Replaced rules (do not use)
 - Panels at 95% (13 Nov) → 99% over the speckle (§11, 19 Nov).
 - Back from the middle of a long page first jumps to the top, then to the top bar → straight to the top bar; a page
