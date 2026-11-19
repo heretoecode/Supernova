@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2c31;font-family:Roboto,Inter,Arial,sans-serif;width:1600px;padding:40px}
+.frame{border:2px solid #c9ccd3;background:#111215;padding:36px 40px 44px;display:grid;
+ grid-template-columns:260px repeat(4,236px);column-gap:34px;row-gap:30px;align-items:center}
+.lbl{color:#e8ebf2;font-size:22px;text-align:center}
+.rl{color:#e8ebf2;font-size:22px;line-height:30px}
+.crop{position:relative;width:236px;height:170px;border-radius:12px 12px 0 0;overflow:hidden;
+ background:radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.18),transparent 60%),linear-gradient(155deg,#2f5c4a,#0e1d17)}
+.edge{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+.badge{position:absolute;top:8px;right:8px;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.45)}
+.badge svg{position:absolute;left:0;top:0}
+</style></head><body><div class="frame" id="f"></div>
+<script>
+const D=48,C=24;
+function pt(p,r){const a=2*Math.PI*p-Math.PI/2;return [C+r*Math.cos(a),C+r*Math.sin(a)]}
+function hand(p){const [x,y]=pt(p,15);return `<line x1="${C}" y1="${C}" x2="${x}" y2="${y}" stroke="#000" stroke-width="4" stroke-linecap="round"/><circle cx="${C}" cy="${C}" r="3.2" fill="#000"/>`}
+function mark(){return `<line x1="${C}" y1="5" x2="${C}" y2="10" stroke="#000" stroke-width="3" stroke-linecap="round"/>`}
+function ticks(){let s='';for(let i=0;i<12;i++){const [x1,y1]=pt(i/12,17.5),[x2,y2]=pt(i/12,i%3==0?13.5:15.5);s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(0,0,0,.45)" stroke-width="${i%3==0?2.2:1.4}" stroke-linecap="round"/>`}return s}
+function wedge(p){const r=17,[x,y]=pt(p,r),large=p>.5?1:0;return `<path d="M${C} ${C} L${C} ${C-r} A${r} ${r} 0 ${large} 1 ${x} ${y} Z" fill="rgba(0,0,0,.2)"/>`}
+const variants=[
+ ["A · Hand only",p=>hand(p)],
+ ["B · Hand and a mark at 12",p=>mark()+hand(p)],
+ ["C · Clock face: hour marks",p=>ticks()+hand(p)],
+ ["D · Hand and the passed time shaded",p=>wedge(p)+hand(p)]];
+const vals=[.1,.25,.4,.75];
+let h='<div></div>'+vals.map(v=>`<div class="lbl">${Math.round(v*100)}%</div>`).join('');
+variants.forEach(([name,fn])=>{h+=`<div class="rl">${name}</div>`;vals.forEach(v=>{
+ h+=`<div class="crop"><div class="edge"></div><div class="badge"><svg width="${D}" height="${D}" viewBox="0 0 ${D} ${D}">${fn(v)}</svg></div></div>`})});
+document.getElementById('f').innerHTML=h;
+</script></body></html>
