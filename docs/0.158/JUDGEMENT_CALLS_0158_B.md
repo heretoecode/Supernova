@@ -188,3 +188,6 @@ decide quickly.
     then come back and sign in"); Sign in shows Username, Password, Show password and Sign in, each typed with the
     shared keyboard; signed in, "Signed in as …", Change account and Sign out. "Downloads left today" is not shown:
     the app doesn't fetch that figure yet.
+61. **Trakt sign-in** keeps its working device-code flow but takes Supernova's look: the speckled page, the address
+    and code in white bold (not NOVA's blue and red), the shared small button for Cancel. A Supernova side panel for
+    it (as the sheet draws) is not built; the screen still opens full page.

@@ -161,7 +161,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 
 ## Not built (plain list, before you install)
 - **Settings, still to do from the sheet:** the in-row backup flow (What to back up chips, progress and Restart now in
-  the row), the Trakt panel redrawn (OpenSubtitles is redrawn, judgement call 60), "Also translate other languages", Reports folder (Save now writes to Download › Supernova from the row), (When a video was started is built: Ask · Resume · Start over). Backup and OpenSubtitles open their existing views from a row.
+  the row), the Trakt sign-in as a side panel (it now has Supernova's look, judgement call 61; OpenSubtitles is redrawn, call 60), "Also translate other languages", Reports folder (Save now writes to Download › Supernova from the row), (When a video was started is built: Ask · Resume · Start over). Backup and OpenSubtitles open their existing views from a row.
 - **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.
 - **X4** — built (0.158.6) as a new MediaLib patch: a scan waits its turn for the scan lock before its five-minute
   clock starts (a one-hour bound covers the wait), so queued scans no longer fail with "scan lock wait interrupted".
