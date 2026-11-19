@@ -100,15 +100,14 @@ top; poster → Details → Back returns to the poster. R2: if the own library p
 top bar, make it match Movies and TV Shows. The icon picker tile width (part A's "not built").
 
 ### Group 9 — the Settings redesign (the last major redesign; owner, 19 Nov)
-Designed and approved by the owner on 14 Nov: `docs/0.157/SETTINGS_INVENTORY.md` (every setting: keep, move, merge,
+**Page sheet: `docs/design/pages/SETTINGS.md`.** Designed and approved by the owner on 14 Nov: `docs/0.157/SETTINGS_INVENTORY.md` (every setting: keep, move, merge,
 reword, remove; seven tabs **Playback · Audio · Subtitles · Library · Services · System · About**; a full page with
 tabs like Files, no tiles, no panel) and the mock-ups `docs/design/proposals/settings-v2/` (the latest round of each
 screen: `b2`–`b5`, e.g. `16-b3-your-services`, `18-b3-backup-choose-restore`, `23-b4-restore-progress`,
 `24-b4-about`, `25-b4-credits-licences`, `27-b5-licences`; `07`/`08` for OpenSubtitles), `docs/design/ABOUT_SETTINGS.md`,
 `docs/design/BACKUP_RESTORE.md`, RULES §8 and §24.
-- **First write the page sheet `docs/design/pages/SETTINGS.md`** (Definition of done 1): every tab, every row, every
-  action and where it leads, from those sources; where they disagree, the latest dated owner decision wins (note it in
-  the judgement calls).
+- **Build from the page sheet `docs/design/pages/SETTINGS.md`** (written 19 Nov from those sources; it lists what is
+  newer than the pictures). Where the sheet is silent, follow the sources and log the judgement call.
 - Then build it on the new look (speckle, one shape for small boxes), every action pressed and checked in a render,
   the old Settings screens added to the no-old-screens test.
 - Onboarding (which points into Settings) stays out: the owner kept it for later. Media Transfers' settings stay out
