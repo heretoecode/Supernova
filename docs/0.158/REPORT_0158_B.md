@@ -177,15 +177,14 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **Group 7, Files** — FL1, FL2, FL4, FL6–FL11 done (FL11 was already in: "Scanning · 42%" while running; FL1,
   FL2, FL4 and FL10 not yet checked in renders). FL12 built (0.158.6): when Android brings a page back after you stopped
   the app yourself, it opens Home instead; when Android ended it in the background, the page comes back (Android 11
-  says why the app last ended). Not started: FL3 + FL5 (turn a connection off; smaller buttons; mock-up
-  `review-0157-2/01` 3).
+  says why the app last ended). FL3 + FL5 built (0.158.6): Turn off / Turn on on each connection, smaller buttons.
 - **Group 8** — R2: nothing changed; your own page now drives the same fade under the top bar as Movies and TV Shows (same code), so please check it on the Shield and send a photo if the solid bar is still there. Back and page position done.
 
 ## For the next session
 - Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
   when a build is due (a push there starts conformance; signing accepts only the working branch).
-- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT5, DT6, PL8, R5, X4.
-- Still to do, in the brief's order: the look sweep renders (item 4), FL3 + FL5,   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
+- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT5, DT6, PL8, R5, X4, FL3, FL5.
+- Still to do, in the brief's order: the look sweep renders (item 4),   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
 
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).

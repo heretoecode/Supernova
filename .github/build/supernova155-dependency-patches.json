@@ -318,6 +318,12 @@
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova158-scan-queue.patch",
       "sha256": "fc7fa57d8305d9e1520994dfc3e11e08a4f87c2746543fc44844767e6058ce9c"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova158-connection-off.patch",
+      "sha256": "38ee0882310dc0147e732466d79ffd5aad9c6e309196b76020a5ab4bca8b32e8"
     }
   ],
   "supernova155": {
@@ -330,6 +336,6 @@
     "note": "0.157: Codex continuation patches (six Java registrations from docs/codex/reports/2026-11-06-0157.md, in its order), then the seek-preview retriever fix and the TV-relevant NOVA 6.6.5+ changes (matching by file name, SMB share credentials, Trakt list paging and 64-bit ids, messenger folders; Samba discovery start result, network initialisation priority). Not carried: import notification change, Dolby Vision colour-fallback metadata key (clashes with this engine's keys), dependency bumps. The two native avos 0.157 patches wait for a new reviewed engine archive. Then medialib-supernova157-ledger-test (15 Nov): the ledger test's scanner gets a real files folder so the scan lock works and the test no longer depends on timing."
   },
   "supernova158": {
-    "note": "0.158: medialib-supernova158-scan-queue (X4, 19 Nov): a network scan waits for the scan lease before its IO scope and five-minute source deadline start, bounded by a one-hour queue deadline instead, so queued scans wait their turn rather than timing out on 'scan lock wait interrupted'; the lease may be taken again by the thread that holds it."
+    "note": "0.158: medialib-supernova158-scan-queue (X4, 19 Nov): a network scan waits for the scan lease before its IO scope and five-minute source deadline start, bounded by a one-hour queue deadline instead, so queued scans wait their turn rather than timing out on 'scan lock wait interrupted'; the lease may be taken again by the thread that holds it. Then medialib-supernova158-connection-off (FL3, 19 Nov): titles under a connection turned off on Files › Connections count as excluded until it is turned on again."
   }
 }

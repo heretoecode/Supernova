@@ -169,3 +169,8 @@ decide quickly.
     scan lock, with a one-hour limit on the wait, and its five minutes start once it holds the lock. Done as one more
     MediaLib patch (`.github/build/medialib-supernova158-scan-queue.patch`, in the patch list), since MediaLib's
     scanner is patched at build time; checked locally that it applies on top of the other 38.
+56. **FL3 + FL5:** a connection row has Open · Edit · Test · Turn off · Remove; once off it reads "SFTP · Off · its 512
+    videos are hidden", shows an Off pill, dims, and offers Turn on · Edit · Remove, as in the mock-up. Its titles
+    leave the library at once (with an Undo notice) and come back on Turn on; its settings and files are untouched. A
+    scheduled scan may still visit it while it is off (its titles stay hidden). The buttons on every Files row with
+    buttons are now the one small-box size (26 dp high, 13 sp words).

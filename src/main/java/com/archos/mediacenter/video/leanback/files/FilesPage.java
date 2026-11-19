@@ -1293,18 +1293,39 @@ public final class FilesPage extends LinearLayout
         {
             String scheme = connection.root == null ? "" : connection.root.getScheme();
             String key = connection.root == null ? connection.name : connection.root.toString();
+            // FL3 (owner, 18 Nov 2026; review-0157-2/01 3): Turn off keeps the settings and hides its titles; the row
+            // says Off and dims; Turn on brings them back.
+            boolean off = connectionOff(connection);
             List<Action> actions = new java.util.ArrayList<>();
-            actions.add(new Action("Open", "folder", () -> openServer(connection)));
+            if (off)
+            {
+                actions.add(new Action("Turn on", "play", () -> setConnectionOff(connection, false)));
+            }
+            else
+            {
+                actions.add(new Action("Open", "folder", () -> openServer(connection)));
+            }
             actions.add(new Action("Edit", "edit", () -> openForm(connection.root, connection.name)));
-            actions.add(new Action("Test", "done", () -> testConnection(connection.root, key)));
+            if (!off)
+            {
+                actions.add(new Action("Test", "done", () -> testConnection(connection.root, key)));
+                actions.add(new Action("Turn off", "pause", () -> setConnectionOff(connection, true)));
+            }
             actions.add(new Action("Remove", "discard", () -> removeConnection(connection)));
             String title = connection.account == null || connection.account.isEmpty()
                 ? connection.name : connection.name + " · " + connection.account;
-            String second = outcomes.containsKey(key) ? outcomes.get(key)
+            String second = off ? ConnectionLine.kind(scheme) + " · Off · its " + count(connection.videos, "video")
+                    + (connection.videos == 1 ? " is" : " are") + " hidden"
+                : outcomes.containsKey(key) ? outcomes.get(key)
                 : ConnectionLine.kind(scheme) + " · " + (connection.folders.size() > 1
                     ? FilesPageData.folderNames(connection.folders) : count(connection.videos, "video"));
+            String pill = off ? "Off" : connection.reachable == null ? null : ConnectionLine.pill(connection.reachable);
             actionRow(column, ConnectionLine.kind(scheme).equals("WebDAV") ? "cloud" : "integration", title, second,
-                      connection.reachable == null ? null : ConnectionLine.pill(connection.reachable), actions, true);
+                      pill, actions, true);
+            if (off)
+            {
+                column.getChildAt(column.getChildCount() - 1).setAlpha(.6f);
+            }
         }
         // Add a connection: the row itself opens the form (F39).
         row(column, "plus", "Add a connection", "SMB, WebDAV, SFTP or FTP", null, () -> openForm(null, null),
@@ -1550,18 +1571,19 @@ public final class FilesPage extends LinearLayout
         };
         for (Action action : actions)
         {
-            TextView button = text(action.label, 15, Color.WHITE);
+            // FL5 (owner, 18 Nov 2026): smaller buttons, the one small-box size (RULES §3).
+            TextView button = text(action.label, 13, Color.WHITE);
             button.setGravity(Gravity.CENTER);
             button.setFocusable(true);
             button.setFocusableInTouchMode(true);
-            int inner = SupernovaStyle.dp(context, 12);
+            int inner = SupernovaStyle.dp(context, SupernovaStyle.SMALL_BOX_SIDE_DP);
             button.setPadding(inner, 0, inner, 0);
             PreviewIcon.apply(button, action.icon, 14);
             button.setContentDescription(action.label + ", " + name);
             button.setOnClickListener(view -> action.run.run());
             button.setOnFocusChangeListener((view, focused) -> row.post(restyle));
-            LayoutParams size = new LayoutParams(-2, SupernovaStyle.dp(context, 30));
-            size.leftMargin = SupernovaStyle.dp(context, 6);
+            LayoutParams size = new LayoutParams(-2, SupernovaStyle.dp(context, SupernovaStyle.SMALL_BOX_HEIGHT_DP));
+            size.leftMargin = SupernovaStyle.dp(context, 4);
             row.addView(button, size);
             buttons.add(button);
         }
@@ -1581,6 +1603,44 @@ public final class FilesPage extends LinearLayout
         divider(column);
         row.setTag(column.findViewWithTag("files.row.first") == null ? "files.row.first" : ROW);
         column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
+    }
+
+    private boolean connectionOff(Connection connection)
+    {
+        if (connection.root == null)
+        {
+            return false;
+        }
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext())
+            .getStringSet(com.archos.mediaprovider.video.SupernovaLibraryPolicy.CONNECTIONS_OFF,
+                          java.util.Collections.emptySet())
+            .contains(com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(connection.root));
+    }
+
+    /** Turn off / Turn on (FL3): the connection's titles leave or return to the library; its settings stay. */
+    private void setConnectionOff(Connection connection, boolean off)
+    {
+        if (connection.root == null)
+        {
+            return;
+        }
+        android.content.SharedPreferences prefs =
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        java.util.Set<String> roots = new java.util.HashSet<>(prefs.getStringSet(
+            com.archos.mediaprovider.video.SupernovaLibraryPolicy.CONNECTIONS_OFF, java.util.Collections.emptySet()));
+        String root = com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(connection.root);
+        if (off ? !roots.add(root) : !roots.remove(root))
+        {
+            return;
+        }
+        prefs.edit().putStringSet(com.archos.mediaprovider.video.SupernovaLibraryPolicy.CONNECTIONS_OFF, roots).apply();
+        getContext().getContentResolver().notifyChange(
+            com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
+        com.archos.mediacenter.video.leanback.UndoNotice.show(getContext(),
+            connection.name + (off ? " is off: its titles are hidden" : " is on again"),
+            () -> setConnectionOff(connection, !off));
+        show(CONNECTIONS);
+        focusContent();
     }
 
     private void divider(LinearLayout column)
