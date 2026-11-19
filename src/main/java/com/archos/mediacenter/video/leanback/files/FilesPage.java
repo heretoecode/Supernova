@@ -1176,6 +1176,19 @@ public final class FilesPage extends LinearLayout
         for (int index = 0; index < Math.min(10, scans.size()); index++)
         {
             scanLine(column, scans.get(index), now);
+            // FL10 (owner, 18 Nov 2026): focus stays on the page and moves through the scans, so the list scrolls;
+            // nothing to press, so a soft box (not the white one) shows where the remote is.
+            View line = column.getChildAt(column.getChildCount() - 1);
+            line.setFocusable(true);
+            line.setFocusableInTouchMode(true);
+            android.graphics.drawable.StateListDrawable focus = new android.graphics.drawable.StateListDrawable();
+            focus.addState(new int[] {android.R.attr.state_focused},
+                           SupernovaStyle.rounded(getContext(), 0x26FFFFFF, SupernovaStyle.SMALL_BOX_RADIUS_DP));
+            line.setBackground(focus);
+            if (index == 0)
+            {
+                line.setTag("files.row.first");
+            }
         }
         if (scans.isEmpty())
         {

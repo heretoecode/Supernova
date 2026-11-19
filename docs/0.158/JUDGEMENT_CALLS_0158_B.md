@@ -135,3 +135,5 @@ decide quickly.
 45. **FL7:** your own library page shows under By Library Page after Movies and TV Shows, with its titles and size
     (a show counts all its episodes' files). It has no "this device / network" figure on the right, since the page
     can mix both.
+46. **FL10:** on All scans the remote moves through the scans so the list scrolls; the focused scan has a soft grey
+    box rather than the white one, because there is nothing to press.
