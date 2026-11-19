@@ -1578,7 +1578,12 @@ public final class FilesPage extends LinearLayout
             button.setFocusableInTouchMode(true);
             int inner = SupernovaStyle.dp(context, SupernovaStyle.SMALL_BOX_SIDE_DP);
             button.setPadding(inner, 0, inner, 0);
-            PreviewIcon.apply(button, action.icon, 14);
+            // Render check (19 Nov 2026): five buttons beside the pill don't fit with icons, so a row with five shows
+            // the words alone.
+            if (actions.size() < 5)
+            {
+                PreviewIcon.apply(button, action.icon, 14);
+            }
             button.setContentDescription(action.label + ", " + name);
             button.setOnClickListener(view -> action.run.run());
             button.setOnFocusChangeListener((view, focused) -> row.post(restyle));
