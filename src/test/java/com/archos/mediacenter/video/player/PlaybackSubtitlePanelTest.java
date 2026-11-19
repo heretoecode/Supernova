@@ -305,8 +305,9 @@ public class PlaybackSubtitlePanelTest {
         assertEquals("playback.tab:1", tabs.getChildAt(0).getTag());
         assertEquals("playback.tab:0", tabs.getChildAt(1).getTag());
         assertEquals("playback.tab:2", tabs.getChildAt(2).getTag());
-        String[] keys = {"enabled",  "track",   "download",   "size",    "colour",
-                         "position", "outline", "background", "opacity", "delay"};
+        // PS11 (approved 18 Nov 2026): Subtitle delay sits in Subtitle Selection.
+        String[] keys = {"enabled",  "track",   "download",   "delay",    "size",
+                         "colour", "position", "outline", "background", "opacity"};
         int previous = -1;
         for (String key : keys) {
             View v = row(key);

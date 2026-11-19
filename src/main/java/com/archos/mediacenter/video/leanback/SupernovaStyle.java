@@ -248,24 +248,48 @@ public final class SupernovaStyle {
      * shifting padding from the bottom to the top (or back) after each layout; it settles after one pass.
      */
     public static void centreOnLetters(TextView view) {
+        // The shift depends only on the font (not on the box's height), so it is set before the first layout and
+        // only changed again if the text size changes: changing a TextView's padding throws its layout away.
+        int[] applied = {0};
+        applyLetterShift(view, applied);
         if (view.getTag(com.archos.mediacenter.video.R.id.supernova_letter_centre) != null)
             return;
         view.setTag(com.archos.mediacenter.video.R.id.supernova_letter_centre, Boolean.TRUE);
         view.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
-            TextView text = (TextView) v;
-            if (text.getLayout() == null || text.getLineCount() != 1 || text.getHeight() == 0)
+            if (!applyLetterShift((TextView) v, applied))
                 return;
-            if ((text.getGravity() & Gravity.VERTICAL_GRAVITY_MASK) != Gravity.CENTER_VERTICAL)
-                return;
-            int shift = Math.round(letterShift(text));
-            if (shift == 0)
-                return;
-            int top = text.getPaddingTop() + shift;
-            int bottom = text.getPaddingBottom() - shift;
-            if (top < 0 || bottom < 0)
-                return;
-            text.setPadding(text.getPaddingLeft(), top, text.getPaddingRight(), bottom);
+            // New padding throws the text's layout away: lay it out again at once, in the same place.
+            v.measure(View.MeasureSpec.makeMeasureSpec(r - l, View.MeasureSpec.EXACTLY),
+                      View.MeasureSpec.makeMeasureSpec(b - t, View.MeasureSpec.EXACTLY));
+            v.layout(l, t, r, b);
         });
+    }
+
+    /** True when the padding changed. */
+    private static boolean applyLetterShift(TextView text, int[] applied) {
+        if ((text.getGravity() & Gravity.VERTICAL_GRAVITY_MASK) != Gravity.CENTER_VERTICAL)
+            return false;
+        int shift = Math.round(fontLetterShift(text));
+        int change = shift - applied[0];
+        if (change == 0)
+            return false;
+        int top = text.getPaddingTop() + change;
+        int bottom = text.getPaddingBottom() - change;
+        if (top < 0 || bottom < 0)
+            return false;
+        applied[0] = shift;
+        text.setPadding(text.getPaddingLeft(), top, text.getPaddingRight(), bottom);
+        return true;
+    }
+
+    /** How far to move a centred line so the middle of its letters ("H0"), not of the font's box, is centred. */
+    static float fontLetterShift(TextView view) {
+        android.graphics.Paint.FontMetrics metrics = view.getPaint().getFontMetrics();
+        float boxCentre = view.getIncludeFontPadding() ? (metrics.top + metrics.bottom) / 2f
+                                                       : (metrics.ascent + metrics.descent) / 2f;
+        android.graphics.Rect letters = new android.graphics.Rect();
+        view.getPaint().getTextBounds("H0", 0, 2, letters);
+        return boxCentre - letters.exactCenterY();
     }
 
     /** How far the letters ("H0") sit from the view's centre; positive moves them down. */

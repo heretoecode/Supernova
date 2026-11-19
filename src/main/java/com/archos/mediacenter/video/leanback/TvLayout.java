@@ -43,9 +43,12 @@ public final class TvLayout {
         return Math.round(c.getResources().getDisplayMetrics().widthPixels * 820f / 1920f);
     }
 
-    /** The hero's top edge from the top of the screen: under the top bar with a small gap (128 px at 1080p). */
+    /**
+     * The hero's top edge from the top of the screen: just under the top bar (112 px at 1080p), so the first row's
+     * cards still peek below the 820 px hero.
+     */
     public static int heroTop(Context c) {
-        return Math.round(c.getResources().getDisplayMetrics().widthPixels * 128f / 1920f);
+        return Math.round(c.getResources().getDisplayMetrics().widthPixels * 112f / 1920f);
     }
 
     /**

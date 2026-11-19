@@ -3265,8 +3265,8 @@ public final class PreviewPages extends FrameLayout {
                     // its top under the top bar at the same height as Details' card. H2: the dots under it.
                     int cardHeight = TvLayout.heroHeight(getContext());
                     int above = Math.max(0, TvLayout.heroTop(getContext()) - list.getPaddingTop());
-                    int dotsHeight = dp(22);
-                    int heroHeight = above + cardHeight + dotsHeight;
+                    int dotsHeight = dp(18);
+                    int heroHeight = above + cardHeight + dp(4);
                     v.setMinimumHeight(heroHeight);
                     v.setLayoutParams(new RecyclerView.LayoutParams(-1, heroHeight));
                     v.setPadding(0, above, 0, 0);
@@ -3276,12 +3276,15 @@ public final class PreviewPages extends FrameLayout {
                         new LinearLayout.LayoutParams(TvLayout.heroWidth(getContext()), cardHeight);
                     cardSize.gravity = Gravity.CENTER_HORIZONTAL;
                     v.addView(featured, cardSize);
+                    // The dots sit at the hero's foot, centred, so the hero keeps its size and the row still peeks.
                     List<Entry> heroes = featuredCandidates();
                     if (featuredIndicators == null)
                         featuredIndicators = new PreviewFeaturedIndicators(getContext());
                     if (featuredIndicators.getParent() instanceof ViewGroup)
                         ((ViewGroup) featuredIndicators.getParent()).removeView(featuredIndicators);
-                    v.addView(featuredIndicators, new LinearLayout.LayoutParams(-1, dotsHeight));
+                    LinearLayout.LayoutParams dotsAt = new LinearLayout.LayoutParams(-1, dotsHeight);
+                    dotsAt.topMargin = -dotsHeight - dp(6);
+                    v.addView(featuredIndicators, dotsAt);
                     featuredIndicators.setVisibility(heroes.size() > 1 ? View.VISIBLE : View.INVISIBLE);
                     if (!heroes.isEmpty())
                         featuredIndicators.setPosition(heroes.size(), Math.floorMod(featuredIndex, heroes.size()));

@@ -92,7 +92,7 @@ public class SeekPreviewBTest
     {
         Context app = RuntimeEnvironment.getApplication();
         Bitmap frame = Bitmap.createBitmap(320, 180, Bitmap.Config.ARGB_8888);
-        try (var construction = mockConstruction(AndroidMediaMetadataRetriever.class, (retriever, call) ->
+        try (var construction = mockConstruction(KeyframeExtractor.HeaderSafeRetriever.class, (retriever, call) ->
                 when(retriever.getScaledSyncFrame(anyLong(), eq(320), eq(180))).thenReturn(frame))) {
             for (Uri input : List.of(Uri.parse("file:///storage/file.mkv"),
                     Uri.parse("https://example.invalid/file"))) {
