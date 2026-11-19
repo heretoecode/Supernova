@@ -168,6 +168,12 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - **Episodes** (OK plays; long-press = the More menu; deleting offers earlier episodes) and **the Settings redesign**
   (moved from 0.159 by the owner, 19 Nov: the last major redesign). Brief: `docs/0.158/BRIEF_0158_B.md`.
 
+### Paused from part B (owner, 19 Nov), for the next version once the discussion is done
+- Backup and Restore in the rows, with the Backups folder picker (reports stay in Download › Supernova)
+- "Also translate other languages" (engine feature, judged on the Shield); Trakt sign-in as a side panel
+- The owner's notes on 0.158.3/0.158.4 (`docs/0.158/REVIEW_0158.md`): the delete bug first, About, Home hero one
+  button, Settings tab size and scroll arrows; the NOVA app-side catch-up; release notes for every APK
+
 ## 0.159
 
 - [Moved to 0.158 part B, 19 Nov] Settings (seven tabs, Backup and Restore, Diagnostics, About)

@@ -87,8 +87,7 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   Backups folder (› Change: folder picker) · Back up now (action, progress and Stop in the row) · Restore (› "3
   backups": the list → In This Backup → Restore this backup, asks first → progress in the Restore row → **Restart
   now** when done, `18` right, `23`).
-- **Diagnostics:** Diagnostic logging (switch) · Keep diagnostics for (1 · 2 · 4 weeks; default 2) · Reports folder
-  (› Change) · Save a diagnostic report (Save; "Done · saved at 23:51 · never includes passwords") · Clear diagnostics
+- **Diagnostics:** Diagnostic logging (switch) · Keep diagnostics for (1 · 2 · 4 weeks; default 2) · Save a diagnostic report (Save; "Done · saved at 23:51 · never includes passwords") · Clear diagnostics
   (Clear, asks first).
 - **Advanced:** Projector mode · Force software decoding (switches) · Video decoder (Automatic · Hardware · Software)
   · Parser synchronisation (Automatic · Strict · Relaxed) · Stream buffer (Small · Medium · Large) · Max I-frame size
@@ -106,6 +105,8 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   code on screen at a time, RULES §20).
 
 ## Newer than the pictures (apply these)
+- **Reports always go to Download › Supernova** (no Reports folder row); **Backups folder** uses Supernova's folder
+  picker with Android's grant once behind it (owner, 19 Nov).
 - Skipping has **four** choices (owner, 13 Nov round 2), not the three drawn in `04`.
 - Open videos in another player stays in **Playback › General** and opens Supernova's own Play With list.
 - Network share options (SMB, discovery, SFTP; `26` right) live on **Files › Connections › Advanced**, not Settings.

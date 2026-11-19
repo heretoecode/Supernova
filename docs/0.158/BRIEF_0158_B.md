@@ -152,6 +152,11 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
 - **FL2** (already in group 7): placeholder rows instead of "Looking in this folder…".
 Not for Coding yet (design to settle first): L1 caption space, R6 one row design, S2, A2, Files' tab underline.
 
+### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
+- **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
+- **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first
+  time a folder outside Download is chosen. Default Download › Supernova. Built with the in-row backup flow.
+
 ### NOVA catch-up (checked 19 Nov; approved 15 Nov: "all of NOVA 6.6.5 and later", 0.157 notes §35)
 NOVA's latest tag is 6.6.5 (10 Nov) with fixes since. 0.157 carried MediaLib's and FileCore's 6.6.5 changes
 (matching by file name, Trakt pagination, 64-bit list IDs and lastActivities2, SMB share credentials, messenger
