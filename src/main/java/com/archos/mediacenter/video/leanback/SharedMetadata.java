@@ -71,8 +71,19 @@ public final class SharedMetadata {
         String value = code == null ? "" : code.trim();
         if (!value.matches("[A-Za-z]{2,3}"))
             return value;
-        String name = new java.util.Locale(value.toLowerCase(java.util.Locale.ROOT))
-                          .getDisplayLanguage(java.util.Locale.ENGLISH);
+        String code = value.toLowerCase(java.util.Locale.ROOT);
+        if (code.length() == 3)
+            for (String two : java.util.Locale.getISOLanguages()) {
+                try {
+                    if (new java.util.Locale(two).getISO3Language().equals(code)) {
+                        code = two;
+                        break;
+                    }
+                } catch (java.util.MissingResourceException unknown) {
+                    // No three-letter form for this one.
+                }
+            }
+        String name = new java.util.Locale(code).getDisplayLanguage(java.util.Locale.ENGLISH);
         return name.isEmpty() || name.equalsIgnoreCase(value) ? value : name;
     }
 

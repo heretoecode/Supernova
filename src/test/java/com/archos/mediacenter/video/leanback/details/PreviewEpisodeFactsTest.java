@@ -58,7 +58,7 @@ public class PreviewEpisodeFactsTest {
             String facts = text(key), ratings = text(reception);
             assertTrue(facts.contains("2022"));
             assertTrue(facts.contains("3 February 2022"));
-            assertTrue(facts.contains("47m"));
+            assertTrue(facts.contains("47 min"));
             assertTrue(facts.contains("Series original"));
             assertFalse(facts.contains("1999"));
             assertFalse(facts.contains("2010"));

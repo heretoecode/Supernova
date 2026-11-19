@@ -313,7 +313,7 @@ public class Supernova138UiTest {
             assertNotNull(PreviewPagesTest.findText(page, "23.976 fps"));
             assertNotNull(PreviewPagesTest.findText(page, "AAC"));
             // Details v20: subtitles have their own row under Technical information.
-            assertNotNull(PreviewPagesTest.findText(page, "eng"));
+            assertNotNull(PreviewPagesTest.findText(page, "English"));
             PreviewPagesTest.capture(nav, "0138-details-local-tracks-150-text");
         } finally {
             host.pause().stop().destroy();

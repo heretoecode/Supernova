@@ -193,7 +193,7 @@ public class DetailsImprovementsTest {
         partial.credits = new JSONObject("{cast:[],crew:[]}");
         apply(page, partial, generation);
         assertNotNull(find(page, "English"));
-        assertNotNull(find(page, "2h"));
+        assertNotNull(find(page, "2 h"));
         ReflectionHelpers.callInstanceMethod(
             page, "freshTitle", ReflectionHelpers.ClassParameter.from(String.class, "other"));
     }
