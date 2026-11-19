@@ -72,6 +72,27 @@ where the owner must decide.
   - **Track list on top (PS8 confirmed):** the panel behind collapses to a short clipped strip.
   - **Panel edge (P6 confirmed):** a light outline round the panel; over video, none.
 - **PS9. Playback tab "not very structured":** after PS1–PS6, look again with a photo.
+  **Owner's photos of 0.158.x (19 Nov):** better when focused, but: rows with many choices drop them onto a second line
+  (Text size, Background opacity, Stop playing at, Still watching?, Play mode, Skip intros & credits), so the
+  Subtitles tab scrolls (only down to Background shows); "3 hours" and "Repeat all" are cut at the edge and the chosen
+  "Off" is clipped on its left; the values ("English") sit above their row's centre line on Subtitles and Audio; the
+  panel is light and see-through. **Owner: never scroll in this panel; scale down; rethink rows with many choices.**
+  Cause: the panel was built narrower than the approved 1060 px. **Proposal (`player/31-v13`):** the approved width,
+  rows about 10% tighter (62 px), every row on one line, values on the centre line; rows with long choices (Stop
+  playing at, Still watching?, Play mode) show their value with › and open their list on top (PS8 behaviour);
+  short ones stay inline; quiet headings on the Playback tab (Picture and Speed · Playing On · For This Series);
+  panel 99% (RULES §11).
+  **Owner, 19 Nov, on v13:** too much empty space now the long rows open lists: make the panel narrower; shorten the
+  For This Series row (the longest); no line under the tabs right above the first heading's lines (too close, jarring).
+  **v14 (`player/32-v14`):** panel 820 px; For This Series row reads **"Use in every episode"** on all three tabs
+  (the heading already says For This Series; replaces "Use these subtitles for all of …"); no line under the tab
+  row, a clear gap instead, the first heading straight under it; chip words never wrap ("Skip intros & credits").
+  **Decided (owner, 19 Nov; v15, `player/33-v15`):** no pop-up lists in the panel for choices. Named choices step in
+  place with Left / Right, the value alone at rest and small ‹ › either side **only on the focused row** (replaces
+  PS11's "no ‹ › arrows" for these rows); numbers keep − +. Stepping rows: **Text size, Background opacity** (Subtitles),
+  **Audio boost** (Audio), **Format, Speed, Stop playing at, Still watching?, Play mode** (Playback). Chips stay only on
+  **Skipping** (renamed from "Skip intros & credits", owner 19 Nov; three choices **Off · Show button · Skip**, the same words as Settings, "Automatic" renamed Skip); Text colour keeps its dots. The per-show row reads **"Remember for this
+  show"** under a **"This Show"** heading (RULES §6: never "series"). Panel 820 px, no line under the tabs, 99%.
 - **PS10. Panel colour** (roadmap To discuss, P6): still different from the mock-up.
 
 ## Details

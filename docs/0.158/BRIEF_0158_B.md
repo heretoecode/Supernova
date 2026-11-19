@@ -43,7 +43,8 @@ it come later, not in this brief.
 - **Look sweep:** render every page on the new background (`preview-renders.yml`) and fix only what now fails: faint
   row lines, grey second lines, "Unknown", the open-page grey box, outlined pills and chips at rest, panels over the
   page, the keyboard's keys, loading placeholders, dimmed rows. **Playback Settings panel colour** (P6 / PS10) is
-  settled here: `#16181C` at 90%, no outline, no glow, no old blue (RULES). List every change in the report.
+  settled here: `#16181C` at **99%** (owner, 19 Nov; RULES §11), no outline, no glow, no old blue. **Every**
+  pop-up, menu and side panel uses the same value (one shared value). List every change in the report.
 
 ### Group 2 — Playback Settings (the owner's worst page; PS1–PS11)
 Every item in the review: tab focus (PS1), gap under the tabs (PS2), every tab fits (PS3), focused-row switches,
@@ -51,6 +52,19 @@ pills and chips (PS4–PS6), subtitles on top at every position (PS7), the track
 darkened at about 96% and the same width (PS8), and all of PS11 (chips instead of ‹ › steppers, − + for Vertical
 position, names on the two nameless rows, Audio boost chips, Extra large, Subtitle delay in Subtitle Selection, For
 This Series wording, the Download subtitles list). Then PS9: render the Playback tab and tidy what is left.
+
+### Settings wording seen on the Shield (owner, 19 Nov, 0.158.3)
+The Playback tab's skip rows still show NOVA's names "Play normally · Show skip (5 s) · Auto skip · Smart". Use the
+sheet's: **Off · Show button · Skip · Skip when binge-watching** (SETTINGS.md › Playback › Skipping). Check every
+Settings row's wording against the sheet while finishing Settings.
+
+### Playback Settings, round two (owner, 19 Nov; build this before anything else still open)
+`player/33-v15-playback-settings-step.png` and REVIEW_0157_2 PS9: panel **820 px**, 99%, rows 62 px, every tab fits
+with no scrolling, every row on one line with its value on the centre line; **no line under the tab row**; named
+choices step with Left / Right (‹ › only on the focused row) on Text size, Background opacity, Audio boost, Format,
+Speed, Stop playing at, Still watching?, Play mode; **Skipping** (renamed from "Skip intros & credits") keeps its three chips **Off · Show button · Skip** (was "Automatic"; the same words as Settings); numbers keep − +; "This Show"
+heading with **"Remember for this show"**; Playback tab headings Picture and Speed · Playing On · This Show. Replaces
+the two-line rows (judgement call 9).
 
 ### Group 3 — crashes and engine (from the diagnostics read, X1–X5)
 X1 (guard the discovery listener), X2 (Scan this folder crash), X3 with PL7 (seek previews engine fixed and the
