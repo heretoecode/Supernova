@@ -602,7 +602,8 @@ public final class PreviewPages extends FrameLayout {
     private List<Entry> featuredCandidates() {
         if (!SupernovaLibraryPolicy.configured(getContext()))
             return Collections.emptyList();
-        String choices = (preferences == null || preferences.getBoolean("preview_featured_recent", true)) + ":" +
+        String choices = (preferences == null || preferences.getBoolean("preview_featured_because", true)) + ":" +
+                         (preferences == null || preferences.getBoolean("preview_featured_recent", true)) + ":" +
                          (preferences != null && preferences.getBoolean("preview_featured_trending", true)) + ":" +
                          (preferences != null && preferences.getBoolean("preview_featured_popular", true));
         long generation = HeroPlaybackEligibility.generation();
@@ -630,7 +631,9 @@ public final class PreviewPages extends FrameLayout {
             heroSource(preferences != null && preferences.getBoolean("preview_featured_popular", true)
                            ? discovery.matches(snapshot, false)
                            : Collections.emptyList()),
-            heroSource(seed == null ? Collections.emptyList() : PreviewDiscovery.similar(seed, snapshot)));
+            heroSource(seed == null || preferences != null && !preferences.getBoolean("preview_featured_because", true)
+                           ? Collections.emptyList()
+                           : PreviewDiscovery.similar(seed, snapshot)));
         List<Entry> result = new ArrayList<>();
         String[] reasons = {"Recently Added", "TRENDING ON TRAKT · IN YOUR LIBRARY",
                             "POPULAR ON TRAKT · IN YOUR LIBRARY", "Because You Watched", "Recently Added"};
@@ -659,6 +662,17 @@ public final class PreviewPages extends FrameLayout {
             postDelayed(rotateFeatured, HeroRotationPolicy.IDLE_MS);
     }
 
+    /** Settings › Library › Home Hero › Change every; 8 seconds unless chosen. */
+    private long heroInterval() {
+        if (preferences == null)
+            return HeroRotationPolicy.INTERVAL_MS;
+        try {
+            return Long.parseLong(preferences.getString("preview_featured_interval", "8000"));
+        } catch (RuntimeException unreadable) {
+            return HeroRotationPolicy.INTERVAL_MS;
+        }
+    }
+
     private void startHeroClock() {
         removeCallbacks(rotateFeatured);
         if (tab == 0 && isAttachedToWindow()) {
@@ -676,6 +690,7 @@ public final class PreviewPages extends FrameLayout {
             long now = SystemClock.elapsedRealtime();
             boolean visible = tab == 0 && hasWindowFocus() && isShown() && !list.canScrollVertically(-1);
             int count = featuredCandidates().size();
+            heroClock.interval(heroInterval());
             if (heroClock.due(now, visible, motionAllowed(), count))
                 changeFeatured(1, false);
             postDelayed(this, visible && motionAllowed() && count > 1 ? Math.max(200, heroClock.delay(now))

@@ -9,7 +9,20 @@ public final class SegmentSkippingPolicy {
  public static String key(IntroSegments.Type type){return "supernova_segment_"+type.name().toLowerCase(Locale.ROOT);}
  public static Mode defaultMode(IntroSegments.Type type){switch(type){case INTRO:return Mode.PROMPT;case RECAP:case PREVIEW:return Mode.SMART;default:return Mode.AUTO;}}
  public static Mode mode(SharedPreferences prefs,IntroSegments.Type type){try{return Mode.valueOf(prefs.getString(key(type),defaultMode(type).name()));}catch(IllegalArgumentException invalid){return defaultMode(type);}}
- public static boolean auto(Mode mode,IntroSegments.Type type,boolean bingeArrival){if(mode==Mode.AUTO)return true;return mode==Mode.SMART&&type==IntroSegments.Type.RECAP&&bingeArrival;}
+ /**
+  * Skip (AUTO) always skips; "Skip when binge-watching" (SMART; Settings page sheet, owner 13 Nov 2026) skips when
+  * the episode was reached by binge-watching, for every part.
+  */
+ public static boolean auto(Mode mode, IntroSegments.Type type, boolean bingeArrival) {
+  if (mode == Mode.AUTO)
+   return true;
+  return mode == Mode.SMART && bingeArrival;
+ }
+
+ /** Show button (PROMPT) always offers Skip; "Skip when binge-watching" offers it when not binge-watching. */
+ public static boolean prompt(Mode mode, boolean bingeArrival) {
+  return mode == Mode.PROMPT || mode == Mode.SMART && !bingeArrival;
+ }
  public static boolean safe(IntroSegments.Type type,IntroSegments.Segment segment,long position,int duration){
   // No open-ended marker or fabricated EOF. A concrete boundary before the end retains post-credit material.
   if(segment.startMs==null||segment.endMs==null||segment.startMs<0||segment.endMs<=segment.startMs||segment.endMs<=position||duration<=0)return false;

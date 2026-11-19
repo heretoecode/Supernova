@@ -701,6 +701,24 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         return row;
     }
 
+    /**
+     * The page sheet's names for a list's choices (SETTINGS.md), in the sheet's order. Only the names and order
+     * change; every value stays, so saved choices and backups are untouched. Skipped if the values differ.
+     */
+    static void useSheetNames(ListPreference list, String key) {
+        String[][] sheet = SettingsLayout.choices(key);
+        CharSequence[] values = list.getEntryValues();
+        if (sheet == null || values == null || values.length != sheet[0].length)
+            return;
+        java.util.Set<String> have = new java.util.HashSet<>();
+        for (CharSequence value : values)
+            have.add(value.toString());
+        if (!have.containsAll(Arrays.asList(sheet[0])))
+            return;
+        list.setEntryValues(sheet[0]);
+        list.setEntries(sheet[1]);
+    }
+
     /** Short choices are shown inline as a segmented control and changed with Left/Right (owner rule: ≤ ~5). */
     static boolean inline(ListPreference list) {
         CharSequence[] entries = list.getEntries();
@@ -708,7 +726,8 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             return false;
         int total = 0;
         for (CharSequence entry : entries) {
-            if (entry == null || entry.length() > 16)
+            // "Skip when binge-watching" (24 letters) is the longest chip name in the sheet.
+            if (entry == null || entry.length() > 24)
                 return false;
             total += entry.length();
         }
@@ -839,6 +858,8 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         }
 
         void refresh() {
+            if (preference instanceof ListPreference)
+                useSheetNames((ListPreference)preference, entry.key);
             String[] copy = SettingsLayout.copy(entry.key);
             title.setText(copy != null ? copy[0] : preference.getTitle());
             CharSequence summary = copy != null ? copy[1] : preference.getSummary();

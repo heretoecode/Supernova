@@ -8,12 +8,17 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.158.4",
-    "version_code": 1584,
+    "version": "0.158.5",
+    "version_code": 1585,
     "date": "2026-11-19",
     "kind": "In development; not a signed or accepted release",
     "documentation": "docs/0.158/",
     "notes": [
+      "## 0.158.5: Settings",
+      "Skipping rows read Off, Show button, Skip and Skip when binge-watching; Skip when binge-watching now skips every part when you binge, and shows the button otherwise",
+      "Every row's name follows the Settings sheet; choices have plain names (Automatic, Hardware, Software …)",
+      "Home Hero: Because you watched and Change every (8, 12 or 20 seconds); the last source can't be turned off",
+      "Diagnostics: Keep diagnostics for",
       "## 0.158.4: Playback Settings, round two",
       "A narrower panel; every row on one line and every tab fits without scrolling; no line under the tabs",
       "Text size, Background opacity, Audio boost, Format, Speed, Stop playing at, Still watching? and Play mode step with Left and Right; ‹ › show on the focused row",

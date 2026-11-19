@@ -15,6 +15,27 @@
       "destination": "System & Maintenance",
       "subsection": "Diagnostics",
       "disposition": "Page sheet SETTINGS.md: Clear diagnostics (Clear, asks first) in System \u203a Diagnostics"
+    },
+    {
+      "id": "N15803",
+      "key": "preview_featured_because",
+      "destination": "Library & Home",
+      "subsection": "Home",
+      "disposition": "Page sheet SETTINGS.md: Home Hero \u203a Because you watched (switch; at least one source stays on)"
+    },
+    {
+      "id": "N15804",
+      "key": "preview_featured_interval",
+      "destination": "Library & Home",
+      "subsection": "Home",
+      "disposition": "Page sheet SETTINGS.md: Home Hero \u203a Change every (8 s \u00b7 12 s \u00b7 20 s)"
+    },
+    {
+      "id": "N15805",
+      "key": "supernova_diagnostic_keep_weeks",
+      "destination": "System & Maintenance",
+      "subsection": "Diagnostics",
+      "disposition": "Page sheet SETTINGS.md: Keep diagnostics for (1 \u00b7 2 \u00b7 4 weeks) in System \u203a Diagnostics"
     }
   ]
 }

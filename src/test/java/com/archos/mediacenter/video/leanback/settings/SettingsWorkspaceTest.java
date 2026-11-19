@@ -416,6 +416,25 @@ public class SettingsWorkspaceTest {
         }
     }
 
+    /** Owner, 19 Nov 2026: the skip rows use the sheet's words, as chips, values unchanged. */
+    @Test
+    public void skipRowsUseTheSheetsWords() {
+        workspace.open(0, null);
+        layout();
+        ListPreference intro = fragment.findPreference("supernova_segment_intro");
+        assertNotNull(intro);
+        View row = tagged("settings.preference.supernova_segment_intro");
+        assertNotNull(row);
+        assertEquals(java.util.Arrays.asList("Off", "Show button", "Skip", "Skip when binge-watching"),
+                     java.util.Arrays.asList(java.util.Arrays.stream(intro.getEntries())
+                                                 .map(CharSequence::toString).toArray(String[]::new)));
+        assertEquals(java.util.Arrays.asList("NORMAL", "PROMPT", "AUTO", "SMART"),
+                     java.util.Arrays.asList(java.util.Arrays.stream(intro.getEntryValues())
+                                                 .map(CharSequence::toString).toArray(String[]::new)));
+        assertTrue(SettingsWorkspace.inline(intro));
+        assertFalse("No NOVA words", containsText(row, "Play Normally"));
+    }
+
     /** Owner question 2 Nov 2026: the OMDb key must be reachable; 0.158: Settings › Services › Ratings. */
     @Test
     public void ratingsKeyIsVisibleUnderLibraryAndMetadata() {
@@ -424,7 +443,7 @@ public class SettingsWorkspaceTest {
         View row = tagged("settings.preference.omdb_api_key");
         assertTrue("row is shown", row.isShown());
         assertTrue("row is reachable with the remote", row.isFocusable());
-        assertTrue("row is titled for the owner", containsText(row, "Ratings key (OMDb)"));
+        assertTrue("row is titled for the owner", containsText(row, "OMDb ratings key"));
     }
 
     private static boolean containsText(View view, String text) {

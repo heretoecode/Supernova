@@ -287,20 +287,29 @@ public final class PreviewSettings {
             return true;
         });
         categories.get("Home & Discovery").addPreference(clear);
-        String[] sources = {
-            "recent", "trending", "popular"
-        },
-                 sourceNames = {
-                     "Featured: Recently Added", "Featured: Trakt Trending", "Featured: Trakt Popular"
-                 };
+        // Settings › Library › Home Hero (page sheet SETTINGS.md): four sources, at least one stays on.
+        String[] sources = HERO_SOURCES;
+        String[] sourceNames = {
+            "Recently added", "Trending on Trakt", "Popular on Trakt", "Because you watched"
+        };
         for (int n = 0; n < sources.length; n++) {
             SwitchPreferenceCompat enabled = new SwitchPreferenceCompat(fragment.requireContext());
             enabled.setKey("preview_featured_" + sources[n]);
             enabled.setTitle(sourceNames[n]);
-            enabled.setSummary("Select from matching local-library titles; offline local fallback");
+            enabled.setSummary("In the Home hero.");
             enabled.setDefaultValue(true);
+            enabled.setOnPreferenceChangeListener((p, value) -> (Boolean) value || !lastHeroSource(
+                androidx.preference.PreferenceManager.getDefaultSharedPreferences(fragment.requireContext()),
+                p.getKey()));
             categories.get("Home & Discovery").addPreference(enabled);
         }
+        ListPreference every = new ListPreference(fragment.requireContext());
+        every.setKey(HERO_INTERVAL);
+        every.setTitle("Change every");
+        every.setEntries(new String[] {"8 s", "12 s", "20 s"});
+        every.setEntryValues(new String[] {"8000", "12000", "20000"});
+        every.setDefaultValue("8000");
+        categories.get("Home & Discovery").addPreference(every);
         SwitchPreferenceCompat diagnostics = new SwitchPreferenceCompat(fragment.requireContext());
         diagnostics.setKey(Diagnostics.KEY);
         diagnostics.setTitle("Diagnostic logging");
@@ -532,11 +541,9 @@ public final class PreviewSettings {
                 ListPreference policy = new ListPreference(fragment.requireContext());
                 policy.setKey(SegmentSkippingPolicy.key(type));
                 policy.setTitle(type.name().substring(0, 1) + type.name().substring(1).toLowerCase(java.util.Locale.ROOT));
+                // Settings page sheet (SETTINGS.md › Playback › Skipping; owner, 19 Nov 2026).
                 policy.setEntries(new String[] {
-                    "Play Normally", "Show Skip (5 seconds)",
-                    type == IntroSegments.Type.CREDITS ? "Safe Auto Skip"
-                                                                                        : "Auto Skip",
-                    "Smart"
+                    "Off", "Show button", "Skip", "Skip when binge-watching"
                 });
                 policy.setEntryValues(new String[] {
                     "NORMAL", "PROMPT", "AUTO", "SMART"
@@ -575,6 +582,21 @@ public final class PreviewSettings {
             }
             categories.get("Legacy").setVisible(false);
         }
+
+    /** The Home hero's sources, each with its switch {@code preview_featured_<source>}. */
+    static final String[] HERO_SOURCES = {"recent", "trending", "popular", "because"};
+    /** How often the Home hero changes, in milliseconds (8, 12 or 20 seconds). */
+    public static final String HERO_INTERVAL = "preview_featured_interval";
+
+    /** True when {@code key} is the only hero source still on (so it can't be turned off). */
+    static boolean lastHeroSource(android.content.SharedPreferences prefs, String key) {
+        for (String source : HERO_SOURCES) {
+            String other = "preview_featured_" + source;
+            if (!other.equals(key) && prefs.getBoolean(other, true))
+                return false;
+        }
+        return true;
+    }
 
     private static void integrationToggle(
         PreferenceFragmentCompat fragment, PreferenceCategory group, String key, String title) {
