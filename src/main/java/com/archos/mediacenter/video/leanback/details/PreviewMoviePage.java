@@ -2625,6 +2625,7 @@ public final class PreviewMoviePage extends ScrollView {
         Action watched = null;
         Action unindex = null;
         Action delete = null;
+        Action fixShow = null;
         for (int i = 0; adapter != null && i < adapter.size(); i++) {
             if (!(adapter.get(i) instanceof Action))
                 continue;
@@ -2633,6 +2634,8 @@ public final class PreviewMoviePage extends ScrollView {
                 watched = a;
             else if (isRemoveFromLibrary(a))
                 unindex = a;
+            else if (show != null && a.getId() == TvshowActionAdapter.ACTION_CHANGE_INFO)
+                fixShow = a;
             else if (show == null && a.getId() == VideoActionAdapter.ACTION_DELETE ||
                      show != null && a.getId() == TvshowActionAdapter.ACTION_DELETE)
                 delete = a;
@@ -2643,7 +2646,7 @@ public final class PreviewMoviePage extends ScrollView {
                      "history", () -> PlayUtils.startVideo((Activity)getContext(), movie, PlayerActivity.RESUME_NO,
                                                            false, -1, null, -1));
         }
-        if (watched != null || movie != null || unindex != null) {
+        if (watched != null || movie != null || unindex != null || fixShow != null) {
             moreItem(labels, icons, commands, "— Library", null, null);
             if (watched != null) {
                 Action toggle = watched;
@@ -2660,6 +2663,11 @@ public final class PreviewMoviePage extends ScrollView {
                                                .ManualVideoScrappingActivity.class)
                              .putExtra(com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity
                                            .EXTRA_VIDEO, movie)));
+            }
+            if (movie == null && fixShow != null) {
+                // DT8 (D2): Fix match in More for a TV show too, through the show's own match action.
+                Action fix = fixShow;
+                moreItem(labels, icons, commands, "Fix match", "search", () -> action.accept(fix));
             }
             if (unindex != null) {
                 Action remove = unindex;
