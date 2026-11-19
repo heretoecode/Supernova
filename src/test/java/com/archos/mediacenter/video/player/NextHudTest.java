@@ -253,7 +253,8 @@ public class NextHudTest {
                                                           : background;
             assertTrue("shared rounded-rectangle button",
                        face instanceof SupernovaStyle.Box);
-            assertEquals(12f * density, ((SupernovaStyle.Box)face).radius(),
+            // One shape for every small box (RULES §3): 20 px corners at 1080p.
+            assertEquals(SupernovaStyle.SMALL_BOX_RADIUS_DP * density, ((SupernovaStyle.Box)face).radius(),
                          0.5f);
         }
     }

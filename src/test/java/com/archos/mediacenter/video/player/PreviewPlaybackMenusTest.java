@@ -317,11 +317,12 @@ public class PreviewPlaybackMenusTest {
         key(tagged("playback.tab:1"), KeyEvent.KEYCODE_DPAD_RIGHT);
         key(tagged("playback.tab:0"), KeyEvent.KEYCODE_DPAD_RIGHT);
         assertNotNull(tagged("playback.row.format"));
-        assertEquals("Original", value(tagged("playback.row.format")));
+        // Format chips (owner, 18 Nov 2026; PS11): Fit · Fill · Zoom · Stretch, from Original, Fullscreen …
+        assertEquals("Fit", value(tagged("playback.row.format")));
         assertNull("No 3D row without a 3D card", tagged("playback.row.s3d"));
         key(tagged("playback.row.format"), KeyEvent.KEYCODE_DPAD_RIGHT);
         assertTrue(full.isChecked());
-        assertEquals("Fullscreen", value(tagged("playback.row.format")));
+        assertEquals("Fill", value(tagged("playback.row.format")));
         assertEquals("Single", value(tagged("playback.row.playmode")));
         // 0.157: one lasting choice, Off · Show button · Automatic, instead of the per-session switch.
         assertNotNull(tagged("playback.row.skipmode"));
