@@ -19,7 +19,9 @@
   "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
   "com.archos.mediacenter.video.player.SegmentSkippingPolicyTest",
   "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
-  "com.archos.mediacenter.video.about.AboutCreditsTest"
+  "com.archos.mediacenter.video.about.AboutCreditsTest",
+  "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+  "com.archos.mediacenter.video.leanback.SupernovaStyleConformanceTest"
  ],
  "variants": {
   "normal": {}

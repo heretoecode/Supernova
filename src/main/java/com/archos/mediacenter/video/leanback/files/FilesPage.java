@@ -1181,10 +1181,8 @@ public final class FilesPage extends LinearLayout
             View line = column.getChildAt(column.getChildCount() - 1);
             line.setFocusable(true);
             line.setFocusableInTouchMode(true);
-            android.graphics.drawable.StateListDrawable focus = new android.graphics.drawable.StateListDrawable();
-            focus.addState(new int[] {android.R.attr.state_focused},
-                           SupernovaStyle.rounded(getContext(), 0x26FFFFFF, SupernovaStyle.SMALL_BOX_RADIUS_DP));
-            line.setBackground(focus);
+            line.setOnFocusChangeListener((view, focused) -> view.setBackground(focused
+                ? SupernovaStyle.rounded(getContext(), 0x26FFFFFF, SupernovaStyle.SMALL_BOX_RADIUS_DP) : null));
             if (index == 0)
             {
                 line.setTag("files.row.first");

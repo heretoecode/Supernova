@@ -511,8 +511,7 @@ public final class OfficialTitleArtwork {
         @Override
         public void draw(Canvas canvas) {
             Rect bounds = getBounds();
-            float[] size = placement(bitmap.getWidth(), bitmap.getHeight(), bounds.width(), bounds.height(),
-                                     android.content.res.Resources.getSystem().getDisplayMetrics().widthPixels / 1920f);
+            float[] size = placement(bitmap.getWidth(), bitmap.getHeight(), bounds.width(), bounds.height());
             float width = size[0];
             float height = size[1];
             int top = alignBottom ? Math.round(bounds.bottom - height) : bounds.top;
@@ -557,22 +556,20 @@ public final class OfficialTitleArtwork {
     }
 
     /**
-     * Logo placement (RULES §19; owner, 18 Nov 2026; title-style/05): every logo the same area inside a 900 × 240 box
-     * at 1080p (42% of it), wide ones capped by width, tall ones by height, and never beyond the view.
+     * Logo placement (RULES §19; owner, 18 Nov 2026; title-style/05): every logo the same area, 42% of the title's
+     * box (the 900 × 240 box at 1080p on the heroes), wide ones capped by width, tall ones by height.
      */
-    static float[] placement(int logoWidth, int logoHeight, int boxWidth, int boxHeight, float screen) {
+    static float[] placement(int logoWidth, int logoHeight, int boxWidth, int boxHeight) {
         float ratio = logoWidth / (float) Math.max(1, logoHeight);
-        float maxWidth = Math.min(boxWidth, 900 * screen);
-        float maxHeight = Math.min(boxHeight, 240 * screen);
-        float area = 900 * 240 * .42f * screen * screen;
+        float area = boxWidth * (float) boxHeight * .42f;
         float height = (float) Math.sqrt(area / ratio);
         float width = ratio * height;
-        if (width > maxWidth) {
-            width = maxWidth;
+        if (width > boxWidth) {
+            width = boxWidth;
             height = width / ratio;
         }
-        if (height > maxHeight) {
-            height = maxHeight;
+        if (height > boxHeight) {
+            height = boxHeight;
             width = height * ratio;
         }
         return new float[] {width, height};
