@@ -8,12 +8,16 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.158.5",
-    "version_code": 1585,
+    "version": "0.158.6",
+    "version_code": 1586,
     "date": "2026-11-19",
     "kind": "In development; not a signed or accepted release",
     "documentation": "docs/0.158/",
     "notes": [
+      "## 0.158.6: Files",
+      "Lists on Files no longer show under the toolbar, tabs or top bar",
+      "Your Library lists your own library page under By Library Page",
+      "The dot beside Files shows only when Library Care has something to check",
       "## 0.158.5: Settings",
       "Skipping rows read Off, Show button, Skip and Skip when binge-watching; Skip when binge-watching now skips every part when you binge, and shows the button otherwise",
       "Every row's name follows the Settings sheet; choices have plain names (Automatic, Hardware, Software …)",
