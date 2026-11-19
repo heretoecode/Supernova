@@ -255,7 +255,7 @@ public final class ConnectionFormPage extends LinearLayout
     /** Row height: 32 (was 46) so every row, the switches and both buttons fit on one 1080p screen (FL4). */
     static final int ROW_DP = 32;
     /** Wide enough for "Encryption (HTTPS)" and "Remember password" whole (render check, 19 Nov 2026). */
-    static final int LABEL_DP = 150;
+    static final int LABEL_DP = 166;
 
     private void build()
     {
