@@ -123,7 +123,7 @@ home:()=>topBar('Home')+`<div class="hero"><div class="t">Harrow Point:<br>The L
  <div class="cards" style="top:836px">${[12,210,120,330,170].map(h=>`<div class="card"><div class="pic" style="background:
  radial-gradient(ellipse 60% 70% at 50% 40%,hsla(${h},35%,45%,.85),hsla(${h},30%,14%,.95) 60%,#121418 100%)"></div></div>`).join('')}</div>`};
 document.getElementById('f').insertAdjacentHTML('beforeend',(pane==='pane'?'<div class="pane"></div>':'')+P[page]());
-if(shade){const al={'16181C':.9,'1D2025':1,'24272D':1}[shade]||.95;const h=shade;
+if(shade){const sp=shade.split('_');const h=sp[0];const al=sp[1]?parseInt(sp[1])/100:({'16181C':.9,'1D2025':1,'24272D':1}[h]||.95);
  const rgb=[0,2,4].map(i=>parseInt(h.substr(i,2),16)).join(',');
  document.getElementById('f').insertAdjacentHTML('beforeend',`<div class="fp" style="background:rgba(${rgb},${al})">
  <div class="hd">Preferred Audio Language</div>

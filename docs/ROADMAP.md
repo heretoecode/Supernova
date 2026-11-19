@@ -161,7 +161,7 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - **Text centred on its letters in every box** (the 0.158 top bar fix, applied to every button, pill, chip and tab
   with the new shape; owner's "TV Shows sat low", 16 Nov). The shape alone doesn't fix it.
 - **Panel shade on the speckle (owner to pick, 19 Nov):** panels nearly match the darker page. Mock-ups
-  `background-speckle/tv4-A` (today, `#16181C` 90%), `tv4-B` (`#1D2025`, solid), `tv4-C` (`#24272D`, solid).
+  `background-speckle/tv4-A` (today, `#16181C` 90%), `tv4-B` (`#1D2025`, solid), `tv4-C` (`#24272D`, solid); owner: B and C look alike on the TV, keep today's colour and try more opacity: `tv4-D` 95%, `tv4-E` 98%.
 - **Back and page position** (RULES §16, 18 Nov): Back goes straight to the top bar; a page left for another one
   reopens at its top; Details → Back returns to the poster.
 - Then the owner's 0.157.2 review (`docs/0.157/REVIEW_0157_2.md`), Playback Settings first.
