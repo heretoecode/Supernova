@@ -27,13 +27,15 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
   the code that fills it). Its build was cancelled and everything in it goes into 0.158.6.
 - **0.158.6** (code 1586) — not signed: the renders found Settings still wouldn't open (its registry expects an
   exact number of rows, and the four new rows weren't counted). Cancelled; everything goes into 0.158.7.
-- **0.158.7** (code 1587) — 0.158.4 plus everything since: the Settings wording and new rows (Home Hero, Keep
-  diagnostics for, When a video was started), Save a diagnostic report in its row, the OpenSubtitles panel, the Trakt
-  sign-in look, the episodes feature, R3, R4, R5, DT1, DT3, DT5, DT6, titles, PL8, X4, FL1–FL5, FL7, FL8, FL10, FL12.
-  Building: conformance run [44586168686](https://github.com/heretoecode/Supernova/actions/runs/44586168686) on
-  `861ba66` (19 Nov, 18:17), with render check run 44586213317 beside it. An earlier attempt (run 44540193164) stopped
-  at compile: the Trakt layout had one setting twice. Signed as soon as it is green.
-
+- **0.158.7** (code 1587) — signed 19 Nov 2026 by run
+  [44604872477](https://github.com/heretoecode/Supernova/actions/runs/44604872477), from green conformance run
+  [44597211401](https://github.com/heretoecode/Supernova/actions/runs/44597211401) on `ecbfdde` (2202 tests, 0
+  failing). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.7.apk`). **Install this one.** 0.158.4 plus
+  everything since: the Settings wording and new rows (Home Hero, Keep diagnostics for, When a video was started),
+  Save a diagnostic report in its row, the OpenSubtitles panel, the Trakt sign-in look, the episodes feature, R3,
+  R4, R5, DT1, DT3, DT5, DT6, titles, PL8, X4, FL1–FL5, FL7, FL8, FL10, FL12. Two earlier attempts failed and were
+  fixed: a duplicated setting in the Trakt layout (compile), then 8 tests (logo size tied to the screen; a
+  hand-made focus box).
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the
 next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
@@ -206,8 +208,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
   when a build is due (a push there starts conformance and cancels a running one; signing accepts only the working
   branch). The two 0.158 MediaLib patches live in `.github/build/`, which `.gitignore` ignores: add new patches with
   `git add -f` and list them, with their SHA-256, in `.github/build/supernova155-dependency-patches.json`.
-- Now: 0.158.7 building (run 44586168686). When green, sign it with `supernova-0157-qa.yml`
-  (`conformance_run_id` 44586168686) and record it here, in PROJECT_STATUS and in CLAUDE.md.
+- 0.158.7 is signed (run 44604872477). Part B is paused: see `PART_B_PAUSED.md`.
 - Still to do, in this order: (1) the in-row backup flow; (2) "Also translate other languages"; (3) the Trakt
   sign-in as a side panel; (4) Reports folder › Change, waiting for the owner's answer (keep Download › Supernova, or
   a folder picker with one Android grant). Then renders of the episodes screens, titles, R5's Play menu and More

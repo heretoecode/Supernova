@@ -8,8 +8,8 @@ and is picked up again from a discussion session. Full detail: `REPORT_0158_B.md
 - **0.158.4** — signed (run 44531272454); installed on the Shield.
 - **0.158.5, 0.158.6** — never signed: the render checks found faults that would have stopped Settings opening;
   fixed, and their contents moved into 0.158.7.
-- **0.158.7** — building (conformance run 44586168686, source `861ba66`), signed when green. Holds everything below
-  under "Done".
+- **0.158.7** — signed 19 Nov (run 44604872477, from conformance run 44597211401 on `ecbfdde`; 2202 tests pass).
+  Artifact `supernova-0157-signed-qa`. Holds everything below under "Done". **The one to install.**
 
 ## Done (in 0.158.7), not yet seen on the Shield
 - **Playback Settings round two** (in 0.158.4): 820 px, every tab fits, stepping rows, Skipping chips, This Show.
