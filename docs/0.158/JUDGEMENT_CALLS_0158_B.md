@@ -183,3 +183,8 @@ decide quickly.
     small list "Resume from 12:34 · Start over" whenever a started video is played from Home, a library page or
     Details; Start over always plays from the beginning. Playback moving on to the next episode is not affected
     (those start at the beginning anyway).
+60. **OpenSubtitles panel** redrawn in its Settings section from `settings-v2/07`, `08`: signed out, "Not signed in ·
+    fewer downloads without one", Sign in, and a QR code ("No account yet? Scan to create a free one on your phone,
+    then come back and sign in"); Sign in shows Username, Password, Show password and Sign in, each typed with the
+    shared keyboard; signed in, "Signed in as …", Change account and Sign out. "Downloads left today" is not shown:
+    the app doesn't fetch that figure yet.
