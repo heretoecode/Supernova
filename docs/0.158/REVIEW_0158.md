@@ -102,3 +102,5 @@ The owner will do the full walk-through when part B is finished; these are thing
 - Asked: panels at 99% are in 0.158.4 and later (built). The poster caption box is solid `#23262C` (100%).
 - **L5. Menus blend into the poster captions** (Filters over the grid). **Decided (owner, 19 Nov): white outline at 70%
   plus a dark shadow** (RULES §11).
+- **L3 / L4 decided (owner, 19 Nov, on the TV):** 52 px boxes, 24 px either side of the line, line white at 35%
+  thinning at the ends (LIBRARY.md).

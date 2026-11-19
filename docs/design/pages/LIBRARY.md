@@ -23,6 +23,11 @@ Left: **Filters ▾ · Sort: <choice> ▾ · Order · List view / Grid view** (�
 the view button without anything moving). Right, locked: **Customise page, on your own pages only** (owner, 19 Nov: on Movies and TV Shows it only
 repeated Filters' Show and the toolbar's View, Sort and Order, so it is removed there). Focus is the white box; a button whose menu
 is open returns to rest. Menus open under the button pressed.
+**Sizes (owner, 19 Nov, judged on the TV, `rows-captions/tv/08-toolbar-line-35.png`):** the buttons use the one
+small-box shape (52 px tall, 20 px corners, about 22 px sides; RULES §3), about 8 px apart. Under them a line from
+margin to margin, **white at 35%**, about 2 px in the middle and **thinning towards both ends like a lifted pen**.
+**24 px** from the bottom of a focused button's box to the line, **24 px** from the line to the posters at rest (the
+focused top-row poster and its ring still clear it). In list view the column headings sit 24 px below the line.
 
 - **Filters** (`23`, `24`): Watched (All · Unwatched · In progress · Watched) · Genre (genre icons, Match: Any · All at the
   top) · Year (quick choices plus From / To; only ranges that hold titles; Left / Right steps) · Streaming services

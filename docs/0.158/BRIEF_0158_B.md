@@ -187,6 +187,10 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   menu and side panel keeps `#16181C` at 99% and gains a white outline at 70% (about 1.5 px at 1080p) and a dark
   shadow spreading outwards (black about 85%, about 48 px soft, 18 px down). One shared look, so all change together.
   Playback Settings over video: leave as it is until the player walk-through.
+- **Library toolbar sizes (owner, 19 Nov, judged on the TV; LIBRARY.md › Toolbar; `rows-captions/tv/08`):** buttons in
+  the one 52 px small-box shape (today the toolbar forces about 88 px: `PreviewToolbar` min height 44 dp and 12 / 6 dp
+  padding override `SupernovaStyle`); the line white at 35%, about 2 px, thinning to a hair at both margins; 24 px
+  from the focused box to the line and 24 px from the line to the posters.
 - **Library toolbar (owner, 19 Nov; LIBRARY.md):** remove **Customise page** from Movies and TV Shows (it only repeated
   Filters' Show and the toolbar's View, Sort and Order); it stays on your own pages.
 - **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
