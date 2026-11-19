@@ -1932,8 +1932,11 @@ public final class PreviewMoviePage extends ScrollView {
                 headingSize.topMargin = episodeRows.isEmpty() ? dp(8) : -dp(10);
                 headingSize.bottomMargin = dp(6);
                 episodes.addView(seasonInfo, headingSize);
-            } else
-                episodes.addView(text(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(), 18));
+            } else {
+                TextView heading = text(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(), 18);
+                PreviewIcon.apply(heading, "tv", 16);
+                episodes.addView(heading);
+            }
             PreviewEpisodeRow row =
                 new PreviewEpisodeRow((Activity)getContext(), season.getValue(), id,
                                       enrichment == null ? null : enrichment.seasonAvailability.get(season.getKey()));
@@ -2238,6 +2241,8 @@ public final class PreviewMoviePage extends ScrollView {
             if (category.getValue().isEmpty())
                 continue;
             TextView heading = text(category.getKey(), 18);
+            // DT5: one row design: every row heading has its icon (Trailers a play mark, the rest film).
+            PreviewIcon.apply(heading, category.getKey().equals("Trailers") ? "play" : "film", 16);
             heading.setPadding(dp(5), dp(12), 0, dp(4));
             trailers.addView(heading);
             HorizontalScrollView rail = new HorizontalScrollView(getContext());
