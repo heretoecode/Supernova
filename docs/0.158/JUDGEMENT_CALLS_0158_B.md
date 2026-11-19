@@ -60,3 +60,22 @@ decide quickly.
     the 0.156 Settings tests (four files, built around the old tiles and per-section tabs) need rewriting before it
     can pass the build. Rather than sign it untested, its commit was reverted on the branch; `git revert` of the
     "Hold the Settings first pass" commit brings it back for the next session.
+
+## After 0.158.1 (owner's second round of instructions, 19 Nov)
+21. **Point releases stay in the current entry.** The build check only accepts whole versions in the history list, so
+    0.158.1's notes sit under 0.158.2's in the current entry (as 0.157.1 and 0.157.2 did).
+22. **Settings, master switches:** the sheet has none for services, so the old "Service integrations" switches are no
+    longer on the page (their saved values are kept). "Look up skip times online" is the one that stays; with it off
+    the skipping choices hide but the switch itself stays, so it can always be turned back on (before, it hid itself).
+23. **Settings, Backup and OpenSubtitles** are rows in System and Subtitles that open their existing views; Back
+    returns to the tab's rows. The sheet's in-row backup flow (What to back up chips, progress in the row) is not
+    drawn yet.
+24. **PL7, the switch:** the reason Seek previews was missing on the Shield is that it had no entry in the settings
+    map, so no page could show it. A small 0.158 map file adds it (and Clear diagnostics), and it sits in Playback ›
+    General.
+25. **Look sweep, row lines:** 8% white lines between rows almost vanish on the speckle, so all of them went to 12%.
+26. **Look sweep, panels:** floating panels (#16181C at 95%) are within a few shades of the speckle's base, so they
+    barely stand apart from the page. The colour is your approved one, so it was not changed; say if you want panels
+    a little lighter or with the soft edge back.
+27. **DT4:** the gap above a season's heading was halved by pulling the heading up into the row's spare space.
+28. **DT8:** shows get Fix match in More through the show's own match action (the series match screen).
