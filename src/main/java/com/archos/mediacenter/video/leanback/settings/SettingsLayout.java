@@ -37,6 +37,8 @@ final class SettingsLayout {
     private static final Map<Integer, LinkedHashMap<String, List<String>>> PAGES = new LinkedHashMap<>();
     private static final Map<String, String> TAB_LABELS = new LinkedHashMap<>();
     private static final Map<String, String[]> COPY = new LinkedHashMap<>();
+    /** Declared before the static block below fills it (static fields initialise in order). */
+    private static final Map<String, String[]> CHOICES = new LinkedHashMap<>();
 
     private static void page(int category, Object... sectionsAndKeys) {
         LinkedHashMap<String, List<String>> sections = new LinkedHashMap<>();
@@ -235,8 +237,6 @@ final class SettingsLayout {
         choices("force_audio_passthrough_multiple", "0", "Off", "1", "Passthrough", "2", "Via Android", "3",
                 "Convert to AC3");
     }
-
-    private static final Map<String, String[]> CHOICES = new LinkedHashMap<>();
 
     private static void choices(String key, String... valuesAndNames) {
         CHOICES.put(key, valuesAndNames);
