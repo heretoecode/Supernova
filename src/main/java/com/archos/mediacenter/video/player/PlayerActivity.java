@@ -4470,6 +4470,12 @@ public class PlayerActivity extends AppCompatActivity
                                                                                              : mTitle;
     }
 
+    /** The age rating for the title block's details line (PP2, PL1), or "" while unknown. */
+    public String previewAge()
+    {
+        return ageOverlay == null ? "" : ageOverlay.classification();
+    }
+
     public String previewEpisode()
     {
         return mVideoInfo != null && mVideoInfo.isShow

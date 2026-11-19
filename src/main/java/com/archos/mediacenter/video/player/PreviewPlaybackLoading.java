@@ -51,21 +51,27 @@ final class PreviewPlaybackLoading extends FrameLayout {
         // gradient over it. Text legibility comes from a shadow on the text itself (see text()).
         LinearLayout labels = new LinearLayout(context);
         labels.setOrientation(LinearLayout.VERTICAL);
-        LayoutParams labelsParams = new LayoutParams(dp(570), -2, Gravity.START | Gravity.CENTER_VERTICAL);
-        labelsParams.leftMargin = dp(48);
+        // PP3 / PL1 (agreed 18 Nov 2026): one title block for Preparing playback and the player, in the player's
+        // place (top left) and sizes: the title or logo in a two-line box, then the details line, badge first.
+        LayoutParams labelsParams = new LayoutParams(dp(560), -2, Gravity.START | Gravity.TOP);
+        labelsParams.leftMargin = dp(28);
+        labelsParams.topMargin = dp(20);
         addView(labels, labelsParams);
-        title = text("", 32);
-        title.setTypeface(null, Typeface.BOLD);
+        title = text("", 23);
+        title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         // The logo's space is kept from the start (0.157 Shield review #7): a fixed two-line box, text at its foot,
         // so nothing below moves when the logo or the full title arrives.
         title.setLines(2);
-        title.setGravity(android.view.Gravity.BOTTOM | android.view.Gravity.START);
+        title.setGravity(android.view.Gravity.TOP | android.view.Gravity.START);
         title.setEllipsize(TextUtils.TruncateAt.END);
-        labels.addView(title);
-        episode = text("", 16);
-        episode.setMaxLines(2);
+        labels.addView(title, new LinearLayout.LayoutParams(dp(380), dp(64)));
+        episode = text("", 13);
+        episode.setTextColor(0xFFCCDFEA);
+        episode.setMaxLines(1);
         episode.setEllipsize(TextUtils.TruncateAt.END);
-        episode.setPadding(0, dp(10), 0, dp(10));
+        episode.setPadding(0, dp(4), 0, dp(10));
+        // PP1: the line keeps its height from the start, so the badge arriving never moves anything.
+        episode.setMinLines(1);
         labels.addView(episode);
         // The age rating in its outlined badge on its own line (owner, 12 Nov 2026; player title block).
         age = text("", 14);
@@ -74,6 +80,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         badge.setCornerRadius(dp(4));
         badge.setStroke(Math.max(1, dp(1)), 0xDDFFFFFF);
         age.setBackground(badge);
+        // PP2 (decided 18 Nov 2026): the badge is the first item of the details line; this box is no longer shown.
         age.setVisibility(GONE);
         LinearLayout.LayoutParams ageSize = new LinearLayout.LayoutParams(-2, -2);
         ageSize.bottomMargin = dp(10);
@@ -115,16 +122,19 @@ final class PreviewPlaybackLoading extends FrameLayout {
                     }
             Episode selected = video instanceof Episode ? (Episode) video : null;
             if (selected != null)
-                episode.setText(episodeLine(selected.getSeasonNumber(), selected.getEpisodeNumber(),
-                                            selected.getEpisodeName()));
-            else
-                episode.setText(PreviewTaglines.cached(context, false, online, 0, 0));
+                details = episodeLine(selected.getSeasonNumber(), selected.getEpisodeNumber(),
+                                      selected.getEpisodeName());
+            else if (video instanceof Movie && ((Movie) video).getYear() > 0)
+                details = String.valueOf(((Movie) video).getYear());
+            episode.setText(details);
             loadAge(selected != null, selected != null ? showOnlineId(library, video) : online);
         }
-        episode.setVisibility(episode.length() == 0 ? GONE : VISIBLE);
+        episode.setVisibility(VISIBLE);
     }
 
     private TextView age;
+    /** The details line without the badge ("Season 2 · Episode 3 · Title", or a film's year). */
+    private String details = "";
 
     /** "Season 2 · Episode 8 · We Don't Talk Anymore", the same as Details and the player. */
     static String episodeLine(int season, int episode, String name) {
@@ -155,7 +165,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
             post(() -> {
                 boolean known = PlaybackAgeOverlay.valid(rating);
                 age.setText(known ? rating : "");
-                age.setVisibility(known ? VISIBLE : GONE);
+                episode.setText(TitleBlockLine.line(getContext(), known ? rating : "", details));
             });
         });
     }

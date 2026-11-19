@@ -122,6 +122,11 @@ final class PlaybackAgeOverlay extends View {
         return chosen.size() == 1 ? chosen.iterator().next() : "";
     }
 
+    /** The known rating for this video, or "" (shown first on the title block's details line). */
+    String classification() {
+        return classification == null ? "" : classification;
+    }
+
     static boolean valid(String value) {
         if (value == null)
             return false;

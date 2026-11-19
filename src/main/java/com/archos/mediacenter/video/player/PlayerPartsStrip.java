@@ -102,7 +102,8 @@ final class PlayerPartsStrip implements PlayerController.Strip
         root.setClipToPadding(false);
         tabs = new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
-        tabs.setPadding(0, dp(6), 0, dp(4));
+        // PL3: the controls to the Chapters tab line 30% closer.
+        tabs.setPadding(0, dp(2), 0, dp(4));
         chaptersTab = tab(CHAPTERS);
         episodesTab = tab(EPISODES);
         tabs.addView(chaptersTab);
@@ -114,7 +115,8 @@ final class PlayerPartsStrip implements PlayerController.Strip
         LinearLayout.LayoutParams ruleSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(1)));
         // The card row sits centred between the tab line and the screen's bottom edge (player v11, approved 13 Nov):
         // 24dp here + the cards' 8dp padding matches the 8dp padding + the control bar's 24dp bottom inset below.
-        ruleSize.bottomMargin = dp(24);
+        // PL3 (owner, 18 Nov 2026): the tab line to the cards 35% closer (32 dp with the cards' padding, now 21).
+        ruleSize.bottomMargin = dp(13);
         root.addView(rule, ruleSize);
         tabs.getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> paintTabs());
         row = new HorizontalScrollView(context);
@@ -346,6 +348,7 @@ final class PlayerPartsStrip implements PlayerController.Strip
                 Card card = card(part.name.isEmpty() ? "Unknown" : part.name);
                 card.view.setOnClickListener(v -> jumpTo(part));
                 card.view.setOnFocusChangeListener((v, has) -> focusChanged(card, has, part));
+                card.view.setForeground(restingEdge());
                 add(card);
             }
             loadChapterPictures();
@@ -354,6 +357,7 @@ final class PlayerPartsStrip implements PlayerController.Strip
                 Card card = card(episodeTitle(item));
                 card.view.setOnClickListener(v -> play(item));
                 card.view.setOnFocusChangeListener((v, has) -> focusChanged(card, has, null));
+                card.view.setForeground(restingEdge());
                 if (item.still != null)
                     Picasso.get().load(item.still).fit().centerCrop().into(card.image);
                 add(card);
@@ -384,7 +388,7 @@ final class PlayerPartsStrip implements PlayerController.Strip
         card.view.setPivotY(card.view.getHeight() / 2f);
         float scale = focused ? FOCUSED_SCALE : 1f;
         card.view.animate().scaleX(scale).scaleY(scale).setDuration(150).start();
-        card.view.setForeground(focused ? ring() : null);
+        card.view.setForeground(focused ? ring() : restingEdge());
         if (focused) {
             keepShowing.run();
             if (part != null)
@@ -679,6 +683,12 @@ final class PlayerPartsStrip implements PlayerController.Strip
         if (edge != 0)
             box.setStroke(Math.max(1, dp(1)), edge);
         return box;
+    }
+
+    /** PL6 (RULES §14): every card has the artwork edge at rest, as Home rows and library posters do. */
+    private android.graphics.drawable.Drawable restingEdge()
+    {
+        return new com.archos.mediacenter.video.leanback.ArtworkEdge(context, 8, false);
     }
 
     private GradientDrawable ring()

@@ -190,7 +190,42 @@ public final class PlaybackParts
             }
             result.add(next);
         }
-        return new PlaybackParts(result);
+        return new PlaybackParts(withoutStubs(result));
+    }
+
+    /** Parts shorter than this are merged into the next one (owner, 18 Nov 2026; PL5). */
+    static final long STUB_MS = 10_000;
+
+    /**
+     * No stub chapters (PL5, agreed 18 Nov 2026): a part under 10 seconds ("Episode · From 0:00" before "Recap ·
+     * From 0:02") is merged into the part after it, which then starts where the stub did. A short last part joins the
+     * one before it.
+     */
+    static List<Part> withoutStubs(List<Part> parts)
+    {
+        List<Part> out = new ArrayList<>(parts);
+        int i = 0;
+        while (out.size() > 1 && i < out.size())
+        {
+            Part part = out.get(i);
+            if (part.endMs - part.startMs >= STUB_MS)
+            {
+                i++;
+                continue;
+            }
+            if (i + 1 < out.size())
+            {
+                Part next = out.get(i + 1);
+                out.set(i + 1, new Part(next.name, next.kind, part.startMs, next.endMs));
+            }
+            else
+            {
+                Part previous = out.get(i - 1);
+                out.set(i - 1, new Part(previous.name, previous.kind, previous.startMs, part.endMs));
+            }
+            out.remove(i);
+        }
+        return out;
     }
 
     private static long snap(long edge, TreeSet<Long> markers)

@@ -651,7 +651,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 if (mClock != null) {
                     // in the player we change the typeface and add shadow to improve visibility over the video plane
                     mClock.setShadowLayer(2, 0, 0, Color.BLACK);
-                    mClock.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                    // PL2: the 0.158 top bar's clock: regular weight, the same size.
+                    mClock.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+                    mClock.setTextSize(19 * com.archos.mediacenter.video.leanback.TvLayout.scale(mContext));
                     mClock.setTextColor(Color.WHITE);
                     if (DateFormat.is24HourFormat(mContext)) {
                         mDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -1744,8 +1746,10 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             a.bindPreviewTitleArtwork(title);
         }
         if (episode != null) {
-            episode.setText(a.previewEpisode());
-            episode.setVisibility(mControlBarShowing && !a.previewEpisode().isEmpty() ? View.VISIBLE : View.GONE);
+            // PL1 / PP2: the same details line as Preparing playback, the age badge first.
+            CharSequence line = TitleBlockLine.line(mContext, a.previewAge(), a.previewEpisode());
+            episode.setText(line);
+            episode.setVisibility(mControlBarShowing && line.length() > 0 ? View.VISIBLE : View.GONE);
         }
     }
 
