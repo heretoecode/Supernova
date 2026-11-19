@@ -8,12 +8,20 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.158.2",
-    "version_code": 1582,
+    "version": "0.158.3",
+    "version_code": 1583,
     "date": "2026-11-19",
     "kind": "In development; not a signed or accepted release",
     "documentation": "docs/0.158/",
     "notes": [
+      "## 0.158.3: Settings",
+      "One page with seven tabs: Playback, Audio, Subtitles, Library, Services, System and About; no tiles",
+      "Each tab shows all its sections, each under its heading; the tabs use the top bar's focus",
+      "Seek previews is back, in Playback › General",
+      "## 0.158.3: Also",
+      "Fix match in More for TV shows; a smaller gap between seasons on Details",
+      "Lines between rows show better on the speckled background",
+      "A page you leave for another opens at its top when you come back",
       "## 0.158.2: Preparing playback and the player",
       "One title block on Preparing playback and in the player, top left, with the age rating first on its line",
       "The player's clock in the top bar's font; the Chapters row sits lower and closer",
