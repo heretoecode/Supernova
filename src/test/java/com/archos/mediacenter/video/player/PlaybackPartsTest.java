@@ -52,6 +52,17 @@ public class PlaybackPartsTest
         assertEquals(80000, timeline.parts().get(1).startMs);
     }
 
+    @Test public void aPartUnderTenSecondsJoinsTheNextOne()
+    {
+        // PL5 (agreed 18 Nov 2026): no "Episode · From 0:00" stub before "Recap · From 0:02".
+        PlaybackParts timeline =
+            PlaybackParts.merge(List.of(), List.of(),
+                                List.of(part("Recap", PlaybackParts.Kind.RECAP, 2000, 60000)), 120000, true);
+        assertEquals(2, timeline.parts().size());
+        assertEquals("Recap", timeline.partAt(0).name);
+        assertEquals(0, timeline.parts().get(0).startMs);
+    }
+
     @Test
     public void genericChapterNamesAreRenumberedAndRealNamesKept()
     {
