@@ -87,6 +87,12 @@ where the owner must decide.
   **v14 (`player/32-v14`):** panel 820 px; For This Series row reads **"Use in every episode"** on all three tabs
   (the heading already says For This Series; replaces "Use these subtitles for all of …"); no line under the tab
   row, a clear gap instead, the first heading straight under it; chip words never wrap ("Skip intros & credits").
+  **Decided (owner, 19 Nov; v15, `player/33-v15`):** no pop-up lists in the panel for choices. Named choices step in
+  place with Left / Right, the value alone at rest and small ‹ › either side **only on the focused row** (replaces
+  PS11's "no ‹ › arrows" for these rows); numbers keep − +. Stepping rows: **Text size, Background opacity** (Subtitles),
+  **Audio boost** (Audio), **Format, Speed, Stop playing at, Still watching?, Play mode** (Playback). Chips stay only on
+  **Skip intros & credits** (three choices); Text colour keeps its dots. The per-show row reads **"Remember for this
+  show"** under a **"This Show"** heading (RULES §6: never "series"). Panel 820 px, no line under the tabs, 99%.
 - **PS10. Panel colour** (roadmap To discuss, P6): still different from the mock-up.
 
 ## Details

@@ -53,6 +53,14 @@ darkened at about 96% and the same width (PS8), and all of PS11 (chips instead o
 position, names on the two nameless rows, Audio boost chips, Extra large, Subtitle delay in Subtitle Selection, For
 This Series wording, the Download subtitles list). Then PS9: render the Playback tab and tidy what is left.
 
+### Playback Settings, round two (owner, 19 Nov; build this before anything else still open)
+`player/33-v15-playback-settings-step.png` and REVIEW_0157_2 PS9: panel **820 px**, 99%, rows 62 px, every tab fits
+with no scrolling, every row on one line with its value on the centre line; **no line under the tab row**; named
+choices step with Left / Right (‹ › only on the focused row) on Text size, Background opacity, Audio boost, Format,
+Speed, Stop playing at, Still watching?, Play mode; Skip intros & credits keeps chips; numbers keep − +; "This Show"
+heading with **"Remember for this show"**; Playback tab headings Picture and Speed · Playing On · This Show. Replaces
+the two-line rows (judgement call 9).
+
 ### Group 3 — crashes and engine (from the diagnostics read, X1–X5)
 X1 (guard the discovery listener), X2 (Scan this folder crash), X3 with PL7 (seek previews engine fixed and the
 switch back where Settings shows it), X4 (scans queue instead of waiting on a lock). X5 is covered by the focus fixes
