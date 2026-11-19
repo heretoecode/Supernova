@@ -29,7 +29,7 @@ final class KeyframeExtractor implements SeekThumbnails.FrameExtractor
         {
             if (cancelled.get())
                 throw new InterruptedIOException("Thumbnail cancelled");
-            AndroidMediaMetadataRetriever current = new AndroidMediaMetadataRetriever();
+            AndroidMediaMetadataRetriever current = new HeaderSafeRetriever();
             retriever = current;
             if (cancelled.get())
             {
@@ -54,6 +54,19 @@ final class KeyframeExtractor implements SeekThumbnails.FrameExtractor
                 frame = small;
             }
             return new SeekThumbnails.Frame(frame, -1);
+        }
+    }
+
+    /**
+     * X3 / PL7 (diagnostics, 18 Nov 2026: 109 failures): for SMB, WebDAV and SFTP the MediaLib proxy re-opens the
+     * retriever on its local address with no header list, and Android's retriever counts the headers
+     * ({@code Map.size()} on null), so every seek preview of a network file failed. An empty list is passed instead.
+     */
+    static final class HeaderSafeRetriever extends AndroidMediaMetadataRetriever
+    {
+        @Override public void setDataSource(String uri, java.util.Map<String, String> headers)
+        {
+            super.setDataSource(uri, headers == null ? java.util.Collections.emptyMap() : headers);
         }
     }
 

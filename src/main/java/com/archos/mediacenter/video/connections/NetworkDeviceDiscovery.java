@@ -257,8 +257,21 @@ public final class NetworkDeviceDiscovery
         {
             if (!job.accepting())
                 return;
+            // X1 (diagnostics, 16 Nov 2026): leaving discovery could remove the listener twice and crash. Detach
+            // runs once, and a listener already gone is ignored.
+            boolean[] detached = {false};
             job.detach = () -> {
-                smb.removeListener(smbListener);
+                if (detached[0])
+                    return;
+                detached[0] = true;
+                try
+                {
+                    smb.removeListener(smbListener);
+                }
+                catch (RuntimeException alreadyGone)
+                {
+                    // Not a listener any more: nothing to remove.
+                }
                 manager.removeListener(upnpListener);
                 IO.execute(smb::abort);
             };

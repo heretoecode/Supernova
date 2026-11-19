@@ -750,6 +750,30 @@ public final class FolderBrowser extends LinearLayout
     }
 
     /**
+     * X2 (diagnostics, 17 Nov 2026): Scan this folder on a local folder crashed, because Android refuses a plain
+     * file address in a broadcast (FileUriExposedException), even one sent to this app only. The broadcast never
+     * leaves the app, so the check is relaxed for that one call and put back straight after.
+     */
+    public static void scanFolder(Context context, android.net.Uri uri)
+    {
+        if (!"file".equals(uri.getScheme()))
+        {
+            com.archos.mediaprovider.NetworkScanner.scanVideos(context, uri);
+            return;
+        }
+        android.os.StrictMode.VmPolicy policy = android.os.StrictMode.getVmPolicy();
+        android.os.StrictMode.setVmPolicy(new android.os.StrictMode.VmPolicy.Builder().build());
+        try
+        {
+            com.archos.mediaprovider.NetworkScanner.scanVideos(context, uri);
+        }
+        finally
+        {
+            android.os.StrictMode.setVmPolicy(policy);
+        }
+    }
+
+    /**
      * The item's menu (F16; mock-up files-review-0157-1/01). A file: Play · Details · Mark as watched · Exclude ·
      * Fix match (Details, watched and Fix match only for a library title: never offer what does nothing, RULES §10).
      * A folder: Open · Add to library · Scan this folder · Exclude.
@@ -853,7 +877,7 @@ public final class FolderBrowser extends LinearLayout
                 }
                 break;
             case "Scan this folder":
-                com.archos.mediaprovider.NetworkScanner.scanVideos(context, file.getUri());
+                scanFolder(context, file.getUri());
                 break;
             case "Exclude":
                 exclude(file);

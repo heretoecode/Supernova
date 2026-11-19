@@ -1996,8 +1996,14 @@ public final class UniversalFileBrowser extends LinearLayout {
             putioController = null;
         }
         if (discovery != null) {
-            if (discoveryListener != null)
-                discovery.removeListener(discoveryListener);
+            // X1: a listener already removed is ignored instead of crashing Files.
+            if (discoveryListener != null) {
+                try {
+                    discovery.removeListener(discoveryListener);
+                } catch (RuntimeException alreadyGone) {
+                    // Not a listener any more.
+                }
+            }
             discovery.abort();
             discovery = null;
         }

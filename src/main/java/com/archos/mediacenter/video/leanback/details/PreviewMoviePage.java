@@ -341,10 +341,17 @@ public final class PreviewMoviePage extends ScrollView {
         int available = View.MeasureSpec.getSize(heightSpec);
         if (available > 0 && heroPage != null) {
             int viewport = Math.max(0, available - getPaddingTop() - getPaddingBottom());
-            int heroHeight = Math.max(dp(180), viewport - dp(90));
             boolean compact = viewport < dp(380);
             compactCard = compact;
-            heroPage.setPadding(0, dp(compact ? 12 : 24), 0, 0);
+            // H1 (owner's 0.158 review): the Home hero's size and place, 1776 x 820 at 1080p, its top at the same
+            // height as Home's, so going from the Home hero into Details the card stays put.
+            int heroTop = compact ? dp(12) : Math.max(0, TvLayout.heroTop(getContext()) - getPaddingTop());
+            int heroCard = compact ? Math.max(dp(160), viewport - dp(110)) : TvLayout.heroHeight(getContext());
+            int heroHeight = heroTop + heroCard + dp(12);
+            heroPage.setPadding(0, heroTop, 0, 0);
+            LinearLayout.LayoutParams cardSize = (LinearLayout.LayoutParams) detailsCard.getLayoutParams();
+            cardSize.width = compact ? -1 : TvLayout.heroWidth(getContext());
+            cardSize.gravity = Gravity.CENTER_HORIZONTAL;
             LinearLayout.LayoutParams tabs = (LinearLayout.LayoutParams)tabBar.getLayoutParams();
             tabs.topMargin = 0;
             int cardHeight = heroHeight - heroPage.getPaddingTop() - heroPage.getPaddingBottom() - dp(12);

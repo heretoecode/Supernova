@@ -3034,11 +3034,8 @@ public final class PreviewPages extends FrameLayout {
                                             () -> open(candidate, cardAnchor()), () -> play(candidate, cardAnchor()),
                                             button -> heroMenu(candidate, button), this::heroPlayLabel);
                 card.measure(
-                    View.MeasureSpec.makeMeasureSpec(
-                        Math.max(dp(320), list.getWidth() - list.getPaddingLeft() - list.getPaddingRight()),
-                        View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(Math.max(dp(280), getHeight() - list.getPaddingTop() - dp(110)),
-                                                     View.MeasureSpec.EXACTLY));
+                    View.MeasureSpec.makeMeasureSpec(TvLayout.heroWidth(getContext()), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(TvLayout.heroHeight(getContext()), View.MeasureSpec.EXACTLY));
                 heroWindow.put(key, card);
             }
         }
@@ -3264,12 +3261,30 @@ public final class PreviewPages extends FrameLayout {
                 v.setLayoutParams(new RecyclerView.LayoutParams(
                     -1, tab == 0 ? dp(244) : android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
                 if (tab == 0) {
-                    int heroHeight = Math.max(dp(280), getHeight() - list.getPaddingTop() - dp(110));
+                    // H1 (owner's 0.158 review): one hero size and place on Home and Details, 1776 x 820 at 1080p,
+                    // its top under the top bar at the same height as Details' card. H2: the dots under it.
+                    int cardHeight = TvLayout.heroHeight(getContext());
+                    int above = Math.max(0, TvLayout.heroTop(getContext()) - list.getPaddingTop());
+                    int dotsHeight = dp(22);
+                    int heroHeight = above + cardHeight + dotsHeight;
                     v.setMinimumHeight(heroHeight);
                     v.setLayoutParams(new RecyclerView.LayoutParams(-1, heroHeight));
-                    v.setPadding(0, dp(12), 0, dp(18));
+                    v.setPadding(0, above, 0, 0);
+                    v.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
                     PreviewFeaturedCard featured = preparedHero(e, v);
-                    v.addView(featured, new LinearLayout.LayoutParams(-1, -1));
+                    LinearLayout.LayoutParams cardSize =
+                        new LinearLayout.LayoutParams(TvLayout.heroWidth(getContext()), cardHeight);
+                    cardSize.gravity = Gravity.CENTER_HORIZONTAL;
+                    v.addView(featured, cardSize);
+                    List<Entry> heroes = featuredCandidates();
+                    if (featuredIndicators == null)
+                        featuredIndicators = new PreviewFeaturedIndicators(getContext());
+                    if (featuredIndicators.getParent() instanceof ViewGroup)
+                        ((ViewGroup) featuredIndicators.getParent()).removeView(featuredIndicators);
+                    v.addView(featuredIndicators, new LinearLayout.LayoutParams(-1, dotsHeight));
+                    featuredIndicators.setVisibility(heroes.size() > 1 ? View.VISIBLE : View.INVISIBLE);
+                    if (!heroes.isEmpty())
+                        featuredIndicators.setPosition(heroes.size(), Math.floorMod(featuredIndex, heroes.size()));
                     v.animate().cancel();
                     v.setAlpha(1f);
                     v.setTranslationX(0);

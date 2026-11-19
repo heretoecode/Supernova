@@ -991,7 +991,7 @@ public final class FilesPage extends LinearLayout
                 android.net.Uri folder = parent(uri);
                 if (folder != null)
                 {
-                    com.archos.mediaprovider.NetworkScanner.scanVideos(getContext(), folder);
+                    FolderBrowser.scanFolder(getContext(), folder);
                 }
                 outcomes.put(key, "Trying again with the next scan");
                 show(LIBRARY_CARE);
