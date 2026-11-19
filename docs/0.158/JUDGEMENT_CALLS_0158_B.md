@@ -137,3 +137,6 @@ decide quickly.
     can mix both.
 46. **FL10:** on All scans the remote moves through the scans so the list scrolls; the focused scan has a soft grey
     box rather than the white one, because there is nothing to press.
+47. **FL4:** the connection form's rows are 40 high (were 46) with smaller gaps above and below, which by the
+    numbers fits Type, every field, both switches and the two buttons on one 1080p screen. The form still scrolls if
+    a larger text size is set on the device.

@@ -88,7 +88,8 @@ public final class ConnectionFormPage extends LinearLayout
         scroll.setClipToPadding(false);
         fields = new LinearLayout(context);
         fields.setOrientation(VERTICAL);
-        fields.setPadding(0, dp(10), 0, dp(20));
+        // FL4 (owner, 18 Nov 2026): the whole form on one screen, Remember password, Test and Save included.
+        fields.setPadding(0, dp(6), 0, dp(8));
         scroll.addView(fields);
         left.addView(scroll, new LayoutParams(-1, 0, 1));
         addView(left, new LayoutParams(0, -1, 0.48f));
@@ -251,6 +252,9 @@ public final class ConnectionFormPage extends LinearLayout
         return type == 3 ? "Encryption (FTPS)" : null;
     }
 
+    /** Row height: 40 (was 46) so every row, the switches and both buttons fit on one screen (FL4). */
+    static final int ROW_DP = 40;
+
     private void build()
     {
         fields.removeAllViews();
@@ -263,7 +267,7 @@ public final class ConnectionFormPage extends LinearLayout
         {
             chips.addView(chip(index), chipSize());
         }
-        fields.addView(chips, new LayoutParams(-1, dp(46)));
+        fields.addView(chips, new LayoutParams(-1, dp(ROW_DP)));
         field(NAME);
         field(ADDRESS);
         String switchLabel = encryptionLabel(type);
@@ -286,7 +290,7 @@ public final class ConnectionFormPage extends LinearLayout
         gap.leftMargin = dp(12);
         buttons.addView(button("Save and browse", "right", this::save), gap);
         LayoutParams buttonsSize = new LayoutParams(-1, -2);
-        buttonsSize.topMargin = dp(16);
+        buttonsSize.topMargin = dp(10);
         fields.addView(buttons, buttonsSize);
         refreshValues();
     }
@@ -362,7 +366,7 @@ public final class ConnectionFormPage extends LinearLayout
         row.setOnClickListener(view -> startEditing(which));
         styleRow(row);
         line();
-        fields.addView(row, new LayoutParams(-1, dp(46)));
+        fields.addView(row, new LayoutParams(-1, dp(ROW_DP)));
     }
 
     private void toggle(String label, java.util.function.BooleanSupplier on, Runnable flip)
@@ -391,7 +395,7 @@ public final class ConnectionFormPage extends LinearLayout
         });
         show.run();
         line();
-        fields.addView(row, new LayoutParams(-1, dp(46)));
+        fields.addView(row, new LayoutParams(-1, dp(ROW_DP)));
     }
 
     private LinearLayout formRow(String label)
