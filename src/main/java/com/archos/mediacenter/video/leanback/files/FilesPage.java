@@ -440,7 +440,7 @@ public final class FilesPage extends LinearLayout
         videos = videoCount;
         lastScanMs = lastScan;
         scanning = scanRunning;
-        tabs.setBadge(LIBRARY_CARE, toCheck());
+        publishBadge();
         nextWaiting();
         show(tabs.openTab());
     }
@@ -1041,12 +1041,20 @@ public final class FilesPage extends LinearLayout
                     care.getStringSet("not_a_movie", java.util.Collections.emptySet()));
                 skipped.add(String.valueOf(video.getId()));
                 care.edit().putStringSet("not_a_movie", skipped).apply();
-                tabs.setBadge(LIBRARY_CARE, toCheck());
+                publishBadge();
                 show(LIBRARY_CARE);
             }));
             String name = video.getName() == null ? video.getFilenameNonCryptic() : video.getName();
             actionRow(column, "film", name, video.getFilenameNonCryptic(), null, actions, false);
         }
+    }
+
+    /** The Library Care badge, also the top bar's dot (FL8: the dot shows only when a tab has a badge). */
+    private void publishBadge()
+    {
+        int count = toCheck();
+        tabs.setBadge(LIBRARY_CARE, count);
+        com.archos.mediacenter.video.leanback.TopBarSignal.filesBadge(getContext(), count);
     }
 
     private int toCheck()

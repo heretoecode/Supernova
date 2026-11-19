@@ -161,7 +161,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
   Episodes: built, but not yet checked in renders.
 - **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
   title ends with "…" rather than shrinking, and the colon split doesn't force a new line (judgement call 43).
-- **Group 7, Files** — FL6 and FL9 done; FL1–FL5, FL7, FL8, FL10–FL12 not started.
+- **Group 7, Files** — FL6, FL8 and FL9 done; FL1–FL5, FL7, FL10–FL12 not started.
 - **Group 8** — R2 (the own page's bar) not done; Back and page position done.
 
 ## Judgement calls

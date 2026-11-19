@@ -129,3 +129,6 @@ decide quickly.
     the colon small (about a third of the size); the line break after the colon is left to the text's own wrapping,
     because inserting one would change the name's letters everywhere it is read back. Shrinking a long title to fit
     two lines is not built: it ends with "…" instead.
+44. **FL8:** the dot beside Files is now the Library Care badge itself (files missing plus titles not matched), as last
+    counted on Files and kept across restarts. Before, it also counted titles with no poster or plot, which no tab
+    shows. Until Files has been opened once after this update, there is no dot.
