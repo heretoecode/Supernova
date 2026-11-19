@@ -4,7 +4,12 @@ Built unattended from `docs/0.158/BRIEF_0158_B.md`, the review `docs/0.157/REVIE
 at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`, Settings from `SETTINGS.md`).
 
 ## Signed APKs
-SIGNED_LIST
+- **0.158.1** (code 1581) — signed 19 Nov 2026 by run
+  [44479811283](https://github.com/heretoecode/Supernova/actions/runs/44479811283) of `supernova-0157-qa.yml`, from
+  green conformance run [44470632446](https://github.com/heretoecode/Supernova/actions/runs/44470632446) (2193 tests,
+  0 failing) on source `731261f`. Artifact `supernova-0157-signed-qa` (`Supernova_0.158.1.apk`, archive digest
+  `7472563a…7dc6`); kept until 3 Dec 2026. Contains groups 1, 2, 3 and 3b.
+- **0.158.2** (code 1582) — SIGNED_0158_2
 
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the
@@ -74,13 +79,39 @@ next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
 - The icon picker's tiles are wide enough for the longest genre names (part A's "not built").
 
 ### Group 9 — Settings (first pass)
-SETTINGS_STATUS
+**Not in tonight's APKs.** A first pass was built: one page with the seven tabs (Playback · Audio · Subtitles ·
+Library · Services · System · About), no tiles, each tab showing every section under its heading with the sheet's
+wording, the tabs in the top bar's look, Backup and OpenSubtitles as rows that open their own views, and the old
+Settings screens added to the no-old-screens test. The existing Settings tests (four files) are written around the
+0.156 tiles and per-section tabs and need rewriting for the new page before it can pass the build, so the commit was
+held back (reverted on the branch; revert the "Hold the Settings first pass" commit to bring it back). Nothing in
+Settings has changed on the Shield yet.
 
 ## Look sweep (Group 1)
-LOOK_SWEEP
+The speckle, the one box shape and the letter centring went in through the shared pieces, so every page picked
+them up at once; the Playback Settings panel colour (`#16181C` at 90%, no outline, no glow) is settled. **The full
+render sweep of every page on the new background (`preview-renders.yml`) was not done tonight** — the build queue
+went to getting 0.158.1 green — so faint lines, grey second lines and placeholders on the speckle are still to be
+checked page by page (see Not built).
 
 ## Not built (plain list, before you install)
-NOT_BUILT
+- **Settings redesign** — built as a first pass but held back (see Group 9). Settings looks as in 0.158.
+- **Look sweep** — no page-by-page render check on the speckled background yet; anything that now looks faint on it
+  is still to fix.
+- **PS9** (Playback tab looked at again after PS1–PS6) — needs your photo of the new panel.
+- **X4** — scans still wait for each other instead of queueing (the lock is in MediaLib's build patches; its own job).
+- **X5** — no separate focus work beyond the groups' own fixes.
+- **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
+- **PL7, second half** — seek previews should work again (X3), but the switch is still where 0.158 has it; it moves
+  to Playback › General with the Settings redesign.
+- **PL8** — the skip button doesn't yet join the controls' line.
+- **Details:** DT1 (Details tab on one screen), DT3 (rows clipped at the sides), DT4 (gap between seasons), DT5 (one
+  row design; More Like This by service), DT6 (artwork side panel), DT8 (Fix match in More for shows), R3 (season
+  artwork), R4 (season More menu), R5 (choose a version), **episodes** (OK plays, long-press menu, deleting with
+  earlier episodes).
+- **Group 6, titles** — logo placement fix and house style A: not started.
+- **Group 7, Files** — FL6 done; FL1–FL5, FL7–FL12 not started.
+- **Group 8** — Back and page position (RULES §16) and R2 not started; the icon picker width is done.
 
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).
