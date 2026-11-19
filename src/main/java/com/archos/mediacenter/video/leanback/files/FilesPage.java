@@ -1592,7 +1592,15 @@ public final class FilesPage extends LinearLayout
     {
         if (tabs.openTab() == LIBRARY_CARE)
         {
+            // FL9 (owner, 18 Nov 2026): focus stays on the row pressed while the page redraws around it.
+            View focused = findFocus();
+            Object tag = focused == null ? null : focused.getTag();
             show(LIBRARY_CARE);
+            View again = tag == null ? null : findViewWithTag(tag);
+            if (again != null && again.isFocusable())
+            {
+                again.requestFocus();
+            }
         }
     }
 
