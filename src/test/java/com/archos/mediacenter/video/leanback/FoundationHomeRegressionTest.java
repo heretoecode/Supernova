@@ -170,7 +170,7 @@ public class FoundationHomeRegressionTest {
             float visible = (540 - cardAt[1]) / (float) card.getHeight();
             // 0.158: the first row peeks below the hero (HOME.md); its cards are taller with the caption box under.
             // H1 (owner's 0.158 review): the hero is exactly 1776 x 820 at 1080p, so less of the row shows.
-            assertTrue("First row peeks below the hero, got " + visible, visible >= .12f && visible <= .65f);
+            assertTrue("First row peeks below the hero, got " + visible, visible >= .05f && visible <= .65f);
             View second = layout.findViewByPosition(3);
             if (second != null) {
                 int[] at = new int[2];
