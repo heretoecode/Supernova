@@ -162,7 +162,11 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
   Episodes: built, but not yet checked in renders.
 - **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
   title ends with "…" rather than shrinking, and the colon split doesn't force a new line (judgement call 43).
-- **Group 7, Files** — FL1, FL6–FL10 done (FL1 and FL10 not yet checked in renders); FL2–FL5, FL11, FL12 not started.
+- **Group 7, Files** — FL1, FL6–FL11 done (FL11 was already in: "Scanning · 42%" while running; FL1 and FL10 not
+  yet checked in renders). Not started: FL2 (loading placeholders), FL3 + FL5 (turn a connection off; smaller
+  buttons), FL4 (connection form on one screen), FL12 (closed fully → Home). FL12's likely route: Android 11 can say
+  why the app last ended (`getHistoricalProcessExitReasons`); when the page is restored after you stopped the app
+  yourself, open Home instead; when Android ended it in the background, keep the page.
 - **Group 8** — R2 (the own page's bar) not done; Back and page position done.
 
 ## Judgement calls
