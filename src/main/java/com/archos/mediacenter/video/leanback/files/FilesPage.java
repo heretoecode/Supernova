@@ -1461,7 +1461,10 @@ public final class FilesPage extends LinearLayout
         TextView status = text(pill == null ? "" : pill, 13.5f, Color.WHITE);
         status.setGravity(Gravity.CENTER);
         status.setVisibility(pill == null ? (wide ? GONE : INVISIBLE) : VISIBLE);
-        row.addView(status, new LayoutParams(SupernovaStyle.dp(context, PILL_DP), SupernovaStyle.dp(context, 24)));
+        LayoutParams statusSize = new LayoutParams(SupernovaStyle.dp(context, PILL_DP), SupernovaStyle.dp(context, 24));
+        // FL6: a clear gap between a long name's "…" and its pill.
+        statusSize.leftMargin = SupernovaStyle.dp(context, 16);
+        row.addView(status, statusSize);
         if (!wide)
         {
             row.addView(new View(context), new LayoutParams(0, 1, 1));
