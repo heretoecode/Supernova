@@ -116,7 +116,7 @@ decide quickly.
 40. **DT3:** the Details sections and their content no longer clip their children, so a grown card and its ring show
     whole at both ends of a row. From 0.158.6 the Episodes rows also run to the screen's edges (widened under the
     page's margin, with that width back as padding so the first card doesn't move). Extras and More Like This rows
-    were not widened yet.
+    were not widened yet; from 0.158.6 Extras rows are widened the same way (More Like This not yet).
 41. **Episodes menu** (no mock-up; built from the rules): Playback (Resume or Play, Restart episode) · Library (Mark
     as watched, Fix match) · Files & Media (Delete episode). The delete warning with earlier episodes has four buttons
     Keep file · Delete episode N only · Delete all … · Choose…; "Delete both" for two, "Delete all three" up to ten,

@@ -2189,12 +2189,17 @@ public final class PreviewMoviePage extends ScrollView {
             rail.setHorizontalScrollBarEnabled(false);
             rail.setClipChildren(false);
             rail.setClipToPadding(false);
-            rail.setPadding(dp(10), dp(10), dp(10), dp(10));
+            // DT3 (D6): Extras rows run off the page's edges too; the padding keeps the first card where it was.
+            int side = Math.round(getResources().getDisplayMetrics().widthPixels * .04f) + dp(8);
+            rail.setPadding(dp(10) + side, dp(10), dp(10) + side, dp(10));
             LinearLayout row = new LinearLayout(getContext());
             row.setClipChildren(false);
             row.setClipToPadding(false);
             rail.addView(row);
-            trailers.addView(rail, new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28)));
+            LinearLayout.LayoutParams railSize = new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28));
+            railSize.leftMargin = -side;
+            railSize.rightMargin = -side;
+            trailers.addView(rail, railSize);
             for (ScraperTrailer extra : category.getValue()) {
                 PreviewLandscapeCard card = new PreviewLandscapeCard(getContext());
                 card.bind(safe(extra.mName),
