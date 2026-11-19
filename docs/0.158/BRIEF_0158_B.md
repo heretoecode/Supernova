@@ -169,6 +169,8 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   refuses episode 1 of a season. Allow it when every episode of the previous season in the library is watched and the
   new one was added after the last watch ("Next Episode · S3 E1"). No time limit. Unstarted shows stay candidates
   as the show. Add tests for both.
+- **A2, app icon and banner (owner, 19 Nov, approved):** the mark on the speckle's base `#111215` instead of
+  charcoal, **no grain** (it reads as dirt at icon size). Icon, banner and splash; re-export from `design/brand-mark/`.
 - **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
   box; RULES "Page tabs"), not the plain row; wait for the Settings mock-up before building. **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).

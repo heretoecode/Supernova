@@ -65,7 +65,7 @@ The owner will do the full walk-through when part B is finished; these are thing
 - **A1. About is nearly empty** (0.158.4): the old **blue ring** icon, the version, "based on NOVA 6.6.4", build
   date. No What's New, no Credits, no Open-source licences.
 - **A2. App icon and banner on the Shield's home screen** have charcoal behind the new mark: should they get the
-  speckle? [Claude: the darker base `#111215`; grain at icon size reads as dirt; a TV look at both.]
+  speckle? [Claude: the darker base `#111215`; grain at icon size reads as dirt.] **Approved (owner, 19 Nov).**
 
 ### Files
 - **FL2 again:** opening a drive still shows "Looking in this folder…"; bring back the placeholder rows.
