@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2c31;font-family:Roboto,Inter,Arial,sans-serif;width:1400px;padding:40px}
+.frame{border:2px solid #c9ccd3;background:#111215;padding:40px 50px 48px;display:flex;gap:40px;justify-content:center}
+.lbl{color:#e8ebf2;font-size:20px;text-align:center;margin-bottom:12px;white-space:nowrap}
+.poster{position:relative;width:236px;height:462px;border-radius:12px;overflow:hidden;background:#1c1e23}
+.art{position:absolute;left:0;right:0;top:0;height:354px;border-radius:12px 12px 0 0;overflow:hidden}
+.edge{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 18px rgba(0,0,0,.45)}
+.logo{position:absolute;left:8px;right:8px;bottom:40px;text-align:center;font-size:25px;color:#f4f6fa;font-weight:900;letter-spacing:2px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.cap{position:absolute;left:14px;right:8px;top:367px}
+.t1{color:#fff;font-size:24px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t2,.t3{color:#c9d3e6;font-size:18px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{position:absolute;top:8px;right:8px;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.45);overflow:hidden}
+.badge svg{position:absolute;left:0;top:0}
+</style></head><body><div class="frame" id="f"></div>
+<script>
+const D=48,C=24;
+function pt(p,r){const a=2*Math.PI*p-Math.PI/2;return [C+r*Math.cos(a),C+r*Math.sin(a)]}
+function pie(p){const r=18,[x,y]=pt(p,r),l=p>.5?1:0;return `<path d="M${C} ${C} L${C} ${C-r} A${r} ${r} 0 ${l} 1 ${x} ${y} Z" fill="#000"/>`}
+function tick(){return `<path d="M15 24.5l6 6 12-13" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`}
+const items=[
+ ["TV show, not started","The Harbour","2 seasons · 16 episodes","Added 16 Nov 2026",null,["#7a3b2e","#26120d"]],
+ ["TV show, started","Greenwood","S1 E4 · 5 of 8 left","Added 16 Nov 2026",.4,["#2f5c4a","#0e1d17"]],
+ ["Film, started","Golden Mile","42 min left","Added 12 Nov 2026",.65,["#8a6a2a","#2a1f0a"]],
+ ["Film, watched","Deep Water","2025 · 1 h 52 min","Added 10 Nov 2026",'w',["#2e4f78","#0d1726"]]];
+document.getElementById('f').innerHTML=items.map(([l,t,a,b,p,c])=>{
+ const badge=p===null?'':`<div class="badge"><svg width="${D}" height="${D}" viewBox="0 0 ${D} ${D}">${p==='w'?tick():pie(p)}</svg></div>`;
+ return `<div><div class="lbl">${l}</div><div class="poster"><div class="art" style="background:radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.18),transparent 60%),linear-gradient(155deg,${c[0]},${c[1]})"><div class="logo">${t.toUpperCase()}</div><div class="edge"></div>${badge}</div>
+ <div class="cap"><div class="t1">${t}</div><div class="t2">${a}</div><div class="t3">${b}</div></div></div></div>`}).join('');
+</script></body></html>
