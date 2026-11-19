@@ -147,13 +147,20 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   1080p render pixel for pixel and fix the one that's off.
 - **DT3 again:** the Details hero's edge is cut off left and right; focused cards in Episodes (left) and More Like
   This (both sides) are cut off.
-- **R2, own library page (owner, firm; RULES "Library pages under the top bar"):** on your own page (Documentaries)
-  scrolled posters stop under a **solid band**; on Movies and TV Shows they run on behind the bar under its fade,
-  which is right. Make the own page do exactly what Movies does. The fade itself is allowed for it
-  (`TopNavigation.setScrollOffset`: indexes 0–2 and 6), so look for what differs in the own page's own layout (a
-  container that starts below the bar, clips to its padding, or paints its own background) and whether it reports
-  its scroll offset. Prove it with renders of Movies and the own page scrolled, side by side, and a test that the
-  own page's content reaches the top of the screen. It was marked done once without a render: not again.
+- **R2, own library page (owner, firm; RULES "Library pages under the top bar"). Cause found (discussion, 19 Nov):**
+  `TopNavigation` decides **once, in its constructor**, whether the page may scroll behind the bar:
+  `prepareScrollingContent(content)` looks for a `PreviewPages` (or `ScrollView`) inside the content, descending
+  only through `FrameLayout`s. If it finds one, the stage is laid out over the whole screen and the page gets the
+  bar's inset; if not, the stage sits **below** the bar, which is the solid band. `CustomLibraryActivity` builds
+  `new TopNavigation(this, workspace, …)` **before** `workspace.render()` creates the `PreviewPages`, so the
+  workspace is empty at that moment; and even later its `PreviewPages` sits inside a `LinearLayout`
+  (`libraryBody`), which the search never enters. Movies and TV Shows pass a ready `PreviewPages`, so they work.
+  The fade listener being wired (what was checked before) is not the problem.
+  **Fix:** let the search walk any `ViewGroup`, and re-run it (inset included) whenever the content is rebuilt
+  (`Workspace.render()` removes and re-adds views), e.g. a `TopNavigation.refreshScrollingContent()` called at the
+  end of `library()`, or a hierarchy-change listener on the stage. **Prove it:** a Robolectric test that the own
+  page's stage is laid out from y = 0 with the inset on its `PreviewPages` (it fails today), and renders of Movies
+  and the own page scrolled, side by side.
 - **S1:** Settings' tabs as tall as every other tab box (RULES §3). **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).
 - **FL2** (already in group 7): placeholder rows instead of "Looking in this folder…".
