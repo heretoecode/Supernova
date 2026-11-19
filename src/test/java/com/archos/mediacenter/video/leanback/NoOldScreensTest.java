@@ -44,6 +44,26 @@ public class NoOldScreensTest
         assertTrue("Old screens reachable from Files: " + found, found.isEmpty());
     }
 
+    /**
+     * Never opens from Settings (SETTINGS.md): the old tiles, Android's preference screens and pickers, the "Open
+     * with" chooser, Android's keyboard, NOVA's old licence and settings screens.
+     */
+    static final String[] NEVER_FROM_SETTINGS = {
+        "LandingTile", "VideoSettingsMoreLeanbackFragment", "VideoSettingsLicencesFragment", "InputMethodManager",
+        "showSoftInput", "ACTION_OPEN_DOCUMENT_TREE", "createChooser", "showGrid()",
+    };
+
+    @Test
+    public void settingsPageNamesNoOldScreen() throws IOException
+    {
+        List<String> found = new ArrayList<>();
+        String workspace = read(Path.of(
+            "src/main/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspace.java"));
+        check("SettingsWorkspace.page", between(workspace, "    void open(int index", "    /** Short choices"),
+              NEVER_FROM_SETTINGS, found);
+        assertTrue("Old screens reachable from Settings: " + found, found.isEmpty());
+    }
+
     /** Never opens from Details (DETAILS.md), including a streaming title's own Supernova page (RULES §18). */
     static final String[] NEVER_FROM_DETAILS = {
         "PreviewRemoteDetailsActivity", "InputMethodManager", "showSoftInput", "LibraryHealthActivity",
