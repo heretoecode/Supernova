@@ -19,7 +19,7 @@ import java.util.TreeSet;
  * find the files to delete, for a film or a whole show. Works on the library database only; the page shows the
  * Undo notice or the delete warning.
  */
-final class LibraryActions
+public final class LibraryActions
 {
     private static final String SHOW_VIDEOS =
         "_id IN (SELECT video_id FROM episode e JOIN show s ON e.show_episode=s._id WHERE s._id=?)";
@@ -29,7 +29,7 @@ final class LibraryActions
     }
 
     /** Marks a film, or every episode of a show season by season (so Trakt hears of it), as watched or not. */
-    static void markWatched(Context context, Object media, boolean watched)
+    public static void markWatched(Context context, Object media, boolean watched)
     {
         if (media instanceof Video)
         {

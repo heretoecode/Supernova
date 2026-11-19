@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.view.*;
 import android.view.ViewTreeObserver;
 import androidx.recyclerview.widget.*;
-import androidx.leanback.widget.Presenter;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
@@ -50,6 +49,8 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
                 PreviewLandscapeCard card = (PreviewLandscapeCard) holder.itemView;
                 card.progress.setVisibility(View.GONE);
                 card.setOnClickListener(null);
+                card.setOnLongClickListener(null);
+                card.setOnKeyListener(null);
                 card.setClickable(false);
                 if (ep != null) {
                     card.bind(ep.getEpisodeNumber() + " · " + ep.getEpisodeName(),
@@ -62,9 +63,19 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
                         PreviewCardPresenter.progress(
                             ep.getResumeMs(), ep.getDurationMs()));
                     card.progress.setVisibility(ep.getResumeMs() > 0 ? View.VISIBLE : View.GONE);
-                    card.setOnClickListener(v
-                        -> new VideoViewClickedListener(activity).onItemClicked(
-                            new Presenter.ViewHolder(v), ep, null, null));
+                    // Episodes (owner, 18 Nov 2026): OK plays the episode at once; long-press or Menu opens the
+                    // same menu as More, beside the card (PreviewEpisodeMenu).
+                    card.setOnClickListener(v -> PreviewEpisodeMenu.play(activity, ep));
+                    card.setOnLongClickListener(v -> {
+                        PreviewEpisodeMenu.show(activity, v, ep, localEpisodes());
+                        return true;
+                    });
+                    card.setOnKeyListener((v, key, event) -> {
+                        if (key != KeyEvent.KEYCODE_MENU || event.getAction() != KeyEvent.ACTION_UP)
+                            return key == KeyEvent.KEYCODE_MENU;
+                        PreviewEpisodeMenu.show(activity, v, ep, localEpisodes());
+                        return true;
+                    });
                     return;
                 }
                 JSONObject remote = choice.remote;
@@ -114,6 +125,15 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
                 ((PreviewLandscapeCard) holder.itemView).release();
             }
         });
+    }
+
+    /** The season's episodes that are in the library. */
+    private List<Episode> localEpisodes() {
+        List<Episode> out = new ArrayList<>();
+        for (PreviewEpisodeChoice choice : episodes)
+            if (choice.local != null)
+                out.add(choice.local);
+        return out;
     }
 
     static boolean aired(String date) {
