@@ -1,46 +1,20 @@
 # Discussion handover (updated 19 Nov 2026)
 
 ## 19 Nov — start here
-- **0.158 (part A) signed and installed.** **Part B brief written and handed to Supernova Coding to run overnight:**
-  `docs/0.158/BRIEF_0158_B.md` (new look first, then the 0.157.2 review; signs 0.158.1, .2 … as it goes).
-- **Remind the owner, next session:**
-  1. **Guest** (and the rest of users and tags): owner said "remind me to get back to that"; decisions in
-     `docs/REVISIT_LATER.md` round 8; needs a mock-up. (Episodes and the Settings redesign were added to part B on
-     19 Nov; onboarding waits.)
-  2. **0.158 part A checklist** for the owner's Shield review (include the Documentaries top bar, R2).
-  3. **Diagnostics report from 0.158** (Drive › Supernova › Media › For Claude, or the inbox).
-
-
-For a fresh **discussion** session (designs, ideas, planning; no coding). Read `CLAUDE.md`, then this, then
-`docs/ROADMAP.md` and `docs/design/RULES.md`. The coding session is called **Supernova Coding**. This discussion
-session's branch is `claude/design-planning-discussion-9poejm`; everything below is pushed there.
-
-## Where things stand (18 Nov)
-- **Installed:** 0.157.2 (code 1572). **Supernova Coding is building 0.158 part A** (`docs/0.158/BRIEF_0158_A.md`):
-  top bar, one side margin, library pages, Home, Search are built with tests; its full checks are failing and being
-  fixed; not signed yet. Its report: `docs/0.158/` on the working branch.
-- **Owner's review of 0.157.2:** `docs/0.157/REVIEW_0157_2.md` (PP, PL, PS, DT, FL, R, X numbers), with the
-  diagnostics read (crashes at 23:09 / 23:14 on 16 Nov explained: X1; new Scan this folder crash: X2; seek previews
-  engine broken: X3). **This becomes 0.158 part B. Playback Settings is the worst; fix it first.** No brief for part B
-  yet: write `docs/0.158/BRIEF_0158_B.md` from the review when the owner says go (Coding must merge this branch again
-  first: part A only merged it up to 17 Nov 12:30).
-- **Approved for part B (beyond bug fixes):** turn a connection off (FL3) and choose a version on Play (R5), mock-up
-  `docs/design/proposals/review-0157-2/01` (3, 4); one row design on Details' Episodes / Extras / More Like This, More
-  Like This in rows by service with the service's colour logo on the heading (DT5; same mock-up 1, 2). Decisions of
-  18 Nov are in the review and in RULES (badge first everywhere; reopen on Home after a full close; Full description is
-  the text alone).
-- **Still to discuss:**
-  1. **Titles in one house style instead of logo artwork:** owner leans to it (clean, no glow; likes "Modern block",
-     styles Bold clean, Two-line, Modern bold). Decided 18 Nov: official logos for now, house style as the fallback (pick A–D still open); owner to send photos of badly placed logos. Next after that: the 0.158 part A checklist when the owner says the APK has landed.
-  1b. **Background speckle** (roadmap To discuss): mock-ups `background-speckle/01`–`03`; owner to judge on the TV.
-  2. Playback Settings panel colour (roadmap To discuss, P6/PS10).
-  3. Anything else under To discuss on the roadmap (users and tags, episodes, network statistics, diagnostics health).
-- **Page sheets** (build from these): `docs/design/pages/FILES.md`, `DETAILS.md`, `LIBRARY.md`, `HOME.md`, `SEARCH.md`.
-  Player has no sheet yet; reference pictures `docs/design/proposals/player/26`–`28` and `player-current/01`.
-- **Checklist for reviewing builds:** artifact https://claude.ai/artifact/JV3yiiYJexfrQC1Jxc2YpF (copy
-  `docs/0.157/review-0157-2-checklist.html`).
-- **How the owner reviews when Claude is unavailable:** dictates into iOS Notes, one note per page, photos, times of
-  crashes; pastes them in later (or `docs/INBOX.md` / an "Inbox:" issue). Plus the diagnostics export.
+- **Installed: 0.158.3.** Supernova Coding is running the continuation of part B in a new window (prompt: merge this
+  branch before each item; order in `docs/0.158/BRIEF_0158_B.md`, Playback Settings round two first).
+- **Decided today:** panels `#16181C` at 99% (RULES §11); Playback Settings v15 (`player/33-v15`: 820 px, one line,
+  Left/Right stepping, "Remember for this show", Skipping = Off · Show button · Skip); Settings page sheet
+  (`docs/design/pages/SETTINGS.md`); speckle density 20, corners B, titles (RULES §1, §3, §19); Back and page position
+  (RULES §16); Guest decisions (`docs/REVISIT_LATER.md` round 8); episodes and Settings added to part B.
+- **How new notes reach Coding:** the owner sends them here; add them to the brief (fold into an item Coding hasn't
+  reached, else a new group at the end); Coding merges this branch before each item.
+- **Next session, first:** make the 0.158.3 review checklist (as `docs/0.157/review-0157-2-checklist.html`; artifact
+  link in the owner's last review), covering part A and part B as built, plus H1/H2 and R2. Then take the owner's
+  notes into a review file and the brief.
+- **Open, for the owner:** a 0.158.3 checklist (offered); Guest mock-up; diagnostics report from 0.158.x (Drive ›
+  Supernova › Media › For Claude); PL4 parked unless seen again. APKs: GitHub app hides artifacts; use Safari, desktop
+  site, signed in (or allow this session to fetch from GitHub's storage and put APKs in Drive).
 
 ## 18 Nov
 - 0.157.2 signed and installed (run 44020349261): much better. Owner: redesign first, then fix bugs on settled designs.
