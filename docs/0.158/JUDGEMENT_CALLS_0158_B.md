@@ -39,3 +39,24 @@ decide quickly.
     video), per RULES §11 (P6 / PS10).
 14. **Download subtitles:** names shown as words (dots and underscores become spaces, the extension goes); the full
     file name still shows when you pick a result.
+
+## Groups 3, 3b and 4
+15. **The hero's exact size (H1)** is taken from the screen's width (1776 × 820 at 1080p) on Home and Details, its
+    top just under the top bar (112 px). The carousel dots sit at the hero's foot, inside it, so the hero keeps its
+    size. At that size the first row's heading and the top of its cards (about a tenth) peek below; the old test
+    wanted a third, so its floor was lowered. If you want more of the row showing, the hero would have to be shorter.
+16. **Details' compact layout** (very small windows only) keeps its old flexible card; the Shield always gets the
+    exact size.
+17. **A film's details line** on Preparing playback reads "[15] · 2024" (badge, then year): the tagline is gone
+    everywhere (RULES §14) and nothing else was settled for films.
+18. **Stub chapters:** any part shorter than 10 seconds joins the part after it (a short last part joins the one
+    before), whichever source it came from.
+19. **X4 (scans waiting on each other)** was not changed: the scan lock lives in MediaLib's build patches, and
+    turning the wait into a queue is a rewrite of the scanner that needs its own careful run.
+
+## Group 9: Settings
+20. **Settings is held back from tonight's APKs.** A first pass of the redesign was built (one page, seven tabs,
+    every section stacked under its heading, top-bar tab focus, old screens added to the no-old-screens test) but
+    the 0.156 Settings tests (four files, built around the old tiles and per-section tabs) need rewriting before it
+    can pass the build. Rather than sign it untested, its commit was reverted on the branch; `git revert` of the
+    "Hold the Settings first pass" commit brings it back for the next session.
