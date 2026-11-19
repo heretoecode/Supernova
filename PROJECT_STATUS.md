@@ -1,8 +1,54 @@
 # Supernova — project status
 
-Updated 6 November 2026 (night). Keep this page short and current: update it at the end of every session.
+Updated 19 November 2026 (0.158 part B: 0.158.1 signed overnight). Keep this page short and current: update it at the
+end of every session.
+
+## Next: the rest of 0.158 part B
+
+Report, "not built" list and run links: `docs/0.158/REPORT_0158_B.md`; judgement calls:
+`docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Still to do from `docs/0.158/BRIEF_0158_B.md`: the look sweep on the speckle,
+the rest of Details (DT1, DT3–DT6, DT8, R3–R5, episodes), titles (group 6), Files (group 7), Back and page position
+(group 8), Settings' remaining sheet items (in-row backup flow, OpenSubtitles and Trakt panels), PL8, X4. Work branch
+for part B: `claude/build-0158-part-b-wsupv2`, merged onto the working branch. Waiting for the owner: install the last
+signed APK; send a diagnostics report from it.
 
 ## Released
+
+**0.158.3** (code 1583) — signed 19 Nov 2026 (run 44506040551, from green conformance run 44500505615 on `4d310f4`).
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`). 0.158.2 plus the Settings redesign (seven tabs), DT4,
+DT8, stronger row lines, pages reopening at their top. The one to install.
+
+**0.158.2** (code 1582) — signed 19 Nov 2026 (run 44500001166, from green conformance run 44493050022 on `8b8a8ff`).
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.2.apk`). 0.158.1 plus the title block, player and Details fixes.
+
+**0.158.1** (code 1581) — signed 19 Nov 2026 (run 44479811283 of `supernova-0157-qa.yml`, from green conformance run
+44470632446 on `731261f`). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.1.apk`). Part B groups 1–3b: the
+speckled background, one shape for small boxes, Playback Settings (PS1–PS11), crash fixes X1–X3, the Home and Details
+hero one size with dots.
+
+**0.158** (code 1580) — signed 19 Nov 2026 (run 44426716646 of `supernova-0157-qa.yml`, from green conformance run
+44421862282 on `6d79049`). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.apk`). Part A of
+`docs/0.158/BRIEF_0158_A.md`: the 0.158 top bar, one side margin, the library pages, Home (rows, Move and Hide,
+Customise Home, hero), Search, and F52 (connections grouped by server). Report and "not built" list:
+`docs/0.158/REPORT_0158_A.md`; judgement calls: `docs/0.158/JUDGEMENT_CALLS_0158_A.md`. Waiting for the owner:
+install and check on the Shield; send the latest diagnostics report.
+
+**0.157.2** (code 1572) — signed 18 Nov 2026 (run 44020349261 of `supernova-0157-qa.yml`, from green
+conformance run 44015287084 on `c3f75d5`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.2.apk`). Bug fixes from the owner's Shield review of 0.157.1
+(`docs/0.157/REVIEW_0157_1.md`), built overnight from `docs/0.157/BRIEF_0157_2.md` and the page sheets. Report:
+`docs/0.157/REPORT_0157_2.md` (fixed, not built, judgement calls in `docs/0.157/JUDGEMENT_CALLS_0157_2.md`).
+Waiting for the owner: install and check on the Shield; send the latest diagnostics report (not in the inbox).
+
+**0.157.1** (code 1571) — signed 16 Nov 2026 (run 43960203498 of `supernova-0157-qa.yml`, from green conformance run
+43952836182 on `5f5f9f6`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.1.apk`). 0.157 plus every fix from the Shield
+review (`docs/0.157/REVIEW_0157.md`). Waiting for the owner to install it.
+
+**Numbering (owner, 16 Nov 2026):** point releases are allowed; version codes are version × 10 from 0.157.1 on
+(0.157.1 = 1571, 0.158 = 1580). **0.157.1** = 0.157 plus the Shield review fixes (`docs/0.157/REVIEW_0157.md`).
+
+**0.157** — signed 16 November 2026 (run 43846921936 of `supernova-0157-qa.yml`, from green conformance run
+43839950017 on `bfca787`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.apk`). Waiting for the owner to
+install it on the Shield. Status of each item: `docs/0.157/HANDOVER.md`; open decisions: `docs/0.157/QUESTIONS.md`.
 
 **0.155** — signed 4 November 2026 (run 41922310251 of `supernova-0155-qa.yml`, from a green conformance run on
 `claude/supernova-github-access-yfhe89`). Installed on the owner's Shield and confirmed working. Highlights: NOVA

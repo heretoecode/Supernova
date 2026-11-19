@@ -14,6 +14,16 @@ APP = 'app.supernova.player'
 ANDROID = '{http://schemas.android.com/apk/res/android}'
 LEGACY = ('browser.SearchProviderVideocommunity', 'com.archos.media.videocommunity', 'com.archos.media.scrapercommunity', 'org.courville.nova.markpreview')
 
+
+def current_follows(current, last, count):
+    """Owner, 16 Nov 2026: point releases are allowed (0.157.1) and codes are version x 10 from then on (0.158 = 1580)."""
+    version = current.get('version', '')
+    if version != f'0.{count + 1}' and not version.startswith(last + '.'):
+        return False
+    parts = version.split('.')
+    expected_code = int(parts[1]) * 10 + (int(parts[2]) if len(parts) > 2 else 0)
+    return current.get('version_code') == expected_code
+
 def verified_baseline_record(video, entry):
     if entry.get('version')!='0.134' or entry.get('recorded_binary_verification')!='docs/foundation/UI_CORRECTED_SIGNED_APK_VERIFICATION.json':return False
     proof=json.loads((video/entry['recorded_binary_verification']).read_text())
@@ -68,7 +78,7 @@ def sources(root, ready=False):
             raise ValueError('Foundation sibling authority mismatch')
     history=json.loads((video/'assets/foundation/release-history.json').read_text())
     expected=[f'0.{i}' for i in range(1,len(history['history'])+1)]
-    if [x['version'] for x in reversed(history['history'])] != expected or history['current']['version'] != f'0.{len(expected)+1}' or history['current']['version_code'] != len(expected)+1:
+    if [x['version'] for x in reversed(history['history'])] != expected or not current_follows(history['current'], expected[-1], len(expected)):
         raise ValueError('Literal Foundation version counter is inconsistent')
     for entry in history['history']:
         if verified_135_ci_record(video,entry) or verified_136_ci_record(video,entry) or verified_143_delivery_record(video,entry) or verified_144_delivery_record(video,entry):continue

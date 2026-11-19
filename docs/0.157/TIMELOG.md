@@ -45,3 +45,8 @@ Pace so far (15 Nov): each 5-hour usage window gives roughly 30 minutes of codin
 | 16 Nov 06:45 | First green 0.157 conformance (run 43813823463 on 571224b). Final run on the last commit next; signing waits for the owner. |
 | 16 Nov 07:15 | Final 0.157 conformance green (run 43817914116 on 3c3ffbf). Stopped: signing waits for the owner (QUESTIONS #9). |
 | 16 Nov (later) | Owner allowed the 0.157 signing copies; added (version strings only). Conformance on the latest commit, then signing. |
+| 16 Nov (later) | Conformance run 43839950017 on bfca787 green; 0.157 signed by run 43846921936 (artifact supernova-0157-signed-qa). |
+| 16 Nov (later) | Fix-against-designs loop starts. Discussion branch merged (b45042a). Blocked: `docs/0.157/REVIEW_0157.md` is not on the discussion branch yet; watching for it. |
+| 16 Nov (later) | Review fixes: shared pieces (frame, tabs, focus ink, choice list, headings, values) and Playback Settings, Files fixes; renders compared. |
+| 16 Nov (later) | Review fixes continued: Details v20, Fix match page, Your Library, folder grid, switches, Settings rows, series save row. |
+| 16 Nov (evening) | 0.157.1 green (run 43952836182) and signed (run 43960203498). Discussion branch merged. |

@@ -31,6 +31,34 @@ public final class TvLayout {
         return px(c, baseline * scale(c));
     }
 
+    /**
+     * The one hero size (RULES §14, HOME.md; owner's 0.158 review H1): 1776 x 820 at 1080p, on Home and Details
+     * alike, so the card stays put going from one into the other.
+     */
+    public static int heroWidth(Context c) {
+        return Math.round(c.getResources().getDisplayMetrics().widthPixels * 1776f / 1920f);
+    }
+
+    public static int heroHeight(Context c) {
+        return Math.round(c.getResources().getDisplayMetrics().widthPixels * 820f / 1920f);
+    }
+
+    /**
+     * The hero's top edge from the top of the screen: just under the top bar (112 px at 1080p), so the first row's
+     * cards still peek below the 820 px hero.
+     */
+    public static int heroTop(Context c) {
+        return Math.round(c.getResources().getDisplayMetrics().widthPixels * 112f / 1920f);
+    }
+
+    /**
+     * One side margin (owner, 18 Nov 2026; RULES §1): the top bar's own edges. The bar's first word box starts here
+     * and the clock ends here; library pages, Files and Search line their content up with it. Home has none.
+     */
+    public static int sideMargin(Context c) {
+        return dimension(c, 26);
+    }
+
     public static int safeWidth(Context c) {
         return Math.max(1, px(c, width(c)) - 2 * dimension(c, 28));
     }

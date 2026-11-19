@@ -38,6 +38,7 @@ public final class PageTabs extends LinearLayout
     private final List<TextView> badges = new ArrayList<>();
     private final IntConsumer opened;
     private Runnable down;
+    private IntConsumer reselected = index -> { };
     private int open;
 
     public PageTabs(Context context, String[] names, String[] icons, IntConsumer opened)
@@ -94,7 +95,7 @@ public final class PageTabs extends LinearLayout
         badgeSize.leftMargin = SupernovaStyle.dp(context, 6);
         row.addView(badge, badgeSize);
         tab.addView(row);
-        View line = new View(context);
+        View line = new TabLine(context);
         tab.addView(line, new LayoutParams(-1, Math.max(2, SupernovaStyle.dp(context, 1.5f))));
         tab.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus && open != index)
@@ -102,6 +103,17 @@ public final class PageTabs extends LinearLayout
                 select(index);
             }
             refresh();
+        });
+        // OK on the open tab takes it back to its start (F12); OK on another tab opens it.
+        tab.setOnClickListener(view -> {
+            if (open == index)
+            {
+                reselected.accept(index);
+            }
+            else
+            {
+                select(index);
+            }
         });
         tab.setOnKeyListener((view, key, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN && key == KeyEvent.KEYCODE_DPAD_DOWN && down != null)
@@ -118,6 +130,50 @@ public final class PageTabs extends LinearLayout
         labels.add(label);
         lines.add(line);
         badges.add(badge);
+    }
+
+    /**
+     * The underline under a tab. A plain full-width View would take all the width on offer inside the tab's
+     * wrap-content column and push the other tabs off the row (0.157 Shield review #19); this one only takes the
+     * width its tab finally gives it.
+     */
+    static final class TabLine extends View
+    {
+        TabLine(Context context)
+        {
+            super(context);
+        }
+
+        @Override
+        protected void onMeasure(int widthSpec, int heightSpec)
+        {
+            boolean exact = MeasureSpec.getMode(widthSpec) == MeasureSpec.EXACTLY;
+            int width = exact ? MeasureSpec.getSize(widthSpec) : 0;
+            setMeasuredDimension(width, getDefaultSize(getSuggestedMinimumHeight(), heightSpec));
+        }
+    }
+
+    /** What OK on the tab that is already open does: return it to its start (F12). */
+    public void setReselected(IntConsumer action)
+    {
+        reselected = action;
+    }
+
+    /**
+     * Up into the tab row lands on the open tab, never the tab above the focus (F17, RULES §4): from outside the
+     * row only the open tab is offered to the focus search; inside the row every tab is.
+     */
+    @Override
+    public void addFocusables(java.util.ArrayList<View> views, int direction, int focusableMode)
+    {
+        View focus = getRootView() == null ? null : getRootView().findFocus();
+        boolean fromOutside = focus != null && !isAncestor(this, focus);
+        if (fromOutside && direction == View.FOCUS_UP && open >= 0 && open < tabs.size())
+        {
+            views.add(tabs.get(open));
+            return;
+        }
+        super.addFocusables(views, direction, focusableMode);
     }
 
     /** Where Down goes from a tab: the open tab's first row. */
@@ -170,7 +226,7 @@ public final class PageTabs extends LinearLayout
                 : style == Underline.DULL ? DULL_LINE : Color.TRANSPARENT);
             int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
             labels.get(index).setTextColor(ink);
-            SupernovaStyle.tintIcons(labels.get(index));
+            SupernovaStyle.inkIcons(labels.get(index), ink);
             TextView badge = badges.get(index);
             badge.setTextColor(focused ? Color.WHITE : SupernovaStyle.FOCUS_TEXT);
             badge.setBackground(circle(focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE));

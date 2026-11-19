@@ -52,7 +52,7 @@ public class TopNavigationTest {
             }
             Rect clock = new Rect();
             assertTrue(nav.findViewWithTag("preview-default-clock").getGlobalVisibleRect(clock));
-            View rail = ((android.view.ViewGroup) nav.getChildAt(0)).getChildAt(1);
+            View rail = ((android.view.ViewGroup) nav.getChildAt(0)).getChildAt(0);
             Bitmap bitmap =
                 Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
             int[] normal = new int[clock.width() * clock.height()], withoutRail = new int[normal.length];
@@ -280,7 +280,7 @@ public class TopNavigationTest {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             }
             LinearLayout bar = (LinearLayout) ((TopNavigation) root).getChildAt(0);
-            LinearLayout group = (LinearLayout) ((HorizontalScrollView) bar.getChildAt(1)).getChildAt(0);
+            LinearLayout group = (LinearLayout) ((HorizontalScrollView) bar.getChildAt(0)).getChildAt(0);
             TextView movies = (TextView) group.getChildAt(1);
             movies.performClick();
             assertTrue(movies.isSelected());

@@ -155,7 +155,8 @@ public class FoundationHomeRegressionTest {
             int[] homeAt = new int[2];
             home.getLocationOnScreen(homeAt);
             assertTrue(a[1] > homeAt[1] + home.getHeight());
-            assertNull(nav.findViewWithTag("hero:play"));
+            // 0.158 (HOME.md): the hero's buttons are Play (or Resume) then More.
+            assertNotNull(nav.findViewWithTag("hero:play"));
             assertNotNull(nav.findViewWithTag("hero:info"));
             assertTrue(background.stream().allMatch(Objects::isNull));
             RecyclerView list = (RecyclerView) pages.getChildAt(0);
@@ -167,7 +168,9 @@ public class FoundationHomeRegressionTest {
             int[] cardAt = new int[2];
             card.getLocationOnScreen(cardAt);
             float visible = (540 - cardAt[1]) / (float) card.getHeight();
-            assertTrue("Artwork teaser 55–65%, got " + visible, visible >= .55f && visible <= .65f);
+            // 0.158: the first row peeks below the hero (HOME.md); its cards are taller with the caption box under.
+            // H1 (owner's 0.158 review): the hero is exactly 1776 x 820 at 1080p, so less of the row shows.
+            assertTrue("First row peeks below the hero, got " + visible, visible >= .05f && visible <= .65f);
             View second = layout.findViewByPosition(3);
             if (second != null) {
                 int[] at = new int[2];
@@ -240,7 +243,7 @@ public class FoundationHomeRegressionTest {
                         assertEquals(baseline, meta.getTop());
                 } else
                     assertEquals("No unverified series score reserves a metadata row", View.GONE, meta.getVisibility());
-                assertNull(card.findViewWithTag("hero:play"));
+                assertNotNull("0.158: the hero has Play before More", card.findViewWithTag("hero:play"));
                 PreviewPagesTest.capture(card, "foundation-home-logo-" + dimensions[0]);
             }
         } finally {
@@ -344,15 +347,36 @@ public class FoundationHomeRegressionTest {
             assertEquals("Film 24", title);
             assertTrue(pages.findViewWithTag("hero:info").requestFocus());
             assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_RIGHT));
             for (int i = 0; i < 8; i++)
                 PreviewPagesTest.layout(pages);
             assertEquals("Film 23", ((TextView) pages.findViewWithTag("semantic:featured.title")).getText().toString());
             assertTrue(pages.findViewWithTag("hero:info").hasFocus());
+            // 0.158: More opens beside the button with Details first.
             pages.findViewWithTag("hero:info").performClick();
+            android.app.Dialog more = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            assertNotNull(more);
+            View details = menuLabel(more.getWindow().getDecorView(), "Details");
+            assertNotNull("More lists Details", details);
+            View row = details;
+            while (!row.isClickable() && row.getParent() instanceof View)
+                row = (View) row.getParent();
+            row.performClick();
             assertSame(source.recent.get(10).media, opened.get(0));
+            if (more.isShowing())
+                more.dismiss();
+            // Left on More reaches Play; Left on Play shows the previous hero; Right comes back to More.
+            assertTrue(pages.findViewWithTag("hero:info").requestFocus());
             assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_LEFT));
+            assertTrue(pages.findViewWithTag("hero:play").hasFocus());
+            assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_LEFT));
             for (int i = 0; i < 8; i++)
                 PreviewPagesTest.layout(pages);
+            assertTrue(pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT)));
+            pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_RIGHT));
+            assertTrue(pages.findViewWithTag("hero:info").hasFocus());
             assertEquals(title, ((TextView) pages.findViewWithTag("semantic:featured.title")).getText().toString());
             assertSame(rowAdapter, rail.getAdapter());
             assertSame(firstCard, rail.findViewHolderForAdapterPosition(0).itemView);
@@ -550,5 +574,19 @@ public class FoundationHomeRegressionTest {
             }
             ReflectionHelpers.setField(http, "interceptors", old);
         }
+    }
+
+    private static View menuLabel(View view, String words) {
+        if (view instanceof TextView && words.equals(((TextView) view).getText().toString()))
+            return view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View match = menuLabel(group.getChildAt(i), words);
+                if (match != null)
+                    return match;
+            }
+        }
+        return null;
     }
 }

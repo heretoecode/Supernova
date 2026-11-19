@@ -6,7 +6,8 @@ import android.graphics.drawable.Drawable;
 
 /** The owner's Gemini switch face; focus is drawn separately by the containing row. */
 public final class StandardSwitchDrawable extends Drawable {
-    public static final int ON_START = 0xff00aff0, ON_END = 0xff2559ee, OFF = 0xff20272d;
+    /** No blue (RULES): "on" is a white track with a dark knob; "off" a dark track with a white knob (player v10). */
+    public static final int ON_TRACK = 0xfff4f6fb, KNOB_ON = 0xff16181c, OFF = 0xff3a3e45;
     /**
      * Switch proportions shared by every toggle in the app. Owner decision 2 Nov 2026: the former
      * 70x26dp (2.7:1) face was too wide; 44x26dp (~1.7:1) matches familiar Android/iOS switches.
@@ -23,7 +24,10 @@ public final class StandardSwitchDrawable extends Drawable {
     private final boolean thumb;
     private final Boolean fixed;
     private boolean checked, enabled;
+    private boolean onFocusedRow;
     private int alpha = 255;
+    /** On a focused row (RULES §3): on = dark track and white knob; off = light grey track and dark knob. */
+    public static final int FOCUSED_ON_TRACK = 0xff0b0d12, FOCUSED_OFF_TRACK = 0xffb4b9c2;
 
     public StandardSwitchDrawable(Context c) {
         this(c, true, null);
@@ -45,6 +49,21 @@ public final class StandardSwitchDrawable extends Drawable {
 
     public static StandardSwitchDrawable snapshot(Context c, boolean checked) {
         return new StandardSwitchDrawable(c, true, checked);
+    }
+
+    /** A fixed switch face for a row that is focused (inverted like the row's text) or at rest. */
+    public static StandardSwitchDrawable snapshot(Context c, boolean checked, boolean focusedRow) {
+        StandardSwitchDrawable face = new StandardSwitchDrawable(c, true, checked);
+        face.onFocusedRow = focusedRow;
+        return face;
+    }
+
+    public boolean onFocusedRow() {
+        return onFocusedRow;
+    }
+
+    public boolean checked() {
+        return checked;
     }
 
     @Override
@@ -92,12 +111,19 @@ public final class StandardSwitchDrawable extends Drawable {
         float w = h * WIDTH_DP / HEIGHT_DP, left = b.exactCenterX() - w / 2;
         RectF track = new RectF(left, b.exactCenterY() - radius, left + w, b.exactCenterY() + radius);
         paint.setStyle(Paint.Style.FILL);
-        paint.setShader(checked
-                ? new LinearGradient(track.left, 0, track.right, 0, ON_START, ON_END, Shader.TileMode.CLAMP)
-                : null);
-        paint.setColor(checked ? Color.WHITE : OFF);
+        paint.setShader(null);
+        if (onFocusedRow)
+            paint.setColor(checked ? FOCUSED_ON_TRACK : FOCUSED_OFF_TRACK);
+        else
+            paint.setColor(checked ? ON_TRACK : OFF);
         paint.setAlpha(Math.round(alpha * (enabled ? 1f : .4f)));
         c.drawRoundRect(track, radius, radius, paint);
+        if (onFocusedRow) {
+            paint.setColor(checked ? Color.WHITE : FOCUSED_ON_TRACK);
+            paint.setAlpha(Math.round(alpha * (enabled ? 1f : .4f)));
+            c.drawCircle(checked ? track.right - radius : track.left + radius, track.centerY(), h * 10f / 26f, paint);
+            return;
+        }
         paint.setShader(null);
         paint.setColor(0xff353d44);
         paint.setAlpha(Math.round(alpha * (enabled ? 1f : .4f)));
@@ -106,7 +132,7 @@ public final class StandardSwitchDrawable extends Drawable {
         c.drawRoundRect(track, radius, radius, paint);
         if (thumb) {
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.WHITE);
+            paint.setColor(checked ? KNOB_ON : Color.WHITE);
             paint.setAlpha(Math.round(alpha * (enabled ? 1f : .4f)));
             c.drawCircle(checked ? track.right - radius : track.left + radius, track.centerY(), h * 10f / 26f, paint);
         }

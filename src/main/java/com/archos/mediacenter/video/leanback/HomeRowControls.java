@@ -44,11 +44,18 @@ final class HomeRowControls extends LinearLayout {
     private static final int LABEL_FOCUSED = 0xFFFFFFFF;
     private static final int LABEL = 0xFFAEB4BF;
 
+    /** Told whenever focus enters or leaves Move or Hide (the heading shows them only while focused). */
+    Runnable focusHook = () -> {
+    };
     final LinearLayout hide;
     final LinearLayout move;
     private final Actions actions;
     private boolean moving;
 
+    /**
+     * Move and Hide beside a row's heading (page sheet HOME.md; mock-up `home-v2/02`): plain words with line icons,
+     * no filled circles (Hide a minus circle); shown when focus reaches the heading. Right from Move to Hide.
+     */
     HomeRowControls(Context c, Actions actions) {
         super(c);
         this.actions = actions;
@@ -56,13 +63,12 @@ final class HomeRowControls extends LinearLayout {
         setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER_VERTICAL);
         setClipChildren(false);
-        hide = column(c, "Hide", RoundIcon.HIDE, "home.row.hide");
         move = column(c, "Move", RoundIcon.MOVE, "home.row.move");
-        LayoutParams first = new LayoutParams(dp(COLUMN_DP), LayoutParams.WRAP_CONTENT);
-        addView(hide, first);
-        LayoutParams second = new LayoutParams(dp(COLUMN_DP), LayoutParams.WRAP_CONTENT);
-        second.leftMargin = dp(4);
-        addView(move, second);
+        hide = column(c, "Hide", RoundIcon.HIDE, "home.row.hide");
+        addView(move, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        LayoutParams second = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        second.leftMargin = dp(6);
+        addView(hide, second);
         hide.setOnKeyListener(this::key);
         move.setOnKeyListener(this::key);
         hide.setOnClickListener(v -> actions.hide());
@@ -112,16 +118,14 @@ final class HomeRowControls extends LinearLayout {
             return code == KeyEvent.KEYCODE_DPAD_LEFT || code == KeyEvent.KEYCODE_DPAD_RIGHT;
         }
         if (code == KeyEvent.KEYCODE_DPAD_LEFT) {
-            if (down && view == move) {
-                hide.requestFocus();
+            if (down && view == hide) {
+                move.requestFocus();
             }
             return true;
         }
         if (code == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            if (down && view == hide) {
-                move.requestFocus();
-            } else if (down) {
-                actions.backToRow();
+            if (down && view == move) {
+                hide.requestFocus();
             }
             return true;
         }
@@ -129,36 +133,45 @@ final class HomeRowControls extends LinearLayout {
     }
 
     private LinearLayout column(Context c, String text, int icon, String tag) {
-        LinearLayout column = new LinearLayout(c);
-        column.setTag(tag);
-        column.setOrientation(VERTICAL);
-        column.setGravity(Gravity.CENTER_HORIZONTAL);
-        column.setFocusable(true);
-        column.setFocusableInTouchMode(true);
-        column.setClickable(true);
-        column.setClipChildren(false);
-        View circle = new View(c);
-        circle.setBackground(new RoundIcon(icon));
-        column.addView(circle, new LayoutParams(dp(BUTTON_DP), dp(BUTTON_DP)));
+        LinearLayout button = new LinearLayout(c);
+        button.setTag(tag);
+        button.setOrientation(HORIZONTAL);
+        button.setGravity(Gravity.CENTER_VERTICAL);
+        button.setPadding(dp(10), dp(5), dp(12), dp(5));
+        button.setFocusable(true);
+        button.setFocusableInTouchMode(true);
+        button.setClickable(true);
+        button.setContentDescription(text);
+        View mark = new View(c);
+        mark.setBackground(new RoundIcon(icon));
+        button.addView(mark, new LayoutParams(dp(16), dp(16)));
         TextView label = new TextView(c);
         label.setText(text);
         label.setTextSize(13);
         label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        label.setGravity(Gravity.CENTER_HORIZONTAL);
         label.setSingleLine(true);
+        label.setIncludeFontPadding(false);
         LayoutParams labelSize = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        labelSize.topMargin = dp(8);
-        column.addView(label, labelSize);
-        column.setOnFocusChangeListener((v, focused) -> refresh(column));
-        refresh(column);
-        return column;
+        labelSize.leftMargin = dp(7);
+        button.addView(label, labelSize);
+        button.setOnFocusChangeListener((v, focused) -> {
+            refresh(button);
+            focusHook.run();
+        });
+        refresh(button);
+        return button;
     }
 
-    private void refresh(LinearLayout column) {
-        boolean white = column.isFocused() || moving && column == move;
-        RoundIcon icon = (RoundIcon) column.getChildAt(0).getBackground();
+    /** Plain at rest; the white box with black ink when focused, and on Move while moving (RULES §3, §12). */
+    private void refresh(LinearLayout button) {
+        boolean white = button.isFocused() || moving && button == move;
+        RoundIcon icon = (RoundIcon) button.getChildAt(0).getBackground();
         icon.setFocused(white);
-        label(column).setTextColor(white ? LABEL_FOCUSED : LABEL);
+        label(button).setTextColor(white ? SupernovaStyle.FOCUS_TEXT : LABEL_FOCUSED);
+        android.graphics.drawable.GradientDrawable box = new android.graphics.drawable.GradientDrawable();
+        box.setCornerRadius(dp(8));
+        box.setColor(white ? SupernovaStyle.FOCUS_FILL : 0);
+        button.setBackground(box);
     }
 
     private static TextView label(LinearLayout column) {
@@ -204,11 +217,10 @@ final class HomeRowControls extends LinearLayout {
             float size = Math.min(b.width(), b.height());
             float cx = b.exactCenterX();
             float cy = b.exactCenterY();
-            fill.setColor(focused ? 0xFFFFFFFF : UNFOCUSED);
-            canvas.drawCircle(cx, cy, size / 2f, fill);
+            // Line icons, no filled circle behind them (RULES §13).
             line.setColor(focused ? FOCUSED_ICON : UNFOCUSED_ICON);
-            line.setStrokeWidth(size * .045f);
-            float unit = size * .19f;
+            line.setStrokeWidth(size * .09f);
+            float unit = size * .36f;
             if (kind == HIDE) {
                 drawHide(canvas, cx, cy, unit);
             } else {
@@ -216,14 +228,10 @@ final class HomeRowControls extends LinearLayout {
             }
         }
 
+        /** Hide: a minus in a circle (sheet). */
         private void drawHide(Canvas canvas, float cx, float cy, float unit) {
-            Path eye = new Path();
-            eye.moveTo(cx - unit * 1.35f, cy);
-            eye.quadTo(cx, cy - unit * 1.25f, cx + unit * 1.35f, cy);
-            eye.quadTo(cx, cy + unit * 1.25f, cx - unit * 1.35f, cy);
-            canvas.drawPath(eye, line);
-            canvas.drawCircle(cx, cy, unit * .42f, line);
-            canvas.drawLine(cx - unit * 1.1f, cy - unit * 1.1f, cx + unit * 1.1f, cy + unit * 1.1f, line);
+            canvas.drawCircle(cx, cy, unit * 1.2f, line);
+            canvas.drawLine(cx - unit * .6f, cy, cx + unit * .6f, cy, line);
         }
 
         private void drawMove(Canvas canvas, float cx, float cy, float unit) {

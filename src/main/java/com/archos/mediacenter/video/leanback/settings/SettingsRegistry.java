@@ -65,6 +65,9 @@ final class SettingsRegistry {
         read(context, "foundation/settings-map-0151.json", ids);
         if (entries.size() != 171)
             throw new IllegalStateException("Incomplete 0.151 ratings-key settings extension");
+        read(context, "foundation/settings-map-0158.json", ids);
+        if (entries.size() != 173)
+            throw new IllegalStateException("Incomplete 0.158 Settings page extension");
     }
 
     private void read(Context context, String asset, Set<String> ids) {

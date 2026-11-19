@@ -149,7 +149,7 @@ final class PreviewPlaybackMenus {
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(16), dp(16), dp(16), dp(16));
         GradientDrawable surface = new GradientDrawable();
-        surface.setColor(0xe615171b);
+        surface.setColor(com.archos.mediacenter.video.leanback.SupernovaStyle.GLASS);
         surface.setCornerRadius(dp(10));
         panel.setBackground(surface);
         TextView title = SharedThreePanel.text(owner, "Playback Settings", 20);

@@ -42,7 +42,12 @@ public class Supernova139ProviderMarksTest {
             StreamingRepository.Provider provider = new StreamingRepository.Provider(i + 1, names[i]);
             PreviewProviderIcons.bindProvider(first, provider, 123, "provider.choice");
             PreviewProviderIcons.bindProvider(second, provider, 123, "details.actions");
-            assertNull(first.getColorFilter());
+            // Each mark in its brand colour (D20, RULES §13); Apple TV, MUBI and HBO stay white.
+            int brand = PreviewProviderIcons.brand(names[i]);
+            if (brand == 0)
+                assertNull(first.getColorFilter());
+            else
+                assertNotNull(first.getColorFilter());
             assertNull(first.getBackground());
             assertEquals(ImageView.ScaleType.FIT_CENTER, first.getScaleType());
             Bitmap mark = Bitmap.createBitmap(72, 72, Bitmap.Config.ARGB_8888),
@@ -64,9 +69,10 @@ public class Supernova139ProviderMarksTest {
                         transparent++;
                     else if (Color.alpha(color) >= 128) {
                         opaque++;
-                        assertEquals(255, Color.red(color));
-                        assertEquals(255, Color.green(color));
-                        assertEquals(255, Color.blue(color));
+                        int expected = brand == 0 ? Color.WHITE : brand;
+                        assertTrue(Math.abs(Color.red(expected) - Color.red(color)) <= 4);
+                        assertTrue(Math.abs(Color.green(expected) - Color.green(color)) <= 4);
+                        assertTrue(Math.abs(Color.blue(expected) - Color.blue(color)) <= 4);
                     }
                 }
             assertTrue(names[i] + " must contain brand strokes", opaque > 50);

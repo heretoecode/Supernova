@@ -1,70 +1,67 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.view.*;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-/** Eight flat children, four columns and two rows, with no independent focus or scrolling. */
+/**
+ * Cast or crew on the Details tab (B2, approved 17 Nov 2026, files-review-0157-1/06): one row of seven portrait
+ * cards, 2:3 like TMDB's photos, the name and role under each; Cast and Crew side by side. No focus stops.
+ */
 final class DetailsPeopleGrid extends LinearLayout {
+    static final int COLUMNS = 7;
+
     DetailsPeopleGrid(Context c) {
         super(c);
-        setOrientation(VERTICAL);
+        setOrientation(HORIZONTAL);
         setFocusable(false);
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
     }
 
-    static int minimumHeight(Context c) {
-        TextView label = new TextView(c);
-        label.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-        label.setTextSize(9 * DetailsDimensions.scale(c));
-        int caption = Math.max(DetailsDimensions.px(c, 12),
-            (int) Math.ceil(label.getPaint().getFontMetrics().descent - label.getPaint().getFontMetrics().ascent));
-        return 2 * (DetailsDimensions.px(c, 24) + 2 * caption) + DetailsDimensions.px(c, 8);
-    }
-
-    int rowGap() {
-        return DetailsDimensions.px(getContext(), 8);
+    /** The space between two cards. */
+    int gap() {
+        return Math.round(8 * getResources().getDisplayMetrics().density);
     }
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-        int width = MeasureSpec.getSize(widthSpec), height = MeasureSpec.getSize(heightSpec);
-        if (MeasureSpec.getMode(heightSpec) == MeasureSpec.UNSPECIFIED)
-            height = DetailsDimensions.px(getContext(), 140);
-        int cellWidth = Math.max(1, width / 4), cellHeight = Math.max(1, (height - rowGap()) / 2);
+        int width = MeasureSpec.getSize(widthSpec);
+        int cell = Math.max(1, (width - gap() * (COLUMNS - 1)) / COLUMNS);
+        int tallest = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
+            // Seven each (D18): the rest stay out of the row.
+            child.setVisibility(i < COLUMNS ? VISIBLE : GONE);
+            if (i >= COLUMNS)
+                continue;
             if (child instanceof ViewGroup) {
                 ViewGroup group = (ViewGroup) child;
-                int captions = 0;
-                for (int n = 1; n < group.getChildCount(); n++)
-                    if (group.getChildAt(n) instanceof TextView) {
-                        TextView label = (TextView) group.getChildAt(n);
-                        label.setTextSize(9 * DetailsDimensions.scale(getContext()));
-                        int line = Math.max(DetailsDimensions.px(getContext(), 12),
-                            (int) Math.ceil(
-                                label.getPaint().getFontMetrics().descent - label.getPaint().getFontMetrics().ascent));
-                        label.getLayoutParams().height = line;
-                        captions += line;
-                    }
                 if (group.getChildCount() > 0 && group.getChildAt(0) instanceof ImageView) {
-                    int portrait = Math.min(DetailsDimensions.px(getContext(), 34), Math.max(1, cellHeight - captions));
-                    group.getChildAt(0).getLayoutParams().width = portrait;
-                    group.getChildAt(0).getLayoutParams().height = portrait;
+                    ViewGroup.LayoutParams portrait = group.getChildAt(0).getLayoutParams();
+                    portrait.width = cell;
+                    portrait.height = Math.round(cell * 1.5f);
                 }
+                for (int n = 1; n < group.getChildCount(); n++)
+                    if (group.getChildAt(n) instanceof TextView)
+                        group.getChildAt(n).getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
             }
-            child.measure(MeasureSpec.makeMeasureSpec(cellWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(cellHeight, MeasureSpec.EXACTLY));
+            child.measure(MeasureSpec.makeMeasureSpec(cell, MeasureSpec.EXACTLY),
+                          MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+            tallest = Math.max(tallest, child.getMeasuredHeight());
         }
-        setMeasuredDimension(width, height);
+        setMeasuredDimension(width, resolveSize(tallest, heightSpec));
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int w = getWidth() / 4, h = Math.max(1, (getHeight() - rowGap()) / 2), gap = rowGap();
-        for (int i = 0; i < getChildCount(); i++)
-            getChildAt(i).layout(i % 4 * w, i / 4 * (h + gap), (i % 4 + 1) * w, i / 4 * (h + gap) + h);
+        int cell = Math.max(1, (getWidth() - gap() * (COLUMNS - 1)) / COLUMNS);
+        for (int i = 0; i < Math.min(COLUMNS, getChildCount()); i++) {
+            View child = getChildAt(i);
+            int left = i * (cell + gap());
+            child.layout(left, 0, left + cell, child.getMeasuredHeight());
+        }
     }
 }

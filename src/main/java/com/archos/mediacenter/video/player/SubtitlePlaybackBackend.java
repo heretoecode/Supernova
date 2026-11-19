@@ -159,6 +159,17 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     }
 
     @Override
+    public Boolean seriesPlayback() {
+        return owner instanceof PlayerActivity ? ((PlayerActivity)owner).seriesPlaybackEnabled() : null;
+    }
+
+    @Override
+    public void setSeriesPlayback(boolean enabled) {
+        if (owner instanceof PlayerActivity)
+            ((PlayerActivity)owner).setSeriesPlaybackEnabled(enabled);
+    }
+
+    @Override
     public void setSeriesChoices(boolean enabled) {
         if (owner instanceof PlayerActivity)
             ((PlayerActivity)owner).setSeriesTrackChoicesEnabled(enabled);
@@ -402,12 +413,52 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         }
         List<PlaybackSubtitlePanel.Choice> out = new ArrayList<>();
         List<TVMenuItem> items = radios(title);
+        if (key.equals("format"))
+            return formats(items);
         if (key.equals("playmode") && items.size() == 5)
             return playModes(items, playingEpisode());
         for (TVMenuItem item : items)
             out.add(
                 new PlaybackSubtitlePanel.Choice(plain(item), item.isChecked(), item.isEnabled(), item::previewClick));
         return out;
+    }
+
+    /**
+     * Format as four chips (owner, 18 Nov 2026; REVIEW_0157_2 PS11): Fit · Fill · Zoom · Stretch, from the engine's
+     * Original, Full screen, Optimised and Stretched. A format the engine hides on this video is left out.
+     */
+    private List<PlaybackSubtitlePanel.Choice> formats(List<TVMenuItem> items) {
+        int[] engine = {R.string.format_original, R.string.format_fullscreen, R.string.format_optimized,
+                        R.string.format_stretched};
+        String[] labels = {"Fit", "Fill", "Zoom", "Stretch"};
+        List<PlaybackSubtitlePanel.Choice> out = new ArrayList<>();
+        for (int i = 0; i < engine.length; i++) {
+            String name = HtmlCompat.fromHtml(owner.getString(engine[i]), 0).toString();
+            for (TVMenuItem item : items)
+                if (name.equals(plain(item))) {
+                    out.add(new PlaybackSubtitlePanel.Choice(labels[i], item.isChecked(), item.isEnabled(),
+                                                             item::previewClick));
+                    break;
+                }
+        }
+        return out;
+    }
+
+    /** Audio boost level 0..3 (Off · Low · Medium · High), or null when this video has no boost. */
+    @Override
+    public Integer boostLevel() {
+        if (optionItem("boost") == null || PlayerService.sPlayerService == null)
+            return null;
+        return Math.max(0, Math.min(3, PlayerService.sPlayerService.mAudioFilt));
+    }
+
+    @Override
+    public void setBoostLevel(int level) {
+        TVMenuItem item = optionItem("boost");
+        if (item == null || !item.isEnabled() || PlayerService.sPlayerService == null)
+            return;
+        PlayerService.sPlayerService.setAudioFilt(Math.max(0, Math.min(3, level)));
+        item.setChecked(PlayerService.sPlayerService.mAudioFilt > 0);
     }
 
     /** Intros and credits share one choice; recaps and previews keep their own settings. */
@@ -417,13 +468,13 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         com.archos.mediacenter.utils.introdb.IntroSegments.Type.CREDITS
     };
 
-    /** "Skip intros and credits: Off · Show button · Automatic" (owner, 6 Nov 2026; Playback tab). */
+    /** "Skipping: Off · Show button · Skip" (owner, 19 Nov 2026: the same words as Settings; Playback tab). */
     private List<PlaybackSubtitlePanel.Choice> skipModes() {
         android.content.SharedPreferences prefs =
             androidx.preference.PreferenceManager.getDefaultSharedPreferences(owner);
         SegmentSkippingPolicy.Mode current = SegmentSkippingPolicy.mode(prefs, SKIP_TYPES[0]);
         int chosen = skipChoice(current);
-        String[] labels = {"Off", "Show button", "Automatic"};
+        String[] labels = {"Off", "Show button", "Skip"};
         SegmentSkippingPolicy.Mode[] modes = {
             SegmentSkippingPolicy.Mode.NORMAL, SegmentSkippingPolicy.Mode.PROMPT, SegmentSkippingPolicy.Mode.AUTO
         };
@@ -440,7 +491,7 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         return out;
     }
 
-    /** Off for "play normally", Show button for the prompt, Automatic for automatic or smart skipping. */
+    /** Off for "play normally", Show button for the prompt, Skip for automatic or smart skipping. */
     static int skipChoice(SegmentSkippingPolicy.Mode mode) {
         switch (mode) {
         case NORMAL:

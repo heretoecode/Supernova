@@ -5,7 +5,6 @@ import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.browser.ShortcutDb;
-import com.archos.mediaprovider.NetworkScanner;
 
 /** Folder membership and bookmarks remain distinct; adding one never deletes the other. */
 public final class PreviewFolderActions {
@@ -17,7 +16,7 @@ public final class PreviewFolderActions {
                 && !ShortcutDbAdapter.VIDEO.addShortcut(c,new ShortcutDbAdapter.Shortcut(name,folder.toString()))) return;
         // This is a classification hint, never a fabricated title match.
         PreferenceManager.getDefaultSharedPreferences(c).edit().putString("preview_source_kind:"+folder,kind).apply();
-        NetworkScanner.scanVideos(c,folder);
+        com.archos.mediacenter.video.leanback.files.FolderBrowser.scanFolder(c, folder);
     }
     public static void save(Context c, Uri folder, String name) {
         if(ShortcutDb.STATIC.isShortcut(c,folder.toString())<0)ShortcutDb.STATIC.insertShortcut(c,folder,name,folder.buildUpon().encodedAuthority(folder.getHost()).clearQuery().fragment(null).build().toString());

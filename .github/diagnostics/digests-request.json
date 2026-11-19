@@ -1,1 +1,5 @@
-{"run_id": 42239912490, "artifact": "supernova-0156-signed-qa"}
+{
+  "run_id": 44479811283,
+  "artifact": "supernova-0157-signed-qa",
+  "purpose": "0.158.1 signed APK digest for release history (0.158.1 moves into history; 0.158.2 is current)"
+}

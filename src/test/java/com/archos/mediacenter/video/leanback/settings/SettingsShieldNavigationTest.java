@@ -99,7 +99,7 @@ public class SettingsShieldNavigationTest {
     }
 
     private void openDiagnostics() {
-        settings.workspace.open(6, "Diagnostics");
+        settings.workspace.open(5, null);
         settle();
     }
 
@@ -131,15 +131,14 @@ public class SettingsShieldNavigationTest {
     }
 
     @Test
-    public void aboutReturnsToGridAndDiagnosticsUsesOnlyItsTwoColumns() {
+    public void aboutIsATabAndSystemShowsDiagnosticsUnderItsHeading() {
         settings.workspace.open(7, null);
         settle();
         assertNotNull(findType(root, FoundationAboutWorkspace.class));
-        assertTrue(settings.workspace.back());
-        settle();
         openDiagnostics();
         assertNull(findType(root, FoundationAboutWorkspace.class));
-        assertEquals(3, ((ViewGroup) root.findViewWithTag("settings.category")).getChildCount());
+        assertEquals("tabs, content", 2, ((ViewGroup) root.findViewWithTag("settings.category")).getChildCount());
+        assertNotNull(root.findViewWithTag("settings.heading.Diagnostics"));
         key(KeyEvent.KEYCODE_DPAD_DOWN);
         assertTrue(String.valueOf(root.findFocus().getTag()).startsWith("settings.preference."));
         capture("0143-diagnostics");
@@ -148,14 +147,14 @@ public class SettingsShieldNavigationTest {
     @Test
     public void diagnosticLoggingLevelAndExportAreReachableByRootKeyDispatch() {
         openDiagnostics();
-        View diagnostics = root.findViewWithTag("settings.section.Diagnostics");
+        View diagnostics = root.findViewWithTag("settings.tab.5");
         assertTrue(diagnostics.requestFocus());
         settle();
         assertNotNull(
             "Clear diagnostic data is offered", settings.findPreference("supernova_diagnostic_clear"));
         key(KeyEvent.KEYCODE_DPAD_DOWN);
         Set<String> reached = new HashSet<>();
-        for (int n = 0; n < 10; n++) {
+        for (int n = 0; n < 24; n++) {
             View focused = root.findFocus();
             if (focused != null
                 && focused.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic) != null)
@@ -191,7 +190,7 @@ public class SettingsShieldNavigationTest {
         assertTrue(PreviewSettings.enterBackup(settings));
         settle();
         ViewGroup split = root.findViewWithTag("settings.category");
-        assertEquals(3, split.getChildCount());
+        assertEquals("tabs, content", 2, split.getChildCount());
         for (int n = 0; n < 2; n++)
             assertEquals(View.VISIBLE, split.getChildAt(n).getVisibility());
         View export = root.findViewWithTag("backup.action.export");
@@ -211,7 +210,7 @@ public class SettingsShieldNavigationTest {
         key(KeyEvent.KEYCODE_DPAD_RIGHT);
         assertTrue("Right stays in the content column", restore.hasFocus());
         key(KeyEvent.KEYCODE_DPAD_LEFT);
-        assertTrue(root.findViewWithTag("settings.section.Backup & restore").hasFocus());
+        assertTrue(root.findViewWithTag("settings.tab.5").hasFocus());
         key(KeyEvent.KEYCODE_DPAD_DOWN);
         assertSame("Down from the tab restores the selected backup action", restore, root.findFocus());
         restore.performClick();

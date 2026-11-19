@@ -32,3 +32,22 @@ Each has Claude's recommendation. Easy to undo: done as recommended. Hard to und
    That is a change to the signing setup, which you've ruled out, so it is not done. Recommendation: allow the
    0.157 copies (or make the gate read the version from the history file), then sign the final green build.
    The 0.157 conformance (build) workflow copy is added: `supernova-0157-conformance.yml`.
+
+10. **Captions under the player's Chapters and Episodes cards? (REVIEW_0157 #16) — answered from the approved
+    designs:** no. The approved player mock-ups (`player/20`, `27`, `chapters/04`) put the name and second line inside
+    the card, on its shade; captions under cards are for Home rows. Kept as approved; say if you want them changed.
+11. **Centred chapter row (REVIEW_0157 #17):** QUESTIONS #8 wrongly called it unapproved; Player v11 approved it
+    (13 Nov). Now built: equal space above and below the card row.
+12. **Track pills on the main Playback Settings page (REVIEW_0157 #11).** You asked for this "to confirm in the
+    mock-ups"; the approved mock-ups (`player/25`, `28`) show the track row as name only. Not built. Recommendation:
+    show the chosen track's pills on the Subtitle Track and Audio Track rows (e.g. "English · Original · SDH"), as in
+    the lists; say yes and it goes in.
+13. **Fix match opens as a page in Files' style, over where you were.** The decision was "Fix match from anywhere
+    takes you to Files › Library Care's Fix match page; Back returns". Built as one full page (path "Files › Library
+    Care › Fix match", keyboard left, matches right); Back returns to where you came from. It is not yet reached by
+    switching to the Files tab first. Easy to change if you want the tab to switch underneath.
+14. **Folder grid (REVIEW_0157 #25):** browsing a storage now stays in Files as the approved grid (path, cards,
+    In library / Not added, Sort, Videos only). Not yet: the List view button and folder artwork mosaics.
+- **Answered (owner, 16 Nov; REVIEW_0157 "Owner's answers"):** #12 track pills on the main page: yes, built. #10
+  captions inside the player cards: kept. #13 Fix match from a title: the approved v2 page on Files (Match and
+  return / Match and stay), built.

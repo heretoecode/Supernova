@@ -92,7 +92,8 @@ public final class SubtitlePanelStyle {
 
     /** The shared glass (approved 2 Nov 2026). */
     public Drawable panelSurface() {
-        return new Glow(SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, side ? 35 : 36, 2, side ? 14 : 6);
+        // RULES §11 (owner, 19 Nov 2026): #16181C at 99%, no outline, no glow.
+        return new Glow(SupernovaStyle.GLASS, 0, side ? 35 : 36, 0, 0);
     }
 
     public Drawable glow(int radius) {
@@ -118,9 +119,12 @@ public final class SubtitlePanelStyle {
             rect.inset(px(3), px(3));
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(fill);
-            paint.setShadowLayer(px(blur), 0, 0, (border & 0x00ffffff) | 0x99000000);
+            if (blur > 0)
+                paint.setShadowLayer(px(blur), 0, 0, (border & 0x00ffffff) | 0x99000000);
             canvas.drawRoundRect(rect, px(radius), px(radius), paint);
             paint.clearShadowLayer();
+            if (stroke <= 0)
+                return;
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(px(stroke));
             paint.setColor(border);

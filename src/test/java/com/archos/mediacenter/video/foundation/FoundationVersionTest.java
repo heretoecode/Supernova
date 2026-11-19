@@ -12,6 +12,12 @@ public class FoundationVersionTest {
         assertEquals(0,FoundationVersion.array("0.133")[0]);
         assertEquals(8,FoundationVersion.array("0.133").length);
     }
+    @Test public void pointReleasesAreRead() {
+        // Owner, 16 Nov 2026: 0.157.1 follows 0.157 and comes before 0.158.
+        assertEquals(157, FoundationVersion.array("0.157.1")[1]);
+        assertEquals(1, FoundationVersion.array("0.157.1")[2]);
+        assertEquals(0, FoundationVersion.array("0.157")[2]);
+    }
     @Test public void invalidCountersFailWithoutSilentlyChangingIdentity() {
         for(String version:new String[]{"0.01","0.0","0.1.0","6.4.64",null}) {
             try { FoundationVersion.array(version);fail("Accepted invalid counter"); }catch(IllegalArgumentException expected){}

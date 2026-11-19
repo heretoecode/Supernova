@@ -105,10 +105,13 @@ public class HomeRowControlsTest {
         assertFalse(HomeRowControls.isWhite(controls.move));
         assertEquals(controls.hide.getChildAt(0).getWidth(), controls.move.getChildAt(0).getWidth());
 
-        press(controls.hide, KeyEvent.KEYCODE_DPAD_RIGHT);
+        // 0.158 (HOME.md): Move then Hide, Right from Move to Hide.
+        press(controls.hide, KeyEvent.KEYCODE_DPAD_LEFT);
         assertTrue(controls.move.isFocused());
         press(controls.move, KeyEvent.KEYCODE_DPAD_RIGHT);
-        assertFalse("Right from Move returns to the cards", mover.showing());
+        assertTrue(controls.hide.isFocused());
+        mover.dismiss(true);
+        assertFalse(mover.showing());
         assertNull(row.findViewWithTag("home.row.controls"));
         assertEquals(ViewGroup.LayoutParams.MATCH_PARENT, rail.getLayoutParams().width);
     }

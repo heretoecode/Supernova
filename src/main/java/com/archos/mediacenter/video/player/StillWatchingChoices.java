@@ -35,14 +35,15 @@ public final class StillWatchingChoices
         options.add(new Choice("Off", 0, 0));
         if (episode)
         {
-            for (int count : new int[] {2, 3, 5})
+            for (int count : new int[] {2, 3})
             {
-                options.add(new Choice("After " + count + " episodes", count, 0));
+                options.add(new Choice(count + " episodes", count, 0));
             }
         }
-        for (int hours : new int[] {2, 3, 4})
+        // Chips Off · 2 episodes · 3 episodes · 2 hours · 3 hours (owner, 18 Nov 2026; REVIEW_0157_2 PS11).
+        for (int hours : new int[] {2, 3})
         {
-            options.add(new Choice("After " + hours + " hours", 0, hours * 60));
+            options.add(new Choice(hours + " hours", 0, hours * 60));
         }
         return options;
     }
@@ -63,6 +64,16 @@ public final class StillWatchingChoices
                 return i;
             }
         }
-        return 0;
+        // An older choice no longer offered (5 episodes, 4 hours) shows as the nearest one of its kind.
+        int nearest = 0;
+        for (int i = 1; i < options.size(); i++)
+        {
+            Choice option = options.get(i);
+            if (episodes > 0 && option.episodes > 0 || episodes <= 0 && minutes > 0 && option.minutes > 0)
+            {
+                nearest = i;
+            }
+        }
+        return nearest;
     }
 }

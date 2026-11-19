@@ -129,8 +129,8 @@ public final class PreviewDialog {
     }
 
     /** The panel behind a list: darkened to about 45% brightness and pushed back to 96% (RULES §11). */
-    static final float BEHIND_SCALE = 0.96f;
-    static final int BEHIND_SHADE = 0x8C000000;
+    public static final float BEHIND_SCALE = 0.96f;
+    public static final int BEHIND_SHADE = 0x8C000000;
 
     /** Only the top window is at full size and brightness; every window under it is pushed back. */
     private static void stackLook(List<WeakReference<Dialog>> windows, Dialog starting) {
@@ -270,6 +270,37 @@ public final class PreviewDialog {
         return readInternal(c, title, body, referenceImage, null, null);
     }
 
+    /**
+     * Only the text (owner, 18 Nov 2026; DT7): no title, no Close, no Copy; Back closes. Sized to the text, scrolling
+     * when it is long.
+     */
+    public static Dialog readText(Context c, String body) {
+        Dialog dialog = create(c, "reader");
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ScrollView scroll = new ScrollView(c);
+        scroll.setBackground(dialogSurface(c));
+        scroll.setFocusable(true);
+        TextView text = new TextView(c);
+        text.setText(body);
+        text.setTextColor(Color.WHITE);
+        text.setTextSize(16);
+        text.setLineSpacing(dp(c, 3), 1);
+        text.setPadding(dp(c, 24), dp(c, 20), dp(c, 24), dp(c, 20));
+        scroll.addView(text);
+        dialog.setContentView(scroll);
+        dialog.show();
+        Window w = dialog.getWindow();
+        w.setBackgroundDrawableResource(android.R.color.transparent);
+        w.setDimAmount(.35f);
+        int width = TvLayout.dialogWidth(c);
+        int maximum = Math.round(TvLayout.safeHeight(c) * .8f);
+        text.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        w.setLayout(width, Math.min(maximum, text.getMeasuredHeight()));
+        scroll.requestFocus();
+        return dialog;
+    }
+
     public static Dialog review(Context c, String title, String body, String confirmation, Runnable accepted) {
         return readInternal(c, title, body, null, confirmation, accepted);
     }
@@ -375,6 +406,50 @@ public final class PreviewDialog {
 
     public static Dialog choose(Context c, String title, String[] labels, int selected, Set<Integer> checked,
                                 boolean dismissOnSelect, IntConsumer action) {
+        return choose(c, title, labels, null, selected, checked, dismissOnSelect, null, action);
+    }
+
+    /**
+     * A menu beside the button that opened it (RULES §10; D1, F6, F16): an icon per item (no two alike), the tick on
+     * the right for the current choice, as wide as its longest item. Labels starting with "— " are group headings.
+     */
+    public static Dialog menu(Context c, View anchor, String title, String[] labels, String[] icons, int ticked,
+                              IntConsumer action) {
+        Set<Integer> checked = ticked < 0 ? Collections.emptySet() : Collections.singleton(ticked);
+        return choose(c, title, labels, icons, ticked, checked, true, anchor, action);
+    }
+
+    /**
+     * A menu that drops down under the toolbar button that opened it (library pages: "menus open under the button
+     * pressed"), with any number of ticks and the focus on {@code focus}. A label of just "— " is a plain line that
+     * sets the foot action apart (RULES §10).
+     */
+    public static Dialog menuBelow(Context c, View anchor, String title, String[] labels, String[] icons,
+                                   Set<Integer> ticked, int focus, boolean dismissOnSelect, IntConsumer action) {
+        return menuBelow(c, anchor, title, labels, icons, ticked, focus, dismissOnSelect, false, action);
+    }
+
+    /** As above; {@code searchable} lists (genres, services) gain the search line above 12 items (RULES §9). */
+    public static Dialog menuBelow(Context c, View anchor, String title, String[] labels, String[] icons,
+                                   Set<Integer> ticked, int focus, boolean dismissOnSelect, boolean searchable,
+                                   IntConsumer action) {
+        dropBelow = true;
+        menuSearch = searchable;
+        try {
+            return choose(c, title, labels, icons, focus, ticked, dismissOnSelect, anchor, action);
+        } finally {
+            dropBelow = false;
+            menuSearch = true;
+        }
+    }
+
+    /** Set only while {@link #menuBelow} builds its menu. */
+    private static boolean dropBelow;
+    /** Grouped menus such as Sort never get the search line (RULES §9). */
+    private static boolean menuSearch = true;
+
+    private static Dialog choose(Context c, String title, String[] labels, String[] icons, int selected,
+                                 Set<Integer> checked, boolean dismissOnSelect, View anchor, IntConsumer action) {
         Dialog d = create(c, "choice");
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = new LinearLayout(c);
@@ -403,7 +478,7 @@ public final class PreviewDialog {
         rows.setOrientation(android.widget.LinearLayout.VERTICAL);
         rows.setTag(CHOICE_ROWS);
         scroll.addView(rows);
-        TextView search = ChoiceListSearch.shown(labels) ? searchRow(c, title) : null;
+        TextView search = menuSearch && ChoiceListSearch.shown(labels) ? searchRow(c, title) : null;
         if (search != null)
             panel.addView(search, new LinearLayout.LayoutParams(-1, dp(c, 37)));
         panel.addView(scroll, new LinearLayout.LayoutParams(-1, -2));
@@ -413,6 +488,18 @@ public final class PreviewDialog {
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
             boolean group = labels[i].startsWith("— ");
+            if (labels[i].equals("— ")) {
+                // A single action at the foot is set apart by a plain line, no heading (RULES §10).
+                View line = new View(c);
+                line.setTag(i);
+                line.setBackgroundColor(SupernovaStyle.HEADING_LINE);
+                LinearLayout.LayoutParams lineSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(c, 1) / 2));
+                lineSize.topMargin = dp(c, 6);
+                lineSize.bottomMargin = dp(c, 6);
+                rows.addView(line, lineSize);
+                height += 13;
+                continue;
+            }
             boolean enabled = !group && !labels[i].endsWith(" (unavailable)") &&
                               !labels[i].endsWith(" — unavailable") && !labels[i].contains("Coming soon");
             if (group) {
@@ -439,8 +526,11 @@ public final class PreviewDialog {
                                    : title.equals(c.getString(com.archos.mediacenter.video.R.string.menu_subtitles))
                                        ? "Subtitles"
                                        : labels[i];
-                icon.setImageDrawable(PreviewGenres.known(iconLabel) ? new PreviewGenres.Icon(iconLabel)
-                                                                     : new PreviewIcon(iconLabel));
+                boolean own = icons != null && i < icons.length && icons[i] != null;
+                icon.setImageDrawable(own ? (PreviewGenres.known(icons[i]) ? new PreviewGenres.Icon(icons[i])
+                                                           : new PreviewIcon(icons[i]))
+                                          : PreviewGenres.known(iconLabel) ? new PreviewGenres.Icon(iconLabel)
+                                                                           : new PreviewIcon(iconLabel));
                 row.addView(icon, new LinearLayout.LayoutParams(dp(c, 18), dp(c, 18)));
             }
             TextView label = new TextView(c);
@@ -510,6 +600,25 @@ public final class PreviewDialog {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = Math.max(dp(c, 14), screenWidth - width - Math.round(screenWidth * 28f / 960f));
         params.y = top;
+        if (dropBelow && anchor != null && anchor.isAttachedToWindow()) {
+            // Under the toolbar button pressed, its left edge on the button's (library pages).
+            int[] at = new int[2];
+            anchor.getLocationOnScreen(at);
+            int below = at[1] + anchor.getHeight() + dp(c, 6);
+            params.x = Math.max(dp(c, 14), Math.min(at[0], screenWidth - width - dp(c, 14)));
+            params.y = below;
+            menuHeight = Math.min(menuHeight, screenHeight - below - dp(c, 14));
+        } else if (anchor != null && anchor.isAttachedToWindow()) {
+            // Beside its button, never in a corner (D1): to the right if there is room, else left, below, above.
+            int[] at = new int[2];
+            anchor.getLocationOnScreen(at);
+            int[] place = PreviewMenuPlacement.place(width, menuHeight, at[0], at[1], at[0] + anchor.getWidth(),
+                                                     at[1] + anchor.getHeight(), screenWidth, screenHeight,
+                                                     dp(c, 14), dp(c, 8));
+            params.x = place[0];
+            params.y = place[1];
+            menuHeight = Math.min(menuHeight, place[3]);
+        }
         w.setAttributes(params);
         w.setDimAmount(.35f);
         // The search line sits above the list, so the list's own area is that much shorter.
@@ -696,6 +805,22 @@ public final class PreviewDialog {
             ((TextView)view).setText(label);
             ((View)view.getParent()).setContentDescription(label);
         }
+    }
+
+    /**
+     * The delete warning (RULES §7b): Supernova's own design, left-aligned, the safe choice named and focused first
+     * ("Keep file"), the deletion second.
+     */
+    public static Dialog warning(Context c, String title, String message, String keep, String delete,
+                                 Runnable action) {
+        Dialog dialog = message(c, title, message, false, new String[] {keep, delete}, 0, index -> {
+            if (index == 1)
+                action.run();
+        });
+        TextView remove = dialog.findViewById(android.R.id.content).findViewWithTag("semantic:dialog.action.1");
+        if (remove != null)
+            remove.setTextColor(SupernovaStyle.destructiveContent());
+        return dialog;
     }
 
     public static Dialog confirmPageDelete(Context c, String title, String message, Runnable action) {

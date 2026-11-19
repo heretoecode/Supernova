@@ -43,6 +43,23 @@ final class PreviewDetailsFacts {
         return format.format(new Date(date));
     }
 
+    /** "2015-06-24" → "24 June 2015" (RULES §6); anything else is returned as it is. */
+    static String words(String value) {
+        String trimmed = value == null ? "" : value.trim();
+        if (!trimmed.matches("\\d{4}-\\d{2}-\\d{2}"))
+            return value;
+        try {
+            SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+            iso.setTimeZone(TimeZone.getTimeZone("UTC"));
+            iso.setLenient(false);
+            SimpleDateFormat spoken = new SimpleDateFormat("d MMMM yyyy", Locale.UK);
+            spoken.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return spoken.format(iso.parse(trimmed));
+        } catch (java.text.ParseException wrong) {
+            return value;
+        }
+    }
+
     static String certificate(JSONObject classification, String country) {
         JSONArray regions = classification == null ? null : classification.optJSONArray("results");
         if (regions == null)
@@ -117,6 +134,23 @@ final class PreviewDetailsFacts {
                     minutes.add(value + " min");
             }
         return TextUtils.join(", ", minutes);
+    }
+
+    /** "about 47 min": the middle episode runtime across the seasons' episodes, or "" when none is known. */
+    static String typicalRuntime(java.util.Collection<JSONArray> seasons) {
+        java.util.List<Integer> minutes = new java.util.ArrayList<>();
+        for (JSONArray season : seasons) {
+            for (int n = 0; season != null && n < season.length(); n++) {
+                JSONObject episode = season.optJSONObject(n);
+                int value = episode == null ? 0 : episode.optInt("runtime");
+                if (value > 0)
+                    minutes.add(value);
+            }
+        }
+        if (minutes.isEmpty())
+            return "";
+        java.util.Collections.sort(minutes);
+        return "about " + minutes.get(minutes.size() / 2) + " min";
     }
 
     private PreviewDetailsFacts() {

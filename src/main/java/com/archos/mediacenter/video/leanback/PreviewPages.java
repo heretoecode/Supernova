@@ -330,6 +330,9 @@ public final class PreviewPages extends FrameLayout {
     }
 
     private final Runnable centreLibraryRow = this::centreFocusedLibraryRow;
+    /** The card the last centring scroll was for, and where the list was then (see centreFocusedLibraryRow). */
+    private View lastCentred;
+    private int lastCentredOffset = -1;
 
     private void centreFocusedLibraryRow() {
         if (tab != 1 && tab != 2 || !list.hasFocus() || list.hasPendingAdapterUpdates())
@@ -346,6 +349,13 @@ public final class PreviewPages extends FrameLayout {
             return;
         }
         int delta = Math.round((item.getTop() + item.getBottom()) / 2f - (list.getPaddingTop() + viewportBottom) / 2f);
+        // Stop when the last centring scroll for this card didn't move the list (it is as centred as it can be);
+        // otherwise each finished scroll asks for another and the page never rests.
+        int offset = list.computeVerticalScrollOffset();
+        if (item == lastCentred && offset == lastCentredOffset)
+            return;
+        lastCentred = item;
+        lastCentredOffset = offset;
         if (Math.abs(delta) > 1 && list.canScrollVertically(delta > 0 ? 1 : -1)) {
             list.stopScroll();
             list.removeCallbacks(centreLibraryRow);
@@ -511,6 +521,17 @@ public final class PreviewPages extends FrameLayout {
     };
     private final boolean[] ascending = {false, false, false};
     private final boolean[] listMode = {false, false, false};
+    // 0.158 library page filters (page sheet LIBRARY.md): Watched, a year range and Match Any / All for genres.
+    private final int[] watchedFilter = {0, 0, 0};
+    private final int[] yearFrom = {0, 0, 0};
+    private final int[] yearTo = {0, 0, 0};
+    private final boolean[] genreAll = {false, false, false};
+    /** Each started show's next episode, for its poster caption ("S2 E3 · 18 of 30 left"). */
+    private final Map<Long, Entry> nextEpisodes = new HashMap<>();
+    /** Your own page before it is set up ("Make this page your own"). */
+    private boolean customUnset;
+    /** Titles just removed from the library: they leave the page at once (Undo brings them back). */
+    private final Set<String> removedKeys = new HashSet<>();
     private int featuredIndex;
     private PreviewFeaturedIndicators featuredIndicators;
     private int featuredDirection;
@@ -669,6 +690,8 @@ public final class PreviewPages extends FrameLayout {
         {
             startHeroClock();
             post(this::recoverLostFocus);
+            // Once more after the page has re-laid itself out (the snapshot may refresh on return).
+            postDelayed(this::recoverLostFocus, 400);
         }
         else {
             heroOwnsHorizontal = false;
@@ -739,7 +762,11 @@ public final class PreviewPages extends FrameLayout {
 
     /** After standby the window can come back with nothing focused: return to the remembered card. */
     private void recoverLostFocus() {
-        if (!isShown() || !hasWindowFocus() || getRootView().findFocus() != null || cells.isEmpty())
+        // Back from a title (D17): focus can come back to nothing, or to this page or its list themselves, which
+        // shows no box and lets Down fall into the top bar. Either way, return to the remembered card.
+        View current = getRootView().findFocus();
+        boolean lost = current == null || current == this || current == list;
+        if (!isShown() || !hasWindowFocus() || !lost || cells.isEmpty() || tab == 3)
         {
             return;
         }
@@ -1003,6 +1030,10 @@ public final class PreviewPages extends FrameLayout {
         if (anchors[tab] != null)
             anchors[tab].token = Diagnostics.focusEntry(v, "details");
         click.open(new Presenter.ViewHolder(v), e.media);
+        // Home hero to Details (HOME.md): both heroes have the same size and place (RULES §14), so the screen changes
+        // without a slide or fade and the card stays exactly where it is.
+        if (tab == 0 && inside(v, findViewWithTag("semantic:home.featured")) && getContext() instanceof Activity)
+            ((Activity)getContext()).overridePendingTransition(0, 0);
     }
 
     private void play(Entry e, View v) {
@@ -1050,11 +1081,15 @@ public final class PreviewPages extends FrameLayout {
         setFocusableInTouchMode(true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         list = new FocusRecycler(c, false);
+        // No scroll bars anywhere (owner, 17 Nov 2026; F4, F36).
+        list.setVerticalScrollBarEnabled(false);
+        list.setHorizontalScrollBarEnabled(false);
         list.setClipChildren(false);
         list.setClipToPadding(false);
         setClipChildren(false);
-        list.setPadding(dp(28), dp(10), dp(28), dp(12));
-        layout = new GridLayoutManager(c, 120) {
+        list.setPadding(TvLayout.sideMargin(c), dp(10), TvLayout.sideMargin(c), dp(12));
+        // 840 spans divide into 4, 5, 6, 7 and 8 columns (library pages: seven posters a row).
+        layout = new GridLayoutManager(c, SPANS) {
             @Override
             public boolean onRequestChildFocus(RecyclerView parent, RecyclerView.State state, View child,
                                                View focused) {
@@ -1071,10 +1106,10 @@ public final class PreviewPages extends FrameLayout {
         layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int p) {
-                return cells.get(p).type == POSTER   ? (tab < 3 && listMode[tab] ? 120 : 120 / libraryColumns())
-                : cells.get(p).type == NETWORK_PANEL ? 40
-                : cells.get(p).type == STORAGE       ? 30
-                                                     : 120;
+                return cells.get(p).type == POSTER   ? (tab < 3 && listMode[tab] ? SPANS : SPANS / libraryColumns())
+                : cells.get(p).type == NETWORK_PANEL ? SPANS / 3
+                : cells.get(p).type == STORAGE       ? SPANS / 4
+                                                     : SPANS;
             }
         });
         adapter.setHasStableIds(true);
@@ -1108,6 +1143,10 @@ public final class PreviewPages extends FrameLayout {
                 providers[i] = preferences.getString(k + "providers", "");
                 ascending[i] = preferences.getBoolean(k + "ascending", false);
                 listMode[i] = preferences.getBoolean(k + "list", false);
+                watchedFilter[i] = preferences.getInt(k + "watched", 0);
+                yearFrom[i] = preferences.getInt(k + "yearFrom", 0);
+                yearTo[i] = preferences.getInt(k + "yearTo", 0);
+                genreAll[i] = preferences.getBoolean(k + "genreAll", false);
             }
         columns[1] = new PreviewLibraryColumns(c, false);
         columns[2] = new PreviewLibraryColumns(c, true);
@@ -1146,7 +1185,8 @@ public final class PreviewPages extends FrameLayout {
 
     public void setNavigationInset(int inset) {
         navigationInset = inset;
-        list.setPadding(dp(28), inset + (tab == 1 || tab == 2 ? 0 : dp(10)), dp(28), dp(12));
+        int side = TvLayout.sideMargin(getContext());
+        list.setPadding(side, inset + (tab == 1 || tab == 2 ? 0 : dp(10)), side, dp(12));
     }
 
     public void setScrollListener(Consumer<Boolean> listener) {
@@ -1191,6 +1231,9 @@ public final class PreviewPages extends FrameLayout {
             while (cursor != null && cursor != item) {
                 if (cursor instanceof PreviewNetworkWorkspace)
                     return ((PreviewNetworkWorkspace)cursor).atTop();
+                // Up from Files' tab row reaches the top bar (F1); from its content it goes to the tabs.
+                if (cursor instanceof com.archos.mediacenter.video.leanback.files.FilesPage)
+                    return ((com.archos.mediacenter.video.leanback.files.FilesPage)cursor).atTop();
                 cursor = cursor.getParent() instanceof View ? (View)cursor.getParent() : null;
             }
             return false;
@@ -1211,10 +1254,16 @@ public final class PreviewPages extends FrameLayout {
     }
 
     public boolean browserBack(Runnable leave) {
+        // Back from the top bar while Files is inside a folder goes up a level there, never out of the app (F10).
+        if (tab == 3 && filesPage != null && filesPage.isShown() && filesPage.back())
+            return true;
         return sharedBrowser != null && sharedBrowser.isShown() && sharedBrowser.browser().back(leave);
     }
 
     public void setTab(int tab) {
+        // Files opens on This Device, at its start, every time it is chosen from the top bar (F2).
+        if (tab == 3 && this.tab != 3 && filesPage != null)
+            filesPage.reset();
         networkEntryPending = tab == 3;
         if (tab == 3)
             loadSources();
@@ -1239,10 +1288,12 @@ public final class PreviewPages extends FrameLayout {
         featuredIndex = tab >= 0 && tab < featuredByTab.length ? featuredByTab[tab] : 0;
         render("tab_change");
         switchingTab = false;
-        if (scrollStates[tab] != null)
-            layout.onRestoreInstanceState(scrollStates[tab]);
-        else
-            list.scrollToPosition(0);
+        // RULES §16 (owner, 18 Nov 2026): a page left for another one reopens at its top, focus on its first item.
+        // Going deeper and back (a poster → Details → Back) does not pass here and keeps its place.
+        scrollStates[tab] = null;
+        if (tab >= 0 && tab < anchors.length)
+            anchors[tab] = null;
+        list.scrollToPosition(0);
         PreviewMetadata.library(getContext(), snapshot, tab);
     }
 
@@ -1323,6 +1374,8 @@ public final class PreviewPages extends FrameLayout {
         final String button;
         final String icon;
         final Runnable action;
+        /** A quiet line under the button ("More options for your library are in Files and Settings."). */
+        String note = "";
 
         EmptyPage(String reason, String button, String icon, Runnable action) {
             this.reason = reason;
@@ -1333,12 +1386,38 @@ public final class PreviewPages extends FrameLayout {
 
         @Override
         public String toString() {
-            return reason + "|" + button;
+            return reason + "|" + button + "|" + note;
         }
     }
 
+    /** "Make this page your own" (sheet; RULES §23): the same Customise page button the page keeps once set up. */
+    private EmptyPage unsetPage() {
+        EmptyPage page = new EmptyPage("", "Customise page", "edit", () -> {
+            if (customEdit != null)
+                customEdit.run();
+        });
+        page.note = "More options for your library are in Files and Settings.";
+        return page;
+    }
+
+    /** Add your videos: Files (This Device) through the top bar, so it opens as the Files page itself. */
+    private void openFiles() {
+        View files = getRootView() == null ? null : getRootView().findViewWithTag("semantic:topnav.network");
+        if (files != null)
+            files.performClick();
+    }
+
+    /** Started shows' next episodes, by show, for the posters' second line. */
+    private void refreshNextEpisodes() {
+        nextEpisodes.clear();
+        for (Entry episode : snapshot.continuingShows)
+            if (episode.media instanceof Episode && episode.show > 0)
+                nextEpisodes.put(episode.show, episode);
+    }
+
     private boolean filtersActive() {
-        return !genres[tab].isEmpty() || years[tab] != 0 || !selectedYears[tab].isEmpty() || !providers[tab].isEmpty();
+        return !genres[tab].isEmpty() || years[tab] != 0 || !selectedYears[tab].isEmpty() || !providers[tab].isEmpty()
+            || watchedFilter[tab] != 0 || yearFrom[tab] > 0 || yearTo[tab] > 0;
     }
 
     EmptyPage emptyPage() {
@@ -1357,7 +1436,7 @@ public final class PreviewPages extends FrameLayout {
                                      render("filters_cleared");
                                  });
         return new EmptyPage(tab == 2 ? "Your library has no TV shows yet." : "Your library has no films yet.",
-                             "Open Files", "network", () -> networkSection(""));
+                             "Add your videos", "plus", this::openFiles);
     }
 
     private void bindEmptyPage(LinearLayout v, String title, EmptyPage page) {
@@ -1366,22 +1445,43 @@ public final class PreviewPages extends FrameLayout {
         v.setPadding(0, dp(48), 0, dp(48));
         v.setTag("library.empty");
         ImageView icon = new ImageView(getContext());
-        icon.setImageDrawable(new PreviewIcon("empty"));
+        if ("ring".equals(page.icon)) {
+            // The loading ring (RULES §21): the first scan is running and nothing is found yet.
+            com.archos.mediacenter.video.foundation.DoubleRingDrawable ring =
+                new com.archos.mediacenter.video.foundation.DoubleRingDrawable();
+            icon.setImageDrawable(ring);
+            ring.start();
+        } else {
+            icon.setImageDrawable(new PreviewIcon(page.button == null ? "empty" : page.icon));
+        }
         v.addView(icon, new LinearLayout.LayoutParams(dp(26), dp(26)));
         TextView heading = text(title, 21);
         heading.setTextColor(SupernovaStyle.TEXT);
         heading.setGravity(Gravity.CENTER);
         heading.setPadding(0, dp(12), 0, dp(6));
         v.addView(heading);
-        TextView reason = text(page.reason, 13);
-        reason.setTextColor(SupernovaStyle.TEXT_SECONDARY);
-        reason.setGravity(Gravity.CENTER);
-        reason.setPadding(0, 0, 0, dp(14));
-        v.addView(reason);
+        if (!page.reason.isEmpty()) {
+            TextView reason = text(page.reason, 13);
+            reason.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            reason.setGravity(Gravity.CENTER);
+            reason.setPadding(0, 0, 0, dp(14));
+            v.addView(reason);
+        } else {
+            v.addView(new View(getContext()), new LinearLayout.LayoutParams(1, dp(8)));
+        }
+        if (page.button == null)
+            return;
         TextView button = TvButton.create(getContext(), page.button, page.action, false);
         PreviewIcon.apply(button, page.icon, 14);
         button.setTag("library.empty.action");
         v.addView(button, new LinearLayout.LayoutParams(-2, -2));
+        if (!page.note.isEmpty()) {
+            TextView note = text(page.note, 12);
+            note.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            note.setGravity(Gravity.CENTER);
+            note.setPadding(0, dp(14), 0, 0);
+            v.addView(note);
+        }
     }
 
     private void header(String title, boolean controls) {
@@ -1398,8 +1498,8 @@ public final class PreviewPages extends FrameLayout {
     private void persistViews() {
         if (preferences == null || !preferences.getBoolean("remember_library_views", true) || tab < 1 || tab > 2)
             return;
-        if (customLibrary != null && customEditing)
-            return; // the Edit Page draft is stored only by Save
+        if (customLibrary != null && (customEditing || customUnset))
+            return; // a page not set up yet is never stored by looking at it
         if (customLibrary != null) {
             customLibrary.view = listMode[tab] ? "list" : "grid";
             customLibrary.sort = sorts[tab] == 1 ? "title" : sorts[tab] == 2 ? "year" : "added";
@@ -1421,6 +1521,10 @@ public final class PreviewPages extends FrameLayout {
             .putString(k + "providers", providers[tab])
             .putBoolean(k + "ascending", ascending[tab])
             .putBoolean(k + "list", listMode[tab])
+            .putInt(k + "watched", watchedFilter[tab])
+            .putInt(k + "yearFrom", yearFrom[tab])
+            .putInt(k + "yearTo", yearTo[tab])
+            .putBoolean(k + "genreAll", genreAll[tab])
             .apply();
     }
 
@@ -1500,6 +1604,17 @@ public final class PreviewPages extends FrameLayout {
         }
         if (event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_UP)
             recordRemoteInput();
+        if ((tab == 1 || tab == 2) && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            // The remote's Menu button opens the same menu as a long-press (sheet).
+            View focused = list.findFocus();
+            View item = focused == null ? null : list.findContainingItemView(focused);
+            int at = item == null ? -1 : list.getChildAdapterPosition(item);
+            if (at >= 0 && at < cells.size() && cells.get(at).type == POSTER) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0)
+                    item.performLongClick();
+                return true;
+            }
+        }
         int remoteKey = event.getKeyCode();
         if (heldVerticalMustWait(event))
         {
@@ -1508,6 +1623,18 @@ public final class PreviewPages extends FrameLayout {
         if (tab == 0 && (remoteKey == KeyEvent.KEYCODE_DPAD_LEFT || remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT)) {
             View focused = findFocus();
             String tag = focused == null ? "" : String.valueOf(focused.getTag());
+            // Play then More (page sheet HOME.md): Right from Play reaches More; Left on Play shows the previous hero
+            // and Right on More the next, focus staying on the same button.
+            boolean between = "hero:play".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT
+                              || "hero:info".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_LEFT;
+            if (between && !heroOwnsHorizontal) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    View other = findViewWithTag("hero:play".equals(tag) ? "hero:info" : "hero:play");
+                    if (other != null)
+                        other.requestFocus();
+                }
+                return true;
+            }
             if (heroOwnsHorizontal || tag.startsWith("hero:") ||
                 restoringFocus && anchors[0] != null && anchors[0].cell.equals(HERO + ":Featured")) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -1520,22 +1647,6 @@ public final class PreviewPages extends FrameLayout {
             }
         } else if (event.getAction() == KeyEvent.ACTION_DOWN)
             heroOwnsHorizontal = false;
-        if (tab == 0 && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            View focus = findFocus(), item = focus == null ? null : list.findContainingItemView(focus);
-            int position = item == null ? -1 : list.getChildAdapterPosition(item);
-            if (position >= 0 && cells.get(position).type == RAIL && !cells.get(position).homeRowId.isEmpty() &&
-                item instanceof ViewGroup) {
-                RecyclerView rail = railIn(item);
-                if (rail != null) {
-                    View card = rail.findContainingItemView(focus);
-                    if (card != null && rail.getChildAdapterPosition(card) == 0) {
-                        // Hide and Move appear beside the row (0.155 notes #14); no pop-up.
-                        rowMover().reveal((LinearLayout)item, rail, cells.get(position).homeRowId);
-                        return true;
-                    }
-                }
-            }
-        }
         if (tab == 0 && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN &&
             findFocus() != null && "hero:info".equals(findFocus().getTag())) {
             for (int i = 0; i < cells.size(); i++)
@@ -1677,6 +1788,7 @@ public final class PreviewPages extends FrameLayout {
         Object state = layout.onSaveInstanceState();
         cells.clear();
         if (tab == 0) {
+            refreshNextEpisodes();
             if (featured() == null)
                 cells.add(new Cell(HERO, "Featured", HomePlaceholder.Kind.HERO));
             if (featured() != null)
@@ -1754,14 +1866,30 @@ public final class PreviewPages extends FrameLayout {
                                : tab == 1            ? "Movies"
                                                      : "TV Shows",
                                featured()));
-            header(tab == 1 ? "Movie library" : "TV show library", true);
-            List<Entry> entries = customPlaceholder != null ? java.util.Collections.<Entry>emptyList() : filtered();
-            for (Entry e : entries)
-                cells.add(new Cell(POSTER, "", e));
-            if (customPlaceholder != null)
-                header(customPlaceholder, false);
-            else if (loaded && entries.isEmpty())
-                cells.add(new Cell(NOTICE, "Nothing on this page yet", emptyPage()));
+            refreshNextEpisodes();
+            boolean nothingAdded = customLibrary == null && loaded && source().isEmpty();
+            if (customUnset) {
+                // Your third page before it is set up (sheet; RULES §23): no toolbar, one message.
+                cells.add(new Cell(NOTICE, "Make this page your own", unsetPage()));
+            } else if (nothingAdded) {
+                // Empty pages (`library-pages/34`): no toolbar while there is nothing to filter or sort.
+                boolean scanning = TopBarSignal.scanning();
+                String kind = tab == 2 ? "TV shows" : "films";
+                cells.add(new Cell(NOTICE, scanning ? "Finding your " + kind : "No " + kind + " yet",
+                                   scanning ? new EmptyPage("The first ones appear here in a moment.", null, "ring",
+                                                            null)
+                                            : new EmptyPage("", "Add your videos", "plus", this::openFiles)));
+            } else {
+                header(tab == 1 ? "Movie library" : "TV show library", true);
+                List<Entry> entries =
+                    customPlaceholder != null ? java.util.Collections.<Entry>emptyList() : filtered();
+                for (Entry e : entries)
+                    cells.add(new Cell(POSTER, "", e));
+                if (customPlaceholder != null)
+                    header(customPlaceholder, false);
+                else if (loaded && entries.isEmpty())
+                    cells.add(new Cell(NOTICE, "Nothing on this page yet", emptyPage()));
+            }
         } else {
             cells.add(new Cell(NETWORK, "Files", null));
         }
@@ -1918,6 +2046,14 @@ public final class PreviewPages extends FrameLayout {
         customEditing = editing;
     }
 
+    /** Your own page before it is set up: "Make this page your own" with Customise page (sheet). */
+    public void setCustomUnset(boolean unset) {
+        if (customUnset == unset)
+            return;
+        customUnset = unset;
+        render("custom_unset");
+    }
+
     public void setCustomPlaceholder(String text) {
         if (java.util.Objects.equals(text, customPlaceholder))
             return;
@@ -1941,7 +2077,8 @@ public final class PreviewPages extends FrameLayout {
     }
 
     public void focusCustomControl(String id) {
-        View target = list.findViewWithTag("custom.control." + id);
+        View target = "empty".equals(id) ? list.findViewWithTag("library.empty.action")
+                                         : list.findViewWithTag("custom.control." + id);
         if (target != null)
             target.requestFocus();
         else
@@ -2030,8 +2167,10 @@ public final class PreviewPages extends FrameLayout {
     private List<Entry> filtered() {
         List<Entry> entries = new ArrayList<>();
         for (Entry e : source())
-            if (!hiddenByWatchedPreference(getContext(), e) &&
-                PreviewGenres.matches(e.genres, PreviewGenres.parse(genres[tab])) &&
+            if (!hiddenByWatchedPreference(getContext(), e) && !removedKeys.contains(e.key()) &&
+                LibraryFilters.watchedMatches(e, watchedFilter[tab]) &&
+                LibraryFilters.yearMatches(e, yearFrom[tab], yearTo[tab]) &&
+                PreviewGenres.matches(e.genres, PreviewGenres.parse(genres[tab]), genreAll[tab]) &&
                 (selectedYears[tab].isEmpty() ||
                  PreviewGenres.parse(selectedYears[tab]).contains(String.valueOf(e.year()))) &&
                 (providers[tab].isEmpty() ||
@@ -2067,125 +2206,765 @@ public final class PreviewPages extends FrameLayout {
                              "Trakt Trending", "Trakt Popular"};
     }
 
-    private void sort() {
-        List<String> labels = new ArrayList<>(Arrays.asList(sortLabels()));
-        if (!discovery.available) {
-            labels.set(3, labels.get(3) + " — unavailable");
-            labels.set(4, labels.get(4) + " — unavailable");
-        }
-        List<PreviewLibraryColumns.Column> metadata = columns[tab].available();
-        metadata.remove(PreviewLibraryColumns.Column.TITLE);
-        metadata.remove(PreviewLibraryColumns.Column.ADDED);
-        for (PreviewLibraryColumns.Column column : metadata)
-            labels.add(column.label);
-        PreviewLibraryColumns.Column active = columns[tab].sortColumn;
-        int selected = active == null                                 ? sorts[tab]
-                       : active == PreviewLibraryColumns.Column.TITLE ? 1
-                       : active == PreviewLibraryColumns.Column.ADDED ? 0
-                                                                      : 5 + metadata.indexOf(active);
-        PreviewDialog.choose(getContext(), "Sort", labels.toArray(new String[0]), selected, n -> {
-            if ((n == 3 || n == 4) && !discovery.available)
-                return;
-            quietOrder.clear();
-            if (n < 5) {
+    // ---- 0.158 library page (page sheet docs/design/pages/LIBRARY.md) -------------------------------------------
+
+    private String sortKey() {
+        return LibraryPageModel.key(sorts[tab], columns[tab] == null ? null : columns[tab].sortColumn);
+    }
+
+    private boolean sortAscending() {
+        return columns[tab] == null || columns[tab].sortColumn == null ? ascending[tab] : columns[tab].ascending;
+    }
+
+    private boolean seriesOnPage() {
+        return customLibrary != null ? !"movies".equals(customLibrary.type) : tab == 2;
+    }
+
+    private boolean onlySeries() {
+        return customLibrary != null ? "tv".equals(customLibrary.type) : tab == 2;
+    }
+
+    private List<LibraryPageModel.SortItem> sortItems() {
+        return LibraryPageModel.sortItems(discovery.available, seriesOnPage(), onlySeries());
+    }
+
+    private String sortLabel(String key) {
+        for (LibraryPageModel.SortItem item : sortItems())
+            if (item.key.equals(key))
+                return item.label;
+        return "Date added";
+    }
+
+    /** Applies a sort from the Sort menu or Customise page; it starts in its own natural direction. */
+    void applySort(String key) {
+        quietOrder.clear();
+        for (LibraryPageModel.SortItem item : sortItems()) {
+            if (!item.key.equals(key))
+                continue;
+            boolean up = LibraryPageModel.startsAscending(key);
+            if (item.column == null) {
                 columns[tab].clearSort();
-                sorts[tab] = n;
-                ascending[tab] = n == 1;
+                sorts[tab] = item.preset;
+                ascending[tab] = up;
             } else {
-                PreviewLibraryColumns.Column column = metadata.get(n - 5);
-                columns[tab].setSort(column, column == PreviewLibraryColumns.Column.YEAR);
-                ascending[tab] = columns[tab].ascending;
+                columns[tab].setSort(item.column, up);
+                ascending[tab] = up;
             }
-            render();
+        }
+        render("sort_change");
+    }
+
+    private void setOrder(boolean up) {
+        quietOrder.clear();
+        ascending[tab] = up;
+        columns[tab].setAscending(up);
+        render("order_change");
+    }
+
+    private void setListMode(boolean list) {
+        quietOrder.clear();
+        listMode[tab] = list;
+        render("view_change");
+    }
+
+    /**
+     * Move and Hide beside a Home row's heading (page sheet HOME.md; `home-v2/02`): plain buttons, shown when focus
+     * reaches the heading. Down from a card lands on Move; Down again on the next row's first card.
+     */
+    private void addRowControls(LinearLayout heading, String rowId) {
+        HomeRowControls controls = new HomeRowControls(getContext(), rowMover());
+        controls.setAlpha(0f);
+        controls.focusHook = () -> {
+            boolean here = controls.hasFocus() || controls.moving();
+            controls.setAlpha(here ? 1f : 0f);
+            if (here)
+                rowMover().activate(controls, rowId);
+        };
+        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-2, -2);
+        size.leftMargin = dp(14);
+        heading.addView(controls, size);
+    }
+
+    /**
+     * Even gaps between the seven posters, with the first and last on the page's side margins (so the posters line
+     * up with the toolbar and the top bar's edges).
+     */
+    private void placeInRow(View card, int position) {
+        int first = position;
+        while (first > 0 && cells.get(first - 1).type == POSTER)
+            first--;
+        int column = (position - first) % libraryColumns();
+        int gap = dp(12);
+        RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams)card.getLayoutParams();
+        lp.leftMargin = column * gap / libraryColumns();
+        lp.rightMargin = gap - (column + 1) * gap / libraryColumns();
+        lp.bottomMargin = dp(16);
+        card.setLayoutParams(lp);
+    }
+
+    /**
+     * The shared toolbar restyles what it holds (a box at rest, an icon guessed from the words); library buttons keep
+     * their own icon and are plain until focused (RULES §12).
+     */
+    private void keepOwnLook(TextView button) {
+        Object icon = button.getTag(com.archos.mediacenter.video.R.id.supernova_toolbar_icon);
+        if (icon instanceof String)
+            PreviewIcon.apply(button, (String)icon, Math.round(18 * TvLayout.scale(getContext())));
+        SupernovaStyle.applyPlainButton(button);
+    }
+
+    private TextView toolbarButton(String label, String icon, Consumer<View> action) {
+        TextView[] made = {null};
+        made[0] = TvButton.create(getContext(), label, () -> {
+            quietOrder.clear();
+            action.accept(made[0]);
+        }, false);
+        PreviewIcon.apply(made[0], icon, Math.round(18 * TvLayout.scale(getContext())));
+        SupernovaStyle.applyPlainButton(made[0]);
+        made[0].setContentDescription(label);
+        made[0].setTag(com.archos.mediacenter.video.R.id.supernova_toolbar_icon, icon);
+        return made[0];
+    }
+
+    /**
+     * The toolbar (sheet; mock-ups `library-pages/27`, `26`): Filters · Sort: <choice> · Order · List view / Grid view
+     * (· Columns in list view), Customise page locked on the right. Focus is the white box; menus drop down under the
+     * button pressed.
+     */
+    private void bindLibraryToolbar(LinearLayout v, Runnable refreshColumns) {
+        v.setOrientation(LinearLayout.VERTICAL);
+        v.setPadding(0, dp(TOOLBAR_TOP_GAP_DP), 0, dp(listMode[tab] ? 4 : 14));
+        v.setTag("library.toolbar.row");
+        PreviewToolbar controls = new PreviewToolbar(getContext(), true);
+        String key = sortKey();
+        boolean up = sortAscending();
+        List<TextView> buttons = new ArrayList<>();
+        buttons.add(toolbarButton("Filters", "filter", this::filter));
+        buttons.add(toolbarButton("Sort: " + sortLabel(key), "sort", this::sort));
+        buttons.add(toolbarButton(LibraryPageModel.orderLabel(key, up), LibraryPageModel.orderIcon(up),
+                                  b -> setOrder(!sortAscending())));
+        buttons.add(toolbarButton(listMode[tab] ? "Grid view" : "List view", listMode[tab] ? "grid" : "list",
+                                  b -> setListMode(!listMode[tab])));
+        if (listMode[tab])
+            buttons.add(toolbarButton("Columns", "columns", b -> columns[tab].choose(b, refreshColumns)));
+        String[] controlIds = {"filters", "sort", "order", "view", "columns"};
+        for (int i = 0; i < buttons.size(); i++) {
+            TextView control = buttons.get(i);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
+            lp.leftMargin = i == 0 ? 0 : dp(4);
+            control.setTag(customLibrary == null ? "control:" + i : "custom.control." + controlIds[i]);
+            Diagnostics.semantic(control, "library.toolbar." + controlIds[i]);
+            controls.addView(control, lp);
+            keepOwnLook(control);
+        }
+        TextView customise = toolbarButton("Customise page", "edit", b -> customisePage());
+        customise.setTag(customLibrary == null ? "control:customise" : "custom.control.edit");
+        v.addView(PreviewToolbar.withTrailingAction(controls, customise));
+        keepOwnLook(customise);
+        View divider = new View(getContext());
+        divider.setTag("library.toolbar.divider");
+        divider.setBackgroundColor(0x1FFFFFFF);
+        LinearLayout.LayoutParams dividerSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(1)));
+        dividerSize.topMargin = dp(10);
+        v.addView(divider, dividerSize);
+        if (listMode[tab])
+            v.addView(columns[tab].header(refreshColumns));
+    }
+
+    /** The grouped Sort menu under its button (`library-pages/25`): no search row, a tick on the current choice. */
+    private void sort(View anchor) {
+        List<LibraryPageModel.SortItem> items = sortItems();
+        List<String> labels = new ArrayList<>();
+        List<String> icons = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
+        String group = "";
+        String current = sortKey();
+        int tick = -1;
+        for (LibraryPageModel.SortItem item : items) {
+            if (!item.group.equals(group)) {
+                group = item.group;
+                labels.add("— " + group);
+                icons.add(null);
+                keys.add(null);
+            }
+            if (item.key.equals(current))
+                tick = labels.size();
+            labels.add(item.label);
+            icons.add(item.icon);
+            keys.add(item.key);
+        }
+        PreviewDialog.menuBelow(getContext(), anchor, "Sort", labels.toArray(new String[0]),
+                                icons.toArray(new String[0]),
+                                tick < 0 ? Collections.emptySet() : Collections.singleton(tick), Math.max(1, tick),
+                                true, n -> {
+                                    if (keys.get(n) != null)
+                                        applySort(keys.get(n));
+                                });
+    }
+
+    private String watchedSummary() {
+        return LibraryFilters.WATCHED_LABELS[Math.max(0, Math.min(3, watchedFilter[tab]))];
+    }
+
+    private String genreSummary() {
+        Set<String> chosen = PreviewGenres.parse(genres[tab]);
+        return chosen.isEmpty() ? "Any" : TextUtils.join(", ", chosen);
+    }
+
+    private String yearSummary() {
+        if (yearFrom[tab] <= 0 && yearTo[tab] <= 0)
+            return "Any";
+        if (yearFrom[tab] == yearTo[tab])
+            return String.valueOf(yearFrom[tab]);
+        return (yearFrom[tab] > 0 ? String.valueOf(yearFrom[tab]) : "Any") + " – " +
+            (yearTo[tab] > 0 ? String.valueOf(yearTo[tab]) : "Any");
+    }
+
+    private String providerSummary() {
+        int count = PreviewGenres.parse(providers[tab]).size();
+        return count == 0 ? "Any" : count + " chosen";
+    }
+
+    private static String titles(int count) {
+        return count + (count == 1 ? " title" : " titles");
+    }
+
+    /**
+     * Filters (`library-pages/23`, `24`): Watched · Genre · Year · Streaming services (when you have services), then
+     * Clear filters apart by a line. Each opens its list on top of the menu; choices apply live; Back closes.
+     */
+    private void filter(View anchor) {
+        boolean services = !StreamingRepository.selectedCatalogue(getContext()).isEmpty();
+        List<String> labels = new ArrayList<>(Arrays.asList("Watched · " + watchedSummary(), "Genre · " + genreSummary(),
+                                                            "Year · " + yearSummary()));
+        List<String> icons = new ArrayList<>(Arrays.asList("eye", "genre", "year"));
+        if (services) {
+            labels.add("Streaming services · " + providerSummary());
+            icons.add("cloud");
+        }
+        labels.add("— ");
+        icons.add(null);
+        labels.add("Clear filters");
+        icons.add("close");
+        int clear = labels.size() - 1;
+        Dialog[] menu = {null};
+        menu[0] = PreviewDialog.menuBelow(getContext(), anchor, "Filters", labels.toArray(new String[0]),
+                                          icons.toArray(new String[0]), Collections.emptySet(), 0, false, n -> {
+            if (n == clear) {
+                genres[tab] = "";
+                years[tab] = 0;
+                selectedYears[tab] = "";
+                providers[tab] = "";
+                watchedFilter[tab] = 0;
+                yearFrom[tab] = 0;
+                yearTo[tab] = 0;
+                quietOrder.clear();
+                menu[0].dismiss();
+                render("filters_cleared");
+                return;
+            }
+            Runnable refreshMenu = () -> {
+                PreviewDialog.updateLabel(menu[0], 0, "Watched · " + watchedSummary());
+                PreviewDialog.updateLabel(menu[0], 1, "Genre · " + genreSummary());
+                PreviewDialog.updateLabel(menu[0], 2, "Year · " + yearSummary());
+                if (services)
+                    PreviewDialog.updateLabel(menu[0], 3, "Streaming services · " + providerSummary());
+            };
+            if (n == 0)
+                chooseWatched(refreshMenu);
+            else if (n == 1)
+                chooseGenres(refreshMenu);
+            else if (n == 2)
+                chooseYears(refreshMenu);
+            else if (n == 3 && services)
+                chooseServices(refreshMenu);
         });
     }
 
-    private void filter() {
-        PreviewDialog.choose(
-            getContext(), "Filters",
-            new String[] {"Genre" + (genres[tab].isEmpty() ? "" : ": " + genres[tab]),
-                          "Year" + (years[tab] == 0 ? "" : ": " + years[tab]),
-                          "Streaming Service" + (providers[tab].isEmpty() ? "" : ": selected"), "Clear Filters"},
-            -1, n -> {
-                if (n == 3) {
-                    genres[tab] = "";
-                    years[tab] = 0;
+    private void chooseWatched(Runnable refreshMenu) {
+        List<Entry> pool = source();
+        String[] labels = new String[4];
+        for (int i = 0; i < 4; i++)
+            labels[i] = i == 0 ? LibraryFilters.WATCHED_LABELS[0]
+                               : LibraryFilters.WATCHED_LABELS[i] + " · " + titles(LibraryFilters.count(pool, i));
+        PreviewDialog.menuBelow(getContext(), null, "Watched", labels, LibraryFilters.WATCHED_ICONS,
+                                Collections.singleton(watchedFilter[tab]), watchedFilter[tab], true, n -> {
+                                    watchedFilter[tab] = n;
+                                    quietOrder.clear();
+                                    render("filter_watched");
+                                    refreshMenu.run();
+                                });
+    }
+
+    /** Genres present on the page with counts and genre icons; Match: Any · All at the top (sheet). */
+    private void chooseGenres(Runnable refreshMenu) {
+        Map<String, Integer> counts = new TreeMap<>();
+        for (Entry e : source())
+            for (String genre : PreviewGenres.parse(e.genres))
+                counts.merge(genre, 1, Integer::sum);
+        List<String> names = new ArrayList<>(counts.keySet());
+        List<String> labels = new ArrayList<>();
+        List<String> icons = new ArrayList<>();
+        labels.add(genreAll[tab] ? "Match: All" : "Match: Any");
+        icons.add("chevrons");
+        for (String name : names) {
+            labels.add(name + " · " + titles(counts.get(name)));
+            icons.add(name);
+        }
+        Set<String> chosen = new LinkedHashSet<>(PreviewGenres.parse(genres[tab]));
+        Set<Integer> ticked = new HashSet<>();
+        for (int i = 0; i < names.size(); i++)
+            if (chosen.contains(names.get(i)))
+                ticked.add(i + 1);
+        Dialog[] list = {null};
+        list[0] = PreviewDialog.menuBelow(getContext(), null, "Genres", labels.toArray(new String[0]),
+                                          icons.toArray(new String[0]), ticked, 0, false, true, n -> {
+            if (n == 0) {
+                genreAll[tab] = !genreAll[tab];
+                PreviewDialog.updateLabel(list[0], 0, genreAll[tab] ? "Match: All" : "Match: Any");
+            } else if (!chosen.add(names.get(n - 1))) {
+                chosen.remove(names.get(n - 1));
+            }
+            Set<Integer> now = new HashSet<>();
+            for (int i = 0; i < names.size(); i++)
+                if (chosen.contains(names.get(i)))
+                    now.add(i + 1);
+            PreviewDialog.updateChecks(list[0], now);
+            genres[tab] = TextUtils.join("|", chosen);
+            quietOrder.clear();
+            render("filter_genres");
+            refreshMenu.run();
+        });
+    }
+
+    /** Year: quick choices that hold titles (with counts), then From / To (`library-pages/24`). */
+    private void chooseYears(Runnable refreshMenu) {
+        List<Entry> pool = source();
+        List<Integer> present = LibraryFilters.years(pool);
+        List<String> labels = new ArrayList<>();
+        List<int[]> ranges = new ArrayList<>();
+        LibraryFilters.quickYears(present, labels, ranges);
+        for (int i = 0; i < labels.size(); i++) {
+            int[] range = ranges.get(i);
+            if (range != null && (range[0] > 0 || range[1] > 0))
+                labels.set(i, labels.get(i) + " · " + titles(LibraryFilters.count(pool, range[0], range[1])));
+        }
+        labels.add("— Your Own Range");
+        ranges.add(null);
+        labels.add("From · " + (yearFrom[tab] > 0 ? yearFrom[tab] : "Any"));
+        ranges.add(new int[] {-1, 0});
+        labels.add("To · " + (yearTo[tab] > 0 ? yearTo[tab] : "Any"));
+        ranges.add(new int[] {0, -1});
+        String[] icons = new String[labels.size()];
+        Set<Integer> ticked = new HashSet<>();
+        for (int i = 0; i < labels.size(); i++) {
+            int[] range = ranges.get(i);
+            icons[i] = range == null ? null : range[0] < 0 || range[1] < 0 ? "edit" : "year";
+            if (range != null && range[0] >= 0 && range[1] >= 0 && range[0] == yearFrom[tab] &&
+                range[1] == yearTo[tab])
+                ticked.add(i);
+        }
+        int fromRow = labels.size() - 2;
+        int toRow = labels.size() - 1;
+        Dialog yearMenu = PreviewDialog.menuBelow(getContext(), null, "Year", labels.toArray(new String[0]), icons,
+                                                  ticked, 1, true, n -> {
+            int[] range = ranges.get(n);
+            if (range == null)
+                return;
+            if (range[0] < 0 || range[1] < 0) {
+                boolean from = range[0] < 0;
+                LibraryFilters.chooseYear(getContext(), present, from ? "From" : "To",
+                                          from ? yearFrom[tab] : yearTo[tab], year -> {
+                    if (from)
+                        yearFrom[tab] = year;
+                    else
+                        yearTo[tab] = year;
+                    if (yearFrom[tab] > 0 && yearTo[tab] > 0 && yearTo[tab] < yearFrom[tab])
+                        yearTo[tab] = yearFrom[tab];
                     selectedYears[tab] = "";
-                    providers[tab] = "";
-                    render();
-                    return;
-                }
-                if (n == 2) {
-                    java.util.List<StreamingRepository.Provider> selected =
-                        StreamingRepository.selectedCatalogue(getContext());
-                    List<String> names = new ArrayList<>(), ids = new ArrayList<>();
-                    for (StreamingRepository.Provider provider : selected) {
-                        names.add(provider.name);
-                        ids.add(String.valueOf(provider.id));
-                    }
-                    Dialog menu = chooseMany("Streaming Services", names, ids, providers[tab], value -> {
-                        providers[tab] = value;
-                        quietOrder.clear();
-                        render();
-                    });
-                    for (int i = 0; i < selected.size(); i++)
-                        PreviewProviderIcons.bindProvider(
-                            menu, i, selected.get(i), "library.filters");
-                    return;
-                }
-                if (n == 0) {
-                    Set<String> values = new TreeSet<>();
-                    for (Entry e : source())
-                        values.addAll(PreviewGenres.parse(e.genres));
-                    PreviewGenres.choose(getContext(), values, PreviewGenres.parse(genres[tab]), selected -> {
-                        genres[tab] = TextUtils.join("|", selected);
-                        quietOrder.clear();
-                        render();
-                    });
-                    return;
-                }
-                TreeSet<String> values = new TreeSet<>(Collections.reverseOrder());
-                for (Entry e : source())
-                    if (e.year() > 0)
-                        values.add(String.valueOf(e.year()));
-                List<String> options = new ArrayList<>(values);
-                chooseMany("Year", options, options, selectedYears[tab], value -> {
-                    selectedYears[tab] = value;
-                    years[tab] = 0;
                     quietOrder.clear();
-                    render();
+                    render("filter_years");
+                    refreshMenu.run();
                 });
+                return;
+            }
+            yearFrom[tab] = range[0];
+            yearTo[tab] = range[1];
+            selectedYears[tab] = "";
+            years[tab] = 0;
+            quietOrder.clear();
+            render("filter_years");
+            refreshMenu.run();
+        });
+        // Left / Right on From or To steps through the years that hold titles, applied at once (sheet).
+        yearMenu.setOnKeyListener((d, key, event) -> {
+            if (key != KeyEvent.KEYCODE_DPAD_LEFT && key != KeyEvent.KEYCODE_DPAD_RIGHT)
+                return false;
+            View focused = yearMenu.getCurrentFocus();
+            if (focused == null || !(focused.getTag() instanceof Integer))
+                return false;
+            int row = (Integer)focused.getTag();
+            if (row != fromRow && row != toRow)
+                return false;
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return true;
+            int direction = key == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1;
+            if (row == fromRow) {
+                yearFrom[tab] = LibraryFilters.stepYear(present, yearFrom[tab], direction, true);
+                if (yearFrom[tab] > 0 && yearTo[tab] > 0 && yearTo[tab] < yearFrom[tab])
+                    yearTo[tab] = yearFrom[tab];
+            } else {
+                yearTo[tab] = LibraryFilters.stepYear(present, yearTo[tab], direction, false);
+                if (yearFrom[tab] > 0 && yearTo[tab] > 0 && yearTo[tab] < yearFrom[tab])
+                    yearFrom[tab] = yearTo[tab];
+            }
+            PreviewDialog.updateLabel(yearMenu, fromRow, "From · " + (yearFrom[tab] > 0 ? yearFrom[tab] : "Any"));
+            PreviewDialog.updateLabel(yearMenu, toRow, "To · " + (yearTo[tab] > 0 ? yearTo[tab] : "Any"));
+            selectedYears[tab] = "";
+            years[tab] = 0;
+            quietOrder.clear();
+            render("filter_years");
+            refreshMenu.run();
+            return true;
+        });
+    }
+
+    /** Your streaming services (several), with counts; ticks apply at once (RULES §9). */
+    private void chooseServices(Runnable refreshMenu) {
+        List<StreamingRepository.Provider> selected = StreamingRepository.selectedCatalogue(getContext());
+        List<String> labels = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
+        List<Entry> pool = source();
+        for (StreamingRepository.Provider provider : selected) {
+            int count = 0;
+            for (Entry e : pool)
+                if (StreamingRepository.knownOn(getContext(), e.media instanceof Movie ? "movie" : "tv", e.onlineId,
+                                                String.valueOf(provider.id)))
+                    count++;
+            labels.add(provider.name + " · " + titles(count));
+            ids.add(String.valueOf(provider.id));
+        }
+        Set<String> chosen = new LinkedHashSet<>(PreviewGenres.parse(providers[tab]));
+        Set<Integer> ticked = new HashSet<>();
+        for (int i = 0; i < ids.size(); i++)
+            if (chosen.contains(ids.get(i)))
+                ticked.add(i);
+        Dialog[] list = {null};
+        list[0] = PreviewDialog.menuBelow(getContext(), null, "Streaming services", labels.toArray(new String[0]),
+                                          new String[labels.size()], ticked, 0, false, true, n -> {
+            if (!chosen.add(ids.get(n)))
+                chosen.remove(ids.get(n));
+            Set<Integer> now = new HashSet<>();
+            for (int i = 0; i < ids.size(); i++)
+                if (chosen.contains(ids.get(i)))
+                    now.add(i);
+            // Ticked services glide up under Selected, A–Z (RULES §9; mock-up library-pages/24).
+            PreviewDialog.updateChecksSelectedFirst(list[0], now, labels.toArray(new String[0]));
+            providers[tab] = TextUtils.join("|", chosen);
+            quietOrder.clear();
+            render("filter_services");
+            refreshMenu.run();
+        });
+        for (int i = 0; i < selected.size(); i++)
+            PreviewProviderIcons.bindProvider(list[0], i, selected.get(i), "library.filters");
+        if (!ticked.isEmpty())
+            PreviewDialog.updateChecksSelectedFirst(list[0], ticked, labels.toArray(new String[0]));
+    }
+
+    /** Customise page: the floating side panel on the right (sheet), for Movies, TV Shows and your own page. */
+    private void customisePage() {
+        if (customLibrary != null) {
+            if (customEdit != null)
+                customEdit.run();
+            return;
+        }
+        LibraryCustomisePanel.show(getContext(), libraryHost(null, null));
+    }
+
+    /** What the Customise page panel changes on this page. {@code changed}/{@code delete} serve your own page. */
+    LibraryCustomisePanel.Host libraryHost(Runnable changed, Runnable delete) {
+        return new LibraryCustomisePanel.Host() {
+            public CustomLibraryPage page() {
+                return customLibrary;
+            }
+
+            public Snapshot snapshot() {
+                return snapshot;
+            }
+
+            public int show() {
+                return watchedFilter[tab];
+            }
+
+            public void setShow(int show) {
+                watchedFilter[tab] = show;
+                quietOrder.clear();
+                render("customise_show");
+            }
+
+            public boolean list() {
+                return listMode[tab];
+            }
+
+            public void setList(boolean list) {
+                setListMode(list);
+            }
+
+            public String sort() {
+                return sortKey();
+            }
+
+            public void setSort(String key) {
+                applySort(key);
+            }
+
+            public boolean ascending() {
+                return sortAscending();
+            }
+
+            public void setAscending(boolean value) {
+                setOrder(value);
+            }
+
+            public void pageChanged() {
+                if (changed != null)
+                    changed.run();
+                render("customise_page");
+            }
+
+            public void deletePage() {
+                if (delete != null)
+                    delete.run();
+            }
+        };
+    }
+
+    /**
+     * Long-press (or Menu) on a poster (`library-pages/30`): beside the poster, an icon each, Playback · Library ·
+     * Files & Media; no "More info" (OK opens Details), no Restart on an unstarted title.
+     */
+    private void libraryMenu(Entry e, View anchor) {
+        List<String> labels = new ArrayList<>();
+        List<String> icons = new ArrayList<>();
+        List<Runnable> commands = new ArrayList<>();
+        boolean show = e.media instanceof Tvshow;
+        boolean watched = LibraryPageModel.watched(e);
+        if (heroDetails != null) {
+            Runnable details = heroDetails;
+            labels.add("Details");
+            icons.add("details");
+            commands.add(details);
+        }
+        labels.add("— Playback");
+        icons.add(null);
+        commands.add(null);
+        if (show) {
+            Entry next = nextEpisodes.get(((Tvshow)e.media).getTvshowId());
+            if (next != null && next.media instanceof Episode) {
+                Episode episode = (Episode)next.media;
+                labels.add("Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber());
+                icons.add("resume");
+                commands.add(() -> play(next, anchor));
+                Entry first = firstEpisode(e);
+                if (first != null) {
+                    labels.add("Play from the start");
+                    icons.add("history");
+                    commands.add(() -> playFromStart(first));
+                }
+            } else {
+                labels.add("Play");
+                icons.add("play");
+                commands.add(() -> play(e, anchor));
+            }
+        } else {
+            boolean resume = e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !watched;
+            labels.add(resume ? "Resume" : "Play");
+            icons.add(resume ? "resume" : "play");
+            commands.add(() -> play(e, anchor));
+        }
+        labels.add("— Library");
+        icons.add(null);
+        commands.add(null);
+        labels.add(watched ? (show ? "Mark show as unwatched" : "Mark as unwatched")
+                           : (show ? "Mark show as watched" : "Mark as watched"));
+        icons.add("check");
+        commands.add(() -> markWatched(e, !watched));
+        Video matchable = e.media instanceof Video ? (Video)e.media
+                          : firstEpisode(e) != null ? (Video)firstEpisode(e).media
+                                                    : null;
+        if (matchable != null) {
+            labels.add("Fix match");
+            icons.add("search");
+            commands.add(() -> adapter.openFixMatch(matchable));
+        }
+        labels.add("Remove from library");
+        icons.add("remove");
+        commands.add(() -> removeFromLibrary(e));
+        labels.add("— Files & Media");
+        icons.add(null);
+        commands.add(null);
+        labels.add(show ? "Delete all episode files" : "Delete file");
+        icons.add("delete");
+        commands.add(() -> deleteFiles(e));
+        PreviewDialog.menu(getContext(), anchor, displayName(e), labels.toArray(new String[0]),
+                           icons.toArray(new String[0]), -1, n -> {
+                               if (commands.get(n) != null)
+                                   commands.get(n).run();
+                           });
+    }
+
+    static final int HERO_FADE_MS = 450;
+
+    /** The hero as it looks now, for the cross-fade; null when it has no size yet. */
+    private android.graphics.drawable.BitmapDrawable snapshot(View hero) {
+        if (hero.getWidth() <= 0 || hero.getHeight() <= 0 || ((ViewGroup)hero).getChildCount() == 0)
+            return null;
+        android.graphics.Bitmap picture = android.graphics.Bitmap.createBitmap(
+            hero.getWidth(), hero.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
+        hero.draw(new Canvas(picture));
+        android.graphics.drawable.BitmapDrawable drawable =
+            new android.graphics.drawable.BitmapDrawable(getResources(), picture);
+        drawable.setBounds(0, 0, hero.getWidth(), hero.getHeight());
+        return drawable;
+    }
+
+    /**
+     * The changing hero (page sheet HOME.md; owner §11): the frame stays still while the old picture fades out over the
+     * new one (about 450 ms), the new one drifting in slightly; the text follows just after. Never an empty frame.
+     */
+    private void crossFade(LinearLayout hero, PreviewFeaturedCard incoming, android.graphics.drawable.BitmapDrawable
+                           outgoing, int direction) {
+        hero.getOverlay().add(outgoing);
+        incoming.setTranslationX(dp(10) * direction);
+        incoming.animate().translationX(0).setDuration(HERO_FADE_MS).start();
+        android.animation.ValueAnimator fade = android.animation.ValueAnimator.ofInt(255, 0);
+        fade.setDuration(HERO_FADE_MS);
+        fade.addUpdateListener(step -> outgoing.setAlpha((int)step.getAnimatedValue()));
+        fade.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                hero.getOverlay().remove(outgoing);
+                outgoing.getBitmap().recycle();
+            }
+        });
+        fade.start();
+    }
+
+    /** "Play", "Resume · 42 min left" or "Resume S1 E5 · 16 min left" (RULES §6 wording). */
+    String heroPlayLabel(Entry e) {
+        Entry next = e.media instanceof Tvshow ? nextEpisodes.get(((Tvshow)e.media).getTvshowId()) : null;
+        if (next != null && next.media instanceof Episode) {
+            Episode episode = (Episode)next.media;
+            String where = "Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber();
+            long left = episode.getDurationMs() - episode.getResumeMs();
+            return episode.getResumeMs() > 0 && left > 0 ? where + " · " + LibraryPageModel.duration(left) + " left"
+                                                        : where;
+        }
+        if (e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !LibraryPageModel.watched(e)) {
+            Video video = (Video)e.media;
+            long left = video.getDurationMs() - video.getResumeMs();
+            return left > 0 ? "Resume · " + LibraryPageModel.duration(left) + " left" : "Resume";
+        }
+        return "Play";
+    }
+
+    /**
+     * The hero's More: beside the button, Details first (OK on the hero plays), then the library menu's Library and
+     * Files & Media items.
+     */
+    private void heroMenu(Entry e, View anchor) {
+        heroDetails = () -> open(e, anchor);
+        libraryMenu(e, anchor);
+        heroDetails = null;
+    }
+
+    /** Set only while the hero's More builds its menu: adds Details at the top. */
+    private Runnable heroDetails;
+
+    private Entry firstEpisode(Entry show) {
+        Entry first = null;
+        for (Entry ep : snapshot.episodes) {
+            if (ep.show != show.show || !(ep.media instanceof Episode))
+                continue;
+            Episode episode = (Episode)ep.media;
+            if (first == null || episode.getSeasonNumber() < ((Episode)first.media).getSeasonNumber() ||
+                episode.getSeasonNumber() == ((Episode)first.media).getSeasonNumber() &&
+                    episode.getEpisodeNumber() < ((Episode)first.media).getEpisodeNumber())
+                first = ep;
+        }
+        return first;
+    }
+
+    private void playFromStart(Entry episode) {
+        if (episode.media instanceof Video && getContext() instanceof Activity)
+            PlayUtils.startVideo((Activity)getContext(), (Video)episode.media, PlayerActivity.RESUME_NO, false, -1,
+                                 null, -1);
+    }
+
+    /** Mark as watched: in place, with an Undo notice; caption and tick update (sheet). */
+    private void markWatched(Entry e, boolean watched) {
+        LibraryActions.markWatched(getContext(), e.media, watched);
+        UndoNotice.show(getContext(), watched ? "Marked as watched" : "Marked as unwatched", () -> {
+            LibraryActions.markWatched(getContext(), e.media, !watched);
+            requestLibraryRefresh();
+        });
+        requestLibraryRefresh();
+    }
+
+    /** Remove from library: the poster leaves, with an Undo notice; the file stays. */
+    private void removeFromLibrary(Entry e) {
+        LibraryActions.removeFromLibrary(getContext(), e.media, true);
+        removedKeys.add(e.key());
+        UndoNotice.show(getContext(), displayName(e) + " left the library", () -> {
+            removedKeys.remove(e.key());
+            LibraryActions.removeFromLibrary(getContext(), e.media, false);
+            requestLibraryRefresh();
+        });
+        requestLibraryRefresh();
+    }
+
+    /** Delete file(s): the delete warning, "Keep file" focused first (RULES §7b); then the files go. */
+    private void deleteFiles(Entry e) {
+        boolean show = e.media instanceof Tvshow;
+        PreviewDialog.warning(
+            getContext(), show ? "Delete every episode of " + displayName(e) + "?" : "Delete " + displayName(e) + "?",
+            show ? "Every episode file is deleted from its drive or server. This can't be undone."
+                 : "The file is deleted from its drive or server. This can't be undone.",
+            show ? "Keep files" : "Keep file", show ? "Delete all episode files" : "Delete file",
+            () -> {
+                List<Uri> files = LibraryActions.files(getContext(), e.media);
+                if (files.isEmpty() || !(getContext() instanceof Activity))
+                    return;
+                com.archos.mediacenter.video.browser.Delete delete = new com.archos.mediacenter.video.browser.Delete(
+                    new com.archos.mediacenter.video.browser.Delete.DeleteListener() {
+                        public void onVideoFileRemoved(Uri videoFile, boolean askForFolderRemoval,
+                                                       Uri folderToDelete) {
+                            requestLibraryRefresh();
+                        }
+
+                        public void onDeleteVideoFailed(Uri videoFile) {
+                            PreviewNotice.show(getContext(), "Couldn't delete the file", true);
+                        }
+
+                        public void onFolderRemoved(Uri folder) {
+                        }
+
+                        public void onDeleteSuccess() {
+                            requestLibraryRefresh();
+                        }
+                    }, getContext());
+                if (files.size() == 1)
+                    delete.startDeleteProcess(files.get(0));
+                else
+                    delete.startMultipleDeleteProcess(files);
             });
     }
 
-    private Dialog chooseMany(String title, List<String> names, List<String> values, String saved,
-                                          Consumer<String> accept) {
-        Set<String> selected = PreviewGenres.parse(saved);
-        List<String> labels = new ArrayList<>(names);
-        labels.add("Clear selection");
-        labels.add("Done");
-        Set<Integer> checks = new HashSet<>();
-        for (int i = 0; i < values.size(); i++)
-            if (selected.contains(values.get(i)))
-                checks.add(i);
-        Dialog[] dialog = {null};
-        dialog[0] = PreviewDialog.choose(getContext(), title, labels.toArray(new String[0]), -1, checks, false, n -> {
-            if (n == values.size() + 1) {
-                dialog[0].dismiss();
-                accept.accept(TextUtils.join("|", selected));
-                return;
-            }
-            if (n == values.size())
-                selected.clear();
-            else if (!selected.add(values.get(n)))
-                selected.remove(values.get(n));
-            checks.clear();
-            for (int i = 0; i < values.size(); i++)
-                if (selected.contains(values.get(i)))
-                    checks.add(i);
-            PreviewDialog.updateChecks(dialog[0], checks);
-        });
-        return dialog[0];
+    /** The library changed underneath: reload the snapshot (the page refreshes as it arrives). */
+    private void requestLibraryRefresh() {
+        getContext().getContentResolver().notifyChange(
+            com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
+        render("library_action");
     }
 
     private TextView text(String value, int size) {
@@ -2254,13 +3033,11 @@ public final class PreviewPages extends FrameLayout {
             if (!heroWindow.containsKey(key)) {
                 PreviewFeaturedCard card =
                     new PreviewFeaturedCard(getContext(), entries, index,
-                                            () -> open(candidate, cardAnchor()), () -> play(candidate, cardAnchor()));
+                                            () -> open(candidate, cardAnchor()), () -> play(candidate, cardAnchor()),
+                                            button -> heroMenu(candidate, button), this::heroPlayLabel);
                 card.measure(
-                    View.MeasureSpec.makeMeasureSpec(
-                        Math.max(dp(320), list.getWidth() - list.getPaddingLeft() - list.getPaddingRight()),
-                        View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(Math.max(dp(280), getHeight() - list.getPaddingTop() - dp(110)),
-                                                     View.MeasureSpec.EXACTLY));
+                    View.MeasureSpec.makeMeasureSpec(TvLayout.heroWidth(getContext()), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(TvLayout.heroHeight(getContext()), View.MeasureSpec.EXACTLY));
                 heroWindow.put(key, card);
             }
         }
@@ -2329,8 +3106,13 @@ public final class PreviewPages extends FrameLayout {
         dialog.setOnCancelListener(d -> preferences.edit().putBoolean("supernova_welcome_dismissed", true).apply());
     }
 
+    static final int SPANS = 840;
+
+    /** One portrait poster size on every library page, seven a row (page sheet LIBRARY.md). */
+    static final int POSTERS_A_ROW = 7;
+
     private int libraryColumns() {
-        return TvLayout.gridColumns(getContext());
+        return POSTERS_A_ROW;
     }
 
     private TextView button(String name, Runnable action) {
@@ -2415,7 +3197,7 @@ public final class PreviewPages extends FrameLayout {
                 h.itemView.setTag(e.key());
                 h.itemView.setOnClickListener(v -> open(e, v));
                 h.itemView.setOnLongClickListener(v -> {
-                    contextMenu(e, v, false);
+                    libraryMenu(e, v);
                     return true;
                 });
                 return;
@@ -2425,6 +3207,20 @@ public final class PreviewPages extends FrameLayout {
                 h.presenter.bindEntry(h.card, e);
                 h.itemView.setTag(e.key());
                 h.itemView.setOnClickListener(v -> open(e, v));
+                if (tab == 1 || tab == 2) {
+                    // One card: artwork and a three-line caption (sheet; RULES §14).
+                    Entry next = e.media instanceof Tvshow ? nextEpisodes.get(((Tvshow)e.media).getTvshowId()) : null;
+                    PreviewCardPresenter.bindLibraryCaption(
+                        h.card, LibraryPageModel.secondLine(e, next),
+                        LibraryPageModel.thirdLine(getContext(), columns[tab], sortKey(), e),
+                        LibraryPageModel.progress(e, next), LibraryPageModel.watched(e));
+                    placeInRow(h.itemView, p);
+                    h.itemView.setOnLongClickListener(v -> {
+                        libraryMenu(e, v);
+                        return true;
+                    });
+                    return;
+                }
                 h.itemView.setOnLongClickListener(v -> {
                     contextMenu(e, v, false);
                     return true;
@@ -2441,6 +3237,9 @@ public final class PreviewPages extends FrameLayout {
                     return;
                 }
             }
+            // Changing hero (HOME.md): keep a picture of the outgoing one to fade out over the new one.
+            android.graphics.drawable.BitmapDrawable outgoing =
+                tab == 0 && c.type == HERO && featuredDirection != 0 && motionAllowed() ? snapshot(v) : null;
             v.removeAllViews();
             v.setFocusable(false);
             v.setOnClickListener(null);
@@ -2464,26 +3263,48 @@ public final class PreviewPages extends FrameLayout {
                 v.setLayoutParams(new RecyclerView.LayoutParams(
                     -1, tab == 0 ? dp(244) : android.view.ViewGroup.LayoutParams.WRAP_CONTENT));
                 if (tab == 0) {
-                    int heroHeight = Math.max(dp(280), getHeight() - list.getPaddingTop() - dp(110));
+                    // H1 (owner's 0.158 review): one hero size and place on Home and Details, 1776 x 820 at 1080p,
+                    // its top under the top bar at the same height as Details' card. H2: the dots under it.
+                    int cardHeight = TvLayout.heroHeight(getContext());
+                    int above = Math.max(0, TvLayout.heroTop(getContext()) - list.getPaddingTop());
+                    int dotsHeight = dp(18);
+                    int heroHeight = above + cardHeight + dp(4);
                     v.setMinimumHeight(heroHeight);
                     v.setLayoutParams(new RecyclerView.LayoutParams(-1, heroHeight));
-                    v.setPadding(0, dp(12), 0, dp(18));
+                    v.setPadding(0, above, 0, 0);
+                    v.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
                     PreviewFeaturedCard featured = preparedHero(e, v);
-                    v.addView(featured, new LinearLayout.LayoutParams(-1, -1));
+                    LinearLayout.LayoutParams cardSize =
+                        new LinearLayout.LayoutParams(TvLayout.heroWidth(getContext()), cardHeight);
+                    cardSize.gravity = Gravity.CENTER_HORIZONTAL;
+                    v.addView(featured, cardSize);
+                    // The dots sit at the hero's foot, centred, so the hero keeps its size and the row still peeks.
+                    List<Entry> heroes = featuredCandidates();
+                    if (featuredIndicators == null)
+                        featuredIndicators = new PreviewFeaturedIndicators(getContext());
+                    if (featuredIndicators.getParent() instanceof ViewGroup)
+                        ((ViewGroup) featuredIndicators.getParent()).removeView(featuredIndicators);
+                    LinearLayout.LayoutParams dotsAt = new LinearLayout.LayoutParams(-1, dotsHeight);
+                    dotsAt.topMargin = -dotsHeight - dp(6);
+                    v.addView(featuredIndicators, dotsAt);
+                    featuredIndicators.setVisibility(heroes.size() > 1 ? View.VISIBLE : View.INVISIBLE);
+                    if (!heroes.isEmpty())
+                        featuredIndicators.setPosition(heroes.size(), Math.floorMod(featuredIndex, heroes.size()));
                     v.animate().cancel();
                     v.setAlpha(1f);
                     v.setTranslationX(0);
-                    if (featuredDirection != 0 && motionAllowed()) {
-                        v.setTranslationX(dp(36) * featuredDirection);
-                        v.setAlpha(1f);
-                        v.animate().translationX(0).setDuration(220).start();
-                        featuredDirection = 0;
+                    if (outgoing != null) {
+                        crossFade(v, featured, outgoing, featuredDirection);
                     }
+                    featuredDirection = 0;
                 } else {
-                    if (customLibrary != null)
-                        LibraryPageHeader.add(v, c.title, snapshot, customLibrary.entries(snapshot));
-                    else
-                        LibraryPageHeader.add(v, c.title, snapshot, tab == 2);
+                    // No page title and no statistics row on a library page (sheet; the top bar says where you
+                    // are, the figures moved to Files › Your Library).
+                    v.setPadding(0, 0, 0, 0);
+                    v.setMinimumHeight(0);
+                    // One pixel, not zero: RecyclerView's scroll estimate skips a zero-height first item and would
+                    // report the page as scrolled at its top (the top bar's fade showing on arrival).
+                    v.setLayoutParams(new RecyclerView.LayoutParams(-1, 1));
                 }
             } else if (c.type == PLACEHOLDERS) {
                 v.setPadding(0, 0, 0, dp(10));
@@ -2538,72 +3359,15 @@ public final class PreviewPages extends FrameLayout {
                 v.setPadding(0, dp(12), 0, dp(12));
             } else if (c.type == HEADER) {
                 if (Boolean.TRUE.equals(c.value)) {
-                    v.setOrientation(LinearLayout.VERTICAL);
-                    v.setPadding(0, dp(TOOLBAR_TOP_GAP_DP), 0, dp(18));
-                    v.setTag("library.toolbar.row");
-                    PreviewToolbar controls = new PreviewToolbar(getContext(), true);
-                    controls.addView(button("Filters" + (genres[tab].isEmpty() ? "" : ": " + genres[tab]) +
-                                                (years[tab] == 0 ? "" : " · " + years[tab]) + "  ▾",
-                                            () -> filter()));
-                    String order = columns[tab].sortColumn != null
-                                       ? (columns[tab].ascending ? "Ascending" : "Descending")
-                                   : sorts[tab] == 1 ? (ascending[tab] ? "A → Z" : "Z → A")
-                                   : sorts[tab] >= 3 ? (ascending[tab] ? "Lowest Ranked First" : "Highest Ranked First")
-                                                     : (ascending[tab] ? "Oldest First" : "Newest First");
-                    for (TextView control : new TextView[] {
-                             button("Sort: " +
-                                        (columns[tab].sortColumn != null ? columns[tab].sortColumn.label
-                                                                         : sortLabels()[sorts[tab]]) +
-                                        "  ▾",
-                                    () -> sort()),
-                             button(order, () -> {
-                                 quietOrder.clear();
-                                 boolean value =
-                                     !(columns[tab].sortColumn == null ? ascending[tab] : columns[tab].ascending);
-                                 ascending[tab] = value;
-                                 columns[tab].setAscending(value);
-                                 render();
-                             }), button(listMode[tab] ? "Grid View" : "List View", () -> {
-                                 listMode[tab] = !listMode[tab];
-                                 render();
-                             })}) {
-                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
-                        lp.leftMargin = dp(8);
-                        controls.addView(control, lp);
-                    }
-                    if (listMode[tab]) {
-                        TextView chooser = button("Columns", () -> columns[tab].choose(this::refreshColumns));
-                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -2);
-                        lp.leftMargin = dp(8);
-                        controls.addView(chooser, lp);
-                    }
-                    String[] controlIds = {"filters", "sort", "order", "view", "columns"};
-                    for (int i = 0; i < controls.getChildCount(); i++) {
-                        View control = controls.getChildAt(i);
-                        control.setTag(customLibrary == null ? "control:" + i : "custom.control." + controlIds[i]);
-                        Diagnostics.semantic(control, "library.toolbar." +
-                                                                                                   controlIds[i]);
-                    }
-                    if (customLibrary != null) {
-                        TextView edit = button("Edit Library", () -> customEdit.run());
-                        edit.setTag("custom.control.edit");
-                        v.addView(PreviewToolbar.withTrailingAction(controls, edit));
-                    } else
-                        v.addView(PreviewToolbar.viewport(controls));
-                    View divider = new View(getContext());
-                    divider.setTag("library.toolbar.divider");
-                    divider.setBackgroundColor(0x557f8996);
-                    LinearLayout.LayoutParams dividerSize = new LinearLayout.LayoutParams(-1, dp(1));
-                    dividerSize.topMargin = dp(12);
-                    v.addView(divider, dividerSize);
-                    if (listMode[tab])
-                        v.addView(columns[tab].header(this::refreshColumns));
+                    bindLibraryToolbar(v, this::refreshColumns);
                 } else {
                     TextView title = text(c.title, tab == 3 && c.title.equals("Network & files") ? 30 : 19);
                     title.setTextColor(tab == 0 ? Color.WHITE : 0xff9ed4f7);
                     if (tab == 0 && !c.headingIcon.isEmpty())
                         MenuFoundation.icon(title, c.headingIcon);
                     v.addView(title);
+                    if (tab == 0 && !c.homeRowId.isEmpty())
+                        addRowControls(v, c.homeRowId);
                 }
             } else if (c.type == RAIL) {
                 v.setPadding(0, 0, 0, dp(10));
@@ -2626,7 +3390,9 @@ public final class PreviewPages extends FrameLayout {
                 rowSize.leftMargin = -list.getPaddingLeft();
                 rowSize.rightMargin = -list.getPaddingRight();
                 v.setLayoutParams(rowSize);
-                v.addView(rail, new LinearLayout.LayoutParams(-1, dp(125)));
+                // Room for the focused card's 10% growth above and below (RULES §3: never crowd a heading).
+                v.addView(rail, new LinearLayout.LayoutParams(
+                    -1, dp(PreviewCardPresenter.Card.ROW_PICTURE_DP + PreviewCardPresenter.Card.ROW_CAPTION_DP + 20)));
             } else if (c.type == STORAGE) {
                 Box b = (Box)c.value;
                 v.setPadding(dp(12), dp(12), dp(12), dp(12));
@@ -2799,8 +3565,15 @@ public final class PreviewPages extends FrameLayout {
 
         /** The redesigned Files page (step 8 of 0.157); the old screens still open from it. */
         private void filesLayout(LinearLayout container) {
-            container.setLayoutParams(new RecyclerView.LayoutParams(
-                -1, Math.max(dp(360), getHeight() - list.getPaddingTop() - list.getPaddingBottom())));
+            // Files fills the page itself, not a cell inside the old page's padding (F3): the old list's 28 dp each
+            // side is cancelled here and Files keeps the same visible margin on its own, without clipping.
+            RecyclerView.LayoutParams whole = new RecyclerView.LayoutParams(
+                -1, Math.max(dp(360), getHeight() - list.getPaddingTop() - list.getPaddingBottom()));
+            whole.leftMargin = -list.getPaddingLeft();
+            whole.rightMargin = -list.getPaddingRight();
+            container.setLayoutParams(whole);
+            container.setClipChildren(false);
+            container.setClipToPadding(false);
             if (filesPage == null)
                 filesPage = new com.archos.mediacenter.video.leanback.files.FilesPage(getContext());
             if (filesPage.getParent() instanceof ViewGroup)
@@ -2824,43 +3597,43 @@ public final class PreviewPages extends FrameLayout {
             filesPage.setDevices(devices, device -> {
                 for (Box box : files)
                     if (device.name.equals(box.getName()) || !device.removable && box.getBoxId() == Box.ID.FOLDERS) {
-                        click.open(new Presenter.ViewHolder(container), box);
+                        Uri root = storageRoot(box);
+                        // A drive without a folder to open stays where it is: never the old browser.
+                        if (root == null)
+                            return;
+                        // Browsing stays in Files (page sheet, Browsing a drive).
+                        filesPage.browse(root, device.name, (file, inLibrary) -> playFile(file, inLibrary));
                         return;
                     }
             });
             filesPage.setConnections(
-                withReachability(
-                    com.archos.mediacenter.video.leanback.files.FilesPageData.connections(librarySources, media)),
-                new com.archos.mediacenter.video.leanback.files.FilesPage.ConnectionActions() {
-                    @Override public void open(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("library");
-                    }
-
-                    @Override public void tryAgain(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("library");
-                    }
-
-                    @Override public void edit(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("saved");
-                    }
-
-                    @Override public void remove(com.archos.mediacenter.video.leanback.files.FilesPage.Connection c) {
-                        networkSection("saved");
-                    }
-
-                    @Override public void add() {
-                        networkSection("add");
-                    }
-                });
+                com.archos.mediacenter.video.leanback.files.FilesPageData.byServer(withReachability(
+                    com.archos.mediacenter.video.leanback.files.FilesPageData.connections(
+                        getContext(), librarySources, media))),
+                // Every connection action now happens on the Files page itself (F31–F35, F40): no route leads to
+                // NOVA's network screens or the three-panel browser.
+                null);
             filesPage.setSources(
                 com.archos.mediacenter.video.leanback.files.FilesPageData.sources(devices, librarySources),
                 source -> {
                     if (source.local)
                         PreviewLibraryScan.request(getContext());
                     else
-                        com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), source.root);
+                        for (Uri folder : source.roots)
+                            com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext(), folder);
                 });
             filesPage.setMedia(media);
+            filesPage.setPlayer((file, inLibrary) -> playFile(file, inLibrary));
+            filesPage.setFolderActions(new com.archos.mediacenter.video.leanback.files.FolderBrowser.Actions() {
+                @Override public void details(Base item) {
+                    click.open(new Presenter.ViewHolder(container), item);
+                }
+
+                @Override public void fixMatch(Base item) {
+                    openFixMatch(item);
+                }
+            });
+            filesPage.setStats(libraryStats());
             filesPage.setScanActions(() -> PreviewLibraryScan.request(getContext()),
                                      () -> PreviewLibraryScan.stop(getContext()));
             container.addView(filesPage, new LinearLayout.LayoutParams(-1, -1));
@@ -2883,6 +3656,55 @@ public final class PreviewPages extends FrameLayout {
             }, "FilesUnreadable").start();
         }
 
+        /** Files › Fix match for a title (the approved page under the top bar; Back returns here). */
+        private void openFixMatch(Base item) {
+            if (!(item instanceof Video))
+                return;
+            Intent intent = new Intent(
+                getContext(), com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.class);
+            intent.putExtra(com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.EXTRA_VIDEO,
+                            (Video)item);
+            getContext().startActivity(intent);
+        }
+
+        /** A storage's top folder: its own path, or the device's shared storage for "This device". */
+        private Uri storageRoot(Box box) {
+            String path = box.getPath();
+            if (path != null && !path.isEmpty())
+                return Uri.fromFile(new java.io.File(path));
+            if (box.getBoxId() == Box.ID.FOLDERS)
+                return Uri.fromFile(android.os.Environment.getExternalStorageDirectory());
+            return null;
+        }
+
+        /** Plays a file chosen in the folder grid, from the library entry when it has one. */
+        private void playFile(com.archos.filecorelibrary.MetaFile2 file, Base inLibrary) {
+            Video video = inLibrary instanceof Video
+                ? (Video)inLibrary
+                : new NonIndexedVideo(file.getStreamingUri(), file.getUri(), file.getName(), null);
+            PlayUtils.startVideo((Activity)getContext(), video, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+        }
+
+        /** Files › Your Library: one line per video in the library snapshot (mock-up network-files-tabs/44). */
+        private com.archos.mediacenter.video.leanback.files.LibraryStats libraryStats() {
+            List<com.archos.mediacenter.video.leanback.files.LibraryStats.Item> items = new ArrayList<>();
+            for (Entry entry : snapshot.technical) {
+                if (!(entry.media instanceof Video))
+                    continue;
+                Video video = (Video)entry.media;
+                String show = video instanceof Episode ? ((Episode)video).getShowName() : null;
+                boolean uhd = video.getMeasuredHeight() >= 1800 || video.getMeasuredWidth() >= 3800;
+                String range = video.getPreviewDynamicRange();
+                boolean hdr = !range.isEmpty() && !"SDR".equalsIgnoreCase(range);
+                items.add(new com.archos.mediacenter.video.leanback.files.LibraryStats.Item(
+                    show == null || show.isEmpty() ? (video instanceof Episode ? "Unknown" : null) : show,
+                    Math.max(0, video.getSize()), video.isLocalFile(), video.getDurationMs(), video.getResumeMs(),
+                    video.isWatched(), uhd, hdr, entry.added, Math.max(video.getMeasuredHeight(), 0)));
+            }
+            long monthStart = com.archos.mediacenter.video.leanback.files.FilesPage.monthStart().getTime() / 1000L;
+            return com.archos.mediacenter.video.leanback.files.LibraryStats.of(items, monthStart);
+        }
+
         /** Adds what the last check found (and when each was last seen); starts a check at most once a minute. */
         private List<com.archos.mediacenter.video.leanback.files.FilesPage.Connection> withReachability(
             List<com.archos.mediacenter.video.leanback.files.FilesPage.Connection> plain) {
@@ -2893,7 +3715,7 @@ public final class PreviewPages extends FrameLayout {
                 long seen = c.root == null ? 0
                     : com.archos.mediacenter.video.leanback.files.ConnectionCheck.lastSeen(getContext(), c.root);
                 known.add(new com.archos.mediacenter.video.leanback.files.FilesPage.Connection(
-                    c.name, c.root, state, c.videos, seen));
+                    c.name, c.root, state, c.videos, seen, c.account));
                 if (c.root != null)
                     roots.add(c.root);
             }
@@ -2941,7 +3763,7 @@ public final class PreviewPages extends FrameLayout {
 
     class RailAdapter extends RecyclerView.Adapter<Holder> {
         final List<Entry> entries;
-        final PreviewCardPresenter pr = new PreviewCardPresenter(PreviewCardPresenter.Style.CONTINUE);
+        final PreviewCardPresenter pr = new PreviewCardPresenter(PreviewCardPresenter.Style.ROW);
         final boolean resume;
 
         RailAdapter(List<Entry> e, boolean resume) {
@@ -2987,7 +3809,10 @@ public final class PreviewPages extends FrameLayout {
             Holder h = new Holder(card.view);
             h.card = card;
             h.presenter = pr;
-            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(dp(172), dp(105));
+            // One row card size: 400 × 225 at 1080p plus the caption box, 24 px gap (RULES §14).
+            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(
+                dp(PreviewCardPresenter.Card.ROW_WIDTH_DP),
+                dp(PreviewCardPresenter.Card.ROW_PICTURE_DP + PreviewCardPresenter.Card.ROW_CAPTION_DP));
             lp.rightMargin = dp(12);
             h.itemView.setLayoutParams(lp);
             return h;
@@ -2996,6 +3821,7 @@ public final class PreviewPages extends FrameLayout {
         public void onBindViewHolder(Holder h, int p) {
             Entry e = entries.get(p);
             pr.bindEntry(h.card, e);
+            PreviewCardPresenter.bindRowCaption(h.card, LibraryPageModel.rowLine(e), LibraryPageModel.rowProgress(e));
             h.itemView.setTag(e.key());
             h.itemView.setOnClickListener(v -> {
                 if (resume)
@@ -3003,8 +3829,9 @@ public final class PreviewPages extends FrameLayout {
                 else
                     open(e, v);
             });
+            // The library long-press menu beside the card (HOME.md, LIBRARY.md).
             h.itemView.setOnLongClickListener(v -> {
-                contextMenu(e, v, resume);
+                libraryMenu(e, v);
                 return true;
             });
         }

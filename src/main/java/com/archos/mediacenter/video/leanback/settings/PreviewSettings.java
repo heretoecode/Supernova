@@ -900,7 +900,7 @@ public final class PreviewSettings {
             return false;
         View workspace = root.findViewWithTag("settings.workspace");
         if (workspace instanceof SettingsWorkspace) {
-            ((SettingsWorkspace) workspace).open(6, "Backup & restore");
+            ((SettingsWorkspace) workspace).open(5, "Backup & restore");
             ((SettingsWorkspace) workspace).enter();
             return true;
         }

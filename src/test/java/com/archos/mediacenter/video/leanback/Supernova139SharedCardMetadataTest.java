@@ -78,7 +78,7 @@ public class Supernova139SharedCardMetadataTest {
             TextView meta = ReflectionHelpers.getField(page, "meta");
             String header = meta.getText().toString();
             assertFalse("0.154: scores stay in the Details tab, not the hero", header.contains("TMDB"));
-            assertTrue(header.startsWith("2024 · 2h"));
+            assertTrue(header.startsWith("2024 · 2 h"));
             assertFalse(header.contains("votes"));
             assertFalse(header.contains("Fantasy"));
             assertEquals(1, meta.getMaxLines());

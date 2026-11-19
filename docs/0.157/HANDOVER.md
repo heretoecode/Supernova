@@ -73,15 +73,39 @@ Roadmap picture: `docs/0.157/board/`. Design rules: `docs/design/RULES.md`. Owne
   row, the rest of R5 (title block, seek preview card, skip button in the
   control row, track names and pills, subtitle lists stacked on the panel).
 
+## Now: 0.157.1 (owner, 16 Nov): 0.157 + the review fixes; code 1571 (codes are version × 10 from now)
+- **Signed 16 Nov:** conformance 43952836182 on `5f5f9f6` green; signing run 43960203498; APK `Supernova_0.157.1.apk` in
+  artifact `supernova-0157-signed-qa` (kept 14 days). Next: the owner installs it on the Shield and reviews.
+
+## Fix 0.157 against the approved designs (owner, 16 Nov)
+- Source: `docs/0.157/REVIEW_0157.md` on `claude/project-discussion-planning-fccq9a` (26 Shield problems; an audit
+  adds more). Order: shared pieces first, then pages. Each item is done only when rendered with
+  `preview-renders.yml` and compared with its mock-up; note the render beside the item. Sign when all ticked and green.
+- Discussion branch merged (REVIEW_0157.md in `1fe324b`). Progress per item: the "Fix progress" section at the end of
+  REVIEW_0157.md. Render test classes: `Review0157RenderTest` (Files in the app frame),
+  `settings/Review0157SettingsRenderTest`; request file `.github/diagnostics/preview-request.json` (pushing it runs
+  `preview-renders.yml`; PNGs land on branch `previews/claude`).
+- Done (code; ✓ = checked in a render, see REVIEW_0157 "Fix progress"): charcoal page frame ✓, top-bar focus
+  ink ✓, Settings shared list ✓, Settings flat ✓ and rows on their centre line, no blue switches, Playback Settings
+  rework ✓ (tabs, chips, plain Playback list, sized per tab, headings Title Case, For This Series at the bottom, series
+  format+skipping save row), track lists stacked on the panel, Files tab row ✓ / margins ✓ / USB icon ✓ / Your Library
+  tab / folder grid browser, Fix match page ✓ (renders `find-a-match`), Details tab v20 ✓ (three columns; tab row
+  without the old box pending render), portrait cast, Details hero flicker, Preparing playback logo space, seek
+  time card, chapter renumbering, player tab row, Episodes row text, centred chapter row.
+- In flight: renders of 66e9fa1 (`preview-renders.yml`), conformance run 43855741788 (on a200b34, older). Next:
+  check renders, then a conformance run on the latest commit, fix failures, record renders in REVIEW_0157, then
+  sign (owner approved signing for this build) and report the APK.
+- Open questions for the owner: QUESTIONS.md #10–#14.
+
 ## In flight (loop mode: owner asked for the rest of 0.157 unattended; decisions go in `QUESTIONS.md`)
 - **Version is 0.157 (157)** since `571224b`; builds now use **`supernova-0157-conformance.yml`** (the 0.156 one
   checks for 0.156 and will fail). **Run 43813823463** (0.157 conformance on `571224b`) **passed** (16 Nov ~06:45). **Final run 43817914116 on `3c3ffbf` passed**
   (16 Nov ~07:15): the candidate for signing. If later commits are made, run conformance again before signing. On
   failure: `report-test-failures.yml` with `run_id`; log via `curl -sL api.github.com/repos/heretoecode/Supernova/
   actions/jobs/<job>/logs`; fix, push, dispatch `supernova-0157-conformance.yml` again.
-- **Blocked on the owner: signing** (QUESTIONS.md #9). The signing gate only accepts 0.156; making 0.157 copies is a
-  signing-setup change, refused. When the owner allows it: copy `supernova-0156-qa.yml` and the two
-  `.github/signing/*0156*` files as 0157 (version strings and required classes only), then sign the green run.
+- **Signing (owner approved, 16 Nov):** 0.157 copies added in `bfca787` (`supernova-0157-qa.yml`,
+  `.github/signing/*0157*`; version strings only). Conformance **run 43839950017 on `bfca787`** passed; **signed by run 43846921936**
+  of `supernova-0157-qa.yml`. APK: artifact `supernova-0157-signed-qa` (`Supernova_0.157.apk`, kept 14 days).
 - Build-order items all coded except those skipped in QUESTIONS.md (#3 hidden grid, #4 memory cuts, #5 backup
   groups, #6 TV in Check matches, #7 Experimental translate, #8 chapter row (not approved)).
 - Release notes: in `assets/foundation/release-history.json` (current 0.157), from `RELEASE_NOTES_DRAFT.md`; About

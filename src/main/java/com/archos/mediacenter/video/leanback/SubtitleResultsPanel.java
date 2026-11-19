@@ -20,16 +20,18 @@ public final class SubtitleResultsPanel {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = p.panel();
         panel.setTag("subtitles.download");
-        p.header(panel, "Download Subtitles", dialog::cancel);
+        // PS11 (owner's photos, 18 Nov 2026): no "‹ Download Subtitles" header on a list (RULES §9); Back closes.
         TextView search = p.text("Search for subtitles...", 25);
         search.setTag("subtitles.download.search");
         search.setFocusable(true);
         search.setFocusableInTouchMode(true);
         search.setGravity(Gravity.CENTER_VERTICAL);
         search.setPadding(p.px(24), p.px(12), p.px(24), p.px(12));
-        search.setBackground(p.surface(0x00000000, 0xff5a7bd8, 19));
-        search.setTextColor(0xffb9c7e8);
+        // No blue outline: a plain row with its icon; focus is the white box with black text (RULES §3).
+        search.setBackground(SupernovaStyle.focusFill(context, SupernovaStyle.SMALL_BOX_RADIUS_DP));
+        search.setTextColor(SupernovaStyle.buttonContent());
         PreviewIcon.apply(search, "search", 24);
+        SupernovaStyle.tintIcons(search);
         panel.addView(search, new LinearLayout.LayoutParams(-1, p.px(75)));
         String[] query = {""};
         ScrollView scroll = new ScrollView(context);
@@ -48,6 +50,7 @@ public final class SubtitleResultsPanel {
             for (int i = 0; i < snapshot.size(); i++) {
                 OpenSubtitlesSearchResult item = snapshot.get(i);
                 String filename = safe(item.getFileName(), "Subtitle file"), language = language(item);
+                String shown = readable(filename);
                 if (!query[0].isEmpty() &&
                     !(filename + " " + language).toLowerCase(Locale.ROOT).contains(query[0].toLowerCase(Locale.ROOT)))
                     continue;
@@ -62,7 +65,7 @@ public final class SubtitleResultsPanel {
                 row.addView(flag, f);
                 LinearLayout copy = new LinearLayout(context);
                 copy.setOrientation(LinearLayout.VERTICAL);
-                TextView title = p.text(filename, 25);
+                TextView title = p.text(shown, 25);
                 title.setTypeface(null, Typeface.BOLD);
                 title.setSingleLine(true);
                 title.setEllipsize(TextUtils.TruncateAt.END);
@@ -75,7 +78,7 @@ public final class SubtitleResultsPanel {
                 copy.addView(metadata, new LinearLayout.LayoutParams(-1, -2));
                 row.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
                 row.addView(p.icon("download", 36));
-                row.setContentDescription(filename + ", " + language + ", Download");
+                row.setContentDescription(shown + ", " + language + ", Download");
                 row.setOnClickListener(v -> {
                     if (accepted[0])
                         return;
@@ -133,7 +136,6 @@ public final class SubtitleResultsPanel {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = p.panel();
         panel.setTag("subtitles.download.working");
-        p.header(panel, "Download Subtitles", dialog::cancel);
         LinearLayout status = new LinearLayout(context);
         status.setTag("subtitles.download.status");
         status.setGravity(Gravity.CENTER_VERTICAL);
@@ -194,6 +196,19 @@ public final class SubtitleResultsPanel {
         size.topMargin = top;
         line.setLayoutParams(size);
         return line;
+    }
+
+    /**
+     * A file name as words (PS11: no raw file names): "Show.Name.S01E02.1080p.WEB.srt" reads "Show Name S01E02
+     * 1080p WEB". The full name is still shown when a result is picked.
+     */
+    static String readable(String filename) {
+        String name = filename.trim();
+        int dot = name.lastIndexOf('.');
+        if (dot > 0 && name.length() - dot <= 5)
+            name = name.substring(0, dot);
+        name = name.replace('_', ' ').replace('.', ' ').replaceAll("\\s+", " ").trim();
+        return name.isEmpty() ? filename : name;
     }
 
     private static String safe(String value, String fallback) {

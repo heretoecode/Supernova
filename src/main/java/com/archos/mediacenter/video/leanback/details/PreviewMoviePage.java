@@ -29,13 +29,11 @@ import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
-import com.archos.mediacenter.video.leanback.LibraryHealthActivity;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import com.archos.mediacenter.video.player.PlayerActivity;
-import com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity;
 import com.archos.mediacenter.video.streaming.StreamingActionPresenter;
 import com.archos.mediacenter.video.streaming.StreamingActions;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
@@ -288,14 +286,8 @@ public final class PreviewMoviePage extends ScrollView {
         reading = new ScrollView(c) {
             @Override
             protected void onMeasure(int w, int h) {
+                // The Details tab runs about two screens and scrolls (v20): measured at its own height.
                 super.onMeasure(w, h);
-                if ("Details".equals(activeSection) && getChildCount() > 0)
-                    getChildAt(0).measure(MeasureSpec.makeMeasureSpec(
-                                              Math.max(1, getMeasuredWidth() - getPaddingLeft() - getPaddingRight()),
-                                              MeasureSpec.EXACTLY),
-                                          MeasureSpec.makeMeasureSpec(
-                                              Math.max(1, getMeasuredHeight() - getPaddingTop() - getPaddingBottom()),
-                                              MeasureSpec.EXACTLY));
             }
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -305,12 +297,15 @@ public final class PreviewMoviePage extends ScrollView {
             @Override
             protected void dispatchDraw(Canvas canvas) {
                 int saved = canvas.save();
-                canvas.clipRect(0, getScrollY(), getWidth(), getScrollY() + getHeight());
+                // Clipped above and below only: a grown card or its ring may reach past the sides (D6, RULES §1).
+                int side = getResources().getDisplayMetrics().widthPixels;
+                canvas.clipRect(-side, getScrollY(), getWidth() + side, getScrollY() + getHeight());
                 super.dispatchDraw(canvas);
                 canvas.restoreToCount(saved);
             }
         };
         reading.setTag("details.reading.overflow");
+        reading.setClipChildren(false);
         reading.setFillViewport(true);
         reading.setClipToPadding(false);
         reading.setSmoothScrollingEnabled(false);
@@ -346,10 +341,17 @@ public final class PreviewMoviePage extends ScrollView {
         int available = View.MeasureSpec.getSize(heightSpec);
         if (available > 0 && heroPage != null) {
             int viewport = Math.max(0, available - getPaddingTop() - getPaddingBottom());
-            int heroHeight = Math.max(dp(180), viewport - dp(90));
             boolean compact = viewport < dp(380);
             compactCard = compact;
-            heroPage.setPadding(0, dp(compact ? 12 : 24), 0, 0);
+            // H1 (owner's 0.158 review): the Home hero's size and place, 1776 x 820 at 1080p, its top at the same
+            // height as Home's, so going from the Home hero into Details the card stays put.
+            int heroTop = compact ? dp(12) : Math.max(0, TvLayout.heroTop(getContext()) - getPaddingTop());
+            int heroCard = compact ? Math.max(dp(160), viewport - dp(110)) : TvLayout.heroHeight(getContext());
+            int heroHeight = heroTop + heroCard + dp(12);
+            heroPage.setPadding(0, heroTop, 0, 0);
+            LinearLayout.LayoutParams cardSize = (LinearLayout.LayoutParams) detailsCard.getLayoutParams();
+            cardSize.width = compact ? -1 : TvLayout.heroWidth(getContext());
+            cardSize.gravity = Gravity.CENTER_HORIZONTAL;
             LinearLayout.LayoutParams tabs = (LinearLayout.LayoutParams)tabBar.getLayoutParams();
             tabs.topMargin = 0;
             int cardHeight = heroHeight - heroPage.getPaddingTop() - heroPage.getPaddingBottom() - dp(12);
@@ -501,6 +503,9 @@ public final class PreviewMoviePage extends ScrollView {
             tab.setContentDescription(label);
             // Approved global button style: tab icons follow the text colour (white at rest, black on the white focus box).
             SupernovaStyle.applyButton(tab, SupernovaStyle.Surface.STANDARD);
+            // The shared tab row (RULES §3; details-background/21): no box at rest, the white box when focused; the
+            // open tab's underline is drawn by the frame below the row.
+            tab.setBackground(null);
             if (label.equals("Details"))
                 tab.setMinWidth(Math.round(getResources().getDisplayMetrics().widthPixels * .143f));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, -1);
@@ -516,6 +521,7 @@ public final class PreviewMoviePage extends ScrollView {
             tab.setOnFocusChangeListener((v, focused) -> {
                 if (focused)
                     showSection(label, false);
+                post(this::paintSectionTabs);
                 sectionFrame.invalidate();
             });
             sectionTabs.add(tab);
@@ -525,6 +531,30 @@ public final class PreviewMoviePage extends ScrollView {
             View restore = tabBar.findViewWithTag(focusedTag);
             if (restore != null)
                 restore.requestFocus();
+        }
+    }
+
+    /**
+     * DT2 (owner, 18 Nov 2026), the 0.158 top bar's look: the white box with black text where the remote is; once
+     * focus goes down, the open tab keeps a soft grey box with a faded word; no underlines.
+     */
+    private void paintSectionTabs() {
+        boolean inRow = tabBar.hasFocus();
+        for (TextView tab : sectionTabs) {
+            boolean focused = tab.isFocused();
+            boolean open = ("section:" + activeSection).equals(tab.getTag()) && !inRow;
+            if (focused)
+                tab.setBackground(SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL,
+                                                         SupernovaStyle.SMALL_BOX_RADIUS_DP));
+            else if (open)
+                tab.setBackground(SupernovaStyle.rounded(getContext(), 0x26FFFFFF,
+                                                         SupernovaStyle.SMALL_BOX_RADIUS_DP));
+            else
+                tab.setBackground(null);
+            if (!focused)
+                tab.setTextColor(open ? 0xB8FFFFFF : Color.WHITE);
+            else
+                tab.setTextColor(SupernovaStyle.buttonContent());
         }
     }
 
@@ -559,6 +589,7 @@ public final class PreviewMoviePage extends ScrollView {
             switchSection(label, enter);
         } finally {
             switchingSection = false;
+            paintSectionTabs();
         }
     }
 
@@ -731,9 +762,16 @@ public final class PreviewMoviePage extends ScrollView {
                 return true;
         }
         if (tag.startsWith("section:")) {
+            // Details tab (v20; owner, 5 Nov): Down scrolls to cast and crew, Up scrolls back, one more Up leaves.
+            if (key == KeyEvent.KEYCODE_DPAD_UP && activeSection.equals("Details") && reading.getScrollY() > 0) {
+                reading.scrollTo(0, 0);
+                return true;
+            }
             if (key == KeyEvent.KEYCODE_DPAD_UP) {
                 focusPrimary();
                 scrollTo(0, 0);
+                // The taller Details tab can pull the page down again while focus settles: back to the top after.
+                post(() -> scrollTo(0, 0));
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -741,7 +779,13 @@ public final class PreviewMoviePage extends ScrollView {
                     int target = expandedScrollTarget();
                     int before = getScrollY();
                     scrollTo(0, target);
-                    if (before == getScrollY()) {
+                    int readingBefore = reading.getScrollY();
+                    if (before == getScrollY() && reading.getChildCount() > 0) {
+                        int end = Math.max(0, reading.getChildAt(0).getHeight() - reading.getHeight()
+                                              + reading.getPaddingTop() + reading.getPaddingBottom());
+                        reading.scrollTo(0, end);
+                    }
+                    if (before == getScrollY() && readingBefore == reading.getScrollY()) {
                         View reviews = findViewWithTag("details.reviews");
                         if (reviews != null)
                             reviews.requestFocus();
@@ -844,7 +888,8 @@ public final class PreviewMoviePage extends ScrollView {
         t.setPadding(dp(14), dp(9), dp(14), dp(9));
         t.setFocusable(true);
         t.setFocusableInTouchMode(true);
-        SupernovaStyle.applyButton(t, SupernovaStyle.Surface.STANDARD);
+        // Hero buttons sit on artwork: a dark box at about 72% at rest, not solid black (D13).
+        SupernovaStyle.applyArtworkButton(t);
         t.setOnClickListener(v -> run.run());
         return t;
     }
@@ -876,6 +921,7 @@ public final class PreviewMoviePage extends ScrollView {
         if (identity.equals(boundTitle))
             return;
         boundTitle = identity;
+        providerSignature = "";
         openedAt = SystemClock.elapsedRealtime();
         activeSection = "Details";
         scrollTo(0, 0);
@@ -1022,15 +1068,12 @@ public final class PreviewMoviePage extends ScrollView {
         renderDetails("information_refresh");
     }
 
-    /** Tagline when TMDb has one (one line), otherwise the synopsis in two lines (one on a compact card). */
+    /** The description in two lines (one on a compact card); never the tagline (D10, page sheet). */
     private void updateHeroLine() {
         if (heroLine == null)
             return;
-        JSONObject data = enrichment != null && enrichment.details != null ? enrichment.details : remoteDetails;
-        String tagline = data == null ? "" : data.optString("tagline", "").trim();
-        boolean useTagline = !tagline.isEmpty() && seasonNumber < 0 && !(movie instanceof Episode);
-        heroLine.setText(useTagline ? tagline : plot.getText());
-        heroLine.setMaxLines(useTagline || compactCard ? 1 : 2);
+        heroLine.setText(plot.getText());
+        heroLine.setMaxLines(compactCard ? 1 : 2);
         heroLine.setVisibility(heroLine.length() == 0 ? GONE : VISIBLE);
     }
 
@@ -1103,14 +1146,22 @@ public final class PreviewMoviePage extends ScrollView {
             fact(key, "Runtime", SharedMetadata.runtime(runtime));
         else if (movie == null) {
             String episodeRuntime = PreviewDetailsFacts.episodeRuntimes(enriched);
+            // TMDB often leaves a show's runtime empty: take it from its episodes instead (D15).
+            if (episodeRuntime.isEmpty() && enrichment != null)
+                episodeRuntime = PreviewDetailsFacts.typicalRuntime(enrichment.episodes.values());
             if (!episodeRuntime.isEmpty())
                 fact(key, "Runtime", "Episodes · " + episodeRuntime);
         }
+        if (enriched != null && (show != null || "tv".equals(remoteKind)) && selectedEpisode == null)
+            fact(key, "Created by", jsonNames(enriched.optJSONArray("created_by"), "name"));
 
         String certificate =
             selectedEpisode == null && seasonNumber < 0 && enrichment != null
                 ? SharedMetadata.certificate(enrichment.classification, StreamingRepository.country(getContext()))
                 : "";
+        // The show's rating, else its first episode's (D11, notes §29); a movie's own stored rating last.
+        if (safe(certificate).isEmpty() && selectedEpisode == null && seasonNumber < 0)
+            certificate = storedRating();
 
         fact(key, "Age rating", certificate);
         fact(key, "Genres", genre);
@@ -1158,14 +1209,13 @@ public final class PreviewMoviePage extends ScrollView {
                 fact(key, "Series status", enriched.optString("status"));
             }
             fact(key, "Countries", jsonNames(enriched.optJSONArray("production_countries"), "name"));
-            fact(key, selectedEpisode != null ? "Series tagline" : "Tagline", enriched.optString("tagline"));
             JSONObject collection = enriched.optJSONObject("belongs_to_collection");
             if (collection != null)
                 fact(key, "Collection", collection.optString("name"));
             for (String field : new String[] {"budget", "revenue"})
                 if (enriched.optLong(field) > 0)
                     fact(key, field.equals("budget") ? "Budget (TMDb)" : "Box office (TMDb)",
-                         NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field)));
+                         SharedMetadata.money(enriched.optLong(field)));
             if (enriched.optLong("vote_count") > 0 && !(movie instanceof Episode))
                 fact(reception, "TMDb votes",
                      NumberFormat.getIntegerInstance().format(enriched.optLong("vote_count")));
@@ -1213,7 +1263,7 @@ public final class PreviewMoviePage extends ScrollView {
                 for (int n = 0; n < data.getSubtitleTrackNb(); n++) {
                     VideoMetadata.SubtitleTrack track = data.getSubtitleTrack(n);
                     if (track != null && !safe(track.language).isEmpty())
-                        subtitles.add(track.language);
+                        subtitles.add(SharedMetadata.languageName(track.language));
                 }
                 fact(technical, "Subtitles", TextUtils.join(", ", subtitles));
             }
@@ -1286,7 +1336,7 @@ public final class PreviewMoviePage extends ScrollView {
                 fact(technical, "Container", TextUtils.join(", ", containers));
                 if (firstAdded != Long.MAX_VALUE)
                     fact(technical, "Added",
-                         DateFormat.getDateFormat(getContext())
+                         new java.text.SimpleDateFormat("d MMM yyyy", Locale.UK)
                              .format(new Date(firstAdded * 1000L)));
             }
         } else {
@@ -1312,20 +1362,13 @@ public final class PreviewMoviePage extends ScrollView {
                     if (entry.media instanceof Video && ((Video)entry.media).getId() == movie.getId() &&
                         entry.added > 0) {
                         fact(technical, "Added",
-                             DateFormat.getDateFormat(getContext())
+                             new java.text.SimpleDateFormat("d MMM yyyy", Locale.UK)
                                  .format(new Date(entry.added * 1000L)));
                         break;
                     }
         }
+        // Each technical fact has its own row on the Details tab (v20), so nothing is merged here.
         Map<String, String> technicalFacts = DetailsBlueprintPanel.facts(technical);
-        if (movie != null)
-            technicalFacts.put(
-                "Video", SharedMetadata.join(technicalFacts.get("Resolution"), technicalFacts.get("Video codec"),
-                                             technicalFacts.get("Dynamic range"), technicalFacts.get("Frame rate"),
-                                             technicalFacts.get("Video bitrate")));
-        if (technicalFacts.containsKey("Subtitles"))
-            technicalFacts.put("Audio tracks", SharedMetadata.join(technicalFacts.get("Audio tracks"),
-                                                                   "Subtitles: " + technicalFacts.get("Subtitles")));
         if (technicalFacts.containsKey("Average file size"))
             technicalFacts.put("Library size", technicalFacts.get("Library size") + " · avg " +
                                                    technicalFacts.get("Average file size"));
@@ -1455,6 +1498,8 @@ public final class PreviewMoviePage extends ScrollView {
     private void fact(LinearLayout panel, String label, String value) {
         if (value == null || value.trim().isEmpty())
             return;
+        // Dates in words, never numbers (D14, RULES §6): "2015-06-24" → "24 June 2015".
+        value = PreviewDetailsFacts.words(value);
         LinearLayout row = new LinearLayout(getContext());
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setContentDescription(label + ": " + value);
@@ -1519,6 +1564,8 @@ public final class PreviewMoviePage extends ScrollView {
             quick.noPlaceholder();
         quick.into(cardArtwork, new Callback() {
                 public void onSuccess() {
+                    // Decide the shade on the first copy, so the picture does not darken a moment later.
+                    calmBackdrop();
                     fullArtwork(uri, identity, requested);
                 }
                 public void onError(Exception error) {
@@ -1532,8 +1579,9 @@ public final class PreviewMoviePage extends ScrollView {
             return;
         Drawable showing = cardArtwork.getDrawable();
         RequestCreator full = artworkLoader.load(uri).fit().centerCrop();
+        // With a copy already showing, the sharp one replaces it without a second fade (0.157 Shield review #6).
         if (showing != null)
-            full.placeholder(showing);
+            full.placeholder(showing).noFade();
         else
             full.noPlaceholder();
         full.into(
@@ -1579,6 +1627,12 @@ public final class PreviewMoviePage extends ScrollView {
         moreButton.setVisibility(remoteDetails == null ? VISIBLE : GONE);
         View focused = providerActions.findFocus();
         Object focusKey = focused == null ? null : focused.getTag();
+        // The hero's buttons are rebuilt only when what they offer changes; rebuilding the same buttons on every
+        // data update made them flicker while the page loaded (0.157 Shield review #6).
+        String signature = providerSignature();
+        if (signature.equals(providerSignature) && providerActions.getChildCount() > 0)
+            return;
+        providerSignature = signature;
         for (Presenter.ViewHolder holder : providerHolders)
             providerPresenter.onUnbindViewHolder(holder);
         providerHolders.clear();
@@ -1623,6 +1677,21 @@ public final class PreviewMoviePage extends ScrollView {
             else
                 play.requestFocus();
         }
+    }
+
+    private String providerSignature = "";
+
+    /** What the hero's provider buttons show: the offers' ids and names, in order. */
+    private String providerSignature() {
+        if (observedActions == null)
+            return "none";
+        StringBuilder key = new StringBuilder(remoteDetails == null ? "local" : "remote");
+        for (int i = 0; i < observedActions.size(); i++) {
+            Object item = observedActions.get(i);
+            if (item instanceof Action && StreamingActions.isAvailableOffer((Action) item))
+                key.append('|').append(((Action) item).getId()).append(':').append(((Action) item).getLabel1());
+        }
+        return key.toString();
     }
 
     private Action matchingAction() {
@@ -1683,12 +1752,17 @@ public final class PreviewMoviePage extends ScrollView {
         portrait.setForeground(new com.archos.mediacenter.video.leanback.ArtworkEdge(getContext(), 4, false));
         portraits.put(name, portrait);
         cell.addView(portrait, new LinearLayout.LayoutParams(dp(40), dp(60)));
+        boolean first = true;
         for (String value : new String[] {name, safe(role)}) {
-            TextView text = text(value, 9);
+            TextView text = text(value, first ? 10 : 9);
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(true);
             text.setEllipsize(TextUtils.TruncateAt.END);
-            cell.addView(text, new LinearLayout.LayoutParams(-1, dp(12)));
+            text.setTextColor(first ? Color.WHITE : SupernovaStyle.TEXT_SECONDARY);
+            LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-1, -2);
+            size.topMargin = first ? dp(8) : dp(2);
+            cell.addView(text, size);
+            first = false;
         }
         row.addView(cell, new LinearLayout.LayoutParams(-1, -1));
     }
@@ -1821,10 +1895,12 @@ public final class PreviewMoviePage extends ScrollView {
                 seasonInfo.setTag("season:" + season.getKey());
                 seasonInfo.setTextSize(16 * TvLayout.scale(getContext()));
                 seasonInfo.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-                seasonInfo.setPadding(dp(4), dp(5), dp(4), dp(5));
-                seasonInfo.setBackground(PreviewDialog.focus(getContext()));
+                seasonInfo.setPadding(dp(10), dp(5), dp(10), dp(5));
+                // Focused: the white box with black text (D5); at rest the heading sits plain on the page.
+                seasonInfo.setBackground(SupernovaStyle.focusFill(getContext(), SupernovaStyle.SMALL_BOX_RADIUS_DP));
+                // DT4 (owner, 18 Nov 2026): the gap from a season's row to the next season's heading halved.
                 LinearLayout.LayoutParams headingSize = new LinearLayout.LayoutParams(-2, dp(44));
-                headingSize.topMargin = dp(8);
+                headingSize.topMargin = episodeRows.isEmpty() ? dp(8) : -dp(10);
                 headingSize.bottomMargin = dp(6);
                 episodes.addView(seasonInfo, headingSize);
             } else
@@ -1943,13 +2019,15 @@ public final class PreviewMoviePage extends ScrollView {
                     card.setTag("remote:" + id);
                     Diagnostics.semantic(card, "details.related.remote." + id);
                     card.setContentDescription(name + " · " + recommendation.provider.name);
-                    card.setOnClickListener(
-                        v
-                        -> getContext().startActivity(
-                            new Intent(getContext(),
-                                       PreviewRemoteDetailsActivity.class)
-                                .putExtra("kind", television ? "tv" : "movie")
-                                .putExtra("tmdb_id", id)));
+                    // A title on a service opens that service's app straight away, never a Supernova page (D8).
+                    String service = recommendation.provider.name;
+                    card.setOnClickListener(v -> {
+                        if (!(getContext() instanceof Activity) ||
+                            !com.archos.mediacenter.video.streaming.StreamingActions.openApp(
+                                (Activity)getContext(), service))
+                            com.archos.mediacenter.video.leanback.PreviewNotice.show(
+                                getContext(), "The " + service + " app isn't on this device", true);
+                    });
                     addRecommendation(card);
                     shown.add("id:" + id);
                 }
@@ -1990,6 +2068,12 @@ public final class PreviewMoviePage extends ScrollView {
                                 -> new VideoViewClickedListener((Activity)getContext())
                                        .onItemClicked(new Presenter.ViewHolder(v), entry.media, null, null));
         addRecommendation(card);
+    }
+
+    /** The Episodes card width: a quarter of the row (PreviewEpisodeRow.cardWidth). */
+    private int extraCardWidth() {
+        int width = getResources().getDisplayMetrics().widthPixels - dp(84);
+        return Math.max(1, (width - dp(36)) / 4);
     }
 
     private void addRecommendation(PreviewLandscapeCard card) {
@@ -2074,7 +2158,7 @@ public final class PreviewMoviePage extends ScrollView {
             row.setClipChildren(false);
             row.setClipToPadding(false);
             rail.addView(row);
-            trailers.addView(rail, new LinearLayout.LayoutParams(-1, dp(125)));
+            trailers.addView(rail, new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28)));
             for (ScraperTrailer extra : category.getValue()) {
                 PreviewLandscapeCard card = new PreviewLandscapeCard(getContext());
                 card.bind(safe(extra.mName),
@@ -2094,7 +2178,9 @@ public final class PreviewMoviePage extends ScrollView {
                         post(this::revealContentFocus);
                     }
                 });
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(172), dp(97));
+                // One card size everywhere (D7, RULES §14): the same quarter-row width as Episodes, 16:9.
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(extraCardWidth(),
+                                                                             extraCardWidth() * 9 / 16);
                 lp.setMargins(0, 0, dp(12), 0);
                 row.addView(card, lp);
                 extraCards.add(card);
@@ -2530,86 +2616,88 @@ public final class PreviewMoviePage extends ScrollView {
                                  });
             return;
         }
+        // The More menu (page sheet DETAILS.md; D1, D2): beside More, an icon per item, groups Playback · Library ·
+        // Files & Media, then TMDB page set apart at the foot. Only what makes sense for this title.
         ObjectAdapter adapter = actions.get();
-        if (adapter == null)
-            return;
         moreRows.clear();
         List<String> labels = new ArrayList<>();
+        List<String> icons = new ArrayList<>();
         List<Runnable> commands = new ArrayList<>();
-        Map<Integer, String> logos = new HashMap<>();
-        // Approved grouping (2 Nov 2026): Playback — Restart · Library — Mark Watched, Add to Row, Fix match, Remove From Library · Files & Media.
-        String restartLabel = null;
-        Runnable restart = null, report = null;
-        if (movie != null && getContext() instanceof Activity) {
-            restartLabel = movie instanceof Episode ? "Restart Episode" : "Restart Movie";
-            restart = (()
-                           -> PlayUtils.startVideo(
-                               (Activity)getContext(), movie,
-                               PlayerActivity.RESUME_NO, false, -1, null, -1));
-        }
-
-        if (movie != null) {
-            // Approved 0.156 #40: Fix match searches TMDB with the title filled in and picks the right one, without
-            // a detour through Library Health. Details refresh when it returns.
-            report = (() -> getContext().startActivity(new android.content.Intent(
-                getContext(), com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.class)
-                    .putExtra(com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.EXTRA_VIDEO,
-                              movie)));
-        }
-        String[] groups = {"Playback", "Library", "Streaming Services", "Files & Media"};
-        for (int group = 0; group < groups.length; group++) {
-            List<Action> section = new ArrayList<>();
-            for (int i = 0; i < adapter.size(); i++) {
-                Object value = adapter.get(i);
-                if (!(value instanceof Action))
-                    continue;
-                Action a = (Action)value;
-                int category = remoteDetails != null ? -1 : PreviewMoreActions.group(a, show != null);
-                if (category == group)
-                    section.add(a);
-            }
-            if (section.isEmpty() && !(group == 0 && restart != null) && !(group == 1 && remoteDetails == null) &&
-                !(group == 3 && (movie != null || show != null)))
+        Action watched = null;
+        Action unindex = null;
+        Action delete = null;
+        Action fixShow = null;
+        for (int i = 0; adapter != null && i < adapter.size(); i++) {
+            if (!(adapter.get(i) instanceof Action))
                 continue;
-            labels.add("— " + groups[group]);
-            commands.add(null);
-            if (group == 0 && restart != null) {
-                labels.add(restartLabel);
-                commands.add(restart);
+            Action a = (Action)adapter.get(i);
+            if (PreviewMoreActions.watched(a, show != null))
+                watched = a;
+            else if (isRemoveFromLibrary(a))
+                unindex = a;
+            else if (show != null && a.getId() == TvshowActionAdapter.ACTION_CHANGE_INFO)
+                fixShow = a;
+            else if (show == null && a.getId() == VideoActionAdapter.ACTION_DELETE ||
+                     show != null && a.getId() == TvshowActionAdapter.ACTION_DELETE)
+                delete = a;
+        }
+        if (movie != null && movie.getResumeMs() > 0 && getContext() instanceof Activity) {
+            moreItem(labels, icons, commands, "— Playback", null, null);
+            moreItem(labels, icons, commands, movie instanceof Episode ? "Restart episode" : "Restart movie",
+                     "history", () -> PlayUtils.startVideo((Activity)getContext(), movie, PlayerActivity.RESUME_NO,
+                                                           false, -1, null, -1));
+        }
+        if (watched != null || movie != null || unindex != null || fixShow != null) {
+            moreItem(labels, icons, commands, "— Library", null, null);
+            if (watched != null) {
+                Action toggle = watched;
+                long id = watched.getId();
+                boolean markWatched = id == VideoActionAdapter.ACTION_MARK_AS_WATCHED ||
+                                      id == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED;
+                moreItem(labels, icons, commands, markWatched ? "Mark as watched" : "Mark as unwatched", "check",
+                         () -> action.accept(toggle));
             }
-            List<Action> last = new ArrayList<>();
-            for (Action a : section) {
-                if (group == 1 && isRemoveFromLibrary(a)) {
-                    last.add(a);
-                    continue;
-                }
-                moreAction(labels, commands, a);
+            if (movie != null) {
+                moreItem(labels, icons, commands, "Fix match", "search",
+                         () -> getContext().startActivity(new android.content.Intent(
+                             getContext(), com.archos.mediacenter.video.leanback.scrapping
+                                               .ManualVideoScrappingActivity.class)
+                             .putExtra(com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity
+                                           .EXTRA_VIDEO, movie)));
             }
-            if (group == 1) {
-                if (remoteDetails == null) {
-                    labels.add("Add to Row");
-                    commands.add(() -> PreviewHomeRows.add(getContext(), rowEntry(), () -> {}));
-                }
-                if (report != null) {
-                    labels.add("Fix match");
-                    commands.add(report);
-                }
+            if (movie == null && fixShow != null) {
+                // DT8 (D2): Fix match in More for a TV show too, through the show's own match action.
+                Action fix = fixShow;
+                moreItem(labels, icons, commands, "Fix match", "search", () -> action.accept(fix));
             }
-            for (Action a : last)
-                moreAction(labels, commands, a);
-            if (group == 3 && movie != null) {
-                labels.add("Subtitles and Artwork");
-                commands.add(nativeDetails);
-            } else if (group == 3 && show != null) {
-                labels.add("Artwork");
-                commands.add(nativeDetails);
+            if (unindex != null) {
+                Action remove = unindex;
+                moreItem(labels, icons, commands, "Remove from library", "remove", () -> action.accept(remove));
             }
         }
-        Dialog dialog = PreviewDialog.choose(getContext(), "Actions", labels.toArray(new String[0]), -1,
-                                             Collections.emptySet(), false, n -> {
-                                                 if (commands.get(n) != null)
-                                                     commands.get(n).run();
-                                             });
+        moreItem(labels, icons, commands, "— Files & Media", null, null);
+        if (movie != null)
+            moreItem(labels, icons, commands, "Subtitles", "sub", nativeDetails);
+        moreItem(labels, icons, commands, "Artwork", "appearance",
+                 artworkPanel != null ? artworkPanel : nativeDetails);
+        moreItem(labels, icons, commands, "Full description", "synopsis", this::fullDescription);
+        if (delete != null && movie != null) {
+            moreItem(labels, icons, commands, "Delete file", "delete", () -> PreviewDialog.confirmDelete(
+                getContext(), "Delete " + movie.getName() + "?",
+                "The file is deleted from its drive or server. This can't be undone.",
+                () -> action.accept(new Action(VideoActionAdapter.ACTION_CONFIRM_DELETE))));
+        }
+        String tmdb = tmdbPage();
+        if (tmdb != null) {
+            moreItem(labels, icons, commands, "— ", null, null);
+            moreItem(labels, icons, commands, "TMDB page", "external",
+                     () -> PreviewTmdbCode.show(getContext(), tmdb));
+        }
+        Dialog dialog = PreviewDialog.menu(getContext(), moreButton, "More", labels.toArray(new String[0]),
+                                           icons.toArray(new String[0]), -1, n -> {
+                                               if (commands.get(n) != null)
+                                                   commands.get(n).run();
+                                           });
         moreDialog = dialog;
         dialog.setOnDismissListener(d -> {
             if (moreDialog == dialog) {
@@ -2617,6 +2705,77 @@ public final class PreviewMoviePage extends ScrollView {
                 moreRows.clear();
             }
         });
+    }
+
+    private static void moreItem(List<String> labels, List<String> icons, List<Runnable> commands, String label,
+                                 String icon, Runnable command) {
+        labels.add(label);
+        icons.add(icon);
+        commands.add(command);
+    }
+
+    private Runnable artworkPanel;
+
+    /** More › Artwork opens the side panel (D3); supplied by the Details screen, which knows the pictures. */
+    public void setArtworkPanel(Runnable panel) {
+        artworkPanel = panel;
+    }
+
+    /** The hero shows {@code uri} while the Artwork panel is on it; null shows the kept picture again (D3). */
+    public void previewArtwork(Uri uri) {
+        Uri shown = uri != null ? uri : artworkUri == null ? null : Uri.parse(artworkUri);
+        if (cardArtwork == null || shown == null)
+            return;
+        try {
+            com.squareup.picasso.Picasso.get().load(shown).fit().centerCrop().noFade().into(cardArtwork);
+        } catch (RuntimeException unavailable) {
+            // No picture loader in this process.
+        }
+    }
+
+    /** Full description: only the text, sized to it (owner, 18 Nov 2026; DT7). */
+    private void fullDescription() {
+        PreviewDialog.readText(getContext(), String.valueOf(plot.getText()));
+    }
+
+    private String storedRating() {
+        if (movie instanceof Movie)
+            return safe(((Movie)movie).getContentRating());
+        if (movie != null)
+            return "";
+        if (show == null)
+            return "";
+        if (!safe(show.getContentRating()).isEmpty())
+            return show.getContentRating();
+        Snapshot local = snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache();
+        if (local == null)
+            return "";
+        Episode first = null;
+        for (Entry entry : local.episodes) {
+            if (!(entry.media instanceof Episode) || safe(((Episode)entry.media).getContentRating()).isEmpty())
+                continue;
+            Episode episode = (Episode)entry.media;
+            if (entry.show != show.getTvshowId())
+                continue;
+            boolean earlier = first == null || episode.getSeasonNumber() < first.getSeasonNumber() ||
+                              episode.getSeasonNumber() == first.getSeasonNumber() &&
+                                  episode.getEpisodeNumber() < first.getEpisodeNumber();
+            if (earlier)
+                first = episode;
+        }
+        return first == null ? "" : first.getContentRating();
+    }
+
+    /** The title's TMDB page, when its TMDB number is known. */
+    private String tmdbPage() {
+        JSONObject data = enrichment != null && enrichment.details != null ? enrichment.details : remoteDetails;
+        long id = data == null ? 0 : data.optLong("id", 0);
+        if (id <= 0 && movie instanceof Movie)
+            id = ((Movie)movie).getOnlineId();
+        if (id <= 0)
+            return null;
+        boolean television = show != null || movie instanceof Episode;
+        return "https://www.themoviedb.org/" + (television ? "tv/" : "movie/") + id;
     }
 
     private ScraperTrailer primaryTrailer() {

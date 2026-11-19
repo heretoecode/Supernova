@@ -233,7 +233,7 @@ public class PreviewPagesTest {
             pages.setTab(1);
             nav.selectTab(1);
             layout(nav);
-            android.view.View listButton = findText(nav, "List View");
+            android.view.View listButton = findText(nav, "List view");
             assertNotNull(listButton);
             listButton.performClick();
             layout(nav);
@@ -246,16 +246,22 @@ public class PreviewPagesTest {
             assertTrue(columnsControl.requestFocus());
             nav.dispatchKeyEvent(
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
-            assertSame(columnsControl, nav.findFocus());
+            // 0.158: Customise page is locked on the right of the toolbar; Right from Columns reaches it.
+            View afterColumns = nav.findFocus();
+            assertTrue("Right from Columns stays in the toolbar: " + (afterColumns == null ? null
+                           : afterColumns.getTag()),
+                afterColumns == columnsControl || "control:customise".equals(afterColumns.getTag()));
             for (int control = 0; control < 5; control++) {
                 View opener = nav.findViewWithTag("control:" + control);
                 assertNotNull(opener);
                 assertTrue(opener.requestFocus());
                 View below = opener.focusSearch(View.FOCUS_DOWN);
                 assertNotNull("Toolbar DOWN target " + control, below);
-                assertTrue("Toolbar DOWN must enter a header, not " + below.getTag()
+                // 0.158: column headings are plain words, so Down goes straight to the first title (LIBRARY.md).
+                assertFalse("Toolbar DOWN must enter the list, not " + below.getTag()
                         + " (touch mode=" + nav.isInTouchMode() + ")",
-                    String.valueOf(below.getTag()).startsWith("column:"));
+                    String.valueOf(below.getTag()).startsWith("control:")
+                        || String.valueOf(below.getTag()).startsWith("column:"));
                 assertTrue(below.isFocusableInTouchMode());
                 assertTrue(below.requestFocus(View.FOCUS_DOWN));
                 assertSame(below, nav.findFocus());
@@ -422,6 +428,8 @@ public class PreviewPagesTest {
         mountain.lineTo(1600, 900);
         mountain.close();
         canvas.drawPath(mountain, paint);
-        ((PreviewBackdrop) nav.getBackground()).onBitmapLoaded(art, Picasso.LoadedFrom.MEMORY);
+        // Every page is plain charcoal now (F27); the artwork backdrop is only there outside Supernova builds.
+        if (nav.getBackground() instanceof PreviewBackdrop)
+            ((PreviewBackdrop) nav.getBackground()).onBitmapLoaded(art, Picasso.LoadedFrom.MEMORY);
     }
 }

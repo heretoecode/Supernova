@@ -249,6 +249,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                 if (mPreviewNavigation != null)
                     mPreviewNavigation.setArtwork(uri);
             });
+        mPreviewMovie.setArtworkPanel(this::showArtworkPanel);
         container.addView(mPreviewMovie, new FrameLayout.LayoutParams(-1, -1));
         mPreviewNavigation =
             new TopNavigation(requireContext(), container, tab -> {
@@ -307,6 +308,46 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                 else
                     showPreviewArtwork(n == 2 ? mPostersRow : mBackdropsRow);
             });
+    }
+
+    /** More › Artwork: the side panel (D3) with backdrops (Hero and rows) and posters (Library page). */
+    private void showArtworkPanel() {
+        List<ScraperImage> backdrops = images(mBackdropsRow);
+        List<ScraperImage> posters = images(mPostersRow);
+        PreviewArtworkPanel.show(requireContext(), backdrops, mPreviewBackdropSelection, posters,
+            mPreviewPosterSelection, uri -> {
+                if (mPreviewMovie != null)
+                    mPreviewMovie.previewArtwork(uri);
+            }, (image, poster, done) -> {
+                Consumer<Boolean> complete = saved -> {
+                    if (saved) {
+                        if (poster)
+                            mPreviewPosterSelection = image;
+                        else
+                            mPreviewBackdropSelection = image;
+                    }
+                    done.accept(saved);
+                };
+                if (poster) {
+                    mPosterSaverTask = new PosterSaverTask(
+                        getActivity(), mVideo instanceof Episode ? ((Episode) mVideo).getSeasonNumber() : -1);
+                    mPosterSaverTask.execute(image, complete);
+                } else {
+                    mBackdropSaverTask = new BackdropSaverTask(getActivity());
+                    mBackdropSaverTask.execute(image, complete);
+                }
+            });
+    }
+
+    private static List<ScraperImage> images(Row sourceRow) {
+        List<ScraperImage> images = new ArrayList<>();
+        if (!(sourceRow instanceof ListRow))
+            return images;
+        ListRow row = (ListRow) sourceRow;
+        for (int i = 0; i < row.getAdapter().size(); i++)
+            if (row.getAdapter().get(i) instanceof ScraperImage)
+                images.add((ScraperImage) row.getAdapter().get(i));
+        return images;
     }
 
     private void showPreviewArtwork(Row sourceRow) {

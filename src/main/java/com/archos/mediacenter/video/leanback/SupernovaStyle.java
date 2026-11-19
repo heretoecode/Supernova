@@ -29,8 +29,8 @@ public final class SupernovaStyle {
     }
 
     // ---- tokens --------------------------------------------------------------------------------
-    /** Glass: charcoal at 95% for every pop-up, menu and side panel (owner, 13 Nov 2026; RULES §11). */
-    public static final int GLASS = 0xF216181C;
+    /** Glass: charcoal #16181C at 99% for every pop-up, menu and side panel (owner, 19 Nov 2026; RULES §11). */
+    public static final int GLASS = 0xFC16181C;
     public static final int GLASS_EDGE = 0x38FFFFFF;
     /** Resting button: black at 72%. */
     public static final int BUTTON_REST = 0xB8000000;
@@ -53,6 +53,14 @@ public final class SupernovaStyle {
     /** Button and tile labels: Medium weight (Light strokes read as grey on a TV). */
     public static final Typeface LABEL = Typeface.create("sans-serif-medium", Typeface.NORMAL);
     public static final float RADIUS_DP = 12f;
+    /**
+     * One shape for every small box (RULES §3, owner 18 Nov 2026; corners B): buttons, pills, chips and the focus
+     * and open boxes in tabs and the top bar are 52 px high on a row with 20 px corners and about 22 px side padding
+     * (at 1080p). Rows, cards and heroes keep their own corners.
+     */
+    public static final float SMALL_BOX_RADIUS_DP = 10f;
+    public static final float SMALL_BOX_HEIGHT_DP = 26f;
+    public static final float SMALL_BOX_SIDE_DP = 11f;
     public static final float PANEL_RADIUS_DP = 13f;
     public static final float ROW_FOCUS_STROKE_DP = 1.5f;
     /** Breathing room between a row's focus outline and its icon/text. */
@@ -85,9 +93,29 @@ public final class SupernovaStyle {
      * selected (not focused) = resting box + thin white outline; disabled = resting at 40%;
      * otherwise resting. The box never changes size between states.
      */
+    /** On artwork (hero buttons): a dark box at about 72% at rest (RULES §12; D13). */
+    public static final int ON_ARTWORK_REST = 0xB816181C;
+
+    /** A button on artwork: the standard button with a dark box at about 72% at rest (RULES §12). */
+    public static void applyArtworkButton(View view) {
+        view.setBackground(button(view.getContext(), Surface.STANDARD, ON_ARTWORK_REST));
+        applyContent(view, true);
+    }
+
+    /** Rest: plain, no box that could read as focus; focused: the white box (RULES §3, §12). */
+    public static void applyPlainButton(View view) {
+        view.setBackground(button(view.getContext(), Surface.STANDARD, Color.TRANSPARENT));
+        if (view instanceof TextView)
+            centreOnLetters((TextView) view);
+    }
+
     public static StateListDrawable button(Context c, Surface surface) {
-        float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
+        return button(c, surface, rest);
+    }
+
+    private static StateListDrawable button(Context c, Surface surface, int rest) {
+        float radius = dp(c, surface == Surface.TILE ? 11 : SMALL_BOX_RADIUS_DP);
         int edge = surface == Surface.TILE || surface == Surface.HUD ? 0x2EFFFFFF : 0;
         int edgeWidth = Math.max(1, dp(c, 1));
         if (surface == Surface.TILE) {
@@ -205,17 +233,101 @@ public final class SupernovaStyle {
         view.setGravity(Gravity.CENTER);
         view.setSingleLine(true);
         view.setEllipsize(TextUtils.TruncateAt.END);
-        int horizontal = dp(c, large ? 14 : 12), vertical = dp(c, large ? 9 : 7);
+        int horizontal = dp(c, SMALL_BOX_SIDE_DP);
+        int vertical = dp(c, large ? 6 : 4);
         view.setPadding(horizontal, vertical, horizontal, vertical);
-        view.setMinimumHeight(dp(c, large ? 36 : 32));
-        view.setMinHeight(dp(c, large ? 36 : 32));
+        view.setMinimumHeight(dp(c, SMALL_BOX_HEIGHT_DP));
+        view.setMinHeight(dp(c, SMALL_BOX_HEIGHT_DP));
         view.setCompoundDrawablePadding(dp(c, 7));
+        centreOnLetters(view);
+    }
+
+    /**
+     * Keeps a one-line box's text centred on its letters, not on the font's box (the 0.158 top bar fix, everywhere
+     * from 0.158 part B): room kept for accents and descenders otherwise makes words sit low. Moves the text by
+     * shifting padding from the bottom to the top (or back) after each layout; it settles after one pass.
+     */
+    public static void centreOnLetters(TextView view) {
+        // The shift depends only on the font (not on the box's height), so it is set before the first layout and
+        // only changed again if the text size changes: changing a TextView's padding throws its layout away.
+        int[] applied = {0};
+        applyLetterShift(view, applied);
+        if (view.getTag(com.archos.mediacenter.video.R.id.supernova_letter_centre) != null)
+            return;
+        view.setTag(com.archos.mediacenter.video.R.id.supernova_letter_centre, Boolean.TRUE);
+        view.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            if (!applyLetterShift((TextView) v, applied))
+                return;
+            // New padding throws the text's layout away: lay it out again at once, in the same place.
+            v.measure(View.MeasureSpec.makeMeasureSpec(r - l, View.MeasureSpec.EXACTLY),
+                      View.MeasureSpec.makeMeasureSpec(b - t, View.MeasureSpec.EXACTLY));
+            v.layout(l, t, r, b);
+        });
+    }
+
+    /** True when the padding changed. */
+    private static boolean applyLetterShift(TextView text, int[] applied) {
+        if ((text.getGravity() & Gravity.VERTICAL_GRAVITY_MASK) != Gravity.CENTER_VERTICAL)
+            return false;
+        int shift = Math.round(fontLetterShift(text));
+        int change = shift - applied[0];
+        if (change == 0)
+            return false;
+        int top = text.getPaddingTop() + change;
+        int bottom = text.getPaddingBottom() - change;
+        if (top < 0 || bottom < 0)
+            return false;
+        applied[0] = shift;
+        text.setPadding(text.getPaddingLeft(), top, text.getPaddingRight(), bottom);
+        return true;
+    }
+
+    /** How far to move a centred line so the middle of its letters ("H0"), not of the font's box, is centred. */
+    static float fontLetterShift(TextView view) {
+        android.graphics.Paint.FontMetrics metrics = view.getPaint().getFontMetrics();
+        float boxCentre = view.getIncludeFontPadding() ? (metrics.top + metrics.bottom) / 2f
+                                                       : (metrics.ascent + metrics.descent) / 2f;
+        android.graphics.Rect letters = new android.graphics.Rect();
+        view.getPaint().getTextBounds("H0", 0, 2, letters);
+        return boxCentre - letters.exactCenterY();
+    }
+
+    /** How far the letters ("H0") sit from the view's centre; positive moves them down. */
+    static float letterShift(TextView view) {
+        if (view.getLayout() == null || view.getHeight() == 0)
+            return 0f;
+        android.graphics.Rect letters = new android.graphics.Rect();
+        view.getPaint().getTextBounds("H0", 0, 2, letters);
+        float letterCentre = view.getBaseline() + letters.exactCenterY();
+        return view.getHeight() / 2f - letterCentre;
     }
 
     /**
      * Makes a TextView's compound icons follow the text colour (white at rest, black on focus).
      * Works for the app's own icon drawables too, which ignore Android's tint lists.
      */
+    /**
+     * Paints a label's icons in the given ink. For a label inside a focusable row (the row has the focus, not the
+     * label), so its icon turns black on the white focus box with the text (0.157 Shield review #20).
+     */
+    public static void inkIcons(TextView view, int ink) {
+        Drawable[] sets = concat(view.getCompoundDrawables(), view.getCompoundDrawablesRelative());
+        for (Drawable d : sets) {
+            if (d == null)
+                continue;
+            Drawable icon = d instanceof StateIcon ? ((StateIcon) d).icon() : d;
+            icon.setColorFilter(new PorterDuffColorFilter(ink, PorterDuff.Mode.SRC_IN));
+        }
+        view.invalidate();
+    }
+
+    private static Drawable[] concat(Drawable[] first, Drawable[] second) {
+        Drawable[] all = new Drawable[first.length + second.length];
+        System.arraycopy(first, 0, all, 0, first.length);
+        System.arraycopy(second, 0, all, first.length, second.length);
+        return all;
+    }
+
     public static void tintIcons(TextView view) {
         // Icons may be attached start/end (relative) or left/right (absolute); the relative getter does not
         // report absolute ones, which left icons such as the Home hero's More Info white on the white box.
@@ -246,6 +358,8 @@ public final class SupernovaStyle {
     public static void applyButton(View view, Surface surface) {
         view.setBackground(button(view.getContext(), surface));
         applyContent(view, true);
+        if (view instanceof TextView)
+            centreOnLetters((TextView) view);
     }
 
     /**
@@ -443,11 +557,20 @@ public final class SupernovaStyle {
         return new Box(0xFF16181C, GLASS_EDGE, Math.max(1, dp(c, 1)), dp(c, PANEL_RADIUS_DP), 0);
     }
 
+    /** RULES §11 (owner, 19 Nov 2026): no outline and no glow on any pop-up, menu or side panel. */
     public static Drawable glass(Context c, float radiusDp) {
-        return new Box(GLASS, GLASS_EDGE, Math.max(1, dp(c, 1)), dp(c, radiusDp), 0);
+        return new Box(GLASS, 0, 0, dp(c, radiusDp), 0);
     }
 
     // ---- rows ----------------------------------------------------------------------------------
+
+    /** The white focus box on a plain row or heading, nothing at rest (RULES §3; D5, P5). */
+    public static StateListDrawable focusFill(Context c, float radiusDp) {
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[] {android.R.attr.state_focused}, rounded(c, FOCUS_FILL, radiusDp));
+        states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));
+        return states;
+    }
 
     /** Row focus: white outline, no fill change. Use with {@link #ROW_INSET_DP} padding inside the row. */
     public static StateListDrawable rowFocus(Context c) {
@@ -474,16 +597,16 @@ public final class SupernovaStyle {
      */
     public static StateListDrawable tab(Context c, boolean open) {
         StateListDrawable states = new ButtonStates();
-        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, 10), 0);
+        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, SMALL_BOX_RADIUS_DP), 0);
         states.addState(new int[] {android.R.attr.state_focused}, focused);
         states.addState(new int[] {android.R.attr.state_pressed}, focused);
-        states.addState(new int[] {}, new Box(open ? TAB_OPEN : PANEL_REST, 0, 0, dp(c, 10), 0));
+        states.addState(new int[] {}, new Box(open ? TAB_OPEN : PANEL_REST, 0, 0, dp(c, SMALL_BOX_RADIUS_DP), 0));
         return states;
     }
 
     public static StateListDrawable chip(Context c) {
         StateListDrawable states = new ButtonStates();
-        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, 7), 0);
+        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, SMALL_BOX_RADIUS_DP), 0);
         states.addState(new int[] {android.R.attr.state_focused}, focused);
         states.addState(new int[] {android.R.attr.state_pressed}, focused);
         states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));

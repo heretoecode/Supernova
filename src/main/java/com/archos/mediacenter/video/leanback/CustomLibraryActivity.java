@@ -12,15 +12,13 @@ import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import java.util.concurrent.*;
 
 /**
- * The user's custom library page, backed by the ordinary library snapshot.
- *
- * <p>Editing (owner, 2 Nov 2026): the approved {@link EditPagePanel} opens over the real page, and every
- * change re-renders the page behind it — "the live preview is the page itself". The page name in the top
- * navigation follows the draft. Nothing is stored until Save; Discard restores the previous page.
+ * Your own library page (page sheet LIBRARY.md), backed by the ordinary library snapshot: the same page and code as
+ * Movies and TV Shows. Before it is set up it says "Make this page your own"; Customise page opens the floating side
+ * panel on the right, and every change saves and shows at once (no Save button; Back closes the panel). The old Edit
+ * Page panel never opens from here.
  */
 public final class CustomLibraryActivity extends LeanbackActivity {
     static final String NEW_PAGE_NAME = "New Page";
-    static final String NEW_PAGE_PLACEHOLDER = "Choose what to show. Your page fills in here.";
     private Workspace workspace;
     private TopNavigation navigation;
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
@@ -35,21 +33,15 @@ public final class CustomLibraryActivity extends LeanbackActivity {
         setContentView(navigation);
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             public void handleOnBackPressed() {
-                workspace.back();
+                finish();
             }
         });
         Snapshot cache = PreviewLibraryLoader.memoryCache();
         if (cache != null)
             workspace.snapshot = cache;
         workspace.freshEntry = state == null;
-        if (state != null) {
-            CustomLibraryPage draft = CustomLibraryPage.decode(state.getString("draft", "{}"));
-            if (draft != null)
-                workspace.draft = draft;
-            workspace.editing = state.getBoolean("editing");
-            workspace.original = state.getString("original", workspace.original);
+        if (state != null)
             workspace.restoreFocus = state.getString("focus", "");
-        }
         workspace.render();
         PreviewLibraryLoader loader = new PreviewLibraryLoader(this);
         worker.execute(() -> {
@@ -70,10 +62,6 @@ public final class CustomLibraryActivity extends LeanbackActivity {
         workspace.snapshot = library;
         if (workspace.sharedLibrary != null)
             workspace.sharedLibrary.setSnapshot(library);
-        if (workspace.editor != null) {
-            workspace.editor.snapshotChanged();
-            workspace.updatePlaceholder();
-        }
     }
 
     private void navigate(int index) {
@@ -95,9 +83,6 @@ public final class CustomLibraryActivity extends LeanbackActivity {
     protected void onSaveInstanceState(Bundle state) {
         workspace.rememberFocus();
         state.putString("focus", workspace.restoreFocus);
-        state.putString("draft", workspace.draft.encode());
-        state.putString("original", workspace.original);
-        state.putBoolean("editing", workspace.editing);
         super.onSaveInstanceState(state);
     }
 
@@ -105,40 +90,31 @@ public final class CustomLibraryActivity extends LeanbackActivity {
     protected void onDestroy() {
         closed = true;
         worker.shutdownNow();
-        workspace.dismissEditor();
+        workspace.closePanel();
         super.onDestroy();
     }
 
-    /** The open Edit Page panel, or null. */
-    EditPagePanel editor() {
-        return workspace.editor;
+    /** The open Customise page panel, or null (tests). */
+    android.app.Dialog customisePanel() {
+        return workspace.panel;
     }
 
-    private final class Workspace
-        extends FrameLayout implements PageExitGuard, TopNavigation.ContentFocus, EditPagePanel.Host {
+    private final class Workspace extends FrameLayout implements TopNavigation.ContentFocus {
         CustomLibraryPage draft;
-        String original;
-        boolean editing;
         Snapshot snapshot = new Snapshot();
         LinearLayout libraryBody;
         String restoreFocus = "";
-        String pendingFocus;
         PreviewPages sharedLibrary;
-        EditPagePanel editor;
-        /** The blank draft a new page starts from; until it changes, the page shows {@link #NEW_PAGE_PLACEHOLDER}. */
-        private final String blank;
+        android.app.Dialog panel;
+        /** True only for the first library mount of a newly opened page (not a restore or panel return). */
+        boolean freshEntry;
 
         Workspace() {
             super(CustomLibraryActivity.this);
             CustomLibraryPage saved = CustomLibraryPage.load(getContext());
-            editing = saved == null;
-            CustomLibraryPage fresh = new CustomLibraryPage();
-            fresh.name = NEW_PAGE_NAME;
-            blank = fresh.encode();
-            draft = saved == null ? fresh : CustomLibraryPage.decode(saved.encode());
-            original = draft.encode();
+            draft = saved != null ? saved : fresh();
             getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
-                if (editing || navigation == null || newFocus == null)
+                if (navigation == null || newFocus == null)
                     return;
                 View target = newFocus;
                 while (target != this && !(target.getTag() instanceof String) && target.getParent() instanceof View)
@@ -153,13 +129,18 @@ public final class CustomLibraryActivity extends LeanbackActivity {
             });
         }
 
-        /** True only for the first library mount of a newly opened page (not a restore or editor return). */
-        boolean freshEntry;
+        private CustomLibraryPage fresh() {
+            CustomLibraryPage page = new CustomLibraryPage();
+            page.name = NEW_PAGE_NAME;
+            return page;
+        }
+
+        boolean unset() {
+            return CustomLibraryPage.load(getContext()) == null;
+        }
 
         @Override
         public boolean focusFromNavigation() {
-            if (editing)
-                return false;
             return sharedLibrary != null && sharedLibrary.focusFromNavigation();
         }
 
@@ -175,166 +156,57 @@ public final class CustomLibraryActivity extends LeanbackActivity {
 
         void render() {
             rememberFocus();
-            if (pendingFocus != null) {
-                restoreFocus = pendingFocus;
-                pendingFocus = null;
-            }
             removeAllViews();
             library();
-            if (editing)
-                openEditor();
-            else {
-                dismissEditor();
-                navigation.updateCustomPage();
+            navigation.updateCustomPage();
+        }
+
+        /** Customise page: the floating panel; each change saves the page and shows it at once. */
+        void customise() {
+            closePanel();
+            panel = LibraryCustomisePanel.show(getContext(), sharedLibrary.libraryHost(this::saveDraft, this::delete));
+            panel.setOnDismissListener(d -> {
+                panel = null;
+                if (sharedLibrary != null)
+                    sharedLibrary.focusCustomControl(unset() ? "empty" : "edit");
+            });
+        }
+
+        void closePanel() {
+            if (panel != null) {
+                android.app.Dialog open = panel;
+                panel = null;
+                open.dismiss();
             }
         }
 
-        // ---- Edit Page panel (EditPagePanel.Host) ----
-
-        void openEditor() {
-            updatePlaceholder();
-            showDraftName();
-            if (editor == null || !editor.isShowing())
-                editor = EditPagePanel.show(CustomLibraryActivity.this, this);
-        }
-
-        void dismissEditor() {
-            if (editor != null) {
-                editor.dismiss();
-                editor = null;
-            }
-        }
-
-        @Override
-        public CustomLibraryPage draft() {
-            return draft;
-        }
-
-        @Override
-        public boolean isNew() {
-            return CustomLibraryPage.load(getContext()) == null;
-        }
-
-        @Override
-        public Snapshot snapshot() {
-            return snapshot;
-        }
-
-        @Override
-        public void changed() {
-            if (sharedLibrary != null)
-                sharedLibrary.configureCustomLibrary(draft, () -> edit(0));
-            updatePlaceholder();
-            showDraftName();
-        }
-
-        @Override
-        public boolean untouched() {
-            return editing && isNew() && draft.encode().equals(blank);
-        }
-
-        void updatePlaceholder() {
-            if (sharedLibrary != null)
-                sharedLibrary.setCustomPlaceholder(
-                    editing && isNew() && draft.encode().equals(blank) ? NEW_PAGE_PLACEHOLDER : null);
-        }
-
-        void showDraftName() {
-            navigation.previewCustomPage(draft.name.trim().isEmpty() ? NEW_PAGE_NAME : draft.name.trim(), isNew());
-        }
-
-        @Override
-        public void save() {
-            save(null);
-        }
-
-        @Override
-        public void back() {
-            if (editing) {
-                requestExit(isNew() ? CustomLibraryActivity.this::finish : this::closeEditor);
+        private void saveDraft() {
+            if (draft.validation() != null)
                 return;
-            }
-            requestExit(CustomLibraryActivity.this::finish);
+            boolean wasUnset = unset();
+            if (!draft.save(getContext()))
+                return;
+            if (wasUnset)
+                sharedLibrary.setCustomUnset(false);
+            sharedLibrary.configureCustomLibrary(draft, this::customise);
+            navigation.updateCustomPage();
         }
 
-        @Override
-        public void delete() {
-            PreviewDialog.confirmPageDelete(
+        /** Delete page: the delete warning ("Keep page" first); the page goes back to "Make this page your own". */
+        void delete() {
+            PreviewDialog.warning(
                 getContext(), "Delete this page?",
-                "Removes this page only. Your media, watched state and playback progress are never deleted.", () -> {
+                "Removes this page only. Your videos, watched state and progress are never deleted.", "Keep page",
+                "Delete page", () -> {
                     if (CustomLibraryPage.delete(getContext())) {
-                        dismissEditor();
-                        finish();
+                        closePanel();
+                        draft = fresh();
+                        sharedLibrary.configureCustomLibrary(draft, this::customise);
+                        sharedLibrary.setCustomUnset(true);
+                        navigation.updateCustomPage();
                     } else
-                        PreviewDialog.read(getContext(), "Page not deleted", "Retry after returning to the page.");
+                        PreviewDialog.read(getContext(), "Page not deleted", "Try again from the page.");
                 });
-        }
-
-        boolean save(Runnable leave) {
-            String validation = draft.validation();
-            if (validation != null) {
-                PreviewDialog.read(getContext(), "Check the page settings", validation);
-                return false;
-            }
-            if (!draft.save(getContext())) {
-                PreviewDialog.read(getContext(), "Page not saved", "Keep editing and retry.");
-                return false;
-            }
-            original = draft.encode();
-            editing = false;
-            freshEntry = false;
-            pendingFocus = "custom.control.edit";
-            sharedLibrary = null;
-            render();
-            if (leave != null)
-                leave.run();
-            return true;
-        }
-
-        @Override
-        public void requestExit(Runnable leave) {
-            if (!editing || draft.encode().equals(original)) {
-                leave.run();
-                return;
-            }
-            PreviewDialog.message(getContext(), "Unsaved Changes",
-                                  "You've changed this page. Save the changes, discard them, or keep editing?", false,
-                                  new String[] {"Keep Editing", "Save", "Discard"}, 0, n -> {
-                                      if (n == 1)
-                                          save(leave);
-                                      else if (n == 2) {
-                                          CustomLibraryPage clean = CustomLibraryPage.decode(original);
-                                          if (clean != null)
-                                              draft = clean;
-                                          boolean wasNew = isNew();
-                                          editing = wasNew;
-                                          if (!wasNew) {
-                                              pendingFocus = "custom.control.edit";
-                                              sharedLibrary = null;
-                                              render();
-                                          }
-                                          leave.run();
-                                      }
-                                  });
-        }
-
-        void closeEditor() {
-            CustomLibraryPage saved = CustomLibraryPage.load(getContext());
-            if (saved != null)
-                draft = saved;
-            original = draft.encode();
-            editing = false;
-            pendingFocus = "custom.control.edit";
-            sharedLibrary = null;
-            render();
-        }
-
-        void edit(int ignored) {
-            editing = true;
-            original = draft.encode();
-            if (sharedLibrary != null)
-                sharedLibrary.setCustomEditing(true);
-            render();
         }
 
         void library() {
@@ -348,8 +220,8 @@ public final class CustomLibraryActivity extends LeanbackActivity {
                                                  (holder, item)
                                                      -> new VideoViewClickedListener(CustomLibraryActivity.this)
                                                             .onItemClicked(holder, item, null, null));
-                sharedLibrary.setCustomEditing(editing);
-                sharedLibrary.configureCustomLibrary(draft, () -> edit(0));
+                sharedLibrary.configureCustomLibrary(draft, this::customise);
+                sharedLibrary.setCustomUnset(unset());
                 sharedLibrary.setArtworkListener(uri -> {
                     if (navigation != null)
                         navigation.setArtwork(uri);
@@ -364,12 +236,9 @@ public final class CustomLibraryActivity extends LeanbackActivity {
                 ((ViewGroup)sharedLibrary.getParent()).removeView(sharedLibrary);
             sharedLibrary.setSnapshot(snapshot);
             libraryBody.addView(sharedLibrary, new LinearLayout.LayoutParams(-1, -1));
-            if (editing)
-                return;
             if (freshEntry) {
-                // Owner decision 2 Nov 2026: opening the custom page from the top bar behaves like
-                // Movies/TV — focus stays visibly on this page's own tab; DOWN then enters the page
-                // through TopNavigation's normal content-focus route.
+                // Opening the page from the top bar behaves like Movies / TV Shows: focus stays on this page's own
+                // name in the bar; Down enters the page through TopNavigation's content-focus route.
                 freshEntry = false;
                 navigation.post(navigation::focusSelectedTab);
             } else {

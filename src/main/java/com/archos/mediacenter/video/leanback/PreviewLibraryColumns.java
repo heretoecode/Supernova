@@ -24,17 +24,17 @@ import java.util.*;
 public final class PreviewLibraryColumns {
     public enum Column {
         TITLE("Title", 3.5f),
-        YEAR("Year", .8f),
+        YEAR("Release date", 1.2f),
         SEASONS("Seasons", .85f),
         EPISODES("Episodes", .9f),
-        DURATION("Runtime", 1.1f),
+        DURATION("Running time", 1.1f),
         RESOLUTION("Resolution", 1.05f),
         HDR("HDR", .65f),
         AUDIO("Audio", 1.1f),
         SIZE("File size", 1.15f),
-        AVERAGE("Avg. ep. size", 1.15f),
+        AVERAGE("Size per episode", 1.3f),
         ADDED("Date added", 1.25f),
-        MODIFIED("Modified", 1.25f),
+        MODIFIED("Date modified", 1.25f),
         CODEC("Codec", 1.05f),
         BITRATE("Bitrate", 1f),
         CONTAINER("Container", .9f),
@@ -50,6 +50,8 @@ public final class PreviewLibraryColumns {
     private final SharedPreferences prefs;
     private final String prefix;
     private final boolean tv;
+    /** Your own page (mixed films and shows): its own default columns (sheet). */
+    private final boolean own;
     private final List<Column> order = new ArrayList<>();
     private final Set<Column> shown = EnumSet.noneOf(Column.class);
     public Column sortColumn;
@@ -62,6 +64,7 @@ public final class PreviewLibraryColumns {
     public PreviewLibraryColumns(Context c, boolean tv, String namespace) {
         context = c;
         this.tv = tv;
+        own = namespace.startsWith("custom");
         prefs = PreferenceManager.getDefaultSharedPreferences(c);
         prefix = "preview_columns_" + namespace;
         reset(false);
@@ -111,10 +114,22 @@ public final class PreviewLibraryColumns {
         order.clear();
         order.addAll(available());
         shown.clear();
-        shown.addAll(tv ? Arrays.asList(Column.TITLE, Column.SEASONS, Column.EPISODES, Column.DURATION,
-                              Column.RESOLUTION, Column.SIZE, Column.AVERAGE, Column.ADDED)
-                        : Arrays.asList(Column.TITLE, Column.YEAR, Column.DURATION, Column.RESOLUTION, Column.AUDIO,
-                              Column.SIZE, Column.ADDED));
+        // Defaults (page sheet LIBRARY.md): Movies, TV Shows and your own page each have their own.
+        if (own)
+            shown.addAll(Arrays.asList(Column.TITLE, Column.YEAR, Column.EPISODES, Column.DURATION,
+                Column.RESOLUTION, Column.SIZE, Column.AVERAGE, Column.ADDED));
+        else if (tv)
+            shown.addAll(Arrays.asList(Column.TITLE, Column.SEASONS, Column.EPISODES, Column.DURATION,
+                Column.RESOLUTION, Column.SIZE, Column.AVERAGE, Column.ADDED));
+        else
+            shown.addAll(Arrays.asList(Column.TITLE, Column.YEAR, Column.DURATION, Column.RESOLUTION, Column.AUDIO,
+                Column.SIZE, Column.ADDED));
+        List<Column> defaults = new ArrayList<>();
+        for (Column c : order)
+            if (shown.contains(c))
+                defaults.add(c);
+        order.removeAll(defaults);
+        order.addAll(0, defaults);
         if (save)
             save();
     }
@@ -237,7 +252,7 @@ public final class PreviewLibraryColumns {
             case TITLE:
                 return PreviewPages.displayName(e);
             case YEAR:
-                return e.year() > 0 ? String.valueOf(e.year()) : "";
+                return LibraryPageModel.releaseDate(e);
             case SEASONS:
                 return e.seasons > 0 ? String.valueOf(e.seasons) : "";
             case EPISODES:
@@ -276,17 +291,11 @@ public final class PreviewLibraryColumns {
     }
 
     private static String duration(long ms) {
-        if (ms <= 0)
-            return "";
-        long minutes = ms / 60000;
-        return minutes >= 60 ? minutes / 60 + "h " + minutes % 60 + "m" : minutes + " min";
+        return LibraryPageModel.duration(ms);
     }
 
     private static String date(long date) {
-        if (date <= 0)
-            return "";
-        return new SimpleDateFormat("dd MMM yy", Locale.UK)
-            .format(new Date(date < 100000000000L ? date * 1000 : date));
+        return LibraryPageModel.date(date);
     }
 
     private TextView text(String value, int size) {
@@ -302,32 +311,28 @@ public final class PreviewLibraryColumns {
         return t;
     }
 
+    /**
+     * The column headings (mock-up `library-pages/26`): plain soft words, the sorted column bold with ⌄ / ⌃. Not a stop
+     * for the remote: Down from the toolbar goes straight to the first title (sheet).
+     */
     public View header(Runnable changed) {
         LinearLayout row = new LinearLayout(context);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(0, dp(5), 0, 0);
-        row.setBackgroundColor(0x240b1b29);
-        row.setClipChildren(false);
+        row.setPadding(0, dp(5), 0, dp(3));
+        row.setTag("library.columns.header");
         for (Column c : visible()) {
-            TextView label = text(c.label + (sortColumn == c ? (ascending ? " ↑" : " ↓") : ""), 11);
-            label.setFocusable(true);
+            boolean sorted = sortColumn == c;
+            TextView label = text(c.label + (sorted ? (ascending ? "  ⌃" : "  ⌄") : ""), 11);
+            label.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            if (sorted)
+                label.setTypeface(android.graphics.Typeface.create("sans-serif-medium",
+                    android.graphics.Typeface.NORMAL));
+            label.setFocusable(false);
             label.setTag("column:" + c);
-            label.setContentDescription(
-                c.label + ", sort" + (sortColumn == c ? (ascending ? ", ascending" : ", descending") : ""));
-            label.setBackground(PreviewDialog.focus(context));
-            label.setOnClickListener(v -> {
-                setSort(c, sortColumn == c ? !ascending : c == Column.TITLE || c == Column.YEAR);
-                changed.run();
-            });
-            row.addView(label, new LinearLayout.LayoutParams(0, dp(30), c.width));
-        }
-        // Match the toolbar/list rows: a retained touch-input state must not remove
-        // column headings from DOWN navigation when a remote takes over.
-        for (int i = 0; i < row.getChildCount(); i++) {
-            View heading = row.getChildAt(i);
-            heading.setFocusableInTouchMode(true);
-            Diagnostics.semantic(
-                heading, "library.header." + visible().get(i).name().toLowerCase(Locale.ROOT));
+            if (c == Column.TITLE)
+                label.setPadding(dp(5) + dp(58) + dp(6), 0, dp(6), 0);
+            row.addView(label, new LinearLayout.LayoutParams(0, dp(26), c.width));
+            Diagnostics.semantic(label, "library.header." + c.name().toLowerCase(Locale.ROOT));
         }
         return row;
     }
@@ -343,11 +348,12 @@ public final class PreviewLibraryColumns {
         return row;
     }
 
+    /** Faint lines between rows only (RULES §5); about 12% white on the speckled background (0.158 look sweep). */
     private Drawable separator(boolean vertical) {
         LayerDrawable d = new LayerDrawable(
             new Drawable[] {
-                new ColorDrawable(0x120b1b29),
-                new ColorDrawable(vertical ? 0x10708695 : 0x16708695)
+                new ColorDrawable(Color.TRANSPARENT),
+                new ColorDrawable(vertical ? Color.TRANSPARENT : 0x1FFFFFFF)
             });
         if (vertical) {
             d.setLayerWidth(1, dp(1));
@@ -382,14 +388,19 @@ public final class PreviewLibraryColumns {
                 }
                 TextView name = text(value(entry, c), 12);
                 name.setTextColor(Color.WHITE);
+                name.setTypeface(android.graphics.Typeface.create("sans-serif-medium",
+                    android.graphics.Typeface.NORMAL));
                 title.addView(name, new LinearLayout.LayoutParams(0, -1, 1));
                 row.addView(title, new LinearLayout.LayoutParams(0, dp(42), c.width));
             } else {
-                TextView cell = text(value(entry, c), 11);
+                String shown = value(entry, c);
+                TextView cell = text(shown.isEmpty() ? "—" : shown, 11);
+                cell.setTextColor(Color.WHITE);
+                if (sortColumn == c)
+                    cell.setTypeface(android.graphics.Typeface.create("sans-serif-medium",
+                        android.graphics.Typeface.NORMAL));
                 row.addView(cell, new LinearLayout.LayoutParams(0, dp(42), c.width));
             }
-            if (row.getChildCount() < visible().size())
-                row.getChildAt(row.getChildCount() - 1).setBackground(separator(true));
             String value = value(entry, c);
             if (!value.isEmpty())
                 description.append(c.label).append(": ").append(value).append(". ");
@@ -407,62 +418,172 @@ public final class PreviewLibraryColumns {
                 clear(((ViewGroup) view).getChildAt(i));
     }
 
-    public void choose(Runnable changed) {
-        choose(changed, 0);
+    /** Icons for the Columns menu (one each, no two alike: RULES §10). */
+    static String icon(Column c) {
+        switch (c) {
+            case YEAR:
+                return "year";
+            case SEASONS:
+                return "tv";
+            case EPISODES:
+                return "list";
+            case DURATION:
+                return "runtime";
+            case RESOLUTION:
+                return "resolution";
+            case HDR:
+                return "hdr";
+            case AUDIO:
+                return "audio";
+            case SIZE:
+                return "total size";
+            case AVERAGE:
+                return "size";
+            case ADDED:
+                return "added";
+            case MODIFIED:
+                return "edit";
+            case CODEC:
+                return "codec";
+            case BITRATE:
+                return "speed";
+            case CONTAINER:
+                return "file";
+            case PATH:
+                return "folder";
+            default:
+                return "title";
+        }
     }
 
-    private void choose(Runnable changed, int focus) {
+    /** Hidden columns, A–Z. */
+    private List<Column> hidden() {
+        List<Column> result = new ArrayList<>();
+        for (Column c : order)
+            if (!shown.contains(c) && c != Column.TITLE)
+                result.add(c);
+        result.sort(Comparator.comparing(c -> c.label));
+        return result;
+    }
+
+    private List<Column> shownMovable() {
+        List<Column> result = visible();
+        result.remove(Column.TITLE);
+        return result;
+    }
+
+    /** The column picked up by OK in the Columns menu, moving with Up / Down (null when none). */
+    private Column moving;
+
+    /**
+     * The Columns menu under its button (mock-ups `library-pages/28`, `33`): Shown (ticked, in column order), Hidden
+     * (A–Z), Reset to default at the foot apart by a line. OK on a hidden column shows it; OK on a shown column picks it
+     * up (it lifts, ⌃⌄) and Up / Down moves it, live; moved past the last shown column it goes back to Hidden; OK or
+     * Back puts it down. No Done: Back closes. Title always shows and keeps the most room.
+     */
+    public void choose(View anchor, Runnable changed) {
+        moving = null;
+        choose(anchor, changed, null);
+    }
+
+    public void choose(Runnable changed) {
+        choose(null, changed);
+    }
+
+    private void choose(View anchor, Runnable changed, Column focus) {
         List<String> labels = new ArrayList<>();
-        Set<Integer> checked = new HashSet<>();
-        for (int i = 0; i < order.size(); i++) {
-            Column c = order.get(i);
-            labels.add(c.label + (c == Column.TITLE ? " (always shown)" : "") + "   ≡");
-            if (shown.contains(c))
-                checked.add(i);
+        List<String> icons = new ArrayList<>();
+        List<Column> rows = new ArrayList<>();
+        Set<Integer> ticked = new HashSet<>();
+        labels.add("— Shown");
+        icons.add(null);
+        rows.add(null);
+        for (Column c : shownMovable()) {
+            ticked.add(labels.size());
+            labels.add(c == moving ? c.label + "   ⌃⌄" : c.label);
+            icons.add(icon(c));
+            rows.add(c);
         }
+        labels.add("— Hidden");
+        icons.add(null);
+        rows.add(null);
+        for (Column c : hidden()) {
+            labels.add(c.label);
+            icons.add(icon(c));
+            rows.add(c);
+        }
+        labels.add("— ");
+        icons.add(null);
+        rows.add(null);
         labels.add("Reset to default");
-        labels.add("Done");
-        final Dialog[] menu = {
-            null
-        };
-        menu[0] = PreviewDialog.choose(
-            context, "Columns · ◀ ▶ to reorder", labels.toArray(new String[0]), focus, checked, false, n -> {
+        icons.add("history");
+        rows.add(null);
+        int initial = focus == null ? 1 : rows.indexOf(focus);
+        final Dialog[] menu = {null};
+        menu[0] = PreviewDialog.menuBelow(context, anchor, "Columns", labels.toArray(new String[0]),
+            icons.toArray(new String[0]), ticked, initial, false, n -> {
+                Column c = rows.get(n);
                 menu[0].dismiss();
-                if (n == order.size() + 1) {
+                if (c == null) {
+                    moving = null;
+                    reset(true);
                     changed.run();
+                    choose(anchor, changed, null);
                     return;
                 }
-                if (n == order.size())
-                    reset(true);
-                else {
-                    Column column = order.get(n);
-                    if (column != Column.TITLE) {
-                        if (shown.contains(column))
-                            shown.remove(column);
-                        else
-                            shown.add(column);
-                    }
+                if (moving != null) {
+                    moving = null;
+                } else if (shown.contains(c)) {
+                    moving = c;
+                } else {
+                    shown.add(c);
+                    order.remove(c);
+                    int last = 0;
+                    for (int i = 0; i < order.size(); i++)
+                        if (shown.contains(order.get(i)))
+                            last = i + 1;
+                    order.add(last, c);
                     save();
+                    changed.run();
                 }
-                choose(changed, Math.min(n, order.size()));
+                choose(anchor, changed, c);
             });
-        menu[0].setOnCancelListener(d -> changed.run());
         menu[0].setOnKeyListener((d, key, event) -> {
-            if (event.getAction() != KeyEvent.ACTION_DOWN
-                || key != KeyEvent.KEYCODE_DPAD_LEFT && key != KeyEvent.KEYCODE_DPAD_RIGHT)
+            if (moving == null || event.getAction() != KeyEvent.ACTION_DOWN)
                 return false;
-            View selected = menu[0].getCurrentFocus();
-            if (selected == null || !(selected.getTag() instanceof Integer))
-                return false;
-            int from = (Integer) selected.getTag(), to = from + (key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
-            if (from >= order.size() || to < 0 || to >= order.size())
+            if (key == KeyEvent.KEYCODE_BACK) {
+                Column put = moving;
+                moving = null;
+                menu[0].dismiss();
+                choose(anchor, changed, put);
                 return true;
-            Collections.swap(order, from, to);
-            save();
+            }
+            if (key != KeyEvent.KEYCODE_DPAD_UP && key != KeyEvent.KEYCODE_DPAD_DOWN)
+                return key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT;
+            move(moving, key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1);
+            changed.run();
             menu[0].dismiss();
-            choose(changed, to);
+            choose(anchor, changed, moving);
             return true;
         });
+    }
+
+    /** Moves a shown column one place; past the last shown column it is hidden again (the page follows live). */
+    private void move(Column column, int step) {
+        List<Column> movable = shownMovable();
+        int at = movable.indexOf(column);
+        int to = at + step;
+        if (to < 0)
+            return;
+        if (to >= movable.size()) {
+            shown.remove(column);
+            moving = null;
+            save();
+            return;
+        }
+        Column other = movable.get(to);
+        Collections.swap(order, order.indexOf(column), order.indexOf(other));
+        save();
     }
 
     private int dp(int value) {

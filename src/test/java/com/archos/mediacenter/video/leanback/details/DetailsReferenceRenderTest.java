@@ -154,10 +154,11 @@ public class DetailsReferenceRenderTest {
             }
             bitmap.recycle();
             writeMetrics(root, page);
-            for (String name : actors)
-                assertVisibleText(page, name);
-            for (String name : names)
-                assertVisibleText(page, name);
+            // B2 (approved 17 Nov 2026): seven people each, Cast and Crew side by side.
+            for (int n = 0; n < Math.min(7, actors.length); n++)
+                assertVisibleText(page, actors[n]);
+            for (int n = 0; n < Math.min(7, names.length); n++)
+                assertVisibleText(page, names[n]);
             assertVisibleLogo(page, 1);
             assertVisibleLogo(page, 2);
             assertWholeText(page, "7.7/10");
@@ -191,7 +192,7 @@ public class DetailsReferenceRenderTest {
             .put("active_tab", rectangle(page.findViewWithTag("section:Details")));
         for (String name :
             new String[] {
-                "Description", "Key Information", "Reception", "Cast", "Crew", "Technical Information"
+                "Key Information", "Reception", "Cast", "Crew", "Technical Information"
             }) {
             View region = page.findViewWithTag("details.region." + name);
             if (region == null)
@@ -220,8 +221,23 @@ public class DetailsReferenceRenderTest {
     }
 
     private void assertVisibleText(View view, String text) {
-        TextView match = find(view, text);
+        // Look in Cast and Crew first: v20 also names the director and writers under Key information.
+        TextView match = null;
+        for (String region : new String[] {"details.region.Cast", "details.region.Crew"}) {
+            View people = view.findViewWithTag(region);
+            if (match == null && people != null)
+                match = find(people, text);
+        }
+        if (match == null)
+            match = find(view, text);
         assertNotNull(text, match);
+        // Details v20 runs about two screens: Down scrolls to Cast and Crew, so scroll there as a viewer would.
+        View reading = view.findViewWithTag("details.reading.overflow");
+        if (reading instanceof android.widget.ScrollView) {
+            Rect place = new Rect(0, 0, match.getWidth(), match.getHeight());
+            ((ViewGroup) reading).offsetDescendantRectToMyCoords(match, place);
+            reading.scrollTo(0, Math.max(0, place.top - reading.getPaddingTop()));
+        }
         Rect bounds = new Rect();
         assertTrue(text, match.getGlobalVisibleRect(bounds));
         assertEquals(text, match.getHeight(), bounds.height());
@@ -236,6 +252,9 @@ public class DetailsReferenceRenderTest {
     private void assertVisibleLogo(View root, int slot) {
         ImageView logo = root.findViewWithTag("details.reception.logo." + slot);
         assertNotNull(logo);
+        View reading = root.findViewWithTag("details.reading.overflow");
+        if (reading != null)
+            reading.scrollTo(0, 0);
         assertNotNull(logo.getDrawable());
         Rect bounds = new Rect();
         assertTrue(logo.getGlobalVisibleRect(bounds));
@@ -246,6 +265,15 @@ public class DetailsReferenceRenderTest {
     private void assertWholeText(View root, String text) {
         TextView view = find(root, text);
         assertNotNull(text, view);
+        // Details v20 scrolls: bring the text into view as Down would on a small screen.
+        View reading = root.findViewWithTag("details.reading.overflow");
+        if (reading instanceof android.widget.ScrollView) {
+            Rect place = new Rect(0, 0, view.getWidth(), view.getHeight());
+            ((ViewGroup) reading).offsetDescendantRectToMyCoords(view, place);
+            int shown = reading.getHeight() - reading.getPaddingTop() - reading.getPaddingBottom();
+            if (place.bottom - reading.getScrollY() > shown)
+                reading.scrollTo(0, Math.max(0, place.bottom - shown));
+        }
         Rect bounds = new Rect();
         assertTrue(text, view.getGlobalVisibleRect(bounds));
         assertEquals("No clipped rating/provider: " + text, view.getHeight(), bounds.height());

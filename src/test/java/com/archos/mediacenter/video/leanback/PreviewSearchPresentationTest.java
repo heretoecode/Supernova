@@ -139,7 +139,7 @@ public class PreviewSearchPresentationTest {
             assertNotNull(query);
             assertTrue(query.getFocusables(View.FOCUS_DOWN).isEmpty());
             assertTrue(query.isCursorVisible());
-            assertEquals("Films, shows, episodes, people", query.getHint().toString());
+            assertEquals("Movies, TV shows, people…", query.getHint().toString());
             assertNotNull(search.findViewWithTag("semantic:keyboard:Caps Lock"));
             assertEquals("⇧",
                 ((TextView) search.findViewWithTag("semantic:keyboard:Caps Lock")).getText().toString());

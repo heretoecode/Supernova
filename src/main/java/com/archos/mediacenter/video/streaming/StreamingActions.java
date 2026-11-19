@@ -282,10 +282,14 @@ public final class StreamingActions {
                 "Provider=" + offer.provider.name + " host=" + Uri.parse(url).getHost()
                     + " titlePathPresent=" + !TextUtils.isEmpty(Uri.parse(url).getPath()));
             for (String pkg : packages(offer.provider.name)) {
-                if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(pkg)))
+                if (start(a, titleIntent(url, pkg)))
                     return;
             }
-            if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url))))
+            // A known service whose app did not take the title link opens at its start, never Android's "No
+            // application can handle this action" (D9). Unknown services may still have an app for the link.
+            if (packages(offer.provider.name).length > 0 && openApp(a, offer.provider.name))
+                return;
+            if (packages(offer.provider.name).length == 0 && start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url))))
                 return;
         }
         if (PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
@@ -362,6 +366,27 @@ public final class StreamingActions {
                 "com.bskyb.nowtv.beta"
             };
         return new String[0];
+    }
+
+    /** The title link for one app; Netflix's TV app also needs its hand-off source to open the title (D9). */
+    static Intent titleIntent(String url, String pkg) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(pkg);
+        if (pkg.startsWith("com.netflix"))
+            intent.putExtra("source", "30");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
+    }
+
+    /** Opens a service's own app at its start (a title with no file, RULES §18); false when it isn't installed. */
+    public static boolean openApp(Activity activity, String providerName) {
+        for (String pkg : packages(providerName)) {
+            Intent launch = activity.getPackageManager().getLeanbackLaunchIntentForPackage(pkg);
+            if (launch == null)
+                launch = activity.getPackageManager().getLaunchIntentForPackage(pkg);
+            if (launch != null && start(activity, launch))
+                return true;
+        }
+        return false;
     }
 
     private static boolean start(Activity activity, Intent intent) {

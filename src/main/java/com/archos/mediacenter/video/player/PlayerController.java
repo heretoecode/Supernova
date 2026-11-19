@@ -168,7 +168,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private static final int FLAG_SIDE_ALL = FLAG_SIDE_ALL_EXCEPT_UNLOCK_INSTRUCTIONS | FLAG_SIDE_UNLOCK_INSTRUCTIONS;
 
     /** Owner 2 Nov 2026: Play/Pause and Settings are rounded rectangles (corner 12), matching buttons elsewhere. */
-    static final float HUD_BUTTON_RADIUS_DP = 12f;
+    static final float HUD_BUTTON_RADIUS_DP = SupernovaStyle.SMALL_BOX_RADIUS_DP;
     private static final int STATUS_BAR_DISABLE_NOTIFICATION_ICONS = 0x00020000;
     private static final int STATUS_BAR_DISABLE_NOTIFICATION_ALERTS = 0x00040000;
     private static final int STATUS_BAR_DISABLE_NOTIFICATION_TICKER = 0x00080000;
@@ -651,7 +651,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 if (mClock != null) {
                     // in the player we change the typeface and add shadow to improve visibility over the video plane
                     mClock.setShadowLayer(2, 0, 0, Color.BLACK);
-                    mClock.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                    // PL2: the 0.158 top bar's clock: regular weight, the same size.
+                    mClock.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+                    mClock.setTextSize(19 * com.archos.mediacenter.video.leanback.TvLayout.scale(mContext));
                     mClock.setTextColor(Color.WHITE);
                     if (DateFormat.is24HourFormat(mContext)) {
                         mDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -1660,16 +1662,15 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if (partsStrip != null || !(mContext instanceof PlayerActivity) || !(mControlBar instanceof LinearLayout))
             return;
         ChapterMarkers markers = mControllerViewLeft.findViewById(R.id.preview_chapter_markers);
+        // The title logo and metadata keep one fixed place whatever the rows do (P2, RULES §19): nothing lifts.
         List<View> lift = new ArrayList<>();
-        for (int id : new int[] {R.id.preview_playback_title, R.id.preview_playback_episode}) {
-            View v = mControllerViewLeft.findViewById(id);
-            if (v != null)
-                lift.add(v);
-        }
         PlayerPartsStrip.Highlight highlight = markers != null ? markers : (start, end) -> {};
         partsStrip = new PlayerPartsStrip(mContext, new PlayerStripSource((PlayerActivity)mContext), mProgress,
                                           highlight, this::keepControlsShowing, lift);
-        ((LinearLayout)mControlBar).addView(partsStrip.view(), new LinearLayout.LayoutParams(-1, -2));
+        // The tab row and its cards sit lower (P1): the gap below the cards is halved, from 32 to 16 dp.
+        LinearLayout.LayoutParams stripSize = new LinearLayout.LayoutParams(-1, -2);
+        stripSize.bottomMargin = -Math.round(8 * mContext.getResources().getDisplayMetrics().density);
+        ((LinearLayout)mControlBar).addView(partsStrip.view(), stripSize);
         setStrip(partsStrip);
     }
 
@@ -1745,8 +1746,10 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             a.bindPreviewTitleArtwork(title);
         }
         if (episode != null) {
-            episode.setText(a.previewEpisode());
-            episode.setVisibility(mControlBarShowing && !a.previewEpisode().isEmpty() ? View.VISIBLE : View.GONE);
+            // PL1 / PP2: the same details line as Preparing playback, the age badge first.
+            CharSequence line = TitleBlockLine.line(mContext, a.previewAge(), a.previewEpisode());
+            episode.setText(line);
+            episode.setVisibility(mControlBarShowing && line.length() > 0 ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -1888,7 +1891,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         listenForSeekPictures(engine);
         boolean seeking = mNextSeek >= 0 || mPreviewKeySeeking;
         android.graphics.Bitmap frame = seeking && engine != null ? engine.nearest(position) : null;
-        if (frame == null) {
+        if (bubble.getVisibility() != View.VISIBLE) {
             if (picture != null)
                 picture.setVisibility(View.GONE);
             return;
@@ -1915,7 +1918,11 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 shade, new com.archos.mediacenter.video.leanback.ArtworkEdge(mContext, 8, false)}));
             parent.addView(picture, new FrameLayout.LayoutParams(width, height, Gravity.TOP | Gravity.START));
         }
-        picture.setImageBitmap(frame);
+        // The time box is always the card (RULES: time over the chapter name); plain charcoal until a picture exists.
+        if (frame != null)
+            picture.setImageBitmap(frame);
+        else
+            picture.setImageDrawable(new android.graphics.drawable.ColorDrawable(SEEK_CARD_EMPTY));
         picture.setVisibility(View.VISIBLE);
         float left = PreviewHudTiming.pillLeft(centre - width / 2f, mProgress.getWidth(), width);
         picture.setTranslationX(left);
@@ -1923,9 +1930,29 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         // chapter name) moves inside it, centred, on the shade (player v6–v7).
         float bottom = bubble.getTranslationY() + bubble.getMeasuredHeight();
         picture.setTranslationY(bottom - height);
-        bubble.setTranslationX(left + (width - bubble.getMeasuredWidth()) / 2f);
-        bubble.setTranslationY(bottom - bubble.getMeasuredHeight() - 6 * density);
+        // Time over the chapter name at the card's bottom left (player v8-v11).
+        bubble.setTranslationX(left + 12 * density);
+        bubble.setTranslationY(bottom - bubble.getMeasuredHeight() - 8 * density);
         bubble.bringToFront();
+    }
+
+    /** The card behind the time while no seek picture exists yet. */
+    static final int SEEK_CARD_EMPTY = 0xFF22252B;
+
+    /**
+     * The time card rises above the seek bar, outside the bar's own row; no parent may cut it off (0.157 Shield
+     * review #8: the top of the time box was clipped where subtitles sit).
+     */
+    private void keepUnclipped(View view) {
+        android.view.ViewParent parent = view.getParent();
+        while (parent instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) parent;
+            group.setClipChildren(false);
+            group.setClipToPadding(false);
+            if (group == mControllerViewLeft)
+                return;
+            parent = group.getParent();
+        }
     }
 
     private void listenForSeekPictures(SeekThumbnails engine) {
@@ -1980,10 +2007,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             bubble.setText(mCurrentTime == null ? "" : mCurrentTime.getText());
         if (mProgress.getWidth() <= 0)
             return;
-        bubble.setMaxWidth(mProgress.getWidth());
+        float cardDensity = mContext.getResources().getDisplayMetrics().density;
+        bubble.setMaxWidth(Math.round((SEEK_PICTURE_WIDTH_DP - 24) * cardDensity));
         float density = mContext.getResources().getDisplayMetrics().density;
-        if (!(bubble.getBackground() instanceof SeekTooltipDrawable))
-            bubble.setBackground(new SeekTooltipDrawable(density, 0));
+        // The time box is the card (player v8-v11): no tooltip; the card behind it is drawn by placeSeekPicture.
+        bubble.setBackground(null);
+        bubble.setGravity(Gravity.START | Gravity.BOTTOM);
+        bubble.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+        keepUnclipped(bubble);
         ChapterMarkers markers = mControllerViewLeft.findViewById(R.id.preview_chapter_markers);
         if (markers != null)
             markers.bind(chapters, Player.sPlayer == null ? 0 : Player.sPlayer.getDuration(),
@@ -1999,7 +2030,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                   bubble.getMeasuredWidth() / 2f;
         float left = PreviewHudTiming.pillLeft(x, mProgress.getWidth(), bubble.getMeasuredWidth());
         bubble.setTranslationX(left);
-        ((SeekTooltipDrawable)bubble.getBackground()).setPointer(x + bubble.getMeasuredWidth() / 2f - left);
         // Raised clearly above the dot (approved 0.156 HUD), so the time never sits on it.
         bubble.setTranslationY(mProgress.getY() + mProgress.getHeight() / 2f - bubble.getMeasuredHeight() -
                                SCRUB_BUBBLE_GAP_DP * density);

@@ -107,7 +107,7 @@ public class Supernova138UiTest {
             assertSame(tab, page.findFocus());
             for (String heading :
                 new String[] {
-                    "Cast", "Crew", "Key Information", "Reception", "Technical Information"
+                    "Cast", "Crew", "Key information", "Reception", "Technical information"
                 }) {
                     View text = PreviewPagesTest.findText(page, heading);
                     assertNotNull(heading, text);
@@ -163,9 +163,8 @@ public class Supernova138UiTest {
                 }, () -> true);
             host.get().setContentView(nav);
             PreviewPagesTest.layout(nav);
-            TextView brand = (TextView) PreviewPagesTest.findText(nav, "SUPERNOVA");
-            assertEquals(1, brand.getLineCount());
-            assertTrue(brand.getWidth() >= brand.getPaint().measureText("SUPERNOVA"));
+            // 0.158 top bar: no SUPERNOVA wordmark (RULES §2).
+            assertNull(PreviewPagesTest.findText(nav, "SUPERNOVA"));
             TextView clock = nav.findViewWithTag("preview-default-clock");
             assertTrue(clock.getWidth() >= clock.getPaint().measureText(clock.getText().toString()));
             for (String tag : new String[] {
@@ -305,7 +304,7 @@ public class Supernova138UiTest {
             PreviewPagesTest.capture(nav, "0138-details-local-tracks-150-text");
             for (String heading :
                 new String[] {
-                    "Cast", "Crew", "Key Information", "Reception", "Technical Information"
+                    "Cast", "Crew", "Key information", "Reception", "Technical information"
                 }) {
                     TextView title = (TextView) PreviewPagesTest.findText(page, heading);
                     assertNotNull(heading, title);
@@ -313,7 +312,8 @@ public class Supernova138UiTest {
                 }
             assertNotNull(PreviewPagesTest.findText(page, "23.976 fps"));
             assertNotNull(PreviewPagesTest.findText(page, "AAC"));
-            assertNotNull(PreviewPagesTest.findText(page, "Subtitles: eng"));
+            // Details v20: subtitles have their own row under Technical information.
+            assertNotNull(PreviewPagesTest.findText(page, "English"));
             PreviewPagesTest.capture(nav, "0138-details-local-tracks-150-text");
         } finally {
             host.pause().stop().destroy();
@@ -342,7 +342,7 @@ public class Supernova138UiTest {
             filters.requestFocus();
             filters.performClick();
             Dialog dialog = ShadowDialog.getLatestDialog();
-            assertNotNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Clear Filters"));
+            assertNotNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Clear filters"));
             assertNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Page Details"));
             assertEquals(0, edited[0]);
             dialog.cancel();

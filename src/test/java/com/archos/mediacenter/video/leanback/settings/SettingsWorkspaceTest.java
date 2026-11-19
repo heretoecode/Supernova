@@ -107,54 +107,62 @@ public class SettingsWorkspaceTest {
         layout();
     }
 
+    /** 0.158 (page sheet SETTINGS.md): no tiles; seven tabs; Settings opens on Playback with focus on its tab. */
     @Test
-    public void gridHasExactEightCardsNoWrapAndRestoresSelectedCategory() {
-        assertTrue(tagged("settings.grid.0").hasFocus());
-        key(KeyEvent.KEYCODE_DPAD_LEFT);
-        assertTrue(tagged("settings.grid.0").hasFocus());
-        key(KeyEvent.KEYCODE_DPAD_RIGHT);
+    public void sevenTabsOpenOnPlaybackAndBackGoesToTheTabThenOut() {
+        assertNull(root.findViewWithTag("settings.grid.0"));
+        assertTrue(tagged("settings.tab.0").hasFocus());
+        ViewGroup tabs = (ViewGroup)tagged("settings.tabs");
+        assertEquals(7, tabs.getChildCount());
+        String[] names = {"Playback", "Audio", "Subtitles", "Library", "Services", "System", "About"};
+        for (int i = 0; i < names.length; i++)
+            assertEquals(names[i], ((TextView)tabs.getChildAt(i)).getText().toString());
         key(KeyEvent.KEYCODE_DPAD_DOWN);
-        assertTrue(tagged("settings.grid.5").hasFocus());
-        tagged("settings.grid.5").performClick();
+        assertTrue("Down goes into the tab's rows", tagged("settings.content").hasFocus());
+        assertTrue("Back from the rows goes to the open tab", workspace.back());
         layout();
-        assertNotNull(root.findViewWithTag("settings.category"));
-        assertTrue(workspace.back());
-        layout();
-        assertTrue(tagged("settings.grid.5").hasFocus());
-        assertFalse(workspace.back());
-        for (int i = 0; i < 8; i++)
-            assertTrue(
-                tagged("settings.grid." + i).getContentDescription().toString().startsWith(SettingsRegistry.LABELS[i]));
+        assertTrue(tagged("settings.tab.0").hasFocus());
+        assertFalse("Back from the tabs leaves for the top bar", workspace.back());
     }
 
     /** 0.156 page pattern (mock-ups settings/03–05): tabs in the header, rows below, values level with titles. */
+    /** Moving along the tabs switches the page at once (RULES §4); a tab's sections stack with their headings. */
     @Test
-    public void tabsSitInTheHeaderAndRowsKeepTheirValueLevelWithTheTitle() {
-        workspace.open(0, "Playback");
+    public void tabsSwitchAtOnceAndRowsKeepTheirValueLevelWithTheTitle() {
+        workspace.open(0, null);
         layout();
-        View first = tagged("settings.section.Playback"), second = tagged("settings.section.Resume & Progress");
-        assertSame("tabs live in the header", tagged("settings.tabs"), first.getParent());
+        View first = tagged("settings.tab.0"), second = tagged("settings.tab.1");
+        assertSame("tabs live in one row", tagged("settings.tabs"), first.getParent());
         assertTrue(first.requestFocus());
         key(KeyEvent.KEYCODE_DPAD_RIGHT);
         assertTrue("Right moves to the next tab", second.hasFocus());
-        assertTrue("the focused tab opens its rows", second.isSelected());
+        assertNotNull("the focused tab opens its rows", tagged("settings.preference.favAudioLang"));
         key(KeyEvent.KEYCODE_DPAD_LEFT);
         assertTrue(first.hasFocus());
+        for (String heading : new String[] {"General", "Resume", "Skipping", "Picture"})
+            assertNotNull(tagged("settings.heading." + heading));
         key(KeyEvent.KEYCODE_DPAD_DOWN);
         View row = root.findFocus();
         assertNotNull(row);
         assertTrue(String.valueOf(row.getTag()).startsWith("settings.preference."));
         key(KeyEvent.KEYCODE_DPAD_UP);
         assertTrue("Up from the first row returns to the open tab", first.hasFocus());
-        ViewGroup speed = (ViewGroup)tagged("settings.preference.playback_speed");
-        View title = (View)speed.getChildAt(0), toggle = speed.findViewWithTag("settings.switch");
-        assertSame("the switch shares the title's line", title, toggle.getParent());
+        // PL7: Seek previews sit in Playback › General.
+        assertNotNull(tagged("settings.preference.seek_thumbnails_enabled"));
+        ViewGroup hide = (ViewGroup)tagged("settings.preference.hide_controls_on_pause");
+        View toggle = hide.findViewWithTag("settings.switch");
+        // Everything in a row sits on the row's centre line (RULES; 0.157 Shield review #2).
+        int[] rowAt = new int[2], toggleAt = new int[2];
+        hide.getLocationInWindow(rowAt);
+        toggle.getLocationInWindow(toggleAt);
+        float rowCentre = rowAt[1] + hide.getHeight() / 2f, toggleCentre = toggleAt[1] + toggle.getHeight() / 2f;
+        assertTrue("the switch is on the row's centre line", Math.abs(rowCentre - toggleCentre) <= 2);
     }
 
     /** Owner rule: up to ~5 short choices sit inline and Left/Right changes them straight away. */
     @Test
     public void shortChoicesAreInlineAndLeftRightSavesThem() {
-        workspace.open(6, "Advanced");
+        workspace.open(5, null);
         layout();
         ListPreference level = fragment.findPreference("supernova_pcm_speed_engine");
         assertNotNull(level);
@@ -194,10 +202,9 @@ public class SettingsWorkspaceTest {
             for (int y = 0; y < 100; y++)
                 for (int x = 0; x < 200; x++)
                     colours.add(image.getPixel(x, y));
-            assertTrue("White thumb visible", colours.contains(Color.WHITE));
-            assertTrue("Blue gradient remains visible",
-                       colours.stream().anyMatch(
-                           c -> Color.blue(c) > 180 && Color.red(c) < 100));
+            // No blue (RULES; player v10): on = white track with a dark knob, whatever the accent.
+            assertTrue("White track visible", colours.contains(StandardSwitchDrawable.ON_TRACK));
+            assertTrue("Dark knob visible", colours.contains(StandardSwitchDrawable.KNOB_ON));
             assertNotEquals(Color.WHITE, PreviewAccent.switchTrack(host.get()));
             assertNotEquals(Color.BLACK, PreviewAccent.switchTrack(host.get()));
             if (accent == 0xff62bbf3)
@@ -224,12 +231,14 @@ public class SettingsWorkspaceTest {
                 for (int x = 0; x < 60; x++)
                     if (Color.alpha(image.getPixel(x, y)) > 240)
                         colours.add(image.getPixel(x, y));
-            assertTrue(colours.contains(Color.WHITE));
-            if (checked)
-                assertTrue(colours.stream().anyMatch(
-                    c -> Color.blue(c) > 180 && Color.red(c) < 100));
-            else
+            // No blue (RULES; player v10): on = white track, dark knob; off = dark track, white knob.
+            if (checked) {
+                assertTrue(colours.contains(StandardSwitchDrawable.ON_TRACK));
+                assertTrue(colours.contains(StandardSwitchDrawable.KNOB_ON));
+            } else {
+                assertTrue(colours.contains(Color.WHITE));
                 assertTrue(colours.contains(StandardSwitchDrawable.OFF));
+            }
             box.setEnabled(false);
             image.eraseColor(Color.TRANSPARENT);
             icon = box.getButtonDrawable();
@@ -245,39 +254,39 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void togglePersistsWithoutMovingFocusAndHiddenRowsRemainAbsent() {
-        workspace.open(0, "Playback");
+        workspace.open(0, null);
         layout();
-        View row = tagged("settings.preference.playback_speed");
+        View row = tagged("settings.preference.hide_controls_on_pause");
         row.requestFocus();
-        boolean before = ((TwoStatePreference)fragment.findPreference("playback_speed")).isChecked();
+        boolean before = ((TwoStatePreference)fragment.findPreference("hide_controls_on_pause")).isChecked();
         row.performClick();
         layout();
         assertEquals(!before,
-                     PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean("playback_speed", true));
+                     PreferenceManager.getDefaultSharedPreferences(host.get()).getBoolean("hide_controls_on_pause", true));
         assertTrue(row.hasFocus());
         assertNull(root.findViewWithTag("settings.preference.try_new_ui"));
         assertNull(root.findViewWithTag("settings.preference.app_theme"));
         workspace.back();
-        workspace.open(0, "Playback");
+        workspace.open(0, null);
         layout();
-        assertEquals(!before, ((TwoStatePreference)fragment.findPreference("playback_speed")).isChecked());
+        assertEquals(!before, ((TwoStatePreference)fragment.findPreference("hide_controls_on_pause")).isChecked());
     }
 
     @Test
     public void toggleStatesAreExplicitAndUnavailableRowsKeepFocusOutline() {
-        workspace.open(0, "Playback");
+        workspace.open(0, null);
         layout();
-        TwoStatePreference preference = fragment.findPreference("playback_speed");
+        TwoStatePreference preference = fragment.findPreference("hide_controls_on_pause");
         for (boolean checked : new boolean[] {false, true}) {
             preference.setChecked(checked);
             layout();
-            ViewGroup row = (ViewGroup)tagged("settings.preference.playback_speed");
+            ViewGroup row = (ViewGroup)tagged("settings.preference.hide_controls_on_pause");
             assertEquals(View.GONE, row.findViewWithTag("settings.value").getVisibility());
             assertTrue(row.getContentDescription().toString().endsWith(checked ? "On" : "Off"));
         }
         preference.setEnabled(false);
         layout();
-        ViewGroup row = (ViewGroup)tagged("settings.preference.playback_speed");
+        ViewGroup row = (ViewGroup)tagged("settings.preference.hide_controls_on_pause");
         assertEquals(View.GONE, row.findViewWithTag("settings.value").getVisibility());
         assertFalse(row.findViewWithTag("settings.switch").isEnabled());
         assertEquals(1f, row.getAlpha(), 0f);
@@ -300,8 +309,8 @@ public class SettingsWorkspaceTest {
             p.setValue("en");
             Dialog dialog = SettingsChoiceDialog.show(host.get(), p);
             for (int n = 0; n < 4; n++) {
-                ViewGroup row = dialog.getWindow().getDecorView().findViewWithTag("settings.choice." + n);
-                Drawable icon = ((ImageView)row.getChildAt(1)).getDrawable();
+                ViewGroup row = dialog.getWindow().getDecorView().findViewWithTag(n);
+                Drawable icon = ((ImageView)row.getChildAt(0)).getDrawable();
                 assertTrue(icon instanceof PreviewLanguageIcon);
                 Object flag = ReflectionHelpers.getField(icon, "flag");
                 if (n < 3)
@@ -337,7 +346,7 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void positiveSubtitleProxyImmediatelyUpdatesNativeLanguageDependency() {
-        workspace.open(1, "Subtitles");
+        workspace.open(2, null);
         layout();
         TwoStatePreference positive = fragment.findPreference("preview_subtitles_by_default");
         positive.setChecked(true);
@@ -351,14 +360,12 @@ public class SettingsWorkspaceTest {
         layout();
         assertTrue(fragment.findPreference("favSubLang").isEnabled());
         assertTrue(fragment.findPreference("subtitles_show_full_for_local_audio").isEnabled());
-        // The fonts rows moved to the approved Style tab (settings/08–09), after the live sample and style controls.
-        workspace.open(1, "Subtitle style");
-        layout();
+        // 0.158: the fonts rows sit in Subtitles › Default Appearance, after the live sample and style controls.
         assertNotNull(tagged("settings.preference.subtitle_fonts_folder_uri"));
         assertNotNull(tagged("settings.preference.subtitle_default_font"));
         assertNotNull(tagged("settings.subtitle.sample"));
         assertNotNull(tagged("settings.subtitle.position"));
-        assertEquals("Style", ((TextView)tagged("settings.section.Subtitle style")).getText().toString());
+        assertNotNull(tagged("settings.heading.Default Appearance"));
     }
 
     @Test
@@ -390,7 +397,8 @@ public class SettingsWorkspaceTest {
     @Test
     public void mapAccountsForBaselineAndNativeSubtitleExtensionWithoutResurrectingHiddenState() {
         SettingsRegistry registry = new SettingsRegistry(host.get());
-        assertEquals(171, registry.entries.size());
+        assertEquals(173, registry.entries.size());
+        assertEquals(2, registry.entries.stream().filter(e -> e.id.startsWith("N158")).count());
         assertEquals(1, registry.entries.stream().filter(e -> e.id.startsWith("N151") && !e.nested()).count());
         assertEquals(165, registry.entries.stream().filter(e -> e.id.startsWith("S")).count());
         assertEquals(5, registry.entries.stream().filter(e -> e.id.startsWith("N146") && !e.nested()).count());
@@ -401,18 +409,17 @@ public class SettingsWorkspaceTest {
             if (e.excluded())
                 assertFalse(e.integration());
         }
-        for (int i = 0; i < 8; i++) {
+        for (int i : SettingsLayout.TABS) {
             workspace.open(i, null);
             layout();
-            assertEquals("header, rule, content", 3, ((ViewGroup)tagged("settings.category")).getChildCount());
+            assertEquals("tabs, content", 2, ((ViewGroup)tagged("settings.category")).getChildCount());
         }
     }
 
-    /** Owner question 2 Nov 2026: the OMDb key must actually be reachable at Settings > Library & Home > Library & metadata. */
+    /** Owner question 2 Nov 2026: the OMDb key must be reachable; 0.158: Settings › Services › Ratings. */
     @Test
     public void ratingsKeyIsVisibleUnderLibraryAndMetadata() {
-        assertEquals("Library & Home", SettingsRegistry.CATEGORIES[2]);
-        workspace.open(2, "Library & metadata");
+        workspace.open(4, null);
         layout();
         View row = tagged("settings.preference.omdb_api_key");
         assertTrue("row is shown", row.isShown());
@@ -433,7 +440,7 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void navigationStateSurvivesRecreationWithoutReplayingAnAction() {
-        workspace.open(6, "Advanced");
+        workspace.open(5, null);
         layout();
         View row = tagged("settings.preference.supernova_pcm_speed_engine");
         row.requestFocus();
@@ -441,13 +448,13 @@ public class SettingsWorkspaceTest {
         fragment.onSaveInstanceState(state);
         SettingsWorkspace copy =
             new SettingsWorkspace(fragment, ReflectionHelpers.getField(fragment, "backupController"), state);
-        assertNotNull(copy.findViewWithTag("settings.section.Diagnostics"));
+        assertNotNull(copy.findViewWithTag("settings.heading.Diagnostics"));
         copy.dispose();
     }
 
     @Test
     public void choiceCancelAndAcceptedSelectionRestoreOpenerAndRespectVeto() {
-        workspace.open(6, "Advanced");
+        workspace.open(5, null);
         layout();
         View opener = tagged("settings.preference.supernova_pcm_speed_engine");
         ListPreference level = fragment.findPreference("supernova_pcm_speed_engine");
@@ -455,54 +462,50 @@ public class SettingsWorkspaceTest {
         opener.requestFocus();
         Dialog dialog = SettingsChoiceDialog.show(host.get(), level);
         assertNotNull(dialog);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").requestFocus();
+        dialog.getWindow().getDecorView().findViewWithTag(0).requestFocus();
         String original = level.getValue();
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.cancel").performClick();
+        // The shared choice list has no Cancel button: Back closes it.
+        dialog.onBackPressed();
+        layout();
         assertEquals(original, level.getValue());
         assertTrue(opener.hasFocus());
         level.setOnPreferenceChangeListener((p, value) -> false);
         dialog = SettingsChoiceDialog.show(host.get(), level);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
+        dialog.getWindow().getDecorView().findViewWithTag(0).performClick();
         assertTrue(dialog.isShowing());
         assertEquals(original, level.getValue());
         dialog.dismiss();
         level.setOnPreferenceChangeListener((p, value) -> true);
         dialog = SettingsChoiceDialog.show(host.get(), level);
-        dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
+        dialog.getWindow().getDecorView().findViewWithTag(0).performClick();
         layout();
         assertFalse(dialog.isShowing());
         assertEquals(level.getEntryValues()[0].toString(), level.getValue());
         assertTrue(opener.hasFocus());
     }
 
+    /** "Look up skip times online" off hides the skipping choices but never itself, so it can be turned back on. */
     @Test
     public void integrationDisableAndReenableRetainsPolicyAndReconcilesChildren() {
         String master = SegmentSkippingPolicy.MASTER;
-        workspace.open(0, "Skipping");
+        workspace.open(0, null);
         layout();
-        String child = "introdb_mode_intro";
+        String child = null;
         SettingsRegistry registry = new SettingsRegistry(host.get());
         for (SettingsRegistry.Entry e : registry.in(0, "Skipping"))
-            if (!e.integration()) {
+            if (!e.key.equals(master) && root.findViewWithTag("settings.preference." + e.key) != null) {
                 child = e.key;
                 break;
             }
+        assertNotNull(child);
         Preference policy = fragment.findPreference(child);
         assertNotNull(policy);
         String value = ((ListPreference)policy).getValue();
-        assertNotNull(root.findViewWithTag("settings.preference." + child));
-        workspace.open(5, "Service integrations");
-        layout();
         tagged("settings.preference." + master).performClick();
-        layout();
-        workspace.open(0, "Skipping");
         layout();
         assertNull(root.findViewWithTag("settings.preference." + child));
-        workspace.open(5, "Service integrations");
-        layout();
+        assertNotNull("the switch itself stays", root.findViewWithTag("settings.preference." + master));
         tagged("settings.preference." + master).performClick();
-        layout();
-        workspace.open(0, "Skipping");
         layout();
         assertNotNull(root.findViewWithTag("settings.preference." + child));
         assertEquals(value, ((ListPreference)fragment.findPreference(child)).getValue());
@@ -510,7 +513,7 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void advancedUnlockReparentsNativePreferencesWithoutResettingSavedValues() {
-        workspace.open(6, "Advanced");
+        workspace.open(5, null);
         layout();
         View original = tagged("settings.preference.force_software_decoding");
         original.requestFocus();
@@ -544,11 +547,11 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void externalRestoreReconcilesNativeValuesWithoutReplayingActions() {
-        workspace.open(0, "Playback");
+        workspace.open(0, null);
         layout();
-        View row = tagged("settings.preference.playback_speed");
+        View row = tagged("settings.preference.hide_controls_on_pause");
         row.requestFocus();
-        TwoStatePreference nativeValue = fragment.findPreference("playback_speed");
+        TwoStatePreference nativeValue = fragment.findPreference("hide_controls_on_pause");
         final int[] called = {0};
         nativeValue.setOnPreferenceChangeListener((p, v) -> {
             called[0]++;
@@ -557,33 +560,31 @@ public class SettingsWorkspaceTest {
         boolean updated = !nativeValue.isChecked();
         PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
-            .putBoolean("playback_speed", updated)
+            .putBoolean("hide_controls_on_pause", updated)
             .putBoolean("subtitles_hide_default", true)
             .commit();
         layout();
         assertEquals(updated, nativeValue.isChecked());
         assertTrue(row.hasFocus());
         assertEquals(0, called[0]);
-        workspace.open(1, "Subtitles");
+        workspace.open(2, null);
         layout();
         assertFalse(((TwoStatePreference)fragment.findPreference("preview_subtitles_by_default")).isChecked());
         assertFalse(fragment.findPreference("favSubLang").isEnabled());
     }
 
     @Test
-    public void allCategoriesRenderTheirRealContentAndRestoreGrid() throws Exception {
-        for (int i = 0; i < 8; i++) {
+    public void allTabsRenderTheirRealContent() throws Exception {
+        for (int i : SettingsLayout.TABS) {
             workspace.open(i, null);
             layout();
-            save("category-" + i);
-            assertTrue(workspace.back());
-            layout();
-            assertTrue(tagged("settings.grid." + i).hasFocus());
+            save("tab-" + i);
+            assertTrue(tagged("settings.tab." + i).isShown());
         }
-        workspace.open(6, "Backup & restore");
+        workspace.open(5, "Backup & restore");
         layout();
         save("backup");
-        workspace.open(5, "OpenSubtitles");
+        workspace.open(2, "OpenSubtitles");
         layout();
         save("opensubtitles");
     }
@@ -609,7 +610,7 @@ public class SettingsWorkspaceTest {
     public void renderEnlargedText() throws Exception {
         RuntimeEnvironment.setFontScale(1.5f);
         try {
-            workspace.showGrid();
+            workspace.open(0, null);
             layout();
             render("large");
         } finally {
@@ -619,23 +620,17 @@ public class SettingsWorkspaceTest {
 
     private void render(String name) throws Exception {
         layout();
-        for (int i = 0; i < 8; i++) {
-            ViewGroup card = (ViewGroup)tagged("settings.grid." + i);
-            for (int j = 0; j < card.getChildCount(); j++)
-                if (card.getChildAt(j) instanceof TextView) {
-                    TextView t = (TextView)card.getChildAt(j);
-                    assertNotNull(t.getLayout());
-                    assertTrue(name + " text fits card " + i + " bottom=" + t.getBottom() +
-                                   " height=" + card.getHeight(),
-                               t.getBottom() <= card.getHeight() - card.getPaddingBottom());
-                    for (int n = 0; n < t.getLineCount(); n++)
-                        assertEquals(0, t.getLayout().getEllipsisCount(n));
-                }
+        // Every tab's word fits its box, unclipped, at every size (0.158 page sheet).
+        ViewGroup tabs = (ViewGroup)tagged("settings.tabs");
+        for (int i = 0; i < tabs.getChildCount(); i++) {
+            TextView t = (TextView)tabs.getChildAt(i);
+            assertNotNull(t.getLayout());
+            assertEquals(name + " tab " + i + " not cut", 0, t.getLayout().getEllipsisCount(0));
         }
-        save(name + "-grid");
-        workspace.open(0, "Playback");
-        layout();
         save(name + "-playback");
+        workspace.open(5, null);
+        layout();
+        save(name + "-system");
     }
 
     private void save(String name) throws Exception {
@@ -651,15 +646,11 @@ public class SettingsWorkspaceTest {
     }
 
     @Test
-    public void overviewUsesEqualGuttersAndPurposeSpecificAudioCopy() {
-        View first = tagged("settings.grid.0"), secondRow = tagged("settings.grid.4");
-        int horizontal = ((LinearLayout.LayoutParams)first.getLayoutParams()).rightMargin;
-        int vertical = ((LinearLayout.LayoutParams)((View)first.getParent()).getLayoutParams()).bottomMargin;
-        assertEquals(horizontal, vertical);
-        workspace.open(1, "Audio output & tracks");
+    public void audioTabUsesPurposeSpecificCopy() {
+        workspace.open(1, null);
         layout();
-        assertEquals("tab says what it holds, in plain words", "Audio",
-                     ((TextView)tagged("settings.section.Audio output & tracks")).getText().toString());
+        assertNotNull(tagged("settings.heading.Language"));
+        assertNotNull(tagged("settings.heading.Sound"));
         View preferred = tagged("settings.preference.favAudioLang");
         assertTrue(containsText(preferred, "Preferred audio language"));
     }
@@ -679,7 +670,7 @@ public class SettingsWorkspaceTest {
     }
 
     @Test
-    public void sharedNavigationRetainsEightCardsAndAllCategoryFocusPaths() throws Exception {
+    public void sharedNavigationReachesEveryTabFromTheTopBar() throws Exception {
         ViewGroup old = (ViewGroup)root.getParent();
         old.removeView(root);
         TopNavigation nav = new TopNavigation(host.get(), root, index -> {}, workspace::atNavigationBoundary);
@@ -688,12 +679,7 @@ public class SettingsWorkspaceTest {
         nav.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY));
         nav.layout(0, 0, 1920, 1080);
-        tagged("settings.grid.2").requestFocus();
-        nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
-        assertTrue(nav.findViewWithTag("semantic:topnav.settings").hasFocus());
-        nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
-        assertTrue(tagged("settings.grid.2").hasFocus());
-        for (int n = 0; n < 8; n++) {
+        for (int n : SettingsLayout.TABS) {
             workspace.open(n, null);
             layout();
             assertTrue(workspace.atNavigationBoundary());
@@ -701,7 +687,6 @@ public class SettingsWorkspaceTest {
             assertTrue(nav.findViewWithTag("semantic:topnav.settings").hasFocus());
             nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             assertTrue(workspace.atNavigationBoundary());
-            assertTrue(workspace.back());
         }
     }
 

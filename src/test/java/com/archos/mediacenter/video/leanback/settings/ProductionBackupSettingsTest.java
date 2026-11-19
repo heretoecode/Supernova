@@ -119,7 +119,7 @@ public class ProductionBackupSettingsTest {
     }
 
     private int railWidth(View root) {
-        View rail = root.findViewWithTag("settings.section.Backup & restore");
+        View rail = root.findViewWithTag("settings.tab.5");
         return ((View) rail.getParent()).getWidth();
     }
 
@@ -139,7 +139,7 @@ public class ProductionBackupSettingsTest {
     }
 
     private void assertBackupOpenerVisible(View root) {
-        View child = root.findViewWithTag("settings.section.Backup & restore");
+        View child = root.findViewWithTag("settings.tab.5");
         assertNotNull(child);
         Rect visible = new Rect();
         ViewParent parent = child.getParent();
@@ -205,7 +205,7 @@ public class ProductionBackupSettingsTest {
             layout(root);
             assertTrue(root.findViewWithTag("backup.details").hasFocus());
             assertTrue(controller(fragment).back());
-            assertTrue(root.findViewWithTag("settings.section.Backup & restore").hasFocus());
+            assertTrue(root.findViewWithTag("settings.tab.5").hasFocus());
         } finally {
             host.pause().stop().destroy();
         }
@@ -290,7 +290,7 @@ public class ProductionBackupSettingsTest {
                 com.archos.mediacenter.video.utils.backup.BackupSelection.Preset.CUSTOM);
             var fragment = install(host.get());
             View root = fragment.requireView();
-            assertNotNull(root.findViewWithTag("settings.section.Backup & restore"));
+            assertNotNull(root.findViewWithTag("settings.tab.5"));
             for (BackupCategory category : BackupCategory.values()) {
                 View option = root.findViewWithTag("backup.category." + category.name());
                 assertNotNull(category.name(), option);
@@ -308,7 +308,7 @@ public class ProductionBackupSettingsTest {
             layout(root);
             assertTrue(details.hasFocus());
             assertTrue(controller(fragment).back());
-            assertTrue(root.findViewWithTag("settings.section.Backup & restore").hasFocus());
+            assertTrue(root.findViewWithTag("settings.tab.5").hasFocus());
         } finally {
             host.pause().stop().destroy();
         }

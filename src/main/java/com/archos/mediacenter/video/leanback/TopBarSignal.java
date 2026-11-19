@@ -58,7 +58,7 @@ public final class TopBarSignal extends View
         return needsAttention > 0 ? State.DOT : State.NONE;
     }
 
-    private static boolean scanning()
+    static boolean scanning()
     {
         return NetworkScannerReceiver.isScannerWorking() || LocalImportActivity.moving();
     }

@@ -37,7 +37,8 @@ final class PreviewFeaturedIndicators extends View {
         float total=weights.length*11*density+19*density,left=(getWidth()-total)/2+3*density;
         float top=(getHeight()-5*density)/2;
         for(float weight:weights){float width=(5+19*weight)*density;
-            paint.setColor(ColorUtils.blendARGB(0x7792aabd,PreviewAccent.color(getContext()),weight));
+            // H2: white for the current hero, soft white for the rest (no blue, RULES §6).
+            paint.setColor(ColorUtils.blendARGB(0x66FFFFFF,0xFFFFFFFF,weight));
             canvas.drawRoundRect(left,top,left+width,top+5*density,2.5f*density,2.5f*density,paint);
             left+=width+6*density;
         }

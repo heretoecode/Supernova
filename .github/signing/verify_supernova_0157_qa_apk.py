@@ -41,16 +41,16 @@ def main():
         identity = {part: subprocess.run([args.apkanalyzer, 'manifest', part, str(args.apk)], capture_output=True,
                                          text=True, check=True, timeout=120).stdout.strip()
                     for part in ('application-id', 'version-name', 'version-code')}
-        if identity != {'application-id': 'app.supernova.player', 'version-name': '0.157', 'version-code': '157'}:
-            raise ValueError('Signed APK identity/version differs from 0.157.')
-        evidence.update(application_id=identity['application-id'], version_name='0.157', version_code=157)
+        if identity != {'application-id': 'app.supernova.player', 'version-name': '0.158.4', 'version-code': '1584'}:
+            raise ValueError('Signed APK identity/version differs from 0.158.4.')
+        evidence.update(application_id=identity['application-id'], version_name='0.158.4', version_code=1584)
         payload_parity(args.unsigned, args.apk)
         evidence.update(source_commit=source, signed=True, qa_only=True, final_release_published=False,
                         unsigned_apk_sha256=unsigned_proof['apk_sha256'], payload_matches_tested_unsigned=True,
                         unsigned_conformance=unsigned_proof, physical_shield_verified=False,
                         signed_upgrade_verified=False)
         args.publish.mkdir(exist_ok=False)
-        shutil.copyfile(args.apk, args.publish / 'Supernova_0.157.apk')
+        shutil.copyfile(args.apk, args.publish / 'Supernova_0.158.4.apk')
         (args.publish / 'public-qa-evidence.json').write_text(json.dumps(evidence, indent=2) + '\n')
         print('QA APK signature, identity, version and tested payload parity verified.')
         return 0

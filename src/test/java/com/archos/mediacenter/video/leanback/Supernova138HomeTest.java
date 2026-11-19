@@ -277,6 +277,14 @@ public class Supernova138HomeTest {
         facts.context = SharedMetadata.join(SharedMetadata.count(1, "Season"), SharedMetadata.count(24, "Episode"));
         assertEquals(
             "1 Season · 24 Episodes · Drama · TMDB 8.1/10 · 8.2k votes", SharedMetadata.primary(facts).toString());
-        assertEquals("2h 14m", SharedMetadata.runtime(134));
+        assertEquals("2 h 14 min", SharedMetadata.runtime(134));
+        // DT9 (owner, 18 Nov 2026): readable values on the Details tab.
+        assertEquals("48 min", SharedMetadata.runtime(48));
+        assertEquals("2 h", SharedMetadata.runtime(120));
+        assertEquals("$25 million", SharedMetadata.money(25_000_000L));
+        assertEquals("$1.2 billion", SharedMetadata.money(1_234_000_000L));
+        assertEquals("$850,000", SharedMetadata.money(850_000L));
+        assertEquals("Arabic", SharedMetadata.languageName("ara"));
+        assertEquals("English", SharedMetadata.languageName("en"));
     }
 }

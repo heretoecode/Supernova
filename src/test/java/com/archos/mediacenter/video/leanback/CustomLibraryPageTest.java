@@ -78,12 +78,9 @@ public class CustomLibraryPageTest {
             workspace.addView(body, new FrameLayout.LayoutParams(-1, -1));
             pages.focusFromNavigation();
             layoutCustomViewport(root);
-            View stats = root.findViewWithTag("library.statistics");
-            Rect visible = new Rect();
-            assertNotNull(stats);
-            assertTrue(stats.getGlobalVisibleRect(visible));
-            assertEquals(stats.getHeight(), visible.height());
-            assertNotNull(PreviewPagesTest.findText(stats, "45"));
+            // 0.158 (LIBRARY.md): no statistics row on a library page; the toolbar is the first thing.
+            assertNull(root.findViewWithTag("library.statistics"));
+            assertNotNull(root.findViewWithTag("custom.control.filters"));
             PreviewPagesTest.capture(root, "custom-populated-first-frame-api30");
             RecyclerView list =
                 (RecyclerView) pages.getChildAt(0);
@@ -91,9 +88,7 @@ public class CustomLibraryPageTest {
             pages.post(() -> pages.setSnapshot(library));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             layoutCustomViewport(root);
-            stats = root.findViewWithTag("library.statistics");
-            assertTrue(stats.getGlobalVisibleRect(visible));
-            assertEquals(stats.getHeight(), visible.height());
+            assertNotNull("The toolbar stays in view after a refresh", root.findViewWithTag("custom.control.filters"));
             assertFalse(list.canScrollVertically(-1));
             PreviewPagesTest.capture(root, "custom-populated-after-refresh-api30");
         } finally {

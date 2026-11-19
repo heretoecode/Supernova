@@ -63,12 +63,24 @@ public final class PlaybackParts
             String name = part.name;
             if (part.kind == Kind.CHAPTER) {
                 chapter++;
-                if (name.isEmpty() || name.matches("(?i)chapter\\s*0*[0-9]+"))
+                if (genericName(name))
                     name = "Chapter " + chapter;
             }
             result.add(new Part(name, part.kind, part.startMs, part.endMs));
         }
         return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * A chapter name that only numbers the chapter ("Chapter 3", "Scene 3", "Ch. 3", "3", "00:05:00.000"): it is
+     * renumbered so the list reads Recap · Chapter 1 · Intro · Chapter 2 (0.157 Shield review #14).
+     */
+    static boolean genericName(String name)
+    {
+        String plain = name.trim();
+        return plain.isEmpty()
+            || plain.matches("(?i)(chapter|chap\\.?|ch\\.?|scene|section)?\\s*0*[0-9]+")
+            || plain.matches("[0-9]{1,2}(:[0-9]{2}){1,2}([.,][0-9]+)?");
     }
 
     public PlaybackParts numbered()
@@ -178,7 +190,42 @@ public final class PlaybackParts
             }
             result.add(next);
         }
-        return new PlaybackParts(result);
+        return new PlaybackParts(withoutStubs(result));
+    }
+
+    /** Parts shorter than this are merged into the next one (owner, 18 Nov 2026; PL5). */
+    static final long STUB_MS = 10_000;
+
+    /**
+     * No stub chapters (PL5, agreed 18 Nov 2026): a part under 10 seconds ("Episode · From 0:00" before "Recap ·
+     * From 0:02") is merged into the part after it, which then starts where the stub did. A short last part joins the
+     * one before it.
+     */
+    static List<Part> withoutStubs(List<Part> parts)
+    {
+        List<Part> out = new ArrayList<>(parts);
+        int i = 0;
+        while (out.size() > 1 && i < out.size())
+        {
+            Part part = out.get(i);
+            if (part.endMs - part.startMs >= STUB_MS)
+            {
+                i++;
+                continue;
+            }
+            if (i + 1 < out.size())
+            {
+                Part next = out.get(i + 1);
+                out.set(i + 1, new Part(next.name, next.kind, part.startMs, next.endMs));
+            }
+            else
+            {
+                Part previous = out.get(i - 1);
+                out.set(i - 1, new Part(previous.name, previous.kind, previous.startMs, part.endMs));
+            }
+            out.remove(i);
+        }
+        return out;
     }
 
     private static long snap(long edge, TreeSet<Long> markers)

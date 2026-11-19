@@ -284,7 +284,7 @@ public class NetworkRootFragment extends BrowseSupportFragment {
 
         if (mSambaDiscovery != null) {
             mSambaDiscovery.abort();
-            mSambaDiscovery.removeListener(mSambaListener);
+            removeSambaListener();
             mSambaDiscovery = null;
         }
 
@@ -727,13 +727,22 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     };
 
     /** Runnable used to relaunch the SMB discovery after it ends */
+    /** X1 (diagnostics, 16 Nov 2026): a listener already removed is ignored instead of crashing. */
+    private void removeSambaListener() {
+        try {
+            mSambaDiscovery.removeListener(mSambaListener);
+        } catch (RuntimeException alreadyGone) {
+            // Not a listener any more.
+        }
+    }
+
     Runnable mSmbDiscoveryRepeat = new Runnable() {
         @Override
         public void run() {
             // samba discovery should not be running at this stage, but better safe than sorry
             if (mSambaDiscovery != null) {
                 mSambaDiscovery.abort();
-                mSambaDiscovery.removeListener(mSambaListener);
+                removeSambaListener();
             }
 
             mSambaDiscovery = new SambaDiscovery(getActivity());

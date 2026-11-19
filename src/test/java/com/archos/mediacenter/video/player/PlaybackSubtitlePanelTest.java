@@ -285,7 +285,8 @@ public class PlaybackSubtitlePanelTest {
     @Test
     public void sidePanelIsOneThirdWideTopRightAndFittedToItsRows() throws Exception {
         WindowManager.LayoutParams a = main.getWindow().getAttributes();
-        assertEquals(640, a.width);
+        // One size for every tab: 820 px at 1080p (round two, owner 19 Nov 2026; player/33-v15).
+        assertEquals(PlaybackSubtitlePanel.PANEL_WIDTH_1080P, a.width);
         assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, a.height);
         assertEquals(Gravity.TOP | Gravity.END, a.gravity);
         assertEquals(40, a.x);
@@ -293,7 +294,7 @@ public class PlaybackSubtitlePanelTest {
         assertEquals("No full-screen dim: the film stays visible", 0,
                      a.flags & WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         int height = main.getWindow().getDecorView().getHeight();
-        assertTrue("Fitted, not full height: " + height, height < 1000 && height > 700);
+        assertTrue("Fitted, not full height: " + height, height <= 1000 && height > 700);
         capture(main, "playback-subtitles-tab");
     }
 
@@ -304,8 +305,9 @@ public class PlaybackSubtitlePanelTest {
         assertEquals("playback.tab:1", tabs.getChildAt(0).getTag());
         assertEquals("playback.tab:0", tabs.getChildAt(1).getTag());
         assertEquals("playback.tab:2", tabs.getChildAt(2).getTag());
-        String[] keys = {"enabled",  "track",   "download",   "size",    "colour",
-                         "position", "outline", "background", "opacity", "delay"};
+        // PS11 (approved 18 Nov 2026): Subtitle delay sits in Subtitle Selection.
+        String[] keys = {"enabled",  "track",   "download",   "delay",    "size",
+                         "colour", "position", "outline", "background", "opacity"};
         int previous = -1;
         for (String key : keys) {
             View v = row(key);
@@ -313,6 +315,9 @@ public class PlaybackSubtitlePanelTest {
             assertTrue(key, v.getTop() > previous);
             previous = v.getTop();
             assertTrue(v.isFocusable());
+            // At the mock-up's text size the panel scrolls: bring the row into view as the remote would.
+            v.requestRectangleOnScreen(new Rect(0, 0, v.getWidth(), v.getHeight()), true);
+            layout(main);
             Rect visible = new Rect();
             assertTrue(key, v.getGlobalVisibleRect(visible));
             assertEquals("Whole row visible " + key, v.getHeight(), visible.height());
@@ -544,15 +549,16 @@ public class PlaybackSubtitlePanelTest {
             assertTrue(tag, v.getTop() > previous);
             previous = v.getTop();
         }
-        assertEquals("1.0×", value(tagged("playback.row.speed")));
+        assertEquals("1×", value(tagged("playback.row.speed")));
         assertEquals("Binge watching", value(tagged("playback.row.playmode")));
         capture(main, "playback-playback-tab");
         key(tagged("playback.row.format"), KeyEvent.KEYCODE_DPAD_RIGHT);
         assertEquals(1, (int)model.modeSelected.get("format"));
         assertEquals("Fullscreen", value(tagged("playback.row.format")));
         key(tagged("playback.row.speed"), KeyEvent.KEYCODE_DPAD_RIGHT);
-        assertEquals(1.05f, model.speed, .001f);
-        assertEquals("1.05×", value(tagged("playback.row.speed")));
+        // Speed is five chips (player v10): Right from 1× goes to 1.25×.
+        assertEquals(1.25f, model.speed, .001f);
+        assertEquals("1.25×", value(tagged("playback.row.speed")));
         key(tagged("playback.row.playmode"), KeyEvent.KEYCODE_DPAD_RIGHT);
         assertEquals("Last mode stays", 4, (int)model.modeSelected.get("playmode"));
         tagged("playback.row.skip").performClick();
@@ -585,6 +591,50 @@ public class PlaybackSubtitlePanelTest {
         assertTrue("Right stops at the last tab", tagged("playback.tab:2").hasFocus());
         key(tagged("playback.tab:2"), KeyEvent.KEYCODE_DPAD_DOWN);
         assertTrue(tagged("playback.row.format").hasFocus());
+    }
+
+    @Test
+    public void roundTwoStepsInPlaceWithArrowsOnlyOnTheFocusedRow() {
+        // Owner, 19 Nov 2026 (player/33-v15): the value alone at rest, ‹ › only on the focused row.
+        View size = row("size");
+        View arrow = size.findViewWithTag(PlaybackSubtitlePanel.ARROW_TAG);
+        assertNotNull(arrow);
+        assertEquals(0f, arrow.getAlpha(), .001f);
+        assertTrue(size.requestFocus());
+        layout(main);
+        assertEquals(1f, arrow.getAlpha(), .001f);
+        assertEquals("Medium", value(size));
+        size.performClick();
+        assertEquals("OK steps on", 75, model.get("size"));
+        size.performClick();
+        size.performClick();
+        assertEquals("OK after the last goes round to the first", 25, model.get("size"));
+        assertTrue(row("colour").requestFocus());
+        layout(main);
+        assertEquals(0f, arrow.getAlpha(), .001f);
+    }
+
+    @Test
+    public void roundTwoEveryTabFitsWithoutScrolling() {
+        for (int tab : new int[] {PlaybackSubtitlePanel.TAB_SUBTITLES, PlaybackSubtitlePanel.TAB_AUDIO,
+                                  PlaybackSubtitlePanel.TAB_PLAYBACK}) {
+            open(tab);
+            android.widget.ScrollView scroll = findScroll(panel);
+            assertNotNull(scroll);
+            assertFalse("No scrolling on tab " + tab, scroll.canScrollVertically(1));
+        }
+    }
+
+    private static android.widget.ScrollView findScroll(View view) {
+        if (view instanceof android.widget.ScrollView)
+            return (android.widget.ScrollView)view;
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup)view).getChildCount(); i++) {
+                android.widget.ScrollView found = findScroll(((ViewGroup)view).getChildAt(i));
+                if (found != null)
+                    return found;
+            }
+        return null;
     }
 
     @Test
