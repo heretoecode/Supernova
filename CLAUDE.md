@@ -55,6 +55,10 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - **Signing: standing approval (owner, 17 Nov 2026).** Sign every version as soon as the conformance run of the exact
   same source is green, without asking; tell the owner it is signed and where the APK is. (Replaces "the owner approves
   every signing".) Publishing anywhere else still needs the owner.
+- **Release notes for every APK (owner, 19 Nov 2026).** Every signed APK, even a point release with one fix or
+  tweak, gets its own release notes: its own section in `docs/<version>/RELEASE_NOTES.md` (e.g. 0.158.1, 0.158.2 …)
+  and its own entry, with its date, in the app's About › What's New. **With every signing, also bring `main` forward
+  to the signed source and update the README's "Current version" line**, so the GitHub front page is never behind.
 - **This repository is public** (a GitHub fork of NOVA). Never put the owner's personal details in it: account
   names, email, location (country, city, time zone names), addresses, device names, real storage figures. Say "local
   time". Mock-ups and tests use made-up names (owner, 12 Nov 2026). The owner intends to make it private; it may go

@@ -130,6 +130,18 @@ screen: `b2`–`b5`, e.g. `16-b3-your-services`, `18-b3-backup-choose-restore`, 
 ## Not in part B
 Users and tags, Guest (still being designed). Onboarding (later). The Trakt list row and Media Transfers (Ready, no version yet).
 
+### Release notes and the front page (owner, 19 Nov; do with every signing from now on)
+- **Every signed APK gets its own release notes.** `docs/0.158/RELEASE_NOTES.md` (written 19 Nov for 0.158 to 0.158.5)
+  has one section per APK, newest first: add each new one there when it is signed, every fix and tweak in plain words.
+- **What's New in the app: one entry per APK,** each with its version and date (0.158.5, 0.158.4 … 0.158, then 0.157.2,
+  0.157.1, 0.157), not every point release folded under one entry. Change the build check that only accepts whole
+  versions in the history list so point releases are accepted. 0.157.1's notes sit unlabelled in the 0.157 entry
+  ("## Every page", "## Files" …): give them their own 0.157.1 entry. The app's 0.158 and 0.158.1 notes miss a
+  few things the file has (the Home hero, Stream more from the world of, connections by server; the hero size and
+  dots, the three crash fixes): match the file.
+- **Front page:** with every signing, fast-forward `main` to the signed source and update the README's "Current
+  version" line (main was brought to 0.158.4 on 19 Nov with a new README; this branch holds that commit).
+
 ## Finish with
 **The review build (owner, 19 Nov):** the owner will not review on the Shield until part B is finished; they will
 install the last signed APK and walk the whole app. So finish every group, sign the final build, and put one line at
