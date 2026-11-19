@@ -575,6 +575,7 @@ public final class FilesPage extends LinearLayout
                 : joinDot(count(page.titles, "title"), size(page.bytes()));
             statRow(column, page == s.shows ? "tv" : "film", page.name, line, places(page), false);
         }
+        ownPage(column);
         if (!s.heaviest.isEmpty())
         {
             heading(column, "Most Space Per Episode", "sort", true);
@@ -585,6 +586,39 @@ public final class FilesPage extends LinearLayout
                         size(heavy.perEpisode()) + " per episode", false);
             }
         }
+    }
+
+    /** FL7 (owner, 18 Nov 2026): your own library page under By Library Page too, after Movies and TV Shows. */
+    private void ownPage(LinearLayout column)
+    {
+        com.archos.mediacenter.video.leanback.CustomLibraryPage page =
+            com.archos.mediacenter.video.leanback.CustomLibraryPage.load(getContext());
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        if (page == null || snapshot == null)
+        {
+            return;
+        }
+        long bytes = 0;
+        int titles = 0;
+        for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : page.entries(snapshot))
+        {
+            titles++;
+            if (entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video)
+            {
+                bytes += ((com.archos.mediacenter.video.browser.adapters.object.Video) entry.media).getSize();
+                continue;
+            }
+            for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry episode : snapshot.episodes)
+            {
+                if (episode.show == entry.show
+                    && episode.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video)
+                {
+                    bytes += ((com.archos.mediacenter.video.browser.adapters.object.Video) episode.media).getSize();
+                }
+            }
+        }
+        statRow(column, "library", page.name, joinDot(count(titles, "title"), size(bytes)), "", false);
     }
 
     private static String joinDot(String... parts)

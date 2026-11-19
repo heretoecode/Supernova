@@ -132,3 +132,6 @@ decide quickly.
 44. **FL8:** the dot beside Files is now the Library Care badge itself (files missing plus titles not matched), as last
     counted on Files and kept across restarts. Before, it also counted titles with no poster or plot, which no tab
     shows. Until Files has been opened once after this update, there is no dot.
+45. **FL7:** your own library page shows under By Library Page after Movies and TV Shows, with its titles and size
+    (a show counts all its episodes' files). It has no "this device / network" figure on the right, since the page
+    can mix both.
