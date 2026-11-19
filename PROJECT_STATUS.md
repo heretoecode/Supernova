@@ -14,6 +14,10 @@ signed APK; send a diagnostics report from it.
 
 ## Released
 
+**0.158.2** (code 1582) — signed 19 Nov 2026 (run 44500001166, from green conformance run 44493050022 on `8b8a8ff`).
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.2.apk`). 0.158.1 plus the title block, player and Details fixes.
+**0.158.3** (Settings) is building.
+
 **0.158.1** (code 1581) — signed 19 Nov 2026 (run 44479811283 of `supernova-0157-qa.yml`, from green conformance run
 44470632446 on `731261f`). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.1.apk`). Part B groups 1–3b: the
 speckled background, one shape for small boxes, Playback Settings (PS1–PS11), crash fixes X1–X3, the Home and Details

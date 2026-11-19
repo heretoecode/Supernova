@@ -9,7 +9,13 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
   green conformance run [44470632446](https://github.com/heretoecode/Supernova/actions/runs/44470632446) (2193 tests,
   0 failing) on source `731261f`. Artifact `supernova-0157-signed-qa` (`Supernova_0.158.1.apk`, archive digest
   `7472563a…7dc6`); kept until 3 Dec 2026. Contains groups 1, 2, 3 and 3b.
-- **0.158.2** (code 1582) — SIGNED_0158_2
+- **0.158.2** (code 1582) — signed 19 Nov 2026 by run
+  [44500001166](https://github.com/heretoecode/Supernova/actions/runs/44500001166), from green conformance run
+  [44493050022](https://github.com/heretoecode/Supernova/actions/runs/44493050022) on source `8b8a8ff`. Artifact
+  `supernova-0157-signed-qa` (`Supernova_0.158.2.apk`). 0.158.1 plus groups 4, the Details part of group 5 below, the
+  icon picker width and FL6.
+- **0.158.3** (code 1583) — building (run on `cb679a2`): Settings (group 9), DT4, DT8, the row lines, pages reopening
+  at their top. See the end of this report for its result.
 
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the
@@ -78,40 +84,47 @@ next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
 ### Group 8 — leftovers
 - The icon picker's tiles are wide enough for the longest genre names (part A's "not built").
 
-### Group 9 — Settings (first pass)
-**Not in tonight's APKs.** A first pass was built: one page with the seven tabs (Playback · Audio · Subtitles ·
-Library · Services · System · About), no tiles, each tab showing every section under its heading with the sheet's
-wording, the tabs in the top bar's look, Backup and OpenSubtitles as rows that open their own views, and the old
-Settings screens added to the no-old-screens test. The existing Settings tests (four files) are written around the
-0.156 tiles and per-section tabs and need rewriting for the new page before it can pass the build, so the commit was
-held back (reverted on the branch; revert the "Hold the Settings first pass" commit to bring it back). Nothing in
-Settings has changed on the Shield yet.
+### Group 9 — Settings (0.158.3)
+- One page with seven tabs (Playback · Audio · Subtitles · Library · Services · System · About), no tiles; the tabs in
+  the top bar's look; each tab shows every section under its heading (icon, 26 px below / 64 px above) with the
+  sheet's wording.
+- Playback: General (Hide controls when paused · **Seek previews, Experimental** · Open videos in another player) ·
+  Resume · Skipping (Look up skip times online, then Intro … Credits) · Picture. Audio: Language · Sound. Subtitles:
+  When To Show · Languages · Downloading (with OpenSubtitles) · Default Appearance (the player's own appearance rows,
+  then fonts, black bars, encoding). Library: Your Library · Details · Home Hero · Viewing History. Services: Where To
+  Watch · Trakt · Ratings. System: General · Backup · Diagnostics · Advanced. About: as before.
+- PL7: Seek previews had no entry in the settings map, which is why it never showed; it now does.
+- The old tiles and Android's screens are in the no-old-screens test; the old Settings tests were rewritten for the
+  new page.
+
+### Group 5 / 8 additions (0.158.3)
+- DT8: Fix match in More for TV shows. DT4: the gap above each season's heading halved.
+- RULES §16: a page left for another reopens at its top (Back already went straight to the top bar).
 
 ## Look sweep (Group 1)
 The speckle, the one box shape and the letter centring went in through the shared pieces, so every page picked
-them up at once; the Playback Settings panel colour (`#16181C` at 90%, no outline, no glow) is settled. **The full
-render sweep of every page on the new background (`preview-renders.yml`) was not done tonight** — the build queue
-went to getting 0.158.1 green — so faint lines, grey second lines and placeholders on the speckle are still to be
-checked page by page (see Not built).
+them up at once; the Playback Settings panel colour (`#16181C` at 90%, no outline, no glow) is settled. Renders of the top bar, library pages (grid and list), Home and
+Search on the speckle were checked: text, keys, pills and second lines read well; the lines between rows were too
+faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to the speckle's colour (judgement call
+26). Files, Details, the player and Settings renders are still to check.
 
 ## Not built (plain list, before you install)
-- **Settings redesign** — built as a first pass but held back (see Group 9). Settings looks as in 0.158.
-- **Look sweep** — no page-by-page render check on the speckled background yet; anything that now looks faint on it
-  is still to fix.
+- **Settings, still to do from the sheet:** the in-row backup flow (What to back up chips, progress and Restart now in
+  the row), the OpenSubtitles and Trakt panels redrawn, Home Hero's "Change every" and "Because you watched",
+  "Also translate other languages". Backup and OpenSubtitles open their existing views from a row.
+- **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.
 - **PS9** (Playback tab looked at again after PS1–PS6) — needs your photo of the new panel.
 - **X4** — scans still wait for each other instead of queueing (the lock is in MediaLib's build patches; its own job).
 - **X5** — no separate focus work beyond the groups' own fixes.
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
-- **PL7, second half** — seek previews should work again (X3), but the switch is still where 0.158 has it; it moves
-  to Playback › General with the Settings redesign.
 - **PL8** — the skip button doesn't yet join the controls' line.
-- **Details:** DT1 (Details tab on one screen), DT3 (rows clipped at the sides), DT4 (gap between seasons), DT5 (one
-  row design; More Like This by service), DT6 (artwork side panel), DT8 (Fix match in More for shows), R3 (season
+- **Details:** DT1 (Details tab on one screen), DT3 (rows clipped at the sides), DT5 (one
+  row design; More Like This by service), DT6 (artwork side panel), R3 (season
   artwork), R4 (season More menu), R5 (choose a version), **episodes** (OK plays, long-press menu, deleting with
   earlier episodes).
 - **Group 6, titles** — logo placement fix and house style A: not started.
 - **Group 7, Files** — FL6 done; FL1–FL5, FL7–FL12 not started.
-- **Group 8** — Back and page position (RULES §16) and R2 not started; the icon picker width is done.
+- **Group 8** — R2 (the own page's bar) not done; Back and page position done.
 
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).
