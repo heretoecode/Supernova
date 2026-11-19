@@ -1,0 +1,345 @@
+<title>Supernova 0.158.3 Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: one reading column, a sticky page switcher, each check a tickable line. Supernova's own charcoal look, dark only. */
+:root{
+  --bg:#16181C; --panel:#1E2127; --line:rgba(255,255,255,.09); --fg:#F4F6FB; --soft:#C9D3E6; --muted:#8E96A6;
+  --focus:#F4F6FB; --ink:#0B0D12; --known:#d9b36c;
+  --display:"Space Grotesk",Inter,system-ui,sans-serif; --body:Inter,system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:760px;margin:0 auto}
+header{padding-block:32px 8px}
+h1{font-family:var(--display);font-size:32px;font-weight:600;letter-spacing:.2px;margin:0;text-wrap:balance}
+.lede{color:var(--soft);margin:8px 0 0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px;border-bottom:1px solid var(--line);
+  display:flex;gap:8px;flex-wrap:wrap}
+nav a{color:var(--fg);text-decoration:none;font-weight:500;padding:8px 16px;border-radius:12px;border:1px solid var(--line)}
+nav a:focus-visible,nav a:hover{background:var(--focus);color:var(--ink)}
+nav .count{color:var(--muted);font-weight:400;margin-left:6px;font-variant-numeric:tabular-nums}
+section{padding-top:28px}
+h2{font-family:var(--display);font-size:26px;font-weight:600;margin:0 0 4px}
+.order{color:var(--muted);font-size:15px;margin:0 0 6px}
+h3{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);font-weight:600;margin:26px 0 6px}
+ul{list-style:none;margin:0;padding:0}
+li{border-bottom:1px solid var(--line)}
+li:last-child{border-bottom:0}
+label{display:flex;gap:14px;align-items:flex-start;padding:11px 4px;cursor:pointer}
+input[type=checkbox]{appearance:none;flex:0 0 22px;width:22px;height:22px;margin-top:2px;border:2px solid var(--soft);border-radius:6px;background:transparent;display:grid;place-content:center}
+input[type=checkbox]:checked{background:var(--focus);border-color:var(--focus)}
+input[type=checkbox]:checked::after{content:"";width:6px;height:11px;border:solid var(--ink);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+input[type=checkbox]:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+li.done span{color:var(--muted)}
+b{font-weight:600}
+.known{background:var(--panel);border-radius:14px;padding:14px 18px;margin-top:22px}
+.known h3{margin-top:0;color:var(--known)}
+.known li{border-color:var(--line);padding:7px 0;color:var(--soft)}
+.tip{background:var(--panel);border-radius:14px;padding:14px 18px;margin-top:20px;color:var(--soft)}
+.tip b{color:var(--fg)}
+footer{color:var(--muted);font-size:14px;margin-top:40px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+
+<div class="wrap">
+<header>
+  <h1>Supernova 0.158.3 Checklist</h1>
+  <p class="lede">What 0.158.3 should look and behave like, page by page: part A (top bar, library pages, Home, Search) and part B as built (the new look, the player, Details, Settings). Compare with the Shield and dictate what differs. Tick as you go; ticks stay on this iPad.</p>
+</header>
+
+<nav aria-label="Pages">
+  <a href="#look">Top bar &amp; look<span class="count" data-for="look"></span></a>
+  <a href="#home">Home<span class="count" data-for="home"></span></a>
+  <a href="#library">Library pages<span class="count" data-for="library"></span></a>
+  <a href="#search">Search<span class="count" data-for="search"></span></a>
+  <a href="#details">Details<span class="count" data-for="details"></span></a>
+  <a href="#player">Player<span class="count" data-for="player"></span></a>
+  <a href="#files">Files<span class="count" data-for="files"></span></a>
+  <a href="#settings">Settings<span class="count" data-for="settings"></span></a>
+  <a href="#shared">Everywhere<span class="count" data-for="shared"></span></a>
+</nav>
+
+<div class="tip"><b>Dictating:</b> one note per page, say the page name first, and the local time of any crash, freeze or blank screen. Photos where something looks wrong. Check About says <b>0.158.3</b> before you start.</div>
+
+<section id="look">
+  <h2>Top bar and the new look</h2>
+  <p class="order">Start here: you'll meet these on every page.</p>
+
+  <h3>Top bar</h3>
+  <ul>
+    <li><label><input type="checkbox"><span><b>No SUPERNOVA</b> in the top left; the places start at the bar's left edge.</span></label></li>
+    <li><label><input type="checkbox"><span>Every item a word: Home · Movies · TV Shows · your page, then <b>Files · Search · Settings</b> (no icons) and the clock. Your page shows a + until it is set up.</span></label></li>
+    <li><label><input type="checkbox"><span>One font, weight and size for every word <b>and the clock</b> (the clock no longer skinnier).</span></label></li>
+    <li><label><input type="checkbox"><span>Words sit in the <b>middle of their box</b>, not low ("TV Shows", "Documentaries").</span></label></li>
+    <li><label><input type="checkbox"><span>Media pages open as focus rests on them (about a quarter of a second, so passing along doesn't open each one). Files, Search and Settings need <b>OK</b>.</span></label></li>
+    <li><label><input type="checkbox"><span>White box with black text = where the remote is. The open page keeps a <b>soft grey box with a faded word</b> while focus is below. No underlines anywhere in the bar.</span></label></li>
+  </ul>
+
+  <h3>Background and boxes</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>The <b>speckled background</b> (darker base, fine faint grains, about the density of tv3-2) on every page: Home, library pages, Files, Search, Details, Settings, Fix match, Preparing playback, About. Never moving, no seams between parts of a page.</span></label></li>
+    <li><label><input type="checkbox"><span><b>No pane</b> behind lists on Files or Settings; text straight on the speckle.</span></label></li>
+    <li><label><input type="checkbox"><span>When a page scrolls, the fade under the top bar melts into the speckle (no visible strip).</span></label></li>
+    <li><label><input type="checkbox"><span><b>One shape for every small box</b>: buttons, pills, chips, tab and top-bar focus all the same height with 20 px corners (option B), tighter side padding. Rows, cards and heroes keep their own corners.</span></label></li>
+    <li><label><input type="checkbox"><span>Lines between rows a little stronger (12%), still faint, never under the last row.</span></label></li>
+  </ul>
+
+  <h3>One side margin</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Library pages, Files, Search and Settings line up with the top bar's edges: the first word's box on the left, the clock's right edge on the right.</span></label></li>
+    <li><label><input type="checkbox"><span>Home has no margin: its rows run off both edges.</span></label></li>
+  </ul>
+</section>
+
+<section id="home">
+  <h2>Home</h2>
+  <p class="order">Have a few started episodes and films so the Resume wording shows.</p>
+
+  <h3>Hero (H1, H2)</h3>
+  <ul>
+    <li><label><input type="checkbox"><span><b>H1:</b> the hero is <b>exactly the same size and place</b> as the Details hero. Open Details from the hero: the card shouldn't move or resize, only its contents change.</span></label></li>
+    <li><label><input type="checkbox"><span><b>H2:</b> carousel dots at the hero's foot: the current one a longer white pill that glides to its new place when the hero changes; hidden when there is only one hero.</span></label></li>
+    <li><label><input type="checkbox"><span>Description on two lines, never the tagline.</span></label></li>
+    <li><label><input type="checkbox"><span>Buttons: <b>Play</b> (or "Resume S1 E5 · 16 min left" / "Resume · 42 min left"), then <b>More</b>. OK on the hero plays.</span></label></li>
+    <li><label><input type="checkbox"><span>Right from Play reaches More, Left comes back. Left on Play shows the previous hero, Right on More the next; focus stays on the same button.</span></label></li>
+    <li><label><input type="checkbox"><span>More opens <b>beside the button</b>: Details first, then the library menu's items.</span></label></li>
+    <li><label><input type="checkbox"><span>A change of hero cross-fades with a slight drift, about half a second; <b>never an empty frame</b>. No movement with animations off.</span></label></li>
+    <li><label><input type="checkbox"><span>The first row's heading and the tops of its cards peek below the hero.</span></label></li>
+  </ul>
+
+  <h3>Rows</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>One card size everywhere; the <b>caption box under the picture</b>: title, one soft line ("S1 E2 · 31 min left"), inset progress bar. Nothing on the artwork.</span></label></li>
+    <li><label><input type="checkbox"><span>Card edge at rest; focused card grows with the thick white ring, never crowding the heading.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Move</b> and <b>Hide</b> appear beside a row's heading when focus reaches it (Up from the first card). Move: "Row 1 of 6 · OK when done", Up / Down, OK or Back puts it down. Hide has Undo.</span></label></li>
+    <li><label><input type="checkbox"><span>Long-press (or Menu) on a card opens the library long-press menu beside it.</span></label></li>
+  </ul>
+
+  <h3>Customise Home</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>A floating panel on the right: Your Rows (› opens a row's settings; Left / Right switches it), Add a row, Built-In Rows with a switch each, in Home's order.</span></label></li>
+    <li><label><input type="checkbox"><span>A <b>long press of OK</b> picks a row up; Up / Down moves it with Home following live.</span></label></li>
+    <li><label><input type="checkbox"><span>Row settings open on top: Row name, Icon, Includes, Genres (+ Match), Years, Minimum rating, Sort by, Order, Maximum items (10–30), Add new titles automatically, Delete row (warning, Keep row first).</span></label></li>
+    <li><label><input type="checkbox"><span>Icon picker: five a row, icon and name, tick on the current one; <b>long genre names fit</b> ("Action &amp; Adventure").</span></label></li>
+  </ul>
+
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>No moving glide from the Home hero into Details yet: the card simply stays put.</li>
+    <li>"Add a Trakt list" isn't here: it has no version yet.</li>
+  </ul></div>
+</section>
+
+<section id="library">
+  <h2>Movies, TV Shows and your page</h2>
+  <p class="order">One design for all three. Try grid and list view, a filter, a sort, then your own page.</p>
+
+  <h3>Page and toolbar</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>No page title, no statistics row.</span></label></li>
+    <li><label><input type="checkbox"><span>Toolbar: Filters · Sort: Title · Order · List view / Grid view (· Columns in list view), Customise page on the right. Plain until focused. Menus drop down under the button pressed.</span></label></li>
+    <li><label><input type="checkbox"><span><b>R2:</b> scroll your own page: is there still a <b>solid bar behind the top bar</b>? It should fade like Movies and TV Shows (not fixed yet, please confirm).</span></label></li>
+  </ul>
+
+  <h3>Filters, Sort, Order</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Filters: Watched · Genre (Match Any / All, genre icons) · Year (quick choices, then From / To stepping with Left / Right) · Streaming services. Counts on every choice ("Unwatched · 35 titles"). Clear filters set apart by a line. Applies live.</span></label></li>
+    <li><label><input type="checkbox"><span>Sort: grouped (General · Trakt when connected · Files · Series, not on Movies), tick on the current choice, no Year sort.</span></label></li>
+    <li><label><input type="checkbox"><span>Order's words follow the sort: A → Z, Newest first, Largest first, Longest first, Highest ranked first…</span></label></li>
+  </ul>
+
+  <h3>Grid and list</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Seven posters a row, first and last on the margins. Poster and caption one card.</span></label></li>
+    <li><label><input type="checkbox"><span>Captions: title; a show's size or "S2 E3 · 18 of 30 left"; "42 min left" for a started film; "2023 · 1 h 24 min" for a film not started; line three follows the sort ("Added 2 Nov 2026"). Inset progress bar, tick on watched.</span></label></li>
+    <li><label><input type="checkbox"><span>Focus grows the whole card with the thick ring.</span></label></li>
+    <li><label><input type="checkbox"><span>List view: title, then the shown columns; plain headings, the sorted one bold. Down from the toolbar goes straight to the first title.</span></label></li>
+    <li><label><input type="checkbox"><span>Columns menu: Shown (ticked, in order; OK picks one up, Up / Down moves it live), Hidden A–Z, Reset to default.</span></label></li>
+  </ul>
+
+  <h3>Long-press on a poster</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Opens beside the poster: Playback · Library · Files &amp; Media. Play / Resume (shows: Resume S1 E2, Play from the start), Mark as watched (Undo), Fix match, Remove from library (Undo), Delete file / Delete all episode files. No "More info".</span></label></li>
+    <li><label><input type="checkbox"><span>Delete warning: <b>Keep file</b> first and focused. Never the old NOVA dialog.</span></label></li>
+  </ul>
+
+  <h3>Customise page and empty pages</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>Customise page: a floating panel on the right, live, no Save, Back closes. Your page: Page name (keyboard beside it), Includes, Genres, Years, Minimum rating, Original language, Studio / Network; every page: Show, View, Sort by, Order; Delete page at the foot (own page).</span></label></li>
+    <li><label><input type="checkbox"><span>Your page before set-up: "Make this page your own", Customise page and a quiet line about Files and Settings.</span></label></li>
+    <li><label><input type="checkbox"><span>Empty pages: "No films yet" / "No TV shows yet" with Add your videos; "Finding your films" with the ring during the first scan.</span></label></li>
+  </ul>
+
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>Genre and service lists tick in place; ticked items don't glide to a "Selected" group.</li>
+  </ul></div>
+</section>
+
+<section id="search">
+  <h2>Search</h2>
+  <p class="order">Search a film from a collection (one with sequels), a show, and a director's name.</p>
+  <ul>
+    <li><label><input type="checkbox"><span>Speckle page, no panel. Field and keyboard on the left, focus on T. Placeholder "Movies, TV shows, people…".</span></label></li>
+    <li><label><input type="checkbox"><span>Before typing: Recent searches as rows with a magnifying glass; Clear history (✕, plain until focused) with Undo; What you can search as plain tips.</span></label></li>
+    <li><label><input type="checkbox"><span>Results under one <b>"In your library"</b> heading (films, shows, episodes, people) with pills: Resume S5 E3 · Watched · Unwatched. No old filter chips coming back when results arrive.</span></label></li>
+    <li><label><input type="checkbox"><span>"Nothing in your library matches …" when nothing does.</span></label></li>
+    <li><label><input type="checkbox"><span>A person shows who and as what: "Avery Lindqvist · director".</span></label></li>
+    <li><label><input type="checkbox"><span>A film: <b>"Stream more from the world of &lt;title&gt;"</b> (cloud icon): its other films you don't own that are on your services, service pill and open-in-app icon; OK opens the app. Only with Where to Watch on.</span></label></li>
+  </ul>
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>No streaming groups for shows or people yet (TMDB has no spin-off links).</li>
+  </ul></div>
+</section>
+
+<section id="details">
+  <h2>Details</h2>
+  <p class="order">A film, then a show with several seasons.</p>
+  <ul>
+    <li><label><input type="checkbox"><span>Hero the same size and place as Home's (H1, above).</span></label></li>
+    <li><label><input type="checkbox"><span><b>DT2:</b> tabs in the top bar's look: white box where the remote is; once focus goes down the open tab keeps a soft grey box with a faded word. No underlines.</span></label></li>
+    <li><label><input type="checkbox"><span><b>DT9:</b> values read "2 h 3 min", "$25 million", "Arabic" (not "2h 3m", "$25,000,000.00", "ara").</span></label></li>
+    <li><label><input type="checkbox"><span><b>DT7:</b> More › Full description shows the text alone: no title, Close or Copy. Back closes it.</span></label></li>
+    <li><label><input type="checkbox"><span><b>DT8:</b> a TV show's More menu has <b>Fix match</b>.</span></label></li>
+    <li><label><input type="checkbox"><span><b>DT4:</b> the gap from one season's row to the next season's heading about half what it was.</span></label></li>
+    <li><label><input type="checkbox"><span>From a library poster into Details, then Back: you land <b>on the same poster</b>.</span></label></li>
+  </ul>
+  <div class="known"><h3>Known, no need to report (coming next)</h3><ul>
+    <li>DT1 Details tab on one screen, DT3 rows clipped at the sides, DT5 one row design and More Like This by service, DT6 artwork side panel.</li>
+    <li>R3 season artwork, R4 season More menu, R5 choose a version on Play.</li>
+    <li>Episodes: OK plays, long-press = the More menu, deleting with earlier episodes.</li>
+    <li>Titles: logo placement fix and house style A.</li>
+  </ul></div>
+</section>
+
+<section id="player">
+  <h2>Player</h2>
+  <p class="order">An episode on a network share with chapters and subtitles, then a film.</p>
+
+  <h3>Preparing playback and the title block</h3>
+  <ul>
+    <li><label><input type="checkbox"><span><b>PP3 / PL1:</b> one title block for Preparing playback and the player, in the <b>same place</b> (top left) and sizes: logo or title, then the details line.</span></label></li>
+    <li><label><input type="checkbox"><span><b>PP1:</b> the age badge first: "[15] · Season 2 · Episode 3 · Title"; a film "[15] · 2024". <b>No reasons line</b> (PP2).</span></label></li>
+    <li><label><input type="checkbox"><span>The line keeps its space from the start: nothing shifts when the badge or logo arrives.</span></label></li>
+  </ul>
+
+  <h3>Playing</h3>
+  <ul>
+    <li><label><input type="checkbox"><span><b>PL2:</b> the player's clock in the top bar's font (regular, same size).</span></label></li>
+    <li><label><input type="checkbox"><span><b>PL3:</b> controls to the Chapters tab line about 30% closer; tab line to the cards about 35% closer.</span></label></li>
+    <li><label><input type="checkbox"><span><b>PL5:</b> no stub chapters under 10 seconds.</span></label></li>
+    <li><label><input type="checkbox"><span><b>PL6:</b> chapter and episode cards have the artwork edge at rest.</span></label></li>
+    <li><label><input type="checkbox"><span><b>X3 / PL7:</b> <b>seek previews on a network file</b> show pictures (switch on in Settings › Playback › General first).</span></label></li>
+  </ul>
+
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li><b>Playback Settings:</b> already reviewed from your photos; round two (v15: 820 px, one line, Left / Right, Skipping chips, panel at 99%) is being built for 0.158.4. Skip it.</li>
+    <li>PL4 controls lingering: unchanged. PL8 skip button not yet in line with the controls.</li>
+  </ul></div>
+</section>
+
+<section id="files">
+  <h2>Files</h2>
+  <p class="order">Have two connections on the same server if you can, and a local folder.</p>
+  <ul>
+    <li><label><input type="checkbox"><span>On the speckle; content on the top bar's margin (moved in from further right).</span></label></li>
+    <li><label><input type="checkbox"><span><b>Connections by server (F52):</b> one row per server and login, its folders on the second line ("WebDAV · Films, TV").</span></label></li>
+    <li><label><input type="checkbox"><span>Open asks which folder when there are several. Remove takes the whole server, with Undo. Edit opens the first folder's form.</span></label></li>
+    <li><label><input type="checkbox"><span>Scan one source: <b>one button per server</b>, named by the connection's name.</span></label></li>
+    <li><label><input type="checkbox"><span><b>FL6:</b> a found device's name leaves a clear gap before the "New" pill.</span></label></li>
+    <li><label><input type="checkbox"><span><b>X2:</b> Scan this folder on a <b>local folder</b> doesn't crash (also Library Care's Try again).</span></label></li>
+    <li><label><input type="checkbox"><span><b>X1:</b> leave Files while devices are being found on the network: no crash.</span></label></li>
+  </ul>
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>FL1–FL5, FL7–FL12 not started (FL9, focus staying on Check matches, is done but comes in 0.158.4).</li>
+    <li>Scans still wait for each other rather than queueing (X4).</li>
+  </ul></div>
+</section>
+
+<section id="settings">
+  <h2>Settings</h2>
+  <p class="order">New in 0.158.3. Walk each tab left to right.</p>
+
+  <h3>Whole page</h3>
+  <ul>
+    <li><label><input type="checkbox"><span>A full page with <b>seven tabs</b>: Playback · Audio · Subtitles · Library · Services · System · About. No tiles, no side panel, no Android screens.</span></label></li>
+    <li><label><input type="checkbox"><span>Opens on OK in the top bar, on Playback (or the last tab while the app stays open), focus on the tab.</span></label></li>
+    <li><label><input type="checkbox"><span>Tabs in the top bar's look; Left / Right switches at once; Down goes to the first row; Up from the first row back to the open tab.</span></label></li>
+    <li><label><input type="checkbox"><span>Section headings with icons, sitting closer to their own rows than to the section above.</span></label></li>
+    <li><label><input type="checkbox"><span>Every row: icon, name, one plain second line, control on the right, all on the row's centre line. Switches for on/off, chips for up to five choices, › only on rows that open something.</span></label></li>
+    <li><label><input type="checkbox"><span>Lists open as the shared choice list on the right with the page still in view; Back closes, focus back on the row.</span></label></li>
+    <li><label><input type="checkbox"><span>Back: from the rows to the open tab, then to the top bar.</span></label></li>
+  </ul>
+
+  <h3>Tab by tab</h3>
+  <ul>
+    <li><label><input type="checkbox"><span><b>Playback:</b> General (Hide controls when paused · <b>Seek previews, Experimental</b> · Open videos in another player) · Resume · Skipping (Look up skip times online, then Intro, Recap, Preview, Outro, Credits) · Picture.</span></label></li>
+    <li><label><input type="checkbox"><span>Turn Look up skip times online off: the skip rows hide, but <b>the switch stays</b> so it can be turned back on.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Audio:</b> Language (Preferred audio language with flags · Prefer the original language) · Sound (Surround sound · Virtual surround · Audio decoder).</span></label></li>
+    <li><label><input type="checkbox"><span><b>Subtitles:</b> When To Show · Languages · Downloading (OpenSubtitles row) · Default Appearance: the player's own appearance rows, then fonts, black bars, encoding.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Library:</b> Your Library · Details · Home Hero · Viewing History.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Services:</b> Where To Watch (Country, Your services as the ordered list) · Trakt · Ratings (OMDb key, never shown in full), then "Streaming availability from JustWatch". No old "Service integrations" switches.</span></label></li>
+    <li><label><input type="checkbox"><span><b>System:</b> General (Interface language) · Backup · Diagnostics (logging, Keep for 1 · 2 · 4 weeks, Save a report, Clear) · Advanced, each with its one-line explanation.</span></label></li>
+    <li><label><input type="checkbox"><span><b>About:</b> version and build line, What's New (last five and All versions), Credits, Open-source licences.</span></label></li>
+    <li><label><input type="checkbox"><span>"This device" everywhere, never "Shield". Movies and TV shows, never "films" or "series" in labels.</span></label></li>
+  </ul>
+
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>Skip rows still say NOVA's "Play normally · Show skip (5 s) · Auto skip · Smart": being changed to Off · Show button · Skip · Skip when binge-watching.</li>
+    <li>Backup and OpenSubtitles open their existing views from a row; the in-row backup flow and the redrawn OpenSubtitles and Trakt panels are still to come.</li>
+    <li>Home Hero's "Change every" and "Because you watched", and "Also translate other languages", not there yet.</li>
+    <li>Settings not yet checked in renders on the speckle, so note anything that looks off.</li>
+  </ul></div>
+</section>
+
+<section id="shared">
+  <h2>Everywhere</h2>
+  <p class="order">Note these wherever you meet them.</p>
+  <ul>
+    <li><label><input type="checkbox"><span>Back goes <b>straight to the top bar</b> from anywhere on a page.</span></label></li>
+    <li><label><input type="checkbox"><span>A page left for another page <b>reopens at its top</b>.</span></label></li>
+    <li><label><input type="checkbox"><span>Focus never lands in the top bar unasked; one focus on screen at a time; it never vanishes or jumps.</span></label></li>
+    <li><label><input type="checkbox"><span>Menus open beside their button, an icon each, a tick on the current choice, sized to the longest item.</span></label></li>
+    <li><label><input type="checkbox"><span>Text centred on its letters in every button, pill, chip and tab.</span></label></li>
+    <li><label><input type="checkbox"><span>No old NOVA screen or three-panel screen opens from any redesigned page.</span></label></li>
+    <li><label><input type="checkbox"><span>Any crash, freeze or blank screen: note the time, then export the diagnostics report (Drive › Supernova › Media › For Claude).</span></label></li>
+  </ul>
+  <div class="known"><h3>Known, no need to report</h3><ul>
+    <li>Panels and menus are still at 90–95%; 99% (decided today) arrives in 0.158.4.</li>
+  </ul></div>
+</section>
+
+<footer>Sources: the page sheets (Home, Library, Search, Details, Files, Settings), the 0.158 part A and part B reports, the 0.157.2 review and the first 0.158 review (H1, H2).</footer>
+</div>
+
+<script>
+(function(){
+  var KEY='sn-01583-checks';
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){saved={}}
+  var boxes=document.querySelectorAll('section input[type=checkbox]');
+  boxes.forEach(function(b,i){
+    b.id='c'+i;
+    if(saved[b.id]){b.checked=true}
+    mark(b);
+    b.addEventListener('change',function(){
+      saved[b.id]=b.checked;
+      try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}
+      mark(b);count();
+    });
+  });
+  function mark(b){b.closest('li').classList.toggle('done',b.checked)}
+  function count(){
+    document.querySelectorAll('nav .count').forEach(function(c){
+      var s=document.getElementById(c.dataset.for);
+      var all=s.querySelectorAll('input[type=checkbox]');
+      var done=s.querySelectorAll('input[type=checkbox]:checked');
+      c.textContent=done.length+'/'+all.length;
+    });
+  }
+  count();
+})();
+</script>
