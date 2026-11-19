@@ -1,6 +1,9 @@
 # Discussion handover (updated 19 Nov 2026)
 
 ## 19 Nov — start here
+- **Part B paused by the owner (19 Nov, evening):** read `docs/0.158/PART_B_PAUSED.md` first: what is done (in
+  0.158.7, signed when its build is green), what is paused and why, and one decision for the owner (Reports and
+  Backups folder: Download, or a folder picker with one Android grant). Installed on the Shield: 0.158.4.
 - **Installed: 0.158.3.** Supernova Coding is running the continuation of part B in a new window (prompt: merge this
   branch before each item; order in `docs/0.158/BRIEF_0158_B.md`, Playback Settings round two first).
 - **Decided today:** panels `#16181C` at 99% (RULES §11); Playback Settings v15 (`player/33-v15`: 820 px, one line,

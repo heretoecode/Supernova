@@ -20,7 +20,7 @@ stepping rows, no scrolling), every panel at 99%, FL9. Installed by the owner.
 
 **0.158.7** (code 1587) — building: conformance run 44586168686 on `861ba66` (19 Nov, 18:17), signed as soon as it
 is green. 0.158.5 and 0.158.6 were never signed (faults found by the render checks; everything moved into 0.158.7).
-What it adds, what is still to do and every judgement call: `docs/0.158/REPORT_0158_B.md`,
+Part B is paused after 0.158.7 (owner, 19 Nov): `docs/0.158/PART_B_PAUSED.md`. Detail: `docs/0.158/REPORT_0158_B.md`,
 `docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Waiting for the owner: Reports folder (keep Download › Supernova, or a
 folder picker with one Android grant).
 
