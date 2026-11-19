@@ -30,7 +30,7 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
 - **0.158.7** (code 1587) — signed 19 Nov 2026 by run
   [44604872477](https://github.com/heretoecode/Supernova/actions/runs/44604872477), from green conformance run
   [44597211401](https://github.com/heretoecode/Supernova/actions/runs/44597211401) on `ecbfdde` (2202 tests, 0
-  failing). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.7.apk`). **Install this one.** 0.158.4 plus
+  failing). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.7.apk`), kept until 3 Dec 2026: https://github.com/heretoecode/Supernova/actions/runs/44604872477/artifacts/14569652013. **Install this one.** 0.158.4 plus
   everything since: the Settings wording and new rows (Home Hero, Keep diagnostics for, When a video was started),
   Save a diagnostic report in its row, the OpenSubtitles panel, the Trakt sign-in look, the episodes feature, R3,
   R4, R5, DT1, DT3, DT5, DT6, titles, PL8, X4, FL1–FL5, FL7, FL8, FL10, FL12. Two earlier attempts failed and were
