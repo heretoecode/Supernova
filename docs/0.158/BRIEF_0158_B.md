@@ -57,7 +57,13 @@ X1 (guard the discovery listener), X2 (Scan this folder crash), X3 with PL7 (see
 switch back where Settings shows it), X4 (scans queue instead of waiting on a lock). X5 is covered by the focus fixes
 in the groups around it.
 
-**Good point to sign 0.158.1** if groups 1–3 are green.
+### Group 3b — the Home hero (owner's first look at 0.158, `docs/0.158/REVIEW_0158.md`)
+- **H1:** the Home hero and the Details hero are not the same size on the Shield. Make them one size and place,
+  1776 × 820 at 1080p (RULES §14, HOME.md); check both in renders side by side, pixel for pixel.
+- **H2:** no carousel dots under the Home hero. Show them (HOME.md: the current one a longer pill, gliding when the
+  hero changes; `PreviewFeaturedIndicators` exists); check in a render that they are visible on the hero.
+
+**Good point to sign 0.158.1** if groups 1–3b are green.
 
 ### Group 4 — Preparing playback and the player (PP1–PP3, PL1–PL8)
 Badge first on the details line, no reasons line, space kept from the start (PP1, PP2); one title block for
