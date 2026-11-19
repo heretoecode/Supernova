@@ -164,3 +164,8 @@ decide quickly.
     of Your services (a service not in Your services goes last), each heading with the service's colour logo; the
     cards are the Extras / Episodes card size and the rows run to the screen's edges. At most 12 titles in all, as
     before. Episodes and Extras headings were not given new icons.
+55. **X4:** each network scan had a five-minute clock that started when it was queued, so a scan waiting behind another
+    (or behind a local import) used up its five minutes waiting and was cancelled. Now a scan first waits for the
+    scan lock, with a one-hour limit on the wait, and its five minutes start once it holds the lock. Done as one more
+    MediaLib patch (`.github/build/medialib-supernova158-scan-queue.patch`, in the patch list), since MediaLib's
+    scanner is patched at build time; checked locally that it applies on top of the other 38.

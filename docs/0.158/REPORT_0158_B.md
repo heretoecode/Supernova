@@ -163,7 +163,9 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
   video was started" as three chips (Ask · Resume · Start over; the old row was NOVA's resume box for its old main
   screen and is gone from the page, judgement call 38). Backup and OpenSubtitles open their existing views from a row.
 - **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.
-- **X4** — scans still wait for each other instead of queueing (the lock is in MediaLib's build patches; its own job).
+- **X4** — built (0.158.6) as a new MediaLib patch: a scan waits its turn for the scan lock before its five-minute
+  clock starts (a one-hour bound covers the wait), so queued scans no longer fail with "scan lock wait interrupted".
+  Needs a diagnostics report from the Shield to confirm.
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
 - **PL8** — the skip button is now the one small-box size (it joined the controls' line already in 0.157); not yet
   checked in a render beside the controls.
@@ -182,8 +184,8 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 ## For the next session
 - Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
   when a build is due (a push there starts conformance; signing accepts only the working branch).
-- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT5, DT6, PL8, R5.
-- Still to do, in the brief's order: the look sweep renders (item 4), X4, FL3 + FL5,   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
+- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT5, DT6, PL8, R5, X4.
+- Still to do, in the brief's order: the look sweep renders (item 4), FL3 + FL5,   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
 
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).
