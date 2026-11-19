@@ -8,7 +8,18 @@
   "com.archos.mediacenter.video.player.Playback141RenderTest",
   "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
   "com.archos.mediacenter.video.leanback.details.PreviewEpisodeMenuTest",
-  "com.archos.mediacenter.video.leanback.TitleLogoPlacementTest"
+  "com.archos.mediacenter.video.leanback.TitleLogoPlacementTest",
+  "com.archos.mediacenter.video.leanback.HeroReadabilityTest",
+  "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+  "com.archos.mediacenter.video.leanback.TopBarSignalTest",
+  "com.archos.mediacenter.video.leanback.details.PreviewEpisodeChoiceTest",
+  "com.archos.mediacenter.video.leanback.NoOldScreensTest",
+  "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+  "com.archos.mediacenter.video.leanback.SupernovaStyleTest",
+  "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
+  "com.archos.mediacenter.video.player.SegmentSkippingPolicyTest",
+  "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+  "com.archos.mediacenter.video.about.AboutCreditsTest"
  ],
  "variants": {
   "normal": {}
