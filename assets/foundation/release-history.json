@@ -34,8 +34,6 @@
       "Scans wait their turn instead of timing out while another scan runs",
       "Connections can be turned off and on again; smaller buttons on Files rows",
       "Save a diagnostic report saves straight to Download › Supernova; action rows show their verb",
-      "Settings: When a video was started (Ask, Resume or Start over)",
-      "Settings: the OpenSubtitles panel redrawn, with a QR code to make a free account",
       "## 0.158.5: Details and titles",
       "OK on an episode plays it; long-press or Menu opens its menu; deleting an episode asks about the earlier ones",
       "Season pages show artwork; their More menu sits beside More and can delete the season",
