@@ -140,3 +140,6 @@ decide quickly.
 47. **FL4:** the connection form's rows are 40 high (were 46) with smaller gaps above and below, which by the
     numbers fits Type, every field, both switches and the two buttons on one 1080p screen. The form still scrolls if
     a larger text size is set on the device.
+48. **FL2:** while a folder is read it shows two rows of four outline cards (grid) or four outline rows (list), a
+    faint fill with a faint edge, nothing to focus; the folder's real cards replace them when it arrives. They don't
+    fill in one by one (the folder arrives as one list).

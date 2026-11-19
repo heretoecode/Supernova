@@ -283,7 +283,9 @@ public final class FolderBrowser extends LinearLayout
         boolean parked = park();
         loading = true;
         items.removeAllViews();
-        items.addView(text("Looking in this folder…", 15, SupernovaStyle.TEXT_SECONDARY));
+        // FL2 (owner, 18 Nov 2026): the placeholder cards are back while a folder is read: outlines at once, the
+        // real cards take their place as the folder arrives.
+        placeholders();
         LIST.submit(() -> {
             List<MetaFile2> files;
             try
@@ -518,6 +520,46 @@ public final class FolderBrowser extends LinearLayout
                 items.addView(line, new LayoutParams(-1, Math.max(1, dp(1))));
             }
             items.addView(listRow(shown.get(index)), new LayoutParams(-1, dp(ROW_HEIGHT_DP)));
+        }
+    }
+
+    /** Two rows of outline cards (grid) or four outline rows (list), nothing to focus. */
+    private void placeholders()
+    {
+        items.setContentDescription("Looking in this folder");
+        for (int line = 0; line < (grid ? 2 : 4); line++)
+        {
+            LinearLayout row = new LinearLayout(getContext());
+            row.setTag("files.placeholder");
+            LayoutParams rowSize = new LayoutParams(-1, grid ? -2 : dp(ROW_HEIGHT_DP));
+            rowSize.bottomMargin = grid ? dp(22) : dp(6);
+            items.addView(row, rowSize);
+            for (int index = 0; index < (grid ? COLUMNS : 1); index++)
+            {
+                View card = new View(getContext())
+                {
+                    @Override
+                    protected void onMeasure(int w, int h)
+                    {
+                        int width = MeasureSpec.getSize(w);
+                        int height = grid ? Math.round(width * 9f / 16f) : MeasureSpec.getSize(h);
+                        setMeasuredDimension(width, height);
+                    }
+                };
+                GradientDrawable outline = new GradientDrawable();
+                outline.setCornerRadius(dp(8));
+                outline.setColor(0x0FFFFFFF);
+                outline.setStroke(Math.max(1, dp(1)), 0x33FFFFFF);
+                card.setBackground(outline);
+                card.setFocusable(false);
+                card.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+                LayoutParams cardSize = new LayoutParams(0, grid ? -2 : -1, 1);
+                if (index > 0)
+                {
+                    cardSize.leftMargin = dp(22);
+                }
+                row.addView(card, cardSize);
+            }
         }
     }
 
