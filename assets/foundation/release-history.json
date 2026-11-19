@@ -8,12 +8,21 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.158.1",
-    "version_code": 1581,
+    "version": "0.158.2",
+    "version_code": 1582,
     "date": "2026-11-19",
     "kind": "In development; not a signed or accepted release",
     "documentation": "docs/0.158/",
     "notes": [
+      "## 0.158.2: Preparing playback and the player",
+      "One title block on Preparing playback and in the player, top left, with the age rating first on its line",
+      "The player's clock in the top bar's font; the Chapters row sits lower and closer",
+      "No chapters of a few seconds; chapter and episode cards have the thin edge",
+      "## 0.158.2: Details",
+      "Tabs use the top bar's focus; More › Full description shows only the text",
+      "Values read 2 h 3 min, $25 million and Arabic",
+      "## 0.158.2: Also",
+      "The icon picker fits the longest genre names; a found device's name keeps clear of its New pill",
       "## 0.158.1: The new look",
       "Every page sits on a fine speckled background instead of plain charcoal",
       "Buttons, pills, chips and the focus boxes share one shape: the same height, softer corners",
