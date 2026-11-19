@@ -72,3 +72,11 @@ The owner will do the full walk-through when part B is finished; these are thing
 
 ### Player
 - **P8. Playback Settings on 0.158.4: "9 out of 10, very nice".** A few tweaks to come with the walk-through.
+
+### Top bar over the library pages (owner's screenshots, 0.158.4, 18:40 local; Drive › For Claude)
+- **R2 seen the other way round.** Scrolled down: on **Movies and TV Shows** the posters run right up behind the top
+  bar with only a light dimming, so the words sit on artwork (Settings over a poster, the clock over another). On
+  **Documentaries** (your own page) the posters stop cleanly under the bar on a dark band, and the words sit on the
+  plain background. Nothing in RULES or LIBRARY.md settles which is meant.
+  [Claude: Documentaries' way reads better; give it a soft edge: the bar's strip is the speckle, and posters fade out
+  over about 40 px just below it, the same on all three pages. Owner to pick.]

@@ -1,6 +1,10 @@
 # Discussion handover (updated 19 Nov 2026)
 
 ## 19 Nov — start here
+- **Reminder (owner, 19 Nov): before the go-ahead for Coding's next version, ask the owner for the diagnostics
+  report covering the MobLand delete, 19 Nov 14:30–14:45 local time** (D1 in `docs/0.158/REVIEW_0158.md`), and read it.
+- Waiting for the owner: 0.158.7 installed (then make the whole-app walkthrough checklist), and replies on L1, R6
+  (three row mock-ups), Files' tab look, A2 icon, S2, and the top-bar strip on library pages (R2, end of REVIEW_0158).
 - **Owner, 19 Nov (afternoon): no Shield review until part B is finished.** Then make one whole-app walkthrough
   checklist from the final signed build (the report's "Review build" line), listing only what is built, with a short
   "not built" box per page. The 0.158.3 checklist (`docs/0.158/review-0158-3-checklist.html`) is superseded.
