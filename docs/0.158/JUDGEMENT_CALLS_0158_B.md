@@ -107,9 +107,10 @@ decide quickly.
     Android · Convert to AC3 (the engine's four; the sheet's "Stereo" is the separate Stereo downmix row), Parser
     synchronisation is Timestamps · Samples (the engine has two, not three). Values are unchanged, so saved choices and
     backups still work.
-38. **When a video was started** is still a switch (Ask, or resume straight away), titled "Ask when a video was
-    started"; the sheet's three chips (Ask · Resume · Start over) need a new setting in the player, listed as not
-    built.
+38. **When a video was started:** the row Settings showed under that name was NOVA's "Display resume box" (a resume
+    button on NOVA's old main screen, which Supernova's Home doesn't have), so the switch did nothing you could see.
+    It is off the page now (its saved value is kept). The sheet's three chips (Ask · Resume · Start over) need a new
+    choice in the player and are listed as not built.
 39. **Home Hero › Because you watched** is a new switch (on by default, like the others); the last source that is
     still on can't be turned off. **Change every** is 8 s · 12 s · 20 s (8 s as before). Both are backed up.
 40. **DT3:** the Details sections and their content no longer clip their children, so a grown card and its ring show

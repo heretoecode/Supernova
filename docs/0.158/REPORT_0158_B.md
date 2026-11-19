@@ -155,8 +155,8 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 ## Not built (plain list, before you install)
 - **Settings, still to do from the sheet:** the in-row backup flow (What to back up chips, progress and Restart now in
   the row), the OpenSubtitles and Trakt panels redrawn, "Also translate other languages", Reports folder, "When a
-  video was started" as three chips (Ask · Resume · Start over; it is still a switch, "Ask when a video was
-  started"). Backup and OpenSubtitles open their existing views from a row.
+  video was started" as three chips (Ask · Resume · Start over; the old row was NOVA's resume box for its old main
+  screen and is gone from the page, judgement call 38). Backup and OpenSubtitles open their existing views from a row.
 - **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.
 - **X4** — scans still wait for each other instead of queueing (the lock is in MediaLib's build patches; its own job).
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.

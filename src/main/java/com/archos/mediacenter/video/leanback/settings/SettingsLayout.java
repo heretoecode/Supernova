@@ -61,7 +61,9 @@ final class SettingsLayout {
     static {
         page(0,
              "General", new String[] {"hide_controls_on_pause", "seek_thumbnails_enabled", "allow_3rd_party_player"},
-             "Resume", new String[] {"display_resume_box", "supernova_save_resume"},
+             // "display_resume_box" is NOVA's resume button on its old main screen, which Supernova's Home doesn't
+             // have, so it is not shown; "When a video was started" (Ask · Resume · Start over) is still to build.
+             "Resume", new String[] {"supernova_save_resume"},
              "Skipping", new String[] {"supernova_segment_enabled", "supernova_segment_intro",
                                        "supernova_segment_recap", "supernova_segment_preview",
                                        "supernova_segment_outro", "supernova_segment_credits"},
