@@ -324,7 +324,7 @@ public class PreviewPlaybackMenusTest {
         assertTrue(full.isChecked());
         assertEquals("Fill", value(tagged("playback.row.format")));
         assertEquals("Single", value(tagged("playback.row.playmode")));
-        // 0.157: one lasting choice, Off · Show button · Automatic, instead of the per-session switch.
+        // Skipping: one lasting choice, Off · Show button · Skip, instead of the per-session switch.
         assertNotNull(tagged("playback.row.skipmode"));
         assertNull(tagged("playback.row.skip"));
         tagged("playback.row.pip").performClick();

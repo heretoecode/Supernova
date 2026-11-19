@@ -468,13 +468,13 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         com.archos.mediacenter.utils.introdb.IntroSegments.Type.CREDITS
     };
 
-    /** "Skip intros and credits: Off · Show button · Automatic" (owner, 6 Nov 2026; Playback tab). */
+    /** "Skipping: Off · Show button · Skip" (owner, 19 Nov 2026: the same words as Settings; Playback tab). */
     private List<PlaybackSubtitlePanel.Choice> skipModes() {
         android.content.SharedPreferences prefs =
             androidx.preference.PreferenceManager.getDefaultSharedPreferences(owner);
         SegmentSkippingPolicy.Mode current = SegmentSkippingPolicy.mode(prefs, SKIP_TYPES[0]);
         int chosen = skipChoice(current);
-        String[] labels = {"Off", "Show button", "Automatic"};
+        String[] labels = {"Off", "Show button", "Skip"};
         SegmentSkippingPolicy.Mode[] modes = {
             SegmentSkippingPolicy.Mode.NORMAL, SegmentSkippingPolicy.Mode.PROMPT, SegmentSkippingPolicy.Mode.AUTO
         };
@@ -491,7 +491,7 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         return out;
     }
 
-    /** Off for "play normally", Show button for the prompt, Automatic for automatic or smart skipping. */
+    /** Off for "play normally", Show button for the prompt, Skip for automatic or smart skipping. */
     static int skipChoice(SegmentSkippingPolicy.Mode mode) {
         switch (mode) {
         case NORMAL:

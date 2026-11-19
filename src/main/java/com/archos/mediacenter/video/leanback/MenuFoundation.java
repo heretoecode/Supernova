@@ -23,12 +23,14 @@ public final class MenuFoundation {
         return TvLayout.dimension(context, value);
     }
 
+    /**
+     * Every pop-up, menu and side panel (owner, 19 Nov 2026; RULES §11): #16181C at 99%, no outline, no glow, no
+     * old navy. {@code raised} is kept for callers but no longer changes the colour.
+     */
     public static GradientDrawable surface(Context context, boolean raised) {
-        GradientDrawable drawable =
-            new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                                 raised ? new int[] {0xf01c2632, 0xf0131c27} : new int[] {0xf0141e29, 0xf00e1620});
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(SupernovaStyle.GLASS);
         drawable.setCornerRadius(dp(context, 6));
-        drawable.setStroke(Math.max(1, dp(context, 1)), DIVIDER);
         return drawable;
     }
 

@@ -285,7 +285,7 @@ public class PlaybackSubtitlePanelTest {
     @Test
     public void sidePanelIsOneThirdWideTopRightAndFittedToItsRows() throws Exception {
         WindowManager.LayoutParams a = main.getWindow().getAttributes();
-        // One size for every tab (P4): 40% of the width, 768px at 1080p.
+        // One size for every tab: 820 px at 1080p (round two, owner 19 Nov 2026; player/33-v15).
         assertEquals(PlaybackSubtitlePanel.PANEL_WIDTH_1080P, a.width);
         assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, a.height);
         assertEquals(Gravity.TOP | Gravity.END, a.gravity);
@@ -591,6 +591,50 @@ public class PlaybackSubtitlePanelTest {
         assertTrue("Right stops at the last tab", tagged("playback.tab:2").hasFocus());
         key(tagged("playback.tab:2"), KeyEvent.KEYCODE_DPAD_DOWN);
         assertTrue(tagged("playback.row.format").hasFocus());
+    }
+
+    @Test
+    public void roundTwoStepsInPlaceWithArrowsOnlyOnTheFocusedRow() {
+        // Owner, 19 Nov 2026 (player/33-v15): the value alone at rest, ‹ › only on the focused row.
+        View size = row("size");
+        View arrow = size.findViewWithTag(PlaybackSubtitlePanel.ARROW_TAG);
+        assertNotNull(arrow);
+        assertEquals(0f, arrow.getAlpha(), .001f);
+        assertTrue(size.requestFocus());
+        layout(main);
+        assertEquals(1f, arrow.getAlpha(), .001f);
+        assertEquals("Medium", value(size));
+        size.performClick();
+        assertEquals("OK steps on", 75, model.get("size"));
+        size.performClick();
+        size.performClick();
+        assertEquals("OK after the last goes round to the first", 25, model.get("size"));
+        assertTrue(row("colour").requestFocus());
+        layout(main);
+        assertEquals(0f, arrow.getAlpha(), .001f);
+    }
+
+    @Test
+    public void roundTwoEveryTabFitsWithoutScrolling() {
+        for (int tab : new int[] {PlaybackSubtitlePanel.TAB_SUBTITLES, PlaybackSubtitlePanel.TAB_AUDIO,
+                                  PlaybackSubtitlePanel.TAB_PLAYBACK}) {
+            open(tab);
+            android.widget.ScrollView scroll = findScroll(panel);
+            assertNotNull(scroll);
+            assertFalse("No scrolling on tab " + tab, scroll.canScrollVertically(1));
+        }
+    }
+
+    private static android.widget.ScrollView findScroll(View view) {
+        if (view instanceof android.widget.ScrollView)
+            return (android.widget.ScrollView)view;
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup)view).getChildCount(); i++) {
+                android.widget.ScrollView found = findScroll(((ViewGroup)view).getChildAt(i));
+                if (found != null)
+                    return found;
+            }
+        return null;
     }
 
     @Test

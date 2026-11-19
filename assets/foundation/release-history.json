@@ -8,12 +8,17 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.158.3",
-    "version_code": 1583,
+    "version": "0.158.4",
+    "version_code": 1584,
     "date": "2026-11-19",
     "kind": "In development; not a signed or accepted release",
     "documentation": "docs/0.158/",
     "notes": [
+      "## 0.158.4: Playback Settings, round two",
+      "A narrower panel; every row on one line and every tab fits without scrolling; no line under the tabs",
+      "Text size, Background opacity, Audio boost, Format, Speed, Stop playing at, Still watching? and Play mode step with Left and Right; ‹ › show on the focused row",
+      "Skipping: Off, Show button or Skip; Remember for this show under This Show",
+      "Pop-ups, menus and side panels at 99%",
       "## 0.158.3: Settings",
       "One page with seven tabs: Playback, Audio, Subtitles, Library, Services, System and About; no tiles",
       "Each tab shows all its sections, each under its heading; the tabs use the top bar's focus",

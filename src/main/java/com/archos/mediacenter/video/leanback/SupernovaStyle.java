@@ -29,8 +29,8 @@ public final class SupernovaStyle {
     }
 
     // ---- tokens --------------------------------------------------------------------------------
-    /** Glass: charcoal at 95% for every pop-up, menu and side panel (owner, 13 Nov 2026; RULES §11). */
-    public static final int GLASS = 0xF216181C;
+    /** Glass: charcoal #16181C at 99% for every pop-up, menu and side panel (owner, 19 Nov 2026; RULES §11). */
+    public static final int GLASS = 0xFC16181C;
     public static final int GLASS_EDGE = 0x38FFFFFF;
     /** Resting button: black at 72%. */
     public static final int BUTTON_REST = 0xB8000000;
@@ -557,8 +557,9 @@ public final class SupernovaStyle {
         return new Box(0xFF16181C, GLASS_EDGE, Math.max(1, dp(c, 1)), dp(c, PANEL_RADIUS_DP), 0);
     }
 
+    /** RULES §11 (owner, 19 Nov 2026): no outline and no glow on any pop-up, menu or side panel. */
     public static Drawable glass(Context c, float radiusDp) {
-        return new Box(GLASS, GLASS_EDGE, Math.max(1, dp(c, 1)), dp(c, radiusDp), 0);
+        return new Box(GLASS, 0, 0, dp(c, radiusDp), 0);
     }
 
     // ---- rows ----------------------------------------------------------------------------------
