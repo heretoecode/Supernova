@@ -85,7 +85,7 @@ const play=f=>`${tabs('Playback')}${h('Picture and Speed')}
  ${row(ic.moon,'Stop playing at',cyc(f?'11:40':'Off'),f)}
  ${row(ic.q,'Still watching?',cyc('Off'))}
  ${row(ic.rp,'Play mode',cyc('Play next'))}
- ${row(ic.sk,'Skipping',ch(['Off','Show button','Automatic'],'Show button'))}
+ ${row(ic.sk,'Skipping',ch(['Off','Show button','Skip'],'Show button'))}
  ${h('This Show')}
  ${row(ic.rp,'Remember for this show',sw(0))}`;
 const stopList=`<div class="list">${h('Stop Playing At')}${[['Off',1],['End of this episode',0],['11:10',0],['11:40',0],['12:10',0],['00:10',0]]

@@ -91,7 +91,7 @@ where the owner must decide.
   place with Left / Right, the value alone at rest and small ‹ › either side **only on the focused row** (replaces
   PS11's "no ‹ › arrows" for these rows); numbers keep − +. Stepping rows: **Text size, Background opacity** (Subtitles),
   **Audio boost** (Audio), **Format, Speed, Stop playing at, Still watching?, Play mode** (Playback). Chips stay only on
-  **Skipping** (renamed from "Skip intros & credits", owner 19 Nov; three choices); Text colour keeps its dots. The per-show row reads **"Remember for this
+  **Skipping** (renamed from "Skip intros & credits", owner 19 Nov; three choices **Off · Show button · Skip**, the same words as Settings, "Automatic" renamed Skip); Text colour keeps its dots. The per-show row reads **"Remember for this
   show"** under a **"This Show"** heading (RULES §6: never "series"). Panel 820 px, no line under the tabs, 99%.
 - **PS10. Panel colour** (roadmap To discuss, P6): still different from the mock-up.
 

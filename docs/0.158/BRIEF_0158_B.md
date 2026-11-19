@@ -57,7 +57,7 @@ This Series wording, the Download subtitles list). Then PS9: render the Playback
 `player/33-v15-playback-settings-step.png` and REVIEW_0157_2 PS9: panel **820 px**, 99%, rows 62 px, every tab fits
 with no scrolling, every row on one line with its value on the centre line; **no line under the tab row**; named
 choices step with Left / Right (‹ › only on the focused row) on Text size, Background opacity, Audio boost, Format,
-Speed, Stop playing at, Still watching?, Play mode; **Skipping** (renamed from "Skip intros & credits") keeps its three chips; numbers keep − +; "This Show"
+Speed, Stop playing at, Still watching?, Play mode; **Skipping** (renamed from "Skip intros & credits") keeps its three chips **Off · Show button · Skip** (was "Automatic"; the same words as Settings); numbers keep − +; "This Show"
 heading with **"Remember for this show"**; Playback tab headings Picture and Speed · Playing On · This Show. Replaces
 the two-line rows (judgement call 9).
 
