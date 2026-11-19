@@ -9,14 +9,20 @@ Report, "not built" list and run links: `docs/0.158/REPORT_0158_B.md`; judgement
 `docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Still to do from `docs/0.158/BRIEF_0158_B.md`: the look sweep on the speckle,
 the rest of Details (DT1, DT3–DT6, DT8, R3–R5, episodes), titles (group 6), Files (group 7), Back and page position
 (group 8), Settings' remaining sheet items (in-row backup flow, OpenSubtitles and Trakt panels), PL8, X4. Work branch
-for part B: `claude/build-0158-part-b-wsupv2`, then `claude/0158-part-b-continued-d5u9w1`, both fast-forwarded onto the working branch. Waiting for the owner: install the last
+for part B: `claude/build-0158-part-b-wsupv2`, then `claude/0158-part-b-continued-d5u9w1` (the working branch is fast-forwarded to it only when a build is due). Waiting for the owner: install the last
 signed APK; send a diagnostics report from it.
 
 ## Released
 
 **0.158.4** (code 1584) — signed 19 Nov 2026 (run 44531272454, from green conformance run 44521801198 on `ef5af36`).
 Artifact `supernova-0157-signed-qa` (`Supernova_0.158.4.apk`). 0.158.3 plus Playback Settings round two (820 px,
-stepping rows, no scrolling), every panel at 99%, FL9. The one to install. 0.158.5 is building (see the report).
+stepping rows, no scrolling), every panel at 99%, FL9. Installed by the owner.
+
+**0.158.7** (code 1587) — building: conformance run 44586168686 on `861ba66` (19 Nov, 18:17), signed as soon as it
+is green. 0.158.5 and 0.158.6 were never signed (faults found by the render checks; everything moved into 0.158.7).
+What it adds, what is still to do and every judgement call: `docs/0.158/REPORT_0158_B.md`,
+`docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Waiting for the owner: Reports folder (keep Download › Supernova, or a
+folder picker with one Android grant).
 
 **0.158.3** (code 1583) — signed 19 Nov 2026 (run 44506040551, from green conformance run 44500505615 on `4d310f4`).
 Artifact `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`). 0.158.2 plus the Settings redesign (seven tabs), DT4,

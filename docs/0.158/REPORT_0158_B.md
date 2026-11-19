@@ -30,7 +30,9 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
 - **0.158.7** (code 1587) — 0.158.4 plus everything since: the Settings wording and new rows (Home Hero, Keep
   diagnostics for, When a video was started), Save a diagnostic report in its row, the OpenSubtitles panel, the Trakt
   sign-in look, the episodes feature, R3, R4, R5, DT1, DT3, DT5, DT6, titles, PL8, X4, FL1–FL5, FL7, FL8, FL10, FL12.
-  Building once the render check of the fix is green.
+  Building: conformance run [44586168686](https://github.com/heretoecode/Supernova/actions/runs/44586168686) on
+  `861ba66` (19 Nov, 18:17), with render check run 44586213317 beside it. An earlier attempt (run 44540193164) stopped
+  at compile: the Trakt layout had one setting twice. Signed as soon as it is green.
 
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the
@@ -201,9 +203,17 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 
 ## For the next session
 - Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
-  when a build is due (a push there starts conformance; signing accepts only the working branch).
-- 0.158.7 is the next build; see Signed APKs above.
-- Still to do, in the brief's order: the look sweep renders (item 4),   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
+  when a build is due (a push there starts conformance and cancels a running one; signing accepts only the working
+  branch). The two 0.158 MediaLib patches live in `.github/build/`, which `.gitignore` ignores: add new patches with
+  `git add -f` and list them, with their SHA-256, in `.github/build/supernova155-dependency-patches.json`.
+- Now: 0.158.7 building (run 44586168686). When green, sign it with `supernova-0157-qa.yml`
+  (`conformance_run_id` 44586168686) and record it here, in PROJECT_STATUS and in CLAUDE.md.
+- Still to do, in this order: (1) the in-row backup flow; (2) "Also translate other languages"; (3) the Trakt
+  sign-in as a side panel; (4) Reports folder › Change, waiting for the owner's answer (keep Download › Supernova, or
+  a folder picker with one Android grant). Then renders of the episodes screens, titles, R5's Play menu and More
+  Like This by service. R2: the owner checks it on the Shield.
+- Before any long build, run `preview-renders.yml` on the session branch with the tests the change touches
+  (`.github/diagnostics/preview-request.json`): four minutes, and it caught every fault this session.
 
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).
