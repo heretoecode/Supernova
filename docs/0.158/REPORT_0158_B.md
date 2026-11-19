@@ -136,6 +136,10 @@ next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
 - **R4** (0.158.5): the season page's More menu opens beside More: Series details · Episodes · Delete season (with
   the delete warning, Keep files first).
 
+- **Titles, group 6** (0.158.5): every official logo sized to one area inside 900 × 240 (wide ones capped by width,
+  tall ones by height), its foot on the title's foot; names without a logo in house style A (heavy capitals, white,
+  no glow, two lines at most, the part before a colon small).
+
 ## Look sweep (Group 1)
 The speckle, the one box shape and the letter centring went in through the shared pieces, so every page picked
 them up at once; the Playback Settings panel colour (`#16181C` at 90%, no outline, no glow) is settled. Renders of the top bar, library pages (grid and list), Home and
@@ -155,7 +159,8 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **Details:** DT1 (Details tab on one screen), DT3's second half (rows running to the screen's edge; the clipping
   is fixed), DT5 (one row design; More Like This by service), DT6 (artwork side panel), R5 (choose a version).
   Episodes: built, but not yet checked in renders.
-- **Group 6, titles** — logo placement fix and house style A: not started.
+- **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
+  title ends with "…" rather than shrinking, and the colon split doesn't force a new line (judgement call 43).
 - **Group 7, Files** — FL6 and FL9 done; FL1–FL5, FL7, FL8, FL10–FL12 not started.
 - **Group 8** — R2 (the own page's bar) not done; Back and page position done.
 

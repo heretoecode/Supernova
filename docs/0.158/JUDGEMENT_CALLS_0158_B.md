@@ -120,3 +120,12 @@ decide quickly.
     Keep file · Delete episode N only · Delete all … · Choose…; "Delete both" for two, "Delete all three" up to ten,
     then "Delete all 14". Choose… is the shared choice list with Select all at its top and Done at its foot; the
     chosen episodes get the same warning again.
+42. **Logo placement (group 6):** every logo is sized to the same area (42% of a 900 × 240 box at 1080p, the
+    mock-up's own figure), capped by width for wide logos and by height for tall ones, its foot on the title box's
+    foot. The 24 px gap above the details line and the soft shade from the left are the pages' existing spacing and
+    shade; they were not changed.
+43. **House style A (group 6):** names without a logo show in heavy capitals, white, no glow, two lines at most. The
+    letters are made capitals for display only, so the stored name is unchanged. A colon title shows the part before
+    the colon small (about a third of the size); the line break after the colon is left to the text's own wrapping,
+    because inserting one would change the name's letters everywhere it is read back. Shrinking a long title to fit
+    two lines is not built: it ends with "…" instead.
