@@ -158,7 +158,8 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.
 - **X4** — scans still wait for each other instead of queueing (the lock is in MediaLib's build patches; its own job).
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
-- **PL8** — the skip button doesn't yet join the controls' line.
+- **PL8** — the skip button is now the one small-box size (it joined the controls' line already in 0.157); not yet
+  checked in a render beside the controls.
 - **Details:** DT1 (Details tab on one screen), DT3's second half (rows running to the screen's edge; the clipping
   is fixed), DT5 (one row design; More Like This by service), R5 (choose a version). DT6 is built for TV shows
   (films already had the side panel), not yet checked in a render.

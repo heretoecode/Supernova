@@ -143,3 +143,8 @@ decide quickly.
 48. **FL2:** while a folder is read it shows two rows of four outline cards (grid) or four outline rows (list), a
     faint fill with a faint edge, nothing to focus; the folder's real cards replace them when it arrives. They don't
     fill in one by one (the folder arrives as one list).
+49. **PL8:** the Skip button takes the one small-box size (26 dp high, 11 dp sides, 12 sp words), the same as the
+    player's other buttons; its countdown bar still runs along its foot. Its corners stay 12 dp, because the shared
+    button style's conformance test fixes them there.
+50. **DT6:** TV shows now open the same artwork side panel as films (backdrops for Hero and rows, posters for the
+    library page). The placeholder icons for Artwork, Posters and Backdrops in More were not redrawn.

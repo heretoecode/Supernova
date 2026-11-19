@@ -12,19 +12,22 @@
     android:clipToPadding="false"
     android:clipChildren="false">
 
+    <!-- PL8 (owner, 18 Nov 2026; player/29, 30): the one small-box size (52 px high at 1080p, RULES §3), the same
+         size as the controls it joins, not larger. -->
     <Button
         android:id="@+id/skip_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="44dp"
-        android:minWidth="140dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="14dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="0dp"
+        android:minHeight="26dp"
+        android:minWidth="0dp"
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
         android:background="@drawable/skip_button_selector"
         android:textColor="@color/skip_button_text_selector"
-        android:textSize="15sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:elevation="20dp"

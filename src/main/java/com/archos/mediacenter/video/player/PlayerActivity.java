@@ -3267,13 +3267,14 @@ public class PlayerActivity extends AppCompatActivity
         }
         else
         {
-            mSkipButton.setTextSize(15);
-            int padH = (int)(20 * density);
-            int padTop = (int)(10 * density);
-            int padBottom = (int)(14 * density);
-            mSkipButton.setPadding(padH, padTop, padH, padBottom);
-            mSkipButton.setMinHeight((int)(44 * density));
-            mSkipButton.setMinWidth((int)(140 * density));
+            // PL8 (owner, 18 Nov 2026; player/29, 30): the one small-box size (RULES §3), as the controls' buttons.
+            mSkipButton.setTextSize(12);
+            int padH = (int)(11 * density);
+            mSkipButton.setPadding(padH, 0, padH, 0);
+            mSkipButton.setMinHeight((int)(26 * density));
+            mSkipButton.setMinimumHeight((int)(26 * density));
+            mSkipButton.setMinWidth(0);
+            mSkipButton.setMinimumWidth(0);
         }
     }
 
