@@ -168,7 +168,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private static final int FLAG_SIDE_ALL = FLAG_SIDE_ALL_EXCEPT_UNLOCK_INSTRUCTIONS | FLAG_SIDE_UNLOCK_INSTRUCTIONS;
 
     /** Owner 2 Nov 2026: Play/Pause and Settings are rounded rectangles (corner 12), matching buttons elsewhere. */
-    static final float HUD_BUTTON_RADIUS_DP = 12f;
+    static final float HUD_BUTTON_RADIUS_DP = SupernovaStyle.SMALL_BOX_RADIUS_DP;
     private static final int STATUS_BAR_DISABLE_NOTIFICATION_ICONS = 0x00020000;
     private static final int STATUS_BAR_DISABLE_NOTIFICATION_ALERTS = 0x00040000;
     private static final int STATUS_BAR_DISABLE_NOTIFICATION_TICKER = 0x00080000;

@@ -53,6 +53,14 @@ public final class SupernovaStyle {
     /** Button and tile labels: Medium weight (Light strokes read as grey on a TV). */
     public static final Typeface LABEL = Typeface.create("sans-serif-medium", Typeface.NORMAL);
     public static final float RADIUS_DP = 12f;
+    /**
+     * One shape for every small box (RULES §3, owner 18 Nov 2026; corners B): buttons, pills, chips and the focus
+     * and open boxes in tabs and the top bar are 52 px high on a row with 20 px corners and about 22 px side padding
+     * (at 1080p). Rows, cards and heroes keep their own corners.
+     */
+    public static final float SMALL_BOX_RADIUS_DP = 10f;
+    public static final float SMALL_BOX_HEIGHT_DP = 26f;
+    public static final float SMALL_BOX_SIDE_DP = 11f;
     public static final float PANEL_RADIUS_DP = 13f;
     public static final float ROW_FOCUS_STROKE_DP = 1.5f;
     /** Breathing room between a row's focus outline and its icon/text. */
@@ -97,6 +105,8 @@ public final class SupernovaStyle {
     /** Rest: plain, no box that could read as focus; focused: the white box (RULES §3, §12). */
     public static void applyPlainButton(View view) {
         view.setBackground(button(view.getContext(), Surface.STANDARD, Color.TRANSPARENT));
+        if (view instanceof TextView)
+            centreOnLetters((TextView) view);
     }
 
     public static StateListDrawable button(Context c, Surface surface) {
@@ -105,7 +115,7 @@ public final class SupernovaStyle {
     }
 
     private static StateListDrawable button(Context c, Surface surface, int rest) {
-        float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
+        float radius = dp(c, surface == Surface.TILE ? 11 : SMALL_BOX_RADIUS_DP);
         int edge = surface == Surface.TILE || surface == Surface.HUD ? 0x2EFFFFFF : 0;
         int edgeWidth = Math.max(1, dp(c, 1));
         if (surface == Surface.TILE) {
@@ -223,11 +233,49 @@ public final class SupernovaStyle {
         view.setGravity(Gravity.CENTER);
         view.setSingleLine(true);
         view.setEllipsize(TextUtils.TruncateAt.END);
-        int horizontal = dp(c, large ? 14 : 12), vertical = dp(c, large ? 9 : 7);
+        int horizontal = dp(c, SMALL_BOX_SIDE_DP);
+        int vertical = dp(c, large ? 6 : 4);
         view.setPadding(horizontal, vertical, horizontal, vertical);
-        view.setMinimumHeight(dp(c, large ? 36 : 32));
-        view.setMinHeight(dp(c, large ? 36 : 32));
+        view.setMinimumHeight(dp(c, SMALL_BOX_HEIGHT_DP));
+        view.setMinHeight(dp(c, SMALL_BOX_HEIGHT_DP));
         view.setCompoundDrawablePadding(dp(c, 7));
+        centreOnLetters(view);
+    }
+
+    /**
+     * Keeps a one-line box's text centred on its letters, not on the font's box (the 0.158 top bar fix, everywhere
+     * from 0.158 part B): room kept for accents and descenders otherwise makes words sit low. Moves the text by
+     * shifting padding from the bottom to the top (or back) after each layout; it settles after one pass.
+     */
+    public static void centreOnLetters(TextView view) {
+        if (view.getTag(com.archos.mediacenter.video.R.id.supernova_letter_centre) != null)
+            return;
+        view.setTag(com.archos.mediacenter.video.R.id.supernova_letter_centre, Boolean.TRUE);
+        view.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            TextView text = (TextView) v;
+            if (text.getLayout() == null || text.getLineCount() != 1 || text.getHeight() == 0)
+                return;
+            if ((text.getGravity() & Gravity.VERTICAL_GRAVITY_MASK) != Gravity.CENTER_VERTICAL)
+                return;
+            int shift = Math.round(letterShift(text));
+            if (shift == 0)
+                return;
+            int top = text.getPaddingTop() + shift;
+            int bottom = text.getPaddingBottom() - shift;
+            if (top < 0 || bottom < 0)
+                return;
+            text.setPadding(text.getPaddingLeft(), top, text.getPaddingRight(), bottom);
+        });
+    }
+
+    /** How far the letters ("H0") sit from the view's centre; positive moves them down. */
+    static float letterShift(TextView view) {
+        if (view.getLayout() == null || view.getHeight() == 0)
+            return 0f;
+        android.graphics.Rect letters = new android.graphics.Rect();
+        view.getPaint().getTextBounds("H0", 0, 2, letters);
+        float letterCentre = view.getBaseline() + letters.exactCenterY();
+        return view.getHeight() / 2f - letterCentre;
     }
 
     /**
@@ -286,6 +334,8 @@ public final class SupernovaStyle {
     public static void applyButton(View view, Surface surface) {
         view.setBackground(button(view.getContext(), surface));
         applyContent(view, true);
+        if (view instanceof TextView)
+            centreOnLetters((TextView) view);
     }
 
     /**
@@ -522,16 +572,16 @@ public final class SupernovaStyle {
      */
     public static StateListDrawable tab(Context c, boolean open) {
         StateListDrawable states = new ButtonStates();
-        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, 10), 0);
+        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, SMALL_BOX_RADIUS_DP), 0);
         states.addState(new int[] {android.R.attr.state_focused}, focused);
         states.addState(new int[] {android.R.attr.state_pressed}, focused);
-        states.addState(new int[] {}, new Box(open ? TAB_OPEN : PANEL_REST, 0, 0, dp(c, 10), 0));
+        states.addState(new int[] {}, new Box(open ? TAB_OPEN : PANEL_REST, 0, 0, dp(c, SMALL_BOX_RADIUS_DP), 0));
         return states;
     }
 
     public static StateListDrawable chip(Context c) {
         StateListDrawable states = new ButtonStates();
-        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, 7), 0);
+        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, SMALL_BOX_RADIUS_DP), 0);
         states.addState(new int[] {android.R.attr.state_focused}, focused);
         states.addState(new int[] {android.R.attr.state_pressed}, focused);
         states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));

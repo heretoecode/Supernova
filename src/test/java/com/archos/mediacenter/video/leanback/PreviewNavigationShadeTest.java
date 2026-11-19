@@ -67,7 +67,7 @@ public class PreviewNavigationShadeTest {
         nav.selectTab(4);
         nav.setScrollOffset(10_000);
         assertEquals("utility pages have no fade", 0, nav.fadeAlpha());
-        assertEquals(0x16, TopNavigation.FADE_COLOUR >> 16 & 255);
+        assertEquals("the speckle's base (RULES §1)", 0x11, TopNavigation.FADE_COLOUR >> 16 & 255);
         assertTrue("no blue cast", (TopNavigation.FADE_COLOUR & 255) - (TopNavigation.FADE_COLOUR >> 16 & 255) < 8);
         host.finish();
     }

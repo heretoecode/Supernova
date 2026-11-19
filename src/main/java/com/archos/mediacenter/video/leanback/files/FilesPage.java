@@ -58,7 +58,7 @@ public final class FilesPage extends LinearLayout
     {
         super(context);
         setOrientation(VERTICAL);
-        setBackgroundColor(0xFF16181C);
+        setBackground(new com.archos.mediacenter.video.leanback.PreviewUtilityBackground(context));
         setClipChildren(false);
         setClipToPadding(false);
         // Content lines up with the top bar's edges (one side margin, owner 18 Nov 2026; RULES §1).

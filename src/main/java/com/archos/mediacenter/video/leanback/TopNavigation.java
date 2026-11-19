@@ -115,8 +115,9 @@ public final class TopNavigation extends LinearLayout {
             tab.setFocusableInTouchMode(true);
             tab.setClickable(true);
             // Compact gutters keep complete icon targets inside the 720p rail after pixel rounding.
-            int horizontal = TvLayout.width(c) < 780 ? 6 : 7;
-            tab.setPadding(dp(horizontal), dp(6), dp(horizontal), dp(6));
+            // One shape for every small box (RULES §3): about 22 px side padding at 1080p.
+            int horizontal = TvLayout.width(c) < 780 ? 6 : Math.round(SupernovaStyle.SMALL_BOX_SIDE_DP);
+            tab.setPadding(dp(horizontal), dp(3), dp(horizontal), dp(3));
             styleTab(tab);
             tab.setOnClickListener(v -> {
                 if (index == 6 && getContext() instanceof CustomLibraryActivity)
@@ -169,12 +170,12 @@ public final class TopNavigation extends LinearLayout {
                 slot.rightMargin = dp(2);
                 group.addView(signal, slot);
             }
-            group.addView(tab, new LayoutParams(-2, dp(36)));
+            group.addView(tab, new LayoutParams(-2, dp(Math.round(SupernovaStyle.SMALL_BOX_HEIGHT_DP))));
         }
         group.removeView(tabs[6]);
-        group.addView(tabs[6], group.indexOfChild(tabs[2]) + 1, new LayoutParams(-2, dp(36)));
+        group.addView(tabs[6], group.indexOfChild(tabs[2]) + 1, new LayoutParams(-2, dp(Math.round(SupernovaStyle.SMALL_BOX_HEIGHT_DP))));
         group.removeView(tabs[5]);
-        group.addView(tabs[5], group.indexOfChild(tabs[4]), new LayoutParams(-2, dp(36)));
+        group.addView(tabs[5], group.indexOfChild(tabs[4]), new LayoutParams(-2, dp(Math.round(SupernovaStyle.SMALL_BOX_HEIGHT_DP))));
         status = new FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(64), dp(46)));
         clock = new BarClock(c);
@@ -231,7 +232,7 @@ public final class TopNavigation extends LinearLayout {
     @Override
     protected void onMeasure(int width, int height) {
         int tabHeight = Math.max(
-            dp(36), Math.round(tabs[0].getPaint().getFontMetrics().bottom - tabs[0].getPaint().getFontMetrics().top) +
+            dp(Math.round(SupernovaStyle.SMALL_BOX_HEIGHT_DP)), Math.round(tabs[0].getPaint().getFontMetrics().bottom - tabs[0].getPaint().getFontMetrics().top) +
                         tabs[0].getPaddingTop() + tabs[0].getPaddingBottom());
         for (TextView tab : tabs)
             tab.getLayoutParams().height = tabHeight;
@@ -338,7 +339,7 @@ public final class TopNavigation extends LinearLayout {
             if (focused || open) {
                 android.graphics.drawable.GradientDrawable box = new android.graphics.drawable.GradientDrawable();
                 box.setColor(focused ? SupernovaStyle.FOCUS_FILL : OPEN_PAGE_BOX);
-                box.setCornerRadius(dp(8));
+                box.setCornerRadius(dp(Math.round(SupernovaStyle.SMALL_BOX_RADIUS_DP)));
                 tab.setBackground(box);
             } else {
                 tab.setBackground(null);
@@ -477,8 +478,8 @@ public final class TopNavigation extends LinearLayout {
         return super.drawChild(canvas, child, time);
     }
 
-    /** Charcoal (the panels' colour) at its strongest behind the tabs, clear ~115dp down. */
-    static final int FADE_COLOUR = 0x16181C;
+    /** The speckle's base colour at its strongest behind the tabs, clear ~115dp down. */
+    static final int FADE_COLOUR = 0x111215;
     static final float FADE_TOP = .88f, FADE_AT_TABS = .60f;
     static final int FADE_HEIGHT_DP = 115, FADE_IN_DP = 60;
 

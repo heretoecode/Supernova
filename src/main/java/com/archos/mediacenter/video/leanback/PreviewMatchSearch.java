@@ -36,7 +36,7 @@ public final class PreviewMatchSearch extends LinearLayout {
         // Opened from a title (owner, 16 Nov 2026; fix-match-from-details/v2): Files › Library Care's page,
         // the tab row with Library Care open, the path, and where Back returns to.
         setPadding(dp(48), dp(8), dp(48), dp(20));
-        setBackgroundColor(PAGE);
+        setBackground(new PreviewUtilityBackground(context));
         com.archos.mediacenter.video.leanback.files.FilesTabsPicture tabs =
             new com.archos.mediacenter.video.leanback.files.FilesTabsPicture(context);
         LayoutParams tabsSize = new LayoutParams(-1, -2);
@@ -203,7 +203,7 @@ public final class PreviewMatchSearch extends LinearLayout {
     public static void asSidePanel(android.app.Activity activity) {
         android.view.Window window = activity.getWindow();
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(PAGE));
+        window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(PreviewUtilityBackground.SPECKLE_BASE));
     }
 
     /** Marks the result that is today's match ("Current"). */
