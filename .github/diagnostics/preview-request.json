@@ -1,11 +1,14 @@
 {
- "purpose": "0.158 part A: top bar, library pages, Home, Search (every action pressed)",
+ "purpose": "0.158 part B continued: look sweep on the speckle (Files, Details, player, Settings) and this session's changes",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review0158TopBarTest",
-  "com.archos.mediacenter.video.leanback.Review0158LibraryTest",
-  "com.archos.mediacenter.video.leanback.Review0158HomeTest",
-  "com.archos.mediacenter.video.leanback.Review0158SearchTest",
-  "com.archos.mediacenter.video.leanback.NoOldScreensTest"
+  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
+  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+  "com.archos.mediacenter.video.player.Playback141RenderTest",
+  "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
+  "com.archos.mediacenter.video.leanback.details.PreviewEpisodeMenuTest",
+  "com.archos.mediacenter.video.leanback.TitleLogoPlacementTest"
  ],
  "variants": {
   "normal": {}
