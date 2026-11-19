@@ -62,8 +62,9 @@ final class HomeIconPicker
                 dialog.dismiss();
                 chosen.accept(AUTOMATIC.equals(name) ? "" : name);
             });
-            line.addView(tile, new LinearLayout.LayoutParams(SupernovaStyle.dp(context, 92),
-                                                             SupernovaStyle.dp(context, 70)));
+            // Part A's "not built": tiles wide enough for the longest genre names ("Action & Adventure").
+            line.addView(tile, new LinearLayout.LayoutParams(SupernovaStyle.dp(context, 124),
+                                                             SupernovaStyle.dp(context, 76)));
             if (name.equals(selected))
             {
                 focus = tile;
@@ -106,7 +107,8 @@ final class HomeIconPicker
         TextView label = new TextView(context);
         label.setText(name);
         label.setTextSize(12);
-        label.setSingleLine(true);
+        label.setMaxLines(2);
+        label.setEllipsize(android.text.TextUtils.TruncateAt.END);
         label.setGravity(Gravity.CENTER);
         label.setTextColor(Color.WHITE);
         LinearLayout.LayoutParams labelSize = new LinearLayout.LayoutParams(-2, -2);
