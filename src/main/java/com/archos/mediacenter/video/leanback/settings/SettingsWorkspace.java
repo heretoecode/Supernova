@@ -558,9 +558,14 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         for (String s : shownSections) {
             boolean link = s.equals("Backup & restore") || s.equals("OpenSubtitles");
             List<SettingsRegistry.Entry> found = new ArrayList<>();
-            if (!link && !integrationDisabled(s))
+            // The page sheet has no master switches for services: only "Look up skip times online" stays, and with
+            // it off the skipping choices hide while the switch itself stays, so it can be turned back on.
+            boolean skippingOff = s.equals("Skipping") && !prefs.getBoolean(SegmentSkippingPolicy.MASTER, true);
+            if (!link)
                 for (SettingsRegistry.Entry e : registry.in(category, s)) {
                     Preference p = e.resolve(fragment.getPreferenceScreen());
+                    if (skippingOff && !e.key.equals(SegmentSkippingPolicy.MASTER))
+                        continue;
                     if (SettingsRegistry.visible(p, e.integration()))
                         found.add(e);
                 }
