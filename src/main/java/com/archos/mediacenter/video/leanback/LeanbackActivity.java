@@ -46,6 +46,8 @@ public abstract class LeanbackActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle saved){
         super.onCreate(saved);
+        // FL12: a page brought back after you closed the app fully gives way to a fresh Home.
+        ClosedFully.reopenHome(this, saved);
         //in case we need to re-log in trakt
         mTraktRelogBroadcastReceiver = new BroadcastReceiver(){
 

@@ -169,10 +169,10 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
   title ends with "…" rather than shrinking, and the colon split doesn't force a new line (judgement call 43).
 - **Group 7, Files** — FL1, FL2, FL4, FL6–FL11 done (FL11 was already in: "Scanning · 42%" while running; FL1,
-  FL2, FL4 and FL10 not yet checked in renders). Not started: FL3 + FL5 (turn a connection off; smaller buttons;
-  mock-up `review-0157-2/01` 3), FL12 (closed fully → Home). FL12's likely route: Android 11 can say
-  why the app last ended (`getHistoricalProcessExitReasons`); when the page is restored after you stopped the app
-  yourself, open Home instead; when Android ended it in the background, keep the page.
+  FL2, FL4 and FL10 not yet checked in renders). FL12 built (0.158.6): when Android brings a page back after you stopped
+  the app yourself, it opens Home instead; when Android ended it in the background, the page comes back (Android 11
+  says why the app last ended). Not started: FL3 + FL5 (turn a connection off; smaller buttons; mock-up
+  `review-0157-2/01` 3).
 - **Group 8** — R2: nothing changed; your own page now drives the same fade under the top bar as Movies and TV Shows (same code), so please check it on the Shield and send a photo if the solid bar is still there. Back and page position done.
 
 ## For the next session
