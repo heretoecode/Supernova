@@ -170,7 +170,9 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
     data, so it wants its own careful pass with a Shield check. Backup still opens its existing view from the row.
   - "Also translate other languages": a player-engine feature (a second, "foreign parts only" subtitle merged on
     screen) that can only be judged on the Shield.
-  - Reports folder › Change (Save now writes to Download › Supernova from the row).
+  - Reports folder › Change (Save now writes to Download › Supernova from the row). It, and the backup flow's
+    Backups folder, need Supernova's one folder picker (the Files browser in picking mode, RULES §7b), which isn't
+    built yet: that picker is the next piece to build, then both rows use it.
   - Trakt sign-in as a side panel (it now has Supernova's look; judgement call 61).
   Built this session: the wording and choice names, Home Hero's two rows, Keep diagnostics for, When a video was
   started (Ask · Resume · Start over), Save a diagnostic report in its row, verbs on action rows, the OpenSubtitles
