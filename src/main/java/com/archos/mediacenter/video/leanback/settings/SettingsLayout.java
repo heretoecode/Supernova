@@ -66,8 +66,8 @@ final class SettingsLayout {
         page(0,
              "General", new String[] {"hide_controls_on_pause", "seek_thumbnails_enabled", "allow_3rd_party_player"},
              // "display_resume_box" is NOVA's resume button on its old main screen, which Supernova's Home doesn't
-             // have, so it is not shown; "When a video was started" (Ask · Resume · Start over) is still to build.
-             "Resume", new String[] {"supernova_save_resume"},
+             // have, so it is not shown; "When a video was started" is Supernova's own Ask · Resume · Start over.
+             "Resume", new String[] {"supernova_resume_choice", "supernova_save_resume"},
              "Skipping", new String[] {"supernova_segment_enabled", "supernova_segment_intro",
                                        "supernova_segment_recap", "supernova_segment_preview",
                                        "supernova_segment_outro", "supernova_segment_credits"},
@@ -190,8 +190,7 @@ final class SettingsLayout {
         copy("enable_downmix_androidtv", "Stereo downmix", "Turns surround sound into two channels.");
         copy("player_projector_mode_key", "Projector mode", "Flips the picture for rear projection.");
         // 0.158.5: every row's wording checked against the page sheet (SETTINGS.md, owner 19 Nov 2026).
-        copy("display_resume_box", "Ask when a video was started",
-             "Resume or start over. Off resumes where you stopped.");
+        copy("supernova_resume_choice", "When a video was started", "Ask, resume, or start over.");
         copy("supernova_subtitle_season_prefetch", "Have subtitles ready",
              "Fetched while a video prepares, and for the next two episodes.");
         copy("enable_tv_refreshrate_switch_mode", "Automatic refresh rate",

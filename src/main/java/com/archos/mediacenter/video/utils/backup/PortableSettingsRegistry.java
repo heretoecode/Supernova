@@ -73,7 +73,7 @@ public final class PortableSettingsRegistry {
             "pref_smbj pref_smbv2 pref_smb_resolv pref_smb_disable_tcp_discovery pref_smb_disable_udp_discovery pref_smb_disable_mdns_discovery pref_sshj pref_create_remote_thumbs network_bookmarks pref_network_prefer_vpn vpn_mobile auto_rescan_on_app_restart preference_display_all_files");
         rules(Category.NETWORK, Type.INT, "preview_scan_frequency auto_rescan_period auto_rescan_starting_time");
         rules(Category.PLAYBACK, Type.BOOLEAN,
-            "display_resume_box hide_controls_on_pause make_time_negative playback_speed allow_3rd_party_player reset_brightness_on_start supernova_track_viewing_history supernova_save_resume PREF_PRIVATE_MODE preview_featured_recent preview_featured_trending preview_featured_popular preview_featured_because preview_featured_interval");
+            "display_resume_box hide_controls_on_pause make_time_negative playback_speed allow_3rd_party_player reset_brightness_on_start supernova_track_viewing_history supernova_save_resume PREF_PRIVATE_MODE preview_featured_recent preview_featured_trending preview_featured_popular preview_featured_because preview_featured_interval supernova_resume_choice");
         rules(Category.PLAYBACK, Type.INT, "brightness_saved pref_play_mode_int_key notifications_mode");
         rules(Category.PLAYBACK, Type.BOOLEAN, "pref_lock_rotation");
         rules(Category.STREAMING, Type.BOOLEAN, "streaming_enabled");

@@ -302,6 +302,13 @@ public final class PreviewSettings {
                 p.getKey()));
             categories.get("Home & Discovery").addPreference(enabled);
         }
+        ListPreference started = new ListPreference(fragment.requireContext());
+        started.setKey(com.archos.mediacenter.video.utils.PlayUtils.RESUME_CHOICE);
+        started.setTitle("When a video was started");
+        started.setEntries(new String[] {"Ask", "Resume", "Start over"});
+        started.setEntryValues(new String[] {"ask", "resume", "start"});
+        started.setDefaultValue("resume");
+        categories.get("Home & Discovery").addPreference(started);
         ListPreference every = new ListPreference(fragment.requireContext());
         every.setKey(HERO_INTERVAL);
         every.setTitle("Change every");

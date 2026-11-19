@@ -103,6 +103,11 @@ public class PlayUtils implements IndexHelper.Listener {
      * @param externalPlayerWithResultStarter
      * @param playlistId
      */
+    /** Settings › Playback › Resume › When a video was started: "ask", "resume" (as before) or "start". */
+    public static final String RESUME_CHOICE = "supernova_resume_choice";
+    /** Set while the Ask choice replays the start, so it is not asked twice. */
+    private static boolean resumeChosen;
+
     static public void startVideo(final Context context, final Video requested, final int resume,
         final boolean legacyPlayer,
         final int resumePosition, //in case we already have resume position. Will only be used by external players
@@ -119,6 +124,37 @@ public class PlayUtils implements IndexHelper.Listener {
                 PreviewDialog.read(context,
                     LibraryHealth.message(state),
                     "Reconnect the source and scan to check this item again. Your library, watched state and playback progress are retained.");
+                return;
+            }
+        }
+        if (BuildConfig.FOUNDATION && video != null && resume == PlayerActivity.RESUME_FROM_LAST_POS
+            && !resumeChosen && video.getResumeMs() > 0) {
+            // Settings › Playback › Resume › When a video was started (page sheet): Ask · Resume · Start over.
+            String choice = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(RESUME_CHOICE, "resume");
+            if ("start".equals(choice)) {
+                startVideo(context, requested, PlayerActivity.RESUME_NO, legacyPlayer, resumePosition,
+                           externalPlayerWithResultStarter, playlistId);
+                return;
+            }
+            if ("ask".equals(choice)) {
+                int seconds = video.getResumeMs() / 1000;
+                String at = seconds >= 3600
+                    ? String.format(java.util.Locale.ROOT, "%d:%02d:%02d", seconds / 3600, seconds / 60 % 60, seconds % 60)
+                    : String.format(java.util.Locale.ROOT, "%d:%02d", seconds / 60, seconds % 60);
+                PreviewDialog.choose(context, video.getName(), new String[] {"Resume from " + at, "Start over"}, 0,
+                                     n -> {
+                                         resumeChosen = true;
+                                         try {
+                                             startVideo(context, requested,
+                                                        n == 0 ? PlayerActivity.RESUME_FROM_LAST_POS
+                                                               : PlayerActivity.RESUME_NO,
+                                                        legacyPlayer, resumePosition, externalPlayerWithResultStarter,
+                                                        playlistId);
+                                         } finally {
+                                             resumeChosen = false;
+                                         }
+                                     });
                 return;
             }
         }

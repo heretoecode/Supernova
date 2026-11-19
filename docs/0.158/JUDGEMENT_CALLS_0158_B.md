@@ -179,3 +179,7 @@ decide quickly.
     · never includes passwords". The sheet's "Reports folder (› Change)" is not built, so the folder is fixed for now.
 58. **Action rows** in Settings show their verb instead of ›: Save, Clear (diagnostics, viewing history), Send,
     Fetch, Remove (Trakt), Write (.nfo files for the whole library).
+59. **When a video was started:** Ask · Resume · Start over, Resume by default (what happened before). Ask shows a
+    small list "Resume from 12:34 · Start over" whenever a started video is played from Home, a library page or
+    Details; Start over always plays from the beginning. Playback moving on to the next episode is not affected
+    (those start at the beginning anyway).

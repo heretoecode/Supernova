@@ -36,6 +36,13 @@
       "destination": "System & Maintenance",
       "subsection": "Diagnostics",
       "disposition": "Page sheet SETTINGS.md: Keep diagnostics for (1 \u00b7 2 \u00b7 4 weeks) in System \u203a Diagnostics"
+    },
+    {
+      "id": "N15806",
+      "key": "supernova_resume_choice",
+      "destination": "Playback & Video",
+      "subsection": "Resume & Progress",
+      "disposition": "Page sheet SETTINGS.md: When a video was started (Ask \u00b7 Resume \u00b7 Start over) in Playback \u203a Resume"
     }
   ]
 }
