@@ -157,7 +157,9 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
     private int cardWidth() {
         int width = getWidth() > 0
             ? getWidth()
-            : getResources().getDisplayMetrics().widthPixels - PreviewDialog.dp(getContext(), 84);
+            : getResources().getDisplayMetrics().widthPixels - PreviewDialog.dp(getContext(), 84)
+                // A row widened under the page's margins (DT3) gets that width back as padding.
+                + getPaddingLeft() + getPaddingRight() - 2 * PreviewDialog.dp(getContext(), 5);
         return Math.max(1, (width - getPaddingLeft() - getPaddingRight() - PreviewDialog.dp(getContext(), 36)) / 4);
     }
 

@@ -114,8 +114,9 @@ decide quickly.
 39. **Home Hero › Because you watched** is a new switch (on by default, like the others); the last source that is
     still on can't be turned off. **Change every** is 8 s · 12 s · 20 s (8 s as before). Both are backed up.
 40. **DT3:** the Details sections and their content no longer clip their children, so a grown card and its ring show
-    whole at both ends of a row. The row still stops at the page's side margin rather than running to the screen
-    edge; that part needs the row widened under the margin and is listed as not built.
+    whole at both ends of a row. From 0.158.6 the Episodes rows also run to the screen's edges (widened under the
+    page's margin, with that width back as padding so the first card doesn't move). Extras and More Like This rows
+    were not widened yet.
 41. **Episodes menu** (no mock-up; built from the rules): Playback (Resume or Play, Restart episode) · Library (Mark
     as watched, Fix match) · Files & Media (Delete episode). The delete warning with earlier episodes has four buttons
     Keep file · Delete episode N only · Delete all … · Choose…; "Delete both" for two, "Delete all three" up to ten,

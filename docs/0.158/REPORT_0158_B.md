@@ -127,7 +127,8 @@ next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
   decoder, Parser synchronisation, Stream buffer, Max I-frame size, Audio interface, Automatic audio delay); choices
   have plain names (Automatic · Hardware · Software and so on). Home Hero gains **Because you watched** and **Change
   every** (8 s · 12 s · 20 s); the last source can't be turned off. Diagnostics gains **Keep diagnostics for**.
-- **DT3** (0.158.5): a grown card and its ring are no longer cut at the sides of Details rows.
+- **DT3** (0.158.5; edges 0.158.6): a grown card and its ring are no longer cut at the sides of Details rows, and
+  the Episodes rows run out to the screen's edges with the first card where it was.
 - **Episodes** (0.158.5): OK on an episode card plays it at once; long-press or Menu opens its menu beside the card
   (Resume or Play, Restart episode · Mark as watched, Fix match · Delete episode). Deleting an episode with earlier
   ones of the season in the library: one warning, "You also have episodes 1 and 2 of this season.", with Keep file ·
@@ -162,8 +163,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
 - **PL8** — the skip button is now the one small-box size (it joined the controls' line already in 0.157); not yet
   checked in a render beside the controls.
-- **Details:** DT3's second half (rows running to the screen's edge; the clipping
-  is fixed), DT5 (one row design; More Like This by service), R5 (choose a version). DT6 is built for TV shows
+- **Details:** DT5 (one row design; More Like This by service), R5 (choose a version). DT6 is built for TV shows
   (films already had the side panel), not yet checked in a render.
   Episodes: built, but not yet checked in renders.
 - **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
@@ -178,9 +178,8 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 ## For the next session
 - Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
   when a build is due (a push there starts conformance; signing accepts only the working branch).
-- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT6, PL8.
-- Still to do, in the brief's order: the look sweep renders (item 4), DT5, R5, X4, FL3 + FL5, DT3's edge-to-edge rows,
-  the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
+- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT6, PL8.
+- Still to do, in the brief's order: the look sweep renders (item 4), DT5, R5, X4, FL3 + FL5,   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
 
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).

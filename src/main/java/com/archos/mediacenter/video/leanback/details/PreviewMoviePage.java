@@ -1938,7 +1938,14 @@ public final class PreviewMoviePage extends ScrollView {
                 new PreviewEpisodeRow((Activity)getContext(), season.getValue(), id,
                                       enrichment == null ? null : enrichment.seasonAvailability.get(season.getKey()));
             episodeRows.add(row);
-            episodes.addView(row, new LinearLayout.LayoutParams(-1, dp(156)));
+            // DT3 (D6): the row runs off the page's edges; its padding keeps the first card where it was.
+            int side = Math.round(getResources().getDisplayMetrics().widthPixels * .04f) + dp(8);
+            LinearLayout.LayoutParams rowSize = new LinearLayout.LayoutParams(-1, dp(156));
+            rowSize.leftMargin = -side;
+            rowSize.rightMargin = -side;
+            row.setPadding(row.getPaddingLeft() + side, row.getPaddingTop(), row.getPaddingRight() + side,
+                           row.getPaddingBottom());
+            episodes.addView(row, rowSize);
         }
         if (key instanceof String) {
             String tag = (String)key;
