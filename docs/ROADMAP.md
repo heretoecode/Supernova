@@ -14,7 +14,7 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### To discuss (owner, 16 Nov)
 
-- Episodes (answered 18 Nov; mock-up next): OK on an episode card plays it; long-press opens the same menu as More;
+- [Moved to 0.158 part B, 19 Nov] Episodes (answered 18 Nov): OK on an episode card plays it; long-press opens the same menu as More;
   deleting one offers the earlier episodes of the season: only this one · all · choose (with Select all)
 - Network statistics: split by source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library
 - Feature blueprint (research): pick ideas to take forward (`docs/research/FEATURE_BLUEPRINT.md`)
@@ -163,11 +163,12 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - **Back and page position** (RULES §16, 18 Nov): Back goes straight to the top bar; a page left for another one
   reopens at its top; Details → Back returns to the poster.
 - Then the owner's 0.157.2 review (`docs/0.157/REVIEW_0157_2.md`), Playback Settings first.
+- **Episodes** (OK plays; long-press = the More menu; deleting offers earlier episodes) and **the Settings redesign**
+  (moved from 0.159 by the owner, 19 Nov: the last major redesign). Brief: `docs/0.158/BRIEF_0158_B.md`.
 
 ## 0.159
 
-- Settings (seven tabs, Backup and Restore, Diagnostics, About): set aside by the owner (18 Nov); the current
-  Settings works and is rarely visited
+- [Moved to 0.158 part B, 19 Nov] Settings (seven tabs, Backup and Restore, Diagnostics, About)
 - Onboarding (on Home, Start fresh / Restore, smart steps): it points into Settings and is seen once
 
 ## Parked

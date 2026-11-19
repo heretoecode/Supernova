@@ -1,7 +1,8 @@
 # Brief: 0.158 part B (for Supernova Coding), to run overnight
 
-Approved by the owner, 19 Nov 2026. Part B = the new look (decided 18 Nov) plus the owner's review of 0.157.2
-(`docs/0.157/REVIEW_0157_2.md`). The owner has 0.158 (part A) installed and will review it separately; their notes on
+Approved by the owner, 19 Nov 2026. Part B = the new look (decided 18 Nov), the owner's review of 0.157.2
+(`docs/0.157/REVIEW_0157_2.md`), the episodes feature and **the Settings redesign** (moved here from 0.159 by the
+owner, 19 Nov: the last major redesign). The owner has 0.158 (part A) installed and will review it separately; their notes on
 it come later, not in this brief.
 
 ## The aim for tonight
@@ -69,6 +70,13 @@ tab focus, rows running off the edges, gaps (DT1–DT4, DT9); **one row design f
 This, More Like This in rows by service with the service's colour logo** (DT5, `review-0157-2/01` 1–2); artwork
 side panel (DT6); full description is the text alone (DT7); Fix match in More (DT8); season artwork (R3); season More
 menu beside its button with Delete season (R4); **choose a version on Play** (R5, `review-0157-2/01` 4).
+**Episodes** (owner, 18 Nov; `docs/0.158/OWNER_NOTES.md` §2; no mock-up, built from the rules): OK on an episode
+card in the Episodes row plays that episode at once; its long-press (or the Menu button) opens **the same menu as
+More**, beside the card, as library posters do. **Deleting an episode** when earlier episodes of the same season are
+in the library: one delete warning in Supernova's design (RULES §23.5: Keep file first), saying "You also have
+episodes 1 and 2 of this season", with **Delete episode 3 only · Delete all three · Choose…**; Choose opens the shared
+choice list with ticks and **Select all** at its top, then the same warning for what is ticked. Nothing earlier is
+deleted without that step. List the screens in the report with renders, as they had no mock-up.
 
 ### Group 6 — titles (RULES §19)
 Official logo with the **placement fix** (`title-style/05-logo-placement.png`: empty space trimmed, same area inside
@@ -80,14 +88,28 @@ Content clipped below the toolbar and tabs (FL1); loading placeholders back (FL2
 smaller buttons (FL3, FL5; `review-0157-2/01` 3); connection form on one screen (FL4); FL6–FL12 as written (FL10
 agreed: focus moves through the scans; FL12 decided: closed fully → Home).
 
-### Group 8 — behaviour and leftovers
+### Group 8 — behaviour and leftovers (before Settings)
 **Back and page position** (RULES §16): Back goes straight to the top bar; a page left for another one reopens at its
 top; poster → Details → Back returns to the poster. R2: if the own library page still shows a solid bar under the
 top bar, make it match Movies and TV Shows. The icon picker tile width (part A's "not built").
 
+### Group 9 — the Settings redesign (the last major redesign; owner, 19 Nov)
+Designed and approved by the owner on 14 Nov: `docs/0.157/SETTINGS_INVENTORY.md` (every setting: keep, move, merge,
+reword, remove; seven tabs **Playback · Audio · Subtitles · Library · Services · System · About**; a full page with
+tabs like Files, no tiles, no panel) and the mock-ups `docs/design/proposals/settings-v2/` (the latest round of each
+screen: `b2`–`b5`, e.g. `16-b3-your-services`, `18-b3-backup-choose-restore`, `23-b4-restore-progress`,
+`24-b4-about`, `25-b4-credits-licences`, `27-b5-licences`; `07`/`08` for OpenSubtitles), `docs/design/ABOUT_SETTINGS.md`,
+`docs/design/BACKUP_RESTORE.md`, RULES §8 and §24.
+- **First write the page sheet `docs/design/pages/SETTINGS.md`** (Definition of done 1): every tab, every row, every
+  action and where it leads, from those sources; where they disagree, the latest dated owner decision wins (note it in
+  the judgement calls).
+- Then build it on the new look (speckle, one shape for small boxes), every action pressed and checked in a render,
+  the old Settings screens added to the no-old-screens test.
+- Onboarding (which points into Settings) stays out: the owner kept it for later. Media Transfers' settings stay out
+  (no version yet).
+
 ## Not in part B
-Users and tags, Guest, episodes (OK plays, long-press, deleting earlier episodes): still being designed. Settings and
-onboarding (0.159). The Trakt list row and Media Transfers (Ready, no version yet).
+Users and tags, Guest (still being designed). Onboarding (later). The Trakt list row and Media Transfers (Ready, no version yet).
 
 ## Finish with
 `docs/0.158/REPORT_0158_B.md`: what each signed APK contains, the look-sweep changes, the "not built" list (plain,
