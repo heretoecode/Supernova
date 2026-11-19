@@ -183,7 +183,8 @@ Ideas kept for later (details in `docs/REVISIT_LATER.md`). "Park that" adds here
 
 ### Planned
 
-- Newer NOVA engine stack, as its own version
+- Newer NOVA engine stack, as its own version (checked 19 Nov: our engine is NOVA's of 4 Nov, 29 changes behind:
+  Dolby Vision profile 7 → 8.1 and profile 5, picture-subtitle position and size, HDR metadata)
 - Make the repository private; private Releases page
 - “Going public” checklist (history, titles, privacy, diagnostics cut back)
 - Supernova’s own TMDB key

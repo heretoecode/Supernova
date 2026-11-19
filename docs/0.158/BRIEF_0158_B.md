@@ -130,6 +130,25 @@ screen: `b2`–`b5`, e.g. `16-b3-your-services`, `18-b3-backup-choose-restore`, 
 ## Not in part B
 Users and tags, Guest (still being designed). Onboarding (later). The Trakt list row and Media Transfers (Ready, no version yet).
 
+### NOVA catch-up (checked 19 Nov; approved 15 Nov: "all of NOVA 6.6.5 and later", 0.157 notes §35)
+NOVA's latest tag is 6.6.5 (10 Nov) with fixes since. 0.157 carried MediaLib's and FileCore's 6.6.5 changes
+(matching by file name, Trakt pagination, 64-bit list IDs and lastActivities2, SMB share credentials, messenger
+folders skipped, Samba probes) and the software-decoding notice and decoder order. **Still missing, app side (bring
+in by hand, our fork is heavily changed):**
+- `aos-Video 567d53b` **HDMI refresh-rate switch pause race** (18 Nov): matters with Automatic refresh rate on.
+- `e13f8a3` / `68e316f` **picture subtitles (PGS / VobSub): vertical position, kept clear of the controls**; and
+  `f67e64a` **their size (scale)** (17 Nov). In our Subtitle Appearance as two rows that show only for a picture
+  subtitle track, Vertical position (− +) and Size (chips), same look as the text rows; note the native half below.
+- `8a1a231` duplicate Samba discovery at start-up (app side; the FileCore side is in).
+- `565ff59` subtitles' default shadow restored (check against our Outline / Background defaults first).
+- `aos-MediaLib` 14 Nov **lingering local import notifications** (may be behind the stuck "Scanning…" pill).
+Not for a TV, skip: phone cutouts, rotation, double-tap zones, status bars, Android 6 SPDIF, empty playlists.
+**Native engine (not now):** ours is aos-avos at 4 Nov (`5cf3ae9`), 29 commits behind: Dolby Vision profile 7 → 8.1
+conversion and profile 5 reshaping (libdovi), the native half of the picture-subtitle position and size, Dolby
+Vision HDR metadata. That needs a new engine archive build: the roadmap's "Newer NOVA engine stack, as its own
+version". Until then, build the two subtitle rows only if the old engine honours them; otherwise list them as not
+built.
+
 ### Release notes and the front page (owner, 19 Nov; do with every signing from now on)
 - **Every signed APK gets its own release notes.** `docs/0.158/RELEASE_NOTES.md` (written 19 Nov for 0.158 to 0.158.5)
   has one section per APK, newest first: add each new one there when it is signed, every fix and tweak in plain words.
