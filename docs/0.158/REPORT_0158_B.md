@@ -134,6 +134,8 @@ next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
   Delete episode 3 only · Delete all three · Choose…; Choose… is the shared choice list with Select all at its top
   and Done at its foot, then the same warning for what's ticked. No renders yet (no mock-up; see judgement call 41).
 - **R3** (0.158.5): season pages show the show's backdrop, else an episode's picture, else the poster.
+- **DT6** (0.158.6): a TV show's More › Artwork opens the artwork side panel, as a film's does, instead of the
+  corner menu and the old grid.
 - **R4** (0.158.5): the season page's More menu opens beside More: Series details · Episodes · Delete season (with
   the delete warning, Keep files first).
 
@@ -158,7 +160,8 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
 - **PL8** — the skip button doesn't yet join the controls' line.
 - **Details:** DT1 (Details tab on one screen), DT3's second half (rows running to the screen's edge; the clipping
-  is fixed), DT5 (one row design; More Like This by service), DT6 (artwork side panel), R5 (choose a version).
+  is fixed), DT5 (one row design; More Like This by service), R5 (choose a version). DT6 is built for TV shows
+  (films already had the side panel), not yet checked in a render.
   Episodes: built, but not yet checked in renders.
 - **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
   title ends with "…" rather than shrinking, and the colon split doesn't force a new line (judgement call 43).

@@ -43,6 +43,7 @@ import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.leanback.PreviewSeriesJourney;
 import com.archos.mediacenter.video.leanback.PreviewWatchedScopeDialog;
 import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.details.PreviewArtworkPanel;
 import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
 import com.archos.mediacenter.video.leanback.details.PreviewTvTrailers;
 import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
@@ -153,6 +154,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                     previewNavigation.setArtwork(uri);
             });
         preview.bindShow(mTvshow, this::playEpisode);
+        // DT6 (owner, 18 Nov 2026): More › Artwork opens the side panel (D3), as on a film's Details.
+        preview.setArtworkPanel(this::showArtworkPanel);
         container.addView(preview);
         previewNavigation =
             new TopNavigation(requireContext(), container, tab -> {
@@ -255,6 +258,72 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         if (previewArtworkWorker == null || previewArtworkWorker.isShutdown())
             previewArtworkWorker = Executors.newSingleThreadExecutor();
         return previewArtworkWorker;
+    }
+
+    /** More › Artwork: the shared side panel, backdrops (Hero and rows) and posters (Library page) of the show. */
+    private void showArtworkPanel() {
+        if (previewArtworkLoading || mTvshow == null)
+            return;
+        previewArtworkLoading = true;
+        Tvshow target = mTvshow;
+        PreviewMoviePage page = preview;
+        Context app = requireContext().getApplicationContext();
+        Handler main = new Handler(Looper.getMainLooper());
+        artworkWorker().execute(() -> {
+            List<ScraperImage> backdrops = Collections.emptyList();
+            List<ScraperImage> posters = Collections.emptyList();
+            ScraperImage backdrop = null;
+            ScraperImage poster = null;
+            try {
+                BaseTags tags = target.getFullScraperTags(app);
+                if (tags != null) {
+                    backdrops = tags.getAllBackdropsInDb(app);
+                    posters = tags.getAllPostersInDb(app);
+                    backdrop = tags.getDefaultBackdrop();
+                    poster = tags.getDefaultPoster();
+                }
+            } catch (Exception failed) {
+                Diagnostics.error("artwork_choices_unavailable", failed);
+            }
+            List<ScraperImage> foundBackdrops = backdrops == null ? Collections.emptyList() : backdrops;
+            List<ScraperImage> foundPosters = posters == null ? Collections.emptyList() : posters;
+            ScraperImage chosenBackdrop = backdrop;
+            ScraperImage chosenPoster = poster;
+            main.post(() -> {
+                previewArtworkLoading = false;
+                if (!isAdded() || preview != page || mTvshow == null || mTvshow.getTvshowId() != target.getTvshowId())
+                    return;
+                if (foundBackdrops.isEmpty() && foundPosters.isEmpty()) {
+                    PreviewDialog.read(requireContext(), "Artwork", "No artwork available");
+                    return;
+                }
+                PreviewArtworkPanel.show(requireContext(), foundBackdrops, chosenBackdrop, foundPosters, chosenPoster,
+                    uri -> {
+                        if (preview != null)
+                            preview.previewArtwork(uri);
+                    },
+                    (image, isPoster, done) -> artworkWorker().execute(() -> {
+                        boolean saved = false;
+                        try {
+                            if (image.download(app))
+                                saved = isPoster ? image.setAsDefault(app, -1) : image.setAsDefault(app);
+                        } catch (Exception failed) {
+                            Diagnostics.error("artwork_save_failed", failed);
+                        }
+                        final boolean success = saved;
+                        main.post(() -> {
+                            if (!isAdded() || preview != page)
+                                return;
+                            if (success) {
+                                if (!isPoster && image.getLargeFileF() != null && image.getLargeFileF().isFile())
+                                    previewNavigation.setArtwork(Uri.fromFile(image.getLargeFileF()));
+                                onMoreDetailsResult();
+                            }
+                            done.accept(success);
+                        });
+                    }));
+            });
+        });
     }
 
     private void showPreviewArtworkMenu() {
