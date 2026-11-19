@@ -40,7 +40,7 @@ Empty tabs hide and the rest close up; all tabs are drawn at once, never popping
   underneath, initials when no photo, **seven each, Cast and Crew side by side** under the columns. Everything fits
   on one 1080p screen (smaller text, tighter rows than `21`). **Nothing focusable;** Up returns to the tabs.
 - **Episodes:** on a show, one Home-style row per season (season heading lined up with the cards); on a season or
-  episode, that season's episodes. Cards 16:9 with the caption box (title, one line, progress bar).
+  episode, that season's episodes. Cards 16:9 in row design A (RULES §14c): title and one line over the artwork, the corner badge, no bar.
 - **Extras:** Home-row cards, one row per kind, Trailers first; most specific first (episode, season, show).
 - **More Like This:** rows "In your library" and "On your services" (only with Where to Watch on). Service titles:
   centred colour logo, title · year; no play icon on library items.

@@ -171,6 +171,13 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   as the show. Add tests for both.
 - **A2, app icon and banner (owner, 19 Nov, approved):** the mark on the speckle's base `#111215` instead of
   charcoal, **no grain** (it reads as dirt at icon size). Icon, banner and splash; re-export from `design/brand-mark/`.
+- **Progress badge and row design A everywhere (owner, 19 Nov; RULES §14c; mock-ups `rows-captions/`):** remove
+  every progress bar from cards, posters and captions (library posters, Home rows, Details Episodes / Extras / More Like
+  This, the player's Chapters and Episodes rows, Search) and draw the one shared badge instead: a 48 px white circle top
+  right, a black pie filling from 12 o'clock inside a white rim, the black tick when watched, nothing when not started.
+  Row cards: title and line over the artwork's foot (no caption box under). Library captions: three lines, no strip.
+  One shared view for the badge, used everywhere; a test that no card in the app draws a progress bar. The player's
+  seek bar and task progress in rows stay.
 - **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
   box; RULES "Page tabs"), not the plain row; wait for the Settings mock-up before building. **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).

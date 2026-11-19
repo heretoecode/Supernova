@@ -32,8 +32,9 @@ underline, this sheet wins.
 
 ## Rows
 - One card size: 16:9, 400×225 (focused 440×248), 24 px gap, a sliver of the next card at the edge.
-- **Caption box under each card** (approved 13 Nov): title (bright), one soft line, inset progress bar; nothing printed
-  over the artwork; no play icon on library items.
+- **Row design A (owner, 19 Nov; RULES §14c; replaces the caption box under each card):** title and one soft line
+  over the bottom of the artwork on a dark fade; progress as the corner badge, never a bar; no play icon on library
+  items.
 - Row heading with its icon. **Move and Hide** appear beside the heading as plain buttons (no filled circles; Hide a
   minus circle) when focus reaches the heading. Down from a card lands on Move; Down again on the next row's first card;
   Right from Move to Hide.

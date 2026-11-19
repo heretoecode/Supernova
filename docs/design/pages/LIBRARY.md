@@ -44,7 +44,8 @@ is open returns to rest. Menus open under the button pressed.
 - **Poster and caption are one card** (`27`, `31`): charcoal-grey caption box under the artwork. Line 1 the title (the
   only bright line); line 2 always a TV show's size or progress: not started "3 seasons · 30 episodes" (one season: "10
   episodes"), started "S2 E3 · 18 of 30 left"; films started "42 min left"; **line 3 follows the sort** (e.g. "1.0 GB
-  per episode"). Progress bar inset in the caption, never touching the ring. Watched titles get a tick.
+  per episode"). **No progress bar:** progress is the corner badge (RULES §14c: 48 px white circle, black pie from
+  12 o'clock inside a white rim; watched = black tick; not started = none). Every caption the same height.
 - Focus: the whole card grows about 8%, the thick white ring exactly on the card's edge, round artwork and caption.
 
 ## List view (`26`, `28`)

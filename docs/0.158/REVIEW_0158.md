@@ -31,14 +31,14 @@ The owner will do the full walk-through when part B is finished; these are thing
     saying exactly what was deleted and what wasn't, and why. Diagnostics from the Shield needed (14:30–14:45).]
 
 ### Library pages
-- **L1. Empty space under posters not started.** Captions: title · seasons/episodes (or year · length) · the sort
+- **L1 (decided 19 Nov: corner badge, RULES §14c). Empty space under posters not started.** Captions: title · seasons/episodes (or year · length) · the sort
   line · then space kept for the progress bar, so unstarted titles have a blank strip. Owner's thoughts: drop the
   title (the poster shows it), or move the bar into the artwork (owner would rather not cover the poster).
   [Claude: a third way: the bar goes **inside the second line** of a started title ("▬▬▬ S2 E3 · 18 left"), so no
   line is kept empty and every caption is the same height. Keep the title (textless and foreign posters). Mock-up.]
 
 ### Rows (Home, Details, player): one design everywhere
-- **R6. Home rows look square** with the caption box under the 16:9 picture; jarring next to the wide heroes. The
+- **R6 (decided 19 Nov: row design A and the corner badge, RULES §14c). Home rows look square** with the caption box under the 16:9 picture; jarring next to the wide heroes. The
   same empty progress strip as L1 on unstarted items. Owner compared the player's Chapters row (text over the
   artwork) and, of the two, prefers text over the artwork. Wants **one row design for every row**: Home, Details
   (Episodes, Extras, More Like This), the player (Chapters, Episodes). Also wants a mock-up of **posters in Home

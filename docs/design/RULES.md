@@ -254,7 +254,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   rounded corners and the artwork edge, name and role underneath, initials when there is no photo; never circles.
 - **Library poster caption (owner, 14 Nov 2026):** line one the title (the only bright line); line two always keeps a
   TV show's size: not started "3 seasons · 30 episodes" (one season: "10 episodes"), started "S2 E3 · 18 of 30
-  left" (the inset bar shows how far into the episode; no "Resume", no minutes left for shows); films started:
+  left" (progress shows in the corner badge, §14c; no "Resume", no minutes left for shows); films started:
   "42 min left"; line three follows the sort.
 - **One row card size:** 16:9, 400×225 (focused 440×248), 24 px gap, a sliver of the next card at the edge (§9).
   Title and details inside the picture on a shade; no blue caption bars. Library posters keep one portrait size on
@@ -270,9 +270,24 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   the hero at once. Details keeps Play / Resume then More.
 - **Artwork picker by place:** Hero and rows · Library page (one backdrop for hero and rows; posters for library
   pages); no title; a side panel sliding in from the right, the hero previewing the picture you are on.
-- **Home row cards: caption box under the 16:9 picture** (title, one line, inset progress bar), as library posters
-  (owner, 13 Nov); nothing printed over the artwork. The player strip keeps its text inside.
+- ~~Home row cards: caption box under the 16:9 picture~~ **Replaced 19 Nov: see §14c** (text over the artwork,
+  corner badge, every row alike).
 - Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
+
+## 14c. Progress badge and row cards (owner, 19 Nov 2026; replaces every progress bar on artwork)
+- **No progress bars on artwork or captions anywhere.** Progress is one **badge in the top-right corner** of the
+  artwork: library posters, Home rows, Details rows (Episodes, Extras, More Like This), the player's Chapters and
+  Episodes rows, Search results, and anything else that shows a title, film or episode.
+- **The badge** (`rows-captions/06-pie-badge.png` B, `04-ring-sizes.png` medium): a white circle **48 px at 1080p**,
+  inset about 8 px from the corner, soft shadow. Inside, black fills like a clock **from 12 o'clock clockwise**
+  (a pie), inside a thin white rim so it never vanishes on dark artwork. **Watched:** the same circle with a black
+  tick. **Not started:** no badge. A show's badge shows episodes watched out of all; a film or episode, time watched.
+- **Row cards (Home, Details, player): design A** (`rows-captions/02-rows-A-B-C.png` frame 2): 16:9, 400 × 225
+  (focused 440 × 248); title and one line **over the bottom of the artwork** on a dark fade; no caption box under the
+  card; the badge top right. Replaces "caption box under the 16:9 picture" (13 Nov).
+- **Library posters** (`rows-captions/01-poster-captions.png`, `03`): the caption under the poster keeps exactly
+  three lines (title, size or "S1 E4 · 5 of 8 left", the sort line), no bar, no empty strip; the badge top right.
+- Not affected: the player's own seek bar, and progress of a task in a row (scans, backups, downloads).
 
 ## 14b. Details pages (all four kinds)
 - **Tabs in one master order, shown or hidden, never moved:** Details · Episodes · Extras · More Like This (§29).
@@ -428,6 +443,8 @@ bar, a line under the tab row, the white focus box; never a plain row of words t
 Panels (Playback Settings) keep their own. Details' tabs: decided at the full walk-through.
 
 ## Replaced rules (do not use)
+- Progress bars on cards, posters and captions; caption box under Home row cards → the corner badge and row
+  design A, §14c (19 Nov).
 - Panels at 95% (13 Nov) → 99% over the speckle (§11, 19 Nov).
 - Back from the middle of a long page first jumps to the top, then to the top bar → straight to the top bar; a page
   left for another page reopens at its top (§16, 18 Nov).
