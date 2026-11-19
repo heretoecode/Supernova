@@ -128,7 +128,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
     }
 
     /** The season's episodes that are in the library. */
-    private List<Episode> localEpisodes() {
+    List<Episode> localEpisodes() {
         List<Episode> out = new ArrayList<>();
         for (PreviewEpisodeChoice choice : episodes)
             if (choice.local != null)

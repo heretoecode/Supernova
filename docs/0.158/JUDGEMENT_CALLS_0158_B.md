@@ -79,3 +79,44 @@ decide quickly.
     a little lighter or with the soft edge back.
 27. **DT4:** the gap above a season's heading was halved by pulling the heading up into the row's spare space.
 28. **DT8:** shows get Fix match in More through the show's own match action (the series match screen).
+
+## Part B continued (second session, 19 Nov)
+29. **Branches.** Work is on the session branch `claude/0158-part-b-continued-d5u9w1`; the working branch
+    (`claude/supernova-github-access-yfhe89`) is fast-forwarded to it only when a build is due, because a push there
+    starts the conformance run and the signing workflow accepts only that branch.
+30. **Playback Settings sizes.** The v15 mock-up is drawn in true 1080p pixels, while the panel's old sizes were in a
+    unit a third larger (rows came out at 83 px, not 62). Every size now comes from the mock-up's own pixels, which is
+    why every tab fits without scrolling.
+31. **Lines between rows in Playback Settings** (2 px, 6% white, as drawn) sit across the rows' edges and add no
+    height; the two lines beside the focused row step aside, as in the mock-up.
+32. **OK on a stepping row** steps on one choice and, after the last, goes back to the first (Left / Right stop at
+    the ends). Before, OK did the same on chips.
+33. **Stop playing at** no longer has the "Stops at 23:40" line under it: the clock time is the value itself. The
+    spoken description still says it.
+34. **Row names in Playback Settings** follow the mock-up exactly ("Play mode", "Stop playing at" in sentence case;
+    "Text Size", "Audio Boost" in title case), as drawn.
+35. **Panels at 99%** (RULES §11): one shared value (`SupernovaStyle.GLASS`) for every pop-up, menu and side panel,
+    also the old navy menu surface (backup boxes, the keyboard panel, the library page header) and the old Playback
+    Settings shell. Their faint outline and glow are gone too ("no outline, no glow").
+36. **Skip when binge-watching** used to skip only recaps; it now skips every part when the episode was reached by
+    binge-watching, and shows the Skip button otherwise (before, it played the part with no button). The word on the
+    chip promises that, so the behaviour follows it.
+37. **Settings choice names** come from the sheet where it names them; where the engine has a choice the sheet
+    doesn't mention, it keeps a plain name and stays: Automatic refresh rate has a third choice "Android matching"
+    (Android 12's own frame-rate matching), Video decoder has "Android", Surround sound is Off · Passthrough · Via
+    Android · Convert to AC3 (the engine's four; the sheet's "Stereo" is the separate Stereo downmix row), Parser
+    synchronisation is Timestamps · Samples (the engine has two, not three). Values are unchanged, so saved choices and
+    backups still work.
+38. **When a video was started** is still a switch (Ask, or resume straight away), titled "Ask when a video was
+    started"; the sheet's three chips (Ask · Resume · Start over) need a new setting in the player, listed as not
+    built.
+39. **Home Hero › Because you watched** is a new switch (on by default, like the others); the last source that is
+    still on can't be turned off. **Change every** is 8 s · 12 s · 20 s (8 s as before). Both are backed up.
+40. **DT3:** the Details sections and their content no longer clip their children, so a grown card and its ring show
+    whole at both ends of a row. The row still stops at the page's side margin rather than running to the screen
+    edge; that part needs the row widened under the margin and is listed as not built.
+41. **Episodes menu** (no mock-up; built from the rules): Playback (Resume or Play, Restart episode) · Library (Mark
+    as watched, Fix match) · Files & Media (Delete episode). The delete warning with earlier episodes has four buttons
+    Keep file · Delete episode N only · Delete all … · Choose…; "Delete both" for two, "Delete all three" up to ten,
+    then "Delete all 14". Choose… is the shared choice list with Select all at its top and Done at its foot; the
+    chosen episodes get the same warning again.

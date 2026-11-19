@@ -199,6 +199,15 @@ final class PreviewEpisodeMenu {
                               () -> deleteFiles(activity, chosen));
     }
 
+    /** R4: Delete season, with the delete warning (Keep files first). */
+    static void deleteSeason(Activity activity, int season, List<Episode> episodes) {
+        String what = season == 0 ? "the specials" : "season " + season;
+        PreviewDialog.warning(activity, "Delete " + what + "?",
+                              "Its " + episodes.size() + (episodes.size() == 1 ? " episode file is" : " episode files are")
+                                  + " deleted from their drive or server. This can't be undone.",
+                              "Keep files", "Delete season", () -> deleteFiles(activity, episodes));
+    }
+
     private static void deleteFiles(Activity activity, List<Episode> episodes) {
         List<Uri> files = new ArrayList<>();
         for (Episode e : episodes)

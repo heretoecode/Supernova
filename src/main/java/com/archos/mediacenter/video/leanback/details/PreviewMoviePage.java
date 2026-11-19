@@ -1851,7 +1851,30 @@ public final class PreviewMoviePage extends ScrollView {
         bindShow(value, playAction);
         seasons.clear();
         setSeason(number, local);
+        Uri art = seasonArtwork(value, local);
+        if (art != null)
+            cardArtwork(art);
         requestEnrichment();
+    }
+
+    /** R3 (owner, 18 Nov 2026): a season page shows the show's backdrop, else an episode's picture, else the poster. */
+    static Uri seasonArtwork(Tvshow value, List<Episode> local) {
+        com.archos.mediascraper.ShowTags tags = value.getShowTags();
+        ScraperImage backdrop = tags == null ? null : tags.getDefaultBackdrop();
+        if (backdrop != null) {
+            File file = backdrop.getLargeFileF();
+            if (file != null && file.exists())
+                return Uri.fromFile(file);
+            if (backdrop.getLargeUrl() != null)
+                return Uri.parse(backdrop.getLargeUrl());
+        }
+        for (Episode episode : local)
+            if (episode.getPreviewBackdrop() != null)
+                return episode.getPreviewBackdrop();
+        for (Episode episode : local)
+            if (episode.getPictureUri() != null)
+                return episode.getPictureUri();
+        return value.getPosterUri();
     }
 
     public void setSeason(int number, List<Episode> values) {
@@ -2612,14 +2635,25 @@ public final class PreviewMoviePage extends ScrollView {
 
     private void more() {
         if (seasonNumber >= 0) {
-            PreviewDialog.choose(getContext(), "Season " + seasonNumber, new String[] {"Series Details", "Episodes"},
-                                 -1, n -> {
-                                     if (n == 0)
-                                         nativeDetails.run();
-                                     else {
-                                         showSection("Episodes", true);
-                                     }
-                                 });
+            // R4 (owner, 18 Nov 2026): the Details More menu beside its button, with Delete season.
+            List<com.archos.mediacenter.video.browser.adapters.object.Episode> files = new ArrayList<>();
+            for (PreviewEpisodeRow row : episodeRows)
+                files.addAll(row.localEpisodes());
+            List<String> labels = new ArrayList<>();
+            List<String> icons = new ArrayList<>();
+            List<Runnable> commands = new ArrayList<>();
+            moreItem(labels, icons, commands, "Series details", "details", nativeDetails);
+            moreItem(labels, icons, commands, "Episodes", "list", () -> showSection("Episodes", true));
+            if (!files.isEmpty() && getContext() instanceof Activity) {
+                moreItem(labels, icons, commands, "— Files & Media", null, null);
+                moreItem(labels, icons, commands, "Delete season", "delete",
+                         () -> PreviewEpisodeMenu.deleteSeason((Activity)getContext(), seasonNumber, files));
+            }
+            PreviewDialog.menu(getContext(), moreButton, "Season " + seasonNumber, labels.toArray(new String[0]),
+                               icons.toArray(new String[0]), -1, n -> {
+                                   if (commands.get(n) != null)
+                                       commands.get(n).run();
+                               });
             return;
         }
         // The More menu (page sheet DETAILS.md; D1, D2): beside More, an icon per item, groups Playback · Library ·
