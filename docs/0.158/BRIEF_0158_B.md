@@ -143,8 +143,11 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   mark. "Based on NOVA …" says the version the app is really built from.
 - **H3, Home hero: one button, More** (owner, 19 Nov; replaces HOME.md's Play then More): its menu starts Details,
   then Play / Resume, Library, Files & Media; Left / Right change the hero at once. Update HOME.md.
-- **H1 again:** on 0.158.4 the Home and Details heroes still differ in size on the Shield; measure both on a
-  1080p render pixel for pixel and fix the one that's off.
+- **H1 again (owner, 19 Nov, firm: the approved design):** the Home hero and the Details hero are **one size and one
+  place, 1776 × 820 at 1080p, top 112 px**; on 0.158.4 they still differ on the Shield. Measure both on 1080p
+  renders pixel for pixel, fix the one that's off, and add a test that lays out both pages and fails if their hero
+  bounds differ by a single pixel. The size stays (the owner keeps it; how much of the first row peeks is settled with
+  the row redesign, not by shrinking the hero).
 - **DT3 again:** the Details hero's edge is cut off left and right; focused cards in Episodes (left) and More Like
   This (both sides) are cut off.
 - **R2, own library page (owner, firm; RULES "Library pages under the top bar"). Cause found (discussion, 19 Nov):**
