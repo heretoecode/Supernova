@@ -82,6 +82,11 @@ where the owner must decide.
   playing at, Still watching?, Play mode) show their value with › and open their list on top (PS8 behaviour);
   short ones stay inline; quiet headings on the Playback tab (Picture and Speed · Playing On · For This Series);
   panel 99% (RULES §11).
+  **Owner, 19 Nov, on v13:** too much empty space now the long rows open lists: make the panel narrower; shorten the
+  For This Series row (the longest); no line under the tabs right above the first heading's lines (too close, jarring).
+  **v14 (`player/32-v14`):** panel 820 px; For This Series row reads **"Use in every episode"** on all three tabs
+  (the heading already says For This Series; replaces "Use these subtitles for all of …"); no line under the tab
+  row, a clear gap instead, the first heading straight under it; chip words never wrap ("Skip intros & credits").
 - **PS10. Panel colour** (roadmap To discuss, P6): still different from the mock-up.
 
 ## Details
