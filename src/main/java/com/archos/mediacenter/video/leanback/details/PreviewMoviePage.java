@@ -2458,7 +2458,18 @@ public final class PreviewMoviePage extends ScrollView {
         });
     }
 
+    private java.util.function.Consumer<View> playVersions;
+
+    /** R5: with two or more files for one title, Play opens the versions menu beside it. */
+    public void setPlayVersions(java.util.function.Consumer<View> chooser) {
+        playVersions = chooser;
+    }
+
     public void play() {
+        if (playVersions != null && versionCount > 1 && movie != null) {
+            playVersions.accept(play);
+            return;
+        }
         if (showPlay != null) {
             showPlay.run();
             return;

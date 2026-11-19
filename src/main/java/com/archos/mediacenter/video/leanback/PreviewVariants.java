@@ -234,6 +234,29 @@ public final class PreviewVariants {
     }
 
     /** Never render URI user-info, query credentials or fragments in the picker. */
+    /**
+     * R5 (owner, 18 Nov 2026; review-0157-2/01 4): a version's short name for Play's menu, e.g. "4K · HDR · 18.2 GB"
+     * or "1080p · 6.1 GB"; the parts that are unknown are left out.
+     */
+    public static String shortName(Context context, Video video) {
+        List<String> parts = new ArrayList<>();
+        int height = video.getMeasuredHeight();
+        if (height >= 2000)
+            parts.add("4K");
+        else if (height >= 1000)
+            parts.add("1080p");
+        else if (height >= 700)
+            parts.add("720p");
+        else if (height > 0)
+            parts.add("SD");
+        String range = dynamicRange(context, video);
+        if (range != null && !range.isEmpty() && !range.equalsIgnoreCase("SDR"))
+            parts.add(range.toUpperCase(java.util.Locale.ROOT).contains("DOLBY") ? "Dolby Vision" : "HDR");
+        if (video.getSize() > 0)
+            parts.add(String.format(java.util.Locale.UK, "%.1f GB", video.getSize() / 1e9));
+        return parts.isEmpty() ? video.getName() : android.text.TextUtils.join(" · ", parts);
+    }
+
     public static String dynamicRange(Context context, Video video) {
         return dynamicRange(context, video, PreviewLibraryLoader.memoryCache());
     }

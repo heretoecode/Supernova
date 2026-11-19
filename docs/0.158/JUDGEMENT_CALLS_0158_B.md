@@ -157,3 +157,6 @@ decide quickly.
 52. **FL12:** "closed fully" is read as Android's own record of why the app last ended: a stop you asked for (force
     stop, or stopping it from the system) reopens at Home; anything Android did by itself (memory, background limits)
     brings the page back as before. Swiping the app away from Recent apps already starts it fresh.
+53. **R5:** when a title has two or more files, Play opens a menu beside it, best first, one row per file
+    ("4K · HDR · 18.2 GB", "1080p · 6.1 GB"); the version last chosen for this title has the tick (remembered as
+    before) and choosing a row plays it from where you stopped. The separate "Versions (n)" button stays for now.
