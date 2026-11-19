@@ -519,9 +519,9 @@ public final class PreviewMoviePage extends ScrollView {
                 tab.setPadding(dp(8), dp(6), dp(8), dp(6));
             }
             tab.setOnFocusChangeListener((v, focused) -> {
-                v.setBackground(focused ? SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL, 8) : null);
                 if (focused)
                     showSection(label, false);
+                post(this::paintSectionTabs);
                 sectionFrame.invalidate();
             });
             sectionTabs.add(tab);
@@ -531,6 +531,30 @@ public final class PreviewMoviePage extends ScrollView {
             View restore = tabBar.findViewWithTag(focusedTag);
             if (restore != null)
                 restore.requestFocus();
+        }
+    }
+
+    /**
+     * DT2 (owner, 18 Nov 2026), the 0.158 top bar's look: the white box with black text where the remote is; once
+     * focus goes down, the open tab keeps a soft grey box with a faded word; no underlines.
+     */
+    private void paintSectionTabs() {
+        boolean inRow = tabBar.hasFocus();
+        for (TextView tab : sectionTabs) {
+            boolean focused = tab.isFocused();
+            boolean open = ("section:" + activeSection).equals(tab.getTag()) && !inRow;
+            if (focused)
+                tab.setBackground(SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL,
+                                                         SupernovaStyle.SMALL_BOX_RADIUS_DP));
+            else if (open)
+                tab.setBackground(SupernovaStyle.rounded(getContext(), 0x26FFFFFF,
+                                                         SupernovaStyle.SMALL_BOX_RADIUS_DP));
+            else
+                tab.setBackground(null);
+            if (!focused)
+                tab.setTextColor(open ? 0xB8FFFFFF : Color.WHITE);
+            else
+                tab.setTextColor(SupernovaStyle.buttonContent());
         }
     }
 
@@ -565,6 +589,7 @@ public final class PreviewMoviePage extends ScrollView {
             switchSection(label, enter);
         } finally {
             switchingSection = false;
+            paintSectionTabs();
         }
     }
 
@@ -1190,7 +1215,7 @@ public final class PreviewMoviePage extends ScrollView {
             for (String field : new String[] {"budget", "revenue"})
                 if (enriched.optLong(field) > 0)
                     fact(key, field.equals("budget") ? "Budget (TMDb)" : "Box office (TMDb)",
-                         NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field)));
+                         SharedMetadata.money(enriched.optLong(field)));
             if (enriched.optLong("vote_count") > 0 && !(movie instanceof Episode))
                 fact(reception, "TMDb votes",
                      NumberFormat.getIntegerInstance().format(enriched.optLong("vote_count")));
@@ -1238,7 +1263,7 @@ public final class PreviewMoviePage extends ScrollView {
                 for (int n = 0; n < data.getSubtitleTrackNb(); n++) {
                     VideoMetadata.SubtitleTrack track = data.getSubtitleTrack(n);
                     if (track != null && !safe(track.language).isEmpty())
-                        subtitles.add(track.language);
+                        subtitles.add(SharedMetadata.languageName(track.language));
                 }
                 fact(technical, "Subtitles", TextUtils.join(", ", subtitles));
             }
@@ -2699,10 +2724,9 @@ public final class PreviewMoviePage extends ScrollView {
         }
     }
 
-    /** Full description: a pop-up sized to the text with the title, then the text (page sheet). */
+    /** Full description: only the text, sized to it (owner, 18 Nov 2026; DT7). */
     private void fullDescription() {
-        String name = movie != null ? movie.getName() : show != null ? show.getName() : "";
-        PreviewDialog.read(getContext(), name == null ? "" : name, String.valueOf(plot.getText()));
+        PreviewDialog.readText(getContext(), String.valueOf(plot.getText()));
     }
 
     private String storedRating() {

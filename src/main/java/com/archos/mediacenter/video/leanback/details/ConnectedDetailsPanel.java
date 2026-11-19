@@ -45,10 +45,7 @@ final class ConnectedDetailsPanel extends LinearLayout {
         selected.getLocationInWindow(at);
         getLocationInWindow(mine);
         float left = at[0] - mine[0];
-        // The focused tab is the white box alone: no underline under it (D4, RULES §3).
-        if (selected.isFocused())
-            return;
-        paint.setColor(row.hasFocus() ? 0x59FFFFFF : Color.WHITE);
-        canvas.drawRect(left, line - 2 * density, left + selected.getWidth(), line, paint);
+        // DT2 (owner, 18 Nov 2026): the top bar's focus. The open tab shows as a soft grey box (painted on the tab
+        // itself), so there is no underline any more.
     }
 }

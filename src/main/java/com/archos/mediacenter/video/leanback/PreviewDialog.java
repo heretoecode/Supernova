@@ -270,6 +270,37 @@ public final class PreviewDialog {
         return readInternal(c, title, body, referenceImage, null, null);
     }
 
+    /**
+     * Only the text (owner, 18 Nov 2026; DT7): no title, no Close, no Copy; Back closes. Sized to the text, scrolling
+     * when it is long.
+     */
+    public static Dialog readText(Context c, String body) {
+        Dialog dialog = create(c, "reader");
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ScrollView scroll = new ScrollView(c);
+        scroll.setBackground(dialogSurface(c));
+        scroll.setFocusable(true);
+        TextView text = new TextView(c);
+        text.setText(body);
+        text.setTextColor(Color.WHITE);
+        text.setTextSize(16);
+        text.setLineSpacing(dp(c, 3), 1);
+        text.setPadding(dp(c, 24), dp(c, 20), dp(c, 24), dp(c, 20));
+        scroll.addView(text);
+        dialog.setContentView(scroll);
+        dialog.show();
+        Window w = dialog.getWindow();
+        w.setBackgroundDrawableResource(android.R.color.transparent);
+        w.setDimAmount(.35f);
+        int width = TvLayout.dialogWidth(c);
+        int maximum = Math.round(TvLayout.safeHeight(c) * .8f);
+        text.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        w.setLayout(width, Math.min(maximum, text.getMeasuredHeight()));
+        scroll.requestFocus();
+        return dialog;
+    }
+
     public static Dialog review(Context c, String title, String body, String confirmation, Runnable accepted) {
         return readInternal(c, title, body, null, confirmation, accepted);
     }

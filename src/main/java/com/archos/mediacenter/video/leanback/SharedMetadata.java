@@ -42,10 +42,38 @@ public final class SharedMetadata {
         public final List<String> technical = new ArrayList<>();
     }
 
+    /** "2 h 3 min", "2 h", "48 min" (owner, 18 Nov 2026; DT9). */
     public static String runtime(long minutes) {
-        return minutes <= 0 ? ""
-                            : (minutes >= 60 ? minutes / 60 + "h" : "")
-                + (minutes % 60 > 0 ? (minutes >= 60 ? " " : "") + minutes % 60 + "m" : "");
+        if (minutes <= 0)
+            return "";
+        String hours = minutes >= 60 ? minutes / 60 + " h" : "";
+        String rest = minutes % 60 > 0 ? minutes % 60 + " min" : "";
+        return hours.isEmpty() ? rest : rest.isEmpty() ? hours : hours + " " + rest;
+    }
+
+    /** Whole, readable money (DT9): "$25 million", "$1.2 billion", "$850,000". */
+    public static String money(long dollars) {
+        if (dollars >= 1_000_000_000L)
+            return "$" + shortNumber(dollars / 1e9) + " billion";
+        if (dollars >= 1_000_000L)
+            return "$" + shortNumber(dollars / 1e6) + " million";
+        return "$" + java.text.NumberFormat.getIntegerInstance(java.util.Locale.US).format(dollars);
+    }
+
+    private static String shortNumber(double value) {
+        double rounded = Math.round(value * 10) / 10.0;
+        return rounded == Math.rint(rounded) ? String.valueOf((long) rounded)
+                                             : String.format(java.util.Locale.US, "%.1f", rounded);
+    }
+
+    /** A bare language code ("ara", "en") as its name ("Arabic", "English"); anything else unchanged (DT9). */
+    public static String languageName(String code) {
+        String value = code == null ? "" : code.trim();
+        if (!value.matches("[A-Za-z]{2,3}"))
+            return value;
+        String name = new java.util.Locale(value.toLowerCase(java.util.Locale.ROOT))
+                          .getDisplayLanguage(java.util.Locale.ENGLISH);
+        return name.isEmpty() || name.equalsIgnoreCase(value) ? value : name;
     }
 
     public static String count(int value, String singular) {
