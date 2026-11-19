@@ -221,9 +221,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ## 11. Panels and pop-ups
 - Pop-ups, menus and side panels: `#16181C` at **99%** opacity (owner, 19 Nov, judged on the TV over the speckle,
   `background-speckle/tv4-F`; was 95%, 13 Nov; 90% before that),
-  no outline, soft shadow; one shared value (§4).
-  **Over a page** (flat charcoal) every menu and panel gets a faint edge so it separates; **over video** none
-  (Playback Settings) (Files v8; owner, 13 Nov).
+  one shared value (§4). **Edge (owner, 19 Nov, judged on the TV, `rows-captions/tv/05` no. 3):** a thin **white
+  outline at 70%** (about 1.5 px at 1080p) **plus a dark shadow spreading outwards** (black at about 85%, about 48 px
+  soft, offset 18 px down), so menus float above the page and keep a crisp edge over poster captions. Same for every
+  pop-up, menu and side panel. **Over video** (Playback Settings): to settle in the player walk-through.
 - Focused item: filled white, black text and icon (section 3).
 - **A list opened from a panel sits on top of it** (owner, 13 Nov; replaces "never stack", 0.156 P5): the panel behind
   is darkened and pushed back slightly (about 45% brightness, 96% size) with the row you came from still visible; the
@@ -446,6 +447,8 @@ bar, a line under the tab row, the white focus box; never a plain row of words t
 Panels (Playback Settings) keep their own. Details' tabs: decided at the full walk-through.
 
 ## Replaced rules (do not use)
+- Panels with no outline (5 Nov) / a faint edge over a page (13 Nov) → white outline at 70% plus a dark shadow,
+  §11 (19 Nov).
 - Progress bars on cards, posters and captions; caption box under Home row cards → the corner badge and row
   design A, §14c (19 Nov).
 - Panels at 95% (13 Nov) → 99% over the speckle (§11, 19 Nov).

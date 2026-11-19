@@ -94,8 +94,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - **Direction: every page becomes plain charcoal `#16181C`, content straight on it; Space Black is being retired**
     (owner, 7 Nov 2026). **Not a blanket switch:** each page changes only after it has been reviewed on charcoal and
     its elements adjusted (as done for Files and Details). Pages not yet reviewed keep Space Black until then.
-  - Pop-ups, menus and side panels are `#16181C` at 90% opacity with no outline, and the focused item is filled white with
-    black text and icon (built in 0.157).
+  - Pop-ups, menus and side panels are `#16181C` at 99% with a white outline at 70% and a dark shadow (owner, 19 Nov;
+    RULES §11), and the focused item is filled white with black text and icon.
   - Every menu: each item has its own icon (no two alike in one menu), the current choice is a tick on the right,
     and the menu is only as wide as its longest item plus the standard padding (owner, 6 Nov 2026; 0.157).
   - In choice rows the chosen option sits in a small chip; single values are plain white. No blue for values.

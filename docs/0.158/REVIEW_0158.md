@@ -100,3 +100,5 @@ The owner will do the full walk-through when part B is finished; these are thing
   24 px side padding, against RULES §3's one small-box shape (52 px, 20 px corners, about 22 px sides) that every other
   button uses. [Claude: a fault, not a choice; bring it to the 52 px shape.]
 - Asked: panels at 99% are in 0.158.4 and later (built). The poster caption box is solid `#23262C` (100%).
+- **L5. Menus blend into the poster captions** (Filters over the grid). **Decided (owner, 19 Nov): white outline at 70%
+  plus a dark shadow** (RULES §11).
