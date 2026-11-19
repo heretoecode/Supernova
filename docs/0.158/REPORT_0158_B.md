@@ -135,6 +135,8 @@ next session. The faults from the 18 Nov report (X1–X4) are dealt with below.
   Delete episode 3 only · Delete all three · Choose…; Choose… is the shared choice list with Select all at its top
   and Done at its foot, then the same warning for what's ticked. No renders yet (no mock-up; see judgement call 41).
 - **R3** (0.158.5): season pages show the show's backdrop, else an episode's picture, else the poster.
+- **DT5** (0.158.6): More Like This in rows: In your library first, then one row per service in the order of Your
+  services, each heading with the service's colour logo.
 - **R5** (0.158.6): with two or more files for a title, Play opens a menu beside it, one row per file
   ("4K · HDR · 18.2 GB"), the last choice ticked.
 - **DT1** (0.158.6): the Details tab's rows, headings and ratings take the B2 mock-up's sizes (they were about 60%
@@ -165,7 +167,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
 - **PL8** — the skip button is now the one small-box size (it joined the controls' line already in 0.157); not yet
   checked in a render beside the controls.
-- **Details:** DT5 (one row design; More Like This by service). DT6 is built for TV shows
+- **Details:** all built; DT5's heading icons for Episodes and Extras not redrawn. DT6 is built for TV shows
   (films already had the side panel), not yet checked in a render.
   Episodes: built, but not yet checked in renders.
 - **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
@@ -180,8 +182,8 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 ## For the next session
 - Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
   when a build is due (a push there starts conformance; signing accepts only the working branch).
-- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT6, PL8, R5.
-- Still to do, in the brief's order: the look sweep renders (item 4), DT5, X4, FL3 + FL5,   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
+- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT5, DT6, PL8, R5.
+- Still to do, in the brief's order: the look sweep renders (item 4), X4, FL3 + FL5,   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
 
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).

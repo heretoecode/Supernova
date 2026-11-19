@@ -2014,6 +2014,8 @@ public final class PreviewMoviePage extends ScrollView {
             card.release();
         landscapeCards.clear();
         related.removeAllViews();
+        relatedGroups.clear();
+        relatedProviders.clear();
         if (movie == null && show == null && remoteDetails == null)
             return;
         boolean television = show != null || "tv".equals(remoteKind);
@@ -2064,7 +2066,7 @@ public final class PreviewMoviePage extends ScrollView {
                             com.archos.mediacenter.video.leanback.PreviewNotice.show(
                                 getContext(), "The " + service + " app isn't on this device", true);
                     });
-                    addRecommendation(card);
+                    addRecommendation(card, recommendation.provider);
                     shown.add("id:" + id);
                 }
             }
@@ -2081,11 +2083,7 @@ public final class PreviewMoviePage extends ScrollView {
                 if (entry.onlineId > 0)
                     shown.add("id:" + entry.onlineId);
             }
-        if (related.getChildCount() > 0) {
-            LinearLayout row = (LinearLayout)related.getChildAt(related.getChildCount() - 1);
-            while (row.getChildCount() < 4)
-                row.addView(new View(getContext()), new LinearLayout.LayoutParams(0, 1, 1));
-        }
+        layoutRelatedRows();
         restoreRowFocus(related, focusKey, oldY);
         rebuildTabs();
     }
@@ -2103,7 +2101,7 @@ public final class PreviewMoviePage extends ScrollView {
         card.setOnClickListener(v
                                 -> new VideoViewClickedListener((Activity)getContext())
                                        .onItemClicked(new Presenter.ViewHolder(v), entry.media, null, null));
-        addRecommendation(card);
+        addRecommendation(card, null);
     }
 
     /** The Episodes card width: a quarter of the row (PreviewEpisodeRow.cardWidth). */
@@ -2112,19 +2110,79 @@ public final class PreviewMoviePage extends ScrollView {
         return Math.max(1, (width - dp(36)) / 4);
     }
 
-    private void addRecommendation(PreviewLandscapeCard card) {
-        LinearLayout row;
-        if (landscapeCards.size() % 4 == 0) {
-            row = new LinearLayout(getContext());
-            row.setClipChildren(false);
-            related.addView(row);
-        } else
-            row = (LinearLayout)related.getChildAt(related.getChildCount() - 1);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, dp(142), 1);
-        lp.setMargins(dp(5), dp(8), dp(5), dp(8));
-        row.addView(card, lp);
+    /** More Like This, grouped: null = In your library, else the service the titles are on. */
+    private final Map<String, List<PreviewLandscapeCard>> relatedGroups = new LinkedHashMap<>();
+    private final Map<String, StreamingRepository.Provider> relatedProviders = new HashMap<>();
+    private static final String IN_LIBRARY = "";
+
+    private void addRecommendation(PreviewLandscapeCard card, StreamingRepository.Provider provider) {
+        String group = provider == null ? IN_LIBRARY : provider.name;
+        if (provider != null)
+            relatedProviders.put(group, provider);
+        relatedGroups.computeIfAbsent(group, key -> new ArrayList<>()).add(card);
         landscapeCards.add(card);
-        rowKeys(card, row);
+    }
+
+    /**
+     * DT5 (owner, 18 Nov 2026; review-0157-2/01 2): More Like This in rows like Episodes and Extras: In your library
+     * first, then one row per service, the top of Your services first, each heading with the service's colour logo.
+     */
+    private void layoutRelatedRows() {
+        List<String> order = new ArrayList<>(relatedGroups.keySet());
+        List<String> yours = new ArrayList<>(StreamingRepository.selected(getContext()));
+        order.sort((a, b) -> Integer.compare(groupRank(a, yours), groupRank(b, yours)));
+        int side = Math.round(getResources().getDisplayMetrics().widthPixels * .04f) + dp(8);
+        for (String group : order) {
+            LinearLayout heading = new LinearLayout(getContext());
+            heading.setGravity(Gravity.CENTER_VERTICAL);
+            heading.setPadding(dp(5), dp(12), 0, dp(4));
+            StreamingRepository.Provider provider = relatedProviders.get(group);
+            if (provider != null) {
+                ImageView logo = new ImageView(getContext());
+                PreviewProviderIcons.bindProvider(logo, provider, 0, "details.related");
+                LinearLayout.LayoutParams logoSize = new LinearLayout.LayoutParams(dp(22), dp(22));
+                logoSize.rightMargin = dp(8);
+                heading.addView(logo, logoSize);
+            }
+            TextView words = text(group.equals(IN_LIBRARY) ? "In your library" : "On " + group, 18);
+            if (provider == null)
+                PreviewIcon.apply(words, "library", 16);
+            heading.addView(words);
+            heading.setTag("related.heading:" + (group.equals(IN_LIBRARY) ? "library" : group));
+            related.addView(heading);
+            HorizontalScrollView rail = new HorizontalScrollView(getContext());
+            rail.setFocusable(false);
+            rail.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+            rail.setHorizontalScrollBarEnabled(false);
+            rail.setClipChildren(false);
+            rail.setClipToPadding(false);
+            rail.setPadding(dp(10) + side, dp(10), dp(10) + side, dp(10));
+            LinearLayout row = new LinearLayout(getContext());
+            row.setClipChildren(false);
+            row.setClipToPadding(false);
+            rail.addView(row);
+            LinearLayout.LayoutParams railSize =
+                new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28));
+            railSize.leftMargin = -side;
+            railSize.rightMargin = -side;
+            related.addView(rail, railSize);
+            for (PreviewLandscapeCard card : relatedGroups.get(group)) {
+                LinearLayout.LayoutParams lp =
+                    new LinearLayout.LayoutParams(extraCardWidth(), extraCardWidth() * 9 / 16);
+                lp.rightMargin = dp(12);
+                row.addView(card, lp);
+                rowKeys(card, row);
+            }
+        }
+    }
+
+    /** In your library first, then services in the order of Your services, then any others. */
+    private int groupRank(String group, List<String> yours) {
+        if (group.equals(IN_LIBRARY))
+            return -1;
+        StreamingRepository.Provider provider = relatedProviders.get(group);
+        int at = provider == null ? -1 : yours.indexOf(String.valueOf(provider.id));
+        return at < 0 ? Integer.MAX_VALUE : at;
     }
 
     private boolean hasPlayableExtras() {

@@ -160,3 +160,7 @@ decide quickly.
 53. **R5:** when a title has two or more files, Play opens a menu beside it, best first, one row per file
     ("4K · HDR · 18.2 GB", "1080p · 6.1 GB"); the version last chosen for this title has the tick (remembered as
     before) and choosing a row plays it from where you stopped. The separate "Versions (n)" button stays for now.
+54. **DT5:** More Like This is now rows like Extras: "In your library" first, then "On <service>" rows in the order
+    of Your services (a service not in Your services goes last), each heading with the service's colour logo; the
+    cards are the Extras / Episodes card size and the rows run to the screen's edges. At most 12 titles in all, as
+    before. Episodes and Extras headings were not given new icons.
