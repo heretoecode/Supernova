@@ -1288,10 +1288,12 @@ public final class PreviewPages extends FrameLayout {
         featuredIndex = tab >= 0 && tab < featuredByTab.length ? featuredByTab[tab] : 0;
         render("tab_change");
         switchingTab = false;
-        if (scrollStates[tab] != null)
-            layout.onRestoreInstanceState(scrollStates[tab]);
-        else
-            list.scrollToPosition(0);
+        // RULES §16 (owner, 18 Nov 2026): a page left for another one reopens at its top, focus on its first item.
+        // Going deeper and back (a poster → Details → Back) does not pass here and keeps its place.
+        scrollStates[tab] = null;
+        if (tab >= 0 && tab < anchors.length)
+            anchors[tab] = null;
+        list.scrollToPosition(0);
         PreviewMetadata.library(getContext(), snapshot, tab);
     }
 
