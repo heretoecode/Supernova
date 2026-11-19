@@ -150,7 +150,8 @@ final class DetailsBlueprintPanel extends LinearLayout {
 
     /** An icon heading, closer to its own content than to what is above it (RULES, sections and headings). */
     private TextView heading(String title, String icon) {
-        TextView heading = text(title, 15, Color.WHITE, true);
+        // DT1 (owner, 18 Nov 2026; B2): sizes from the mock-up, so the whole tab fits one 1080p screen.
+        TextView heading = text(title, 13, Color.WHITE, true);
         heading.setSingleLine(true);
         heading.setEllipsize(TextUtils.TruncateAt.END);
         PreviewIcon.apply(heading, icon, 16);
@@ -160,8 +161,8 @@ final class DetailsBlueprintPanel extends LinearLayout {
 
     private LayoutParams headingSize(boolean gapAbove) {
         LayoutParams size = new LayoutParams(-1, -2);
-        size.topMargin = gapAbove ? dp(32) : 0;
-        size.bottomMargin = dp(10);
+        size.topMargin = gapAbove ? dp(18) : 0;
+        size.bottomMargin = dp(6);
         return size;
     }
 
@@ -205,13 +206,13 @@ final class DetailsBlueprintPanel extends LinearLayout {
     private TextView fact(LinearLayout parent, String name, String value) {
         LinearLayout row = new LinearLayout(getContext());
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setMinimumHeight(dp(20));
+        row.setMinimumHeight(dp(14));
         row.setContentDescription(name + ": " + value);
-        TextView label = text(name, 13, LABEL, false);
+        TextView label = text(name, 11, LABEL, false);
         label.setSingleLine(true);
         label.setEllipsize(TextUtils.TruncateAt.END);
         row.addView(label, new LayoutParams(-2, -2));
-        TextView data = text(value, 13, Color.WHITE, true);
+        TextView data = text(value, 11, Color.WHITE, true);
         data.setSingleLine(true);
         data.setGravity(Gravity.END);
         data.setEllipsize(TextUtils.TruncateAt.END);
@@ -236,8 +237,8 @@ final class DetailsBlueprintPanel extends LinearLayout {
         rule.setTag("details.separator");
         rule.setBackgroundColor(ROW_LINE);
         LayoutParams size = new LayoutParams(-1, Math.max(1, dp(.5f)));
-        size.topMargin = dp(4);
-        size.bottomMargin = dp(4);
+        size.topMargin = dp(2);
+        size.bottomMargin = dp(2);
         parent.addView(rule, size);
     }
 
@@ -280,9 +281,9 @@ final class DetailsBlueprintPanel extends LinearLayout {
             LinearLayout rating = new LinearLayout(getContext());
             rating.setGravity(Gravity.CENTER_VERTICAL);
             rating.setBaselineAligned(false);
-            rating.setMinimumHeight(dp(38));
+            rating.setMinimumHeight(dp(24));
             rating.setTag("details.reception.slot." + n);
-            rating.addView(providerMark(n, providers[n]), new LayoutParams(dp(64), dp(30)));
+            rating.addView(providerMark(n, providers[n]), new LayoutParams(dp(48), dp(22)));
             LayoutParams valueSize = new LayoutParams(0, -2, 1);
             valueSize.leftMargin = dp(12);
             rating.addView(ratingValue(n, supplied), valueSize);
@@ -333,7 +334,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         }
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         logo.setContentDescription(name);
-        mark.addView(logo, new FrameLayout.LayoutParams(dp(26), dp(26), Gravity.CENTER));
+        mark.addView(logo, new FrameLayout.LayoutParams(dp(20), dp(20), Gravity.CENTER));
         return mark;
     }
 
@@ -347,7 +348,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
             box.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
             int stop = supplied.indexOf(". ");
             String headline = stop < 0 ? supplied : supplied.substring(0, stop);
-            TextView summary = text(headline, 14, Color.WHITE, true);
+            TextView summary = text(headline, 12, Color.WHITE, true);
             summary.setTag("details.reception.awards.summary");
             summary.setMaxLines(2);
             summary.setEllipsize(TextUtils.TruncateAt.END);
@@ -359,7 +360,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
             }
             return box;
         }
-        TextView score = text(supplied.isEmpty() ? "Rating unavailable" : supplied, 15, Color.WHITE, true);
+        TextView score = text(supplied.isEmpty() ? "Rating unavailable" : supplied, 13, Color.WHITE, true);
         score.setTag("details.reception.score." + row);
         score.setSingleLine(true);
         int unit = supplied.indexOf('/');

@@ -148,3 +148,7 @@ decide quickly.
     button style's conformance test fixes them there.
 50. **DT6:** TV shows now open the same artwork side panel as films (backdrops for Hero and rows, posters for the
     library page). The placeholder icons for Artwork, Posters and Backdrops in More were not redrawn.
+51. **DT1:** the Details tab was already laid out as B2 (three columns, Cast and Crew side by side, seven each), but
+    its rows were about 57 px apart against the mock-up's 34, so it ran past the screen. Rows, headings and rating
+    marks now take the mock-up's sizes (text 11, headings 13, ratings 13). The portraits keep their size (a seventh
+    of each half). If it still scrolls on the Shield, the portraits are the next thing to shrink.
