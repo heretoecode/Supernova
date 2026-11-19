@@ -27,6 +27,8 @@ canvas.speck{position:absolute;inset:0}
 .edgebar b{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#fff}
 .under{position:absolute;height:5px;border-radius:3px;background:rgba(255,255,255,.22)}
 .under b{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#fff}
+.badge2{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:18px;background:rgba(10,11,14,.82);box-shadow:0 0 0 1.5px rgba(255,255,255,.6)}
+.badge2 svg{position:absolute;left:0;top:0}
 </style></head><body>
 <script>
 function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -45,7 +47,15 @@ const CH=108;for(let r=0;r<2;r++)for(let c=0;c<cols;c++){const it=items[(c+r*3)%
  const line2=it[3]>0?`<span class="mini"><b style="width:${it[3]*100}%"></b></span>${it[4]}`:it[1];
  g+=`<div class="poster ${f?'ring':''}" style="left:${x}px;top:${y}px;width:${W}px;height:${H+CH}px;${f?'transform:scale(1.08);z-index:1':''}"><div style="position:absolute;left:0;right:0;top:0;height:${H}px;border-radius:12px 12px 0 0;overflow:hidden">${art(i)}<div class="logo" style="left:8px;right:8px;bottom:40px;text-align:center;font-size:25px">${it[0].toUpperCase()}</div><div class="edge"></div></div>
  <div style="position:absolute;left:16px;right:12px;top:${H+13}px"><div class="t1">${it[0]}</div><div class="t2">${line2}</div><div class="t3">${it[2]}</div></div></div>`}
-let html=frame("1 · Library posters: three lines for every title; a started title's bar sits inside its second line",g,'tvs');
+
+function ring(p){const r=11,c=2*Math.PI*r;return `<div class="badge2"><svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="${r}" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="4"/><circle cx="18" cy="18" r="${r}" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="${c*p} ${c}" transform="rotate(-90 18 18)"/></svg></div>`}
+function tick(){return `<div class="badge2"><svg viewBox="0 0 36 36" width="36" height="36"><path d="M11 18.5l5 5 9-11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`}
+let g2='';const items2=[["The Harbour","2 seasons · 16 episodes","Added 16 Nov 2026",0],["Greenwood","S1 E4 · 5 of 8 left","Added 16 Nov 2026",.4],["Night Shift","3 seasons · 30 episodes","Added 14 Nov 2026",1],["Golden Mile","S1 E6 · 1 of 6 left","Added 12 Nov 2026",.83],["Deep Water","4 episodes","Added 10 Nov 2026",0],["Velvet","S1 E3 · 18 of 20 left","Added 9 Nov 2026",.1],["The Isle","6 episodes","Added 2 Nov 2026",1]];
+for(let r=0;r<2;r++)for(let c=0;c<cols;c++){const it=items2[(c+r*3)%7],i=c+r*3,x=L+c*(W+gap),y=170+r*(H+CH+44);const f=(r==0&&c==1);
+ const b=it[3]>=1?tick():it[3]>0?ring(it[3]):'';
+ g2+=`<div class="poster ${f?'ring':''}" style="left:${x}px;top:${y}px;width:${W}px;height:${H+CH}px;${f?'transform:scale(1.08);z-index:1':''}"><div style="position:absolute;left:0;right:0;top:0;height:${H}px;border-radius:12px 12px 0 0;overflow:hidden">${art(i)}<div class="logo" style="left:8px;right:8px;bottom:40px;text-align:center;font-size:25px">${it[0].toUpperCase()}</div><div class="edge"></div>${b}</div>
+ <div style="position:absolute;left:16px;right:12px;top:${H+13}px"><div class="t1">${it[0]}</div><div class="t2">${it[1]}</div><div class="t3">${it[2]}</div></div></div>`}
+let html=frame("1 · Library posters: three lines for every title; a started title's bar sits inside its second line",g,'tvs')+frame("1b · Your idea: the corner badge fills as a ring with progress; when complete it becomes the tick",g2,'tvs');
 // ---------- rows helpers
 function rowCards(y,rows,mode,focusIdx,started){let h='';let x=72;rows.forEach((it,i)=>{const f=i==focusIdx,w=f?440:400,hh=f?248:225,yy=f?y-11:y,xx=f?x-20:x;
  let inner=art(i+(started?0:5));
