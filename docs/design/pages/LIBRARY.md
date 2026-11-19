@@ -20,7 +20,8 @@ SUPERNOVA wordmark, an underline in the top bar or a stats row, this sheet wins.
 
 ## Toolbar
 Left: **Filters ▾ · Sort: <choice> ▾ · Order · List view / Grid view** (· **Columns** in list view only, appearing beside
-the view button without anything moving). Right, locked: **Customise page**. Focus is the white box; a button whose menu
+the view button without anything moving). Right, locked: **Customise page, on your own pages only** (owner, 19 Nov: on Movies and TV Shows it only
+repeated Filters' Show and the toolbar's View, Sort and Order, so it is removed there). Focus is the white box; a button whose menu
 is open returns to rest. Menus open under the button pressed.
 
 - **Filters** (`23`, `24`): Watched (All · Unwatched · In progress · Watched) · Genre (genre icons, Match: Any · All at the
@@ -55,7 +56,7 @@ is open returns to rest. Menus open under the button pressed.
 Rows with Title first, then the shown columns; long values end in "…"; faint lines between rows; the focused row is the
 white box. Same Filters / Sort / Order as the grid.
 
-## Customise page (`32`, `29`)
+## Customise page (`32`, `29`) — your own pages only (owner, 19 Nov)
 A side panel floating on the right, sized to fit without scrolling; changes apply live, **no Save button**, Back
 closes. Group headings centred on their line, Title Case.
 - **What To Show:** Page name (types with the one keyboard in its own panel beside this one; the text appears in the

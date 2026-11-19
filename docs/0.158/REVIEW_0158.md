@@ -88,3 +88,15 @@ The owner will do the full walk-through when part B is finished; these are thing
   the tabs apart from the top bar; Settings' plain row of words with icons reads as a second top bar and looks
   unfinished. Settings' tabs take Files' look (size, line under the row, white focus box). Mock-up of the whole
   Settings page as it should be, when mock-ups resume. Details' tabs: left for the full walk-through (owner, 19 Nov).
+
+### Library pages, toolbar (owner, 19 Nov evening)
+- **L2. Customise page on Movies and TV Shows** only repeats Filters' Show and the toolbar's View / Sort / Order.
+  **Decided: remove it there**; own pages keep it (LIBRARY.md, brief).
+- **L3. Toolbar line and gaps:** the line sits midway but with too much space above and below. Code (0.158.7): the
+  line is 1 dp (about 2 px) of white at 12%; about 32 px from the bottom of a button's box to the line, about 28 px
+  from the line to the posters. [Claude: about 24 px each side, measured from the focused box and from the posters
+  at rest; the focused top-row poster grows about 18 px and its 4 px ring must still clear the line.]
+- **L4. Toolbar focus box too big.** Code: the toolbar sets its own size, at least 44 dp tall (about **88 px**) with
+  24 px side padding, against RULES §3's one small-box shape (52 px, 20 px corners, about 22 px sides) that every other
+  button uses. [Claude: a fault, not a choice; bring it to the 52 px shape.]
+- Asked: panels at 99% are in 0.158.4 and later (built). The poster caption box is solid `#23262C` (100%).

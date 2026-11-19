@@ -183,6 +183,8 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   1080p (`ArtworkEdge`: 0.5 dp at full white, was 0.75 dp at 60%); the soft shade unchanged; **every** artwork focus
   ring solid white 4 px (2 dp, was 3 dp / 6 px), one shared value for posters, row cards, the player's rows and
   anything else with the ring.
+- **Library toolbar (owner, 19 Nov; LIBRARY.md):** remove **Customise page** from Movies and TV Shows (it only repeated
+  Filters' Show and the toolbar's View, Sort and Order); it stays on your own pages.
 - **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
   box; RULES "Page tabs"), not the plain row; wait for the Settings mock-up before building. **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).
