@@ -130,6 +130,28 @@ screen: `b2`–`b5`, e.g. `16-b3-your-services`, `18-b3-backup-choose-restore`, 
 ## Not in part B
 Users and tags, Guest (still being designed). Onboarding (later). The Trakt list row and Media Transfers (Ready, no version yet).
 
+### Owner's notes on 0.158.3 / 0.158.4 (19 Nov afternoon; `docs/0.158/REVIEW_0158.md`, end) — do these next
+- **D1, deleting (first):** "Delete all episode files" on an SFTP show reported "couldn't delete file" though the
+  file was deleted; the folder became Excluded; re-adding left the pill on "Not added"; a ghost episode stayed in
+  the library and Missing files never showed it; deleting it gave an Android-style "Delete failed". Fix all five:
+  delete never excludes a folder; one Supernova notice says what was deleted and what failed, and why; pills
+  follow the real state after Add; an entry whose file is gone is caught as missing (and offered Remove); no
+  Android notices. Delete all episode files deletes every episode file of the show that the library knows, and
+  says if others remain in the folder. Read the diagnostics for 14:30–14:45 if the owner sends them; add tests.
+- **A1, About:** the About tab shows only the old blue ring, the version and build line. Build it from the sheet
+  (SETTINGS.md › About: What's New with the last five and All versions, Credits, Open-source licences) with the new
+  mark. "Based on NOVA …" says the version the app is really built from.
+- **H3, Home hero: one button, More** (owner, 19 Nov; replaces HOME.md's Play then More): its menu starts Details,
+  then Play / Resume, Library, Files & Media; Left / Right change the hero at once. Update HOME.md.
+- **H1 again:** on 0.158.4 the Home and Details heroes still differ in size on the Shield; measure both on a
+  1080p render pixel for pixel and fix the one that's off.
+- **DT3 again:** the Details hero's edge is cut off left and right; focused cards in Episodes (left) and More Like
+  This (both sides) are cut off.
+- **S1:** Settings' tabs as tall as every other tab box (RULES §3). **S3:** scroll arrows on Settings tabs that
+  scroll (RULES §16).
+- **FL2** (already in group 7): placeholder rows instead of "Looking in this folder…".
+Not for Coding yet (design to settle first): L1 caption space, R6 one row design, S2, A2, Files' tab underline.
+
 ### NOVA catch-up (checked 19 Nov; approved 15 Nov: "all of NOVA 6.6.5 and later", 0.157 notes §35)
 NOVA's latest tag is 6.6.5 (10 Nov) with fixes since. 0.157 carried MediaLib's and FileCore's 6.6.5 changes
 (matching by file name, Trakt pagination, 64-bit list IDs and lastActivities2, SMB share credentials, messenger

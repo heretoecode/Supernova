@@ -15,8 +15,8 @@ underline, this sheet wins.
 
 ## Hero
 - **Same design as Details** (1776×820 at 1080p): logo artwork (or the name), metadata row (Age rating · Year · Length ·
-  Genres), two-line description, no tagline, buttons fixed at the bottom left ("Play" / "Resume S1 E5 · 16 min left",
-  then More), artwork edge, the first row peeking below. **Carousel dots** under the hero.
+  Genres), two-line description, no tagline, one button fixed at the bottom left, **More** (owner, 19 Nov: replaces "Play / Resume, then More";
+  its menu: Details, Play / Resume, Library, Files & Media), artwork edge, the first row peeking below. **Carousel dots** under the hero.
 - **Changing hero (§11):** the frame, edge and buttons stay still; the next and previous artwork are loaded first, so
   there's never an empty frame; the picture cross-fades (about 450 ms) with a slight drift; text fades out and back in
   just after; focus stays on the same button; dots glide; presses during a change finish it at once; automatic changes
@@ -54,8 +54,7 @@ Floating side panel on the right; changes apply live; Back closes.
 | Focus lands on Home in the top bar | Home opens (no OK) |
 | Down from the top bar | The hero's first button |
 | Left / Right on the hero | Previous / next hero (as above); focus stays on the same button |
-| Play / Resume (hero) | Preparing playback, then the player; Back returns to Home, same button |
-| More (hero) | The Details More menu beside the button (same items as Details) |
+| More (hero, the one button) | Its menu beside the button: Details, Play / Resume, then the Details More items; Play / Resume → Preparing playback, Back returns to the button |
 | OK on the hero artwork / Down then Up | Details for that title (card stays in place) |
 | OK on a row card | That title's Details; Back returns with focus on the same card |
 | OK on a streaming-only card | The title in its service's app (no Supernova page) |
