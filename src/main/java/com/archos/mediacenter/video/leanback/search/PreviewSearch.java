@@ -370,7 +370,7 @@ public final class PreviewSearch extends LinearLayout {
                 break;
             if (recentChips.getChildCount() > 0) {
                 View rule = new View(activity);
-                rule.setBackgroundColor(0x14FFFFFF);
+                rule.setBackgroundColor(0x1FFFFFFF);
                 recentChips.addView(rule, new LayoutParams(-1, Math.max(1, dp(1) / 2)));
             }
             TextView row = TvButton.create(activity, value, () -> {

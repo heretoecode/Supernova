@@ -40,7 +40,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
     /** Soft near-white labels; pure white, bolder values; quieter "Unknown" (RULES, text on the page). */
     static final int LABEL = SupernovaStyle.TEXT_SECONDARY;
     static final int UNKNOWN = 0x99FFFFFF;
-    static final int ROW_LINE = 0x14FFFFFF;
+    static final int ROW_LINE = 0x1FFFFFFF;
 
     private final Map<String, TextView> keyValues = new LinkedHashMap<>(), technicalValues = new LinkedHashMap<>();
     private final TextView synopsisView;

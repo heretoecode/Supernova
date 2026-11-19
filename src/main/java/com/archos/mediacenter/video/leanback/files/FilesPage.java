@@ -36,7 +36,7 @@ public final class FilesPage extends LinearLayout
     private LibraryStats stats;
 
     static final int SECOND_LINE = 0xFFC9D3E6;
-    static final int LINE = 0x14FFFFFF;
+    static final int LINE = 0x1FFFFFFF;
 
     // Side margin: TvLayout.sideMargin, the top bar's edges (owner, 18 Nov 2026). Files fills the page itself; the
     // margin is inside it, so a grown card or ring may reach into it.

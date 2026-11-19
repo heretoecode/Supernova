@@ -348,12 +348,12 @@ public final class PreviewLibraryColumns {
         return row;
     }
 
-    /** Faint lines between rows only (RULES §5: about 8% white); no column lines. */
+    /** Faint lines between rows only (RULES §5); about 12% white on the speckled background (0.158 look sweep). */
     private Drawable separator(boolean vertical) {
         LayerDrawable d = new LayerDrawable(
             new Drawable[] {
                 new ColorDrawable(Color.TRANSPARENT),
-                new ColorDrawable(vertical ? Color.TRANSPARENT : 0x14FFFFFF)
+                new ColorDrawable(vertical ? Color.TRANSPARENT : 0x1FFFFFFF)
             });
         if (vertical) {
             d.setLayerWidth(1, dp(1));

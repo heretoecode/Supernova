@@ -2361,7 +2361,7 @@ public final class PreviewPages extends FrameLayout {
         keepOwnLook(customise);
         View divider = new View(getContext());
         divider.setTag("library.toolbar.divider");
-        divider.setBackgroundColor(0x14FFFFFF);
+        divider.setBackgroundColor(0x1FFFFFFF);
         LinearLayout.LayoutParams dividerSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(1)));
         dividerSize.topMargin = dp(10);
         v.addView(divider, dividerSize);
