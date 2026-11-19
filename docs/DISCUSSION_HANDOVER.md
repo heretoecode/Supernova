@@ -9,6 +9,9 @@
   (RULES §16); Guest decisions (`docs/REVISIT_LATER.md` round 8); episodes and Settings added to part B.
 - **How new notes reach Coding:** the owner sends them here; add them to the brief (fold into an item Coding hasn't
   reached, else a new group at the end); Coding merges this branch before each item.
+- **Next session, first:** make the 0.158.3 review checklist (as `docs/0.157/review-0157-2-checklist.html`; artifact
+  link in the owner's last review), covering part A and part B as built, plus H1/H2 and R2. Then take the owner's
+  notes into a review file and the brief.
 - **Open, for the owner:** a 0.158.3 checklist (offered); Guest mock-up; diagnostics report from 0.158.x (Drive ›
   Supernova › Media › For Claude); PL4 parked unless seen again. APKs: GitHub app hides artifacts; use Safari, desktop
   site, signed in (or allow this session to fetch from GitHub's storage and put APKs in Drive).
