@@ -1,0 +1,57 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2c31;font-family:Roboto,"Inter",Arial,sans-serif;width:2000px;padding:40px}
+.cap{color:#e8ebf2;font-size:30px;font-weight:500;margin:0 0 14px 4px}
+.frame{width:1920px;height:1080px;position:relative;overflow:hidden;border:2px solid #c9ccd3;margin-bottom:50px;background:#111215}
+canvas.speck{position:absolute;inset:0}
+.bar{position:absolute;top:0;left:0;right:0;height:84px;display:flex;align-items:center;padding:0 52px;color:#fff;font-size:30px}
+.bar span{padding:9px 22px;border-radius:20px;margin-right:6px}
+.bar .open{background:rgba(255,255,255,.15);color:rgba(255,255,255,.72)}
+.bar .sp{flex:1}
+.hero{position:absolute;left:72px;width:1776px;border-radius:24px;overflow:hidden;
+ box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+.art{position:absolute;inset:0;background:
+ radial-gradient(ellipse 60% 70% at 72% 40%,rgba(196,214,232,.55),transparent 60%),
+ radial-gradient(ellipse 40% 50% at 85% 75%,rgba(70,96,130,.8),transparent 70%),
+ linear-gradient(160deg,#4d6a88 0%,#24364d 45%,#121a26 100%)}
+.ridge{position:absolute;left:35%;right:0;bottom:0;height:45%;background:
+ linear-gradient(170deg,transparent 30%,rgba(12,18,28,.9) 31%),linear-gradient(195deg,transparent 40%,rgba(20,28,40,.95) 41%)}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,9,12,.9) 0%,rgba(8,9,12,.6) 35%,transparent 65%),
+ linear-gradient(0deg,rgba(8,9,12,.6),transparent 40%)}
+.inner{position:absolute;inset:0;box-shadow:inset 0 0 24px rgba(0,0,0,.45);border-radius:24px}
+.logo{position:absolute;left:64px;font-size:96px;font-weight:900;letter-spacing:4px;color:#f2f5fa;line-height:.95}
+.meta{position:absolute;left:64px;color:#fff;font-size:26px;display:flex;gap:14px;align-items:center}
+.badge{border:2px solid #fff;border-radius:6px;padding:0 8px;font-weight:700;font-size:22px}
+.desc{position:absolute;left:64px;width:760px;color:#dfe5ef;font-size:26px;line-height:38px}
+.btn{position:absolute;left:64px;height:52px;padding:0 26px;border-radius:20px;background:#fff;color:#000;font-size:26px;
+ font-weight:500;display:flex;align-items:center;gap:12px}
+.dots{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:12px}
+.dots i{width:12px;height:12px;border-radius:6px;background:rgba(255,255,255,.45);display:block}
+.dots i.on{width:40px;background:#fff}
+.heading{position:absolute;left:72px;color:#fff;font-size:30px;font-weight:500;display:flex;gap:14px;align-items:center}
+.card{position:absolute;width:400px;height:225px;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+</style></head><body>
+<script>
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const cards=[["#7a3b2e","#26120d"],["#2f5c4a","#0e1d17"],["#5a4a7a","#1a1426"],["#8a6a2a","#2a1f0a"],["#2e4f78","#0d1726"]];
+function frame(cap,heroH){
+ const top=112,bottom=top+heroH;
+ const head=bottom+30, cardTop=head+96;
+ let h=`<div class="cap">${cap}</div><div class="frame"><canvas class="speck" width="1920" height="1080"></canvas>
+ <div class="bar"><span class="open">Home</span><span>Movies</span><span>TV Shows</span><span>Documentaries</span><span class="sp"></span>
+ <span style="font-size:26px">◌</span><span>Files</span><span>Search</span><span>Settings</span><span style="padding-right:0">18:40</span></div>
+ <div class="hero" style="top:${top}px;height:${heroH}px"><div class="art"></div><div class="ridge"></div><div class="shade"></div><div class="inner"></div>
+ <div class="logo" style="top:${heroH*0.25}px">THE LONG<br>FROST</div>
+ <div class="meta" style="top:${heroH*0.25+210}px"><span class="badge">15</span>2025 · 1 h 52 min · Drama, Thriller</div>
+ <div class="desc" style="top:${heroH*0.25+262}px">A lighthouse keeper on a remote northern island finds a stranger in the snow, and a winter of secrets begins.</div>
+ <div class="btn" style="top:${heroH-130}px">⋯ More</div>
+ <div class="dots" style="top:${heroH-34}px"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div></div>
+ <div class="heading" style="top:${head}px"><span>▶</span>Continue Watching</div>`;
+ cards.forEach((c,i)=>{h+=`<div class="card" style="left:${72+i*424}px;top:${cardTop}px;background:linear-gradient(150deg,${c[0]},${c[1]})"></div>`});
+ return h+`</div>`;
+}
+document.body.innerHTML=frame("1 · As built: hero 1776 × 820, a tenth of the row's cards below",820)+frame("2 · For comparison: hero 1776 × 740, about 40% of the cards below",740);
+document.querySelectorAll('canvas.speck').forEach(cv=>{const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;
+ for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;g.fillStyle=`rgba(255,255,255,${a})`;g.fillRect(x,y,1,1)}});
+</script></body></html>
