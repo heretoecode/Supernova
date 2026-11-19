@@ -14,8 +14,12 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
   [44493050022](https://github.com/heretoecode/Supernova/actions/runs/44493050022) on source `8b8a8ff`. Artifact
   `supernova-0157-signed-qa` (`Supernova_0.158.2.apk`). 0.158.1 plus groups 4, the Details part of group 5 below, the
   icon picker width and FL6.
-- **0.158.3** (code 1583) — building (run on `cb679a2`): Settings (group 9), DT4, DT8, the row lines, pages reopening
-  at their top. See the end of this report for its result.
+- **0.158.3** (code 1583) — signed 19 Nov 2026 by run
+  [44506040551](https://github.com/heretoecode/Supernova/actions/runs/44506040551), from green conformance run
+  [44500505615](https://github.com/heretoecode/Supernova/actions/runs/44500505615) on source `4d310f4`. Artifact
+  `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`), kept until 3 Dec 2026. **Install this one.** 0.158.2 plus the
+  Settings redesign, DT4, DT8, the row lines and pages reopening at their top.
+- On the branch after 0.158.3, not in any APK yet: FL9 (focus stays on Check matches).
 
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the

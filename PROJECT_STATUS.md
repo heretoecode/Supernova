@@ -8,15 +8,18 @@ end of every session.
 Report, "not built" list and run links: `docs/0.158/REPORT_0158_B.md`; judgement calls:
 `docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Still to do from `docs/0.158/BRIEF_0158_B.md`: the look sweep on the speckle,
 the rest of Details (DT1, DT3–DT6, DT8, R3–R5, episodes), titles (group 6), Files (group 7), Back and page position
-(group 8), and **Settings** (group 9: a first pass exists but is held back until its tests are rewritten). Work branch
+(group 8), Settings' remaining sheet items (in-row backup flow, OpenSubtitles and Trakt panels), PL8, X4. Work branch
 for part B: `claude/build-0158-part-b-wsupv2`, merged onto the working branch. Waiting for the owner: install the last
 signed APK; send a diagnostics report from it.
 
 ## Released
 
+**0.158.3** (code 1583) — signed 19 Nov 2026 (run 44506040551, from green conformance run 44500505615 on `4d310f4`).
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`). 0.158.2 plus the Settings redesign (seven tabs), DT4,
+DT8, stronger row lines, pages reopening at their top. The one to install.
+
 **0.158.2** (code 1582) — signed 19 Nov 2026 (run 44500001166, from green conformance run 44493050022 on `8b8a8ff`).
 Artifact `supernova-0157-signed-qa` (`Supernova_0.158.2.apk`). 0.158.1 plus the title block, player and Details fixes.
-**0.158.3** (Settings) is building.
 
 **0.158.1** (code 1581) — signed 19 Nov 2026 (run 44479811283 of `supernova-0157-qa.yml`, from green conformance run
 44470632446 on `731261f`). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.1.apk`). Part B groups 1–3b: the
