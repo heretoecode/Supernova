@@ -1,0 +1,26 @@
+diff --git a/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+index f580b95..99c4f44 100644
+--- a/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
++++ b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+@@ -133,6 +133,9 @@ public final class SupernovaLibraryPolicy
+             .path("/" + android.text.TextUtils.join("/", path.subList(0, length)))
+             .build();
+     }
++    /** Canonical roots (see {@link #canonical}) of the connections turned off on Files › Connections. */
++    public static final String CONNECTIONS_OFF = "supernova_connections_off";
++
+     public static boolean excluded(Context c, Uri uri)
+     {
+         if (!retainsRecords(c) || uri == null)
+@@ -144,6 +147,11 @@ public final class SupernovaLibraryPolicy
+         for (String excluded : p.getStringSet("supernova_library_exclusions", Collections.emptySet()))
+             if (contains(excluded, key))
+                 return true;
++        // FL3 (0.158): a connection turned off keeps its settings, but its titles leave the library until it is
++        // turned on again.
++        for (String off : p.getStringSet(CONNECTIONS_OFF, Collections.emptySet()))
++            if (contains(off, key))
++                return true;
+         if (p.getBoolean("supernova_library_policy_initialized", false))
+         {
+             for (String root : p.getStringSet("supernova_library_roots", Collections.emptySet()))
