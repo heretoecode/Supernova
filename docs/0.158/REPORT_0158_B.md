@@ -17,11 +17,12 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
 - **0.158.3** (code 1583) — signed 19 Nov 2026 by run
   [44506040551](https://github.com/heretoecode/Supernova/actions/runs/44506040551), from green conformance run
   [44500505615](https://github.com/heretoecode/Supernova/actions/runs/44500505615) on source `4d310f4`. Artifact
-  `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`), kept until 3 Dec 2026. **Install this one.** 0.158.2 plus the
+  `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`), kept until 3 Dec 2026. 0.158.2 plus the
   Settings redesign, DT4, DT8, the row lines and pages reopening at their top.
-- **0.158.4** (code 1584) — Playback Settings round two and panels at 99% (plus FL9). Conformance run
-  [44521801198](https://github.com/heretoecode/Supernova/actions/runs/44521801198) on source `ef5af36`; signing
-  follows when green.
+- **0.158.4** (code 1584) — signed 19 Nov 2026 by run
+  [44531272454](https://github.com/heretoecode/Supernova/actions/runs/44531272454), from green conformance run
+  [44521801198](https://github.com/heretoecode/Supernova/actions/runs/44521801198) on source `ef5af36`. Artifact
+  `supernova-0157-signed-qa` (`Supernova_0.158.4.apk`). Playback Settings round two, panels at 99%, FL9.
 - **0.158.5** (code 1585) — 0.158.4 plus the Settings wording, Home Hero's two new rows, DT3, the episodes feature,
   R3 and R4. Built after 0.158.4.
 
