@@ -46,6 +46,9 @@ is open returns to rest. Menus open under the button pressed.
   episodes"), started "S2 E3 · 18 of 30 left"; films started "42 min left"; **line 3 follows the sort** (e.g. "1.0 GB
   per episode"). **No progress bar:** progress is the corner badge (RULES §14c: 48 px white circle, black pie from
   12 o'clock inside a white rim; watched = black tick; not started = none). Every caption the same height.
+  **Caption spacing (owner, 19 Nov; `rows-captions/08-caption-spacing.png`, After):** a shorter box (about 100 px
+  at 1080p, was about 108) with the three lines spread evenly: equal small gaps above, between and below; title kept
+  (owner asked; Claude's view: keep it, small change later if wanted).
 - Focus: the whole card grows about 8%, the thick white ring exactly on the card's edge, round artwork and caption.
 
 ## List view (`26`, `28`)

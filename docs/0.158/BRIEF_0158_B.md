@@ -175,7 +175,8 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   every progress bar from cards, posters and captions (library posters, Home rows, Details Episodes / Extras / More Like
   This, the player's Chapters and Episodes rows, Search) and draw the one shared badge instead: a 48 px white circle top
   right, a black pie filling from 12 o'clock inside a white rim, the black tick when watched, nothing when not started.
-  Row cards: title and line over the artwork's foot (no caption box under). Library captions: three lines, no strip.
+  Row cards: title and line over the artwork's foot (no caption box under). Library captions: three lines, no strip, a shorter box with the lines spread
+  evenly (LIBRARY.md, `rows-captions/08` After).
   One shared view for the badge, used everywhere; a test that no card in the app draws a progress bar. The player's
   seek bar and task progress in rows stay.
 - **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
