@@ -1,18 +1,20 @@
 # Supernova — project status
 
-Updated 18 November 2026 (0.158 part A session). Keep this page short and current: update it at the end of every session.
+Updated 19 November 2026 (0.158 part A signed). Keep this page short and current: update it at the end of every session.
 
-## In progress: 0.158 (code 1580), part A
+## Next: 0.158.1 (part B: the owner's 0.157.2 review)
 
-Built from `docs/0.158/BRIEF_0158_A.md` and the page sheets (LIBRARY, HOME, SEARCH): the 0.158 top bar, one side
-margin, the library pages, Home (rows, Move and Hide, Customise Home, hero), Search, and F52 (connections grouped by
-server). Every action in the sheets is pressed in `Review0158*Test` with renders on `previews/claude`. Report and
-"not built" list: `docs/0.158/REPORT_0158_A.md`; judgement calls: `docs/0.158/JUDGEMENT_CALLS_0158_A.md`.
-Signing: as soon as conformance on the exact source is green (standing approval); the run link goes in the report.
-Work is on `claude/0158-part-a-signed-apk-woiqj6`, brought onto the working branch for builds and signing. Next:
-part B (the owner's 0.157.2 review) as 0.158.1.
+Also carries the 0.158 "not built" items that are due (icon picker tile width). Work branch for 0.158 part A:
+`claude/0158-part-a-signed-apk-woiqj6`, merged onto the working branch.
 
 ## Released
+
+**0.158** (code 1580) — signed 19 Nov 2026 (run 44426716646 of `supernova-0157-qa.yml`, from green conformance run
+44421862282 on `6d79049`). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.apk`). Part A of
+`docs/0.158/BRIEF_0158_A.md`: the 0.158 top bar, one side margin, the library pages, Home (rows, Move and Hide,
+Customise Home, hero), Search, and F52 (connections grouped by server). Report and "not built" list:
+`docs/0.158/REPORT_0158_A.md`; judgement calls: `docs/0.158/JUDGEMENT_CALLS_0158_A.md`. Waiting for the owner:
+install and check on the Shield; send the latest diagnostics report.
 
 **0.157.2** (code 1572) — signed 18 Nov 2026 (run 44020349261 of `supernova-0157-qa.yml`, from green
 conformance run 44015287084 on `c3f75d5`). Artifact `supernova-0157-signed-qa` (`Supernova_0.157.2.apk`). Bug fixes from the owner's Shield review of 0.157.1

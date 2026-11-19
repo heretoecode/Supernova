@@ -4,7 +4,10 @@ Built unattended from `docs/0.158/BRIEF_0158_A.md` and the page sheets (`docs/de
 `SEARCH.md`). Version **0.158**, code **1580**.
 
 ## Signed APK
-_Filled in when signed: run link, source commit, artifact._
+Signed 19 Nov 2026 by run [44426716646](https://github.com/heretoecode/Supernova/actions/runs/44426716646) of
+`supernova-0157-qa.yml`, from green conformance run
+[44421862282](https://github.com/heretoecode/Supernova/actions/runs/44421862282) (2193 tests) on source `6d79049`.
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.apk`, version 0.158, code 1580); kept until 3 Dec 2026.
 
 ## Diagnostics report
 Not in `docs/INBOX.md` and no "Inbox:" issue, so none was read. **Please send the latest report from the Shield**;
