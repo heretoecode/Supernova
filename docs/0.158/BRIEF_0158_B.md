@@ -43,7 +43,8 @@ it come later, not in this brief.
 - **Look sweep:** render every page on the new background (`preview-renders.yml`) and fix only what now fails: faint
   row lines, grey second lines, "Unknown", the open-page grey box, outlined pills and chips at rest, panels over the
   page, the keyboard's keys, loading placeholders, dimmed rows. **Playback Settings panel colour** (P6 / PS10) is
-  settled here: `#16181C` at 90%, no outline, no glow, no old blue (RULES). List every change in the report.
+  settled here: `#16181C` at **99%** (owner, 19 Nov; RULES §11), no outline, no glow, no old blue. **Every**
+  pop-up, menu and side panel uses the same value (one shared value). List every change in the report.
 
 ### Group 2 — Playback Settings (the owner's worst page; PS1–PS11)
 Every item in the review: tab focus (PS1), gap under the tabs (PS2), every tab fits (PS3), focused-row switches,

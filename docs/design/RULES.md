@@ -220,7 +220,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   opens it) (§4, §19).
 
 ## 11. Panels and pop-ups
-- Pop-ups, menus and side panels: `#16181C` at **95%** opacity (owner, 13 Nov; was 90%, too see-through over posters),
+- Pop-ups, menus and side panels: `#16181C` at **99%** opacity (owner, 19 Nov, judged on the TV over the speckle,
+  `background-speckle/tv4-F`; was 95%, 13 Nov; 90% before that),
   no outline, soft shadow; one shared value (§4).
   **Over a page** (flat charcoal) every menu and panel gets a faint edge so it separates; **over video** none
   (Playback Settings) (Files v8; owner, 13 Nov).
@@ -414,6 +415,7 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - Settled 12–13 Nov: Details headings (icons, no underline) and Details lines (faint row lines, no column lines).
 
 ## Replaced rules (do not use)
+- Panels at 95% (13 Nov) → 99% over the speckle (§11, 19 Nov).
 - Back from the middle of a long page first jumps to the top, then to the top bar → straight to the top bar; a page
   left for another page reopens at its top (§16, 18 Nov).
 - Plain charcoal `#16181C` behind every page → the speckled background, §1 (18 Nov; from 0.158 part B).
