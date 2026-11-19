@@ -903,6 +903,10 @@ public final class PreviewMoviePage extends ScrollView {
     private LinearLayout section(String name) {
         LinearLayout section = new LinearLayout(getContext());
         section.setOrientation(LinearLayout.VERTICAL);
+        // DT3 (owner, 18 Nov 2026): no invisible frame. A grown card and its ring may reach past the row's sides,
+        // and rows run off the page's edges (D6), so neither the section nor its content clips its children.
+        section.setClipChildren(false);
+        section.setClipToPadding(false);
         section.setPadding(0, dp(10), 0, dp(8));
         TextView label = text(name, 16);
         label.setTextColor(0xff9ed4f7);
@@ -911,6 +915,8 @@ public final class PreviewMoviePage extends ScrollView {
             label.setVisibility(GONE);
         LinearLayout content = new LinearLayout(getContext());
         content.setOrientation(LinearLayout.VERTICAL);
+        content.setClipChildren(false);
+        content.setClipToPadding(false);
         content.setPadding(0, dp(6), 0, 0);
         section.addView(content);
         body.addView(section);
