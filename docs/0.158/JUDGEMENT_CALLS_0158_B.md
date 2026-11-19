@@ -152,3 +152,6 @@ decide quickly.
     its rows were about 57 px apart against the mock-up's 34, so it ran past the screen. Rows, headings and rating
     marks now take the mock-up's sizes (text 11, headings 13, ratings 13). The portraits keep their size (a seventh
     of each half). If it still scrolls on the Shield, the portraits are the next thing to shrink.
+52. **FL12:** "closed fully" is read as Android's own record of why the app last ended: a stop you asked for (force
+    stop, or stopping it from the system) reopens at Home; anything Android did by itself (memory, background limits)
+    brings the page back as before. Swiping the app away from Recent apps already starts it fresh.
