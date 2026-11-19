@@ -169,5 +169,12 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
   yourself, open Home instead; when Android ended it in the background, keep the page.
 - **Group 8** — R2 (the own page's bar) not done; Back and page position done.
 
+## For the next session
+- Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
+  when a build is due (a push there starts conformance; signing accepts only the working branch).
+- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10.
+- Still to do, in the brief's order: the look sweep renders (item 4), DT1, DT5, DT6, R5, PL8, R2, X4, FL3 + FL5,
+  FL12, the Settings leftovers above, and renders of the episodes screens and titles.
+
 ## Judgement calls
 See `docs/0.158/JUDGEMENT_CALLS_0158_B.md` (each with its reason).
