@@ -169,7 +169,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 - **PL4** (controls linger on the seek bar) — not changed; I couldn't tell from the notes what looks wrong.
 - **PL8** — the skip button is now the one small-box size (it joined the controls' line already in 0.157); not yet
   checked in a render beside the controls.
-- **Details:** all built; DT5's heading icons for Episodes and Extras not redrawn. DT6 is built for TV shows
+- **Details:** all built. DT6 is built for TV shows
   (films already had the side panel), not yet checked in a render.
   Episodes: built, but not yet checked in renders.
 - **Group 6, titles** — built (logo placement by one area; house style A), not yet checked in renders; a long
