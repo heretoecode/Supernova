@@ -16,7 +16,7 @@ underline, this sheet wins.
 ## Hero
 - **Same design as Details** (1776×820 at 1080p): logo artwork (or the name), metadata row (Age rating · Year · Length ·
   Genres), two-line description, no tagline, one button fixed at the bottom left, **More** (owner, 19 Nov: replaces "Play / Resume, then More";
-  its menu: Details, Play / Resume, Library, Files & Media), artwork edge, the first row peeking below. **Carousel dots** under the hero.
+  its menu: Details, Play / Resume, Library, Files & Media), artwork edge, the first row peeking below (at least its heading, any amount of its cards; never only the hero; owner, 19 Nov). **Carousel dots** under the hero.
 - **Changing hero (§11):** the frame, edge and buttons stay still; the next and previous artwork are loaded first, so
   there's never an empty frame; the picture cross-fades (about 450 ms) with a slight drift; text fades out and back in
   just after; focus stays on the same button; dots glide; presses during a change finish it at once; automatic changes

@@ -146,8 +146,9 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
 - **H1 again (owner, 19 Nov, firm: the approved design):** the Home hero and the Details hero are **one size and one
   place, 1776 × 820 at 1080p, top 112 px**; on 0.158.4 they still differ on the Shield. Measure both on 1080p
   renders pixel for pixel, fix the one that's off, and add a test that lays out both pages and fails if their hero
-  bounds differ by a single pixel. The size stays (the owner keeps it; how much of the first row peeks is settled with
-  the row redesign, not by shrinking the hero).
+  bounds differ by a single pixel. The size stays. **Below it (owner, 19 Nov):** at rest, Home must show that there
+  is more below the hero: at least the first row's heading, any amount of its cards (5, 10, 20% all fine). Never the
+  hero alone. Add that to the test (the first row's heading is on screen without scrolling).
 - **DT3 again:** the Details hero's edge is cut off left and right; focused cards in Episodes (left) and More Like
   This (both sides) are cut off.
 - **R2, own library page (owner, firm; RULES "Library pages under the top bar"). Cause found (discussion, 19 Nov):**

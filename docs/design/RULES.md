@@ -264,6 +264,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Hero text: **no tagline anywhere** (owner, 13 Nov); description **two lines** on Home and Details; More › Full description opens a pop-up sized to the
   text, mirroring the hero: title, title line (seasons/episodes), then the text; no icon.
 - **Hero buttons sit in a fixed place at the bottom left** of the hero, whatever the text length (owner, 12 Nov).
+  **Below the Home hero (owner, 19 Nov):** at rest Home always shows something below the hero, at least the first
+  row's heading; how much of its cards is free (5–20% is fine). Never only the hero.
   **Home hero: one button, More** (owner, 19 Nov): its menu holds Details and Play / Resume, so Left / Right change
   the hero at once. Details keeps Play / Resume then More.
 - **Artwork picker by place:** Hero and rows · Library page (one backdrop for hero and rows; posters for library
