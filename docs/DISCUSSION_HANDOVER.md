@@ -4,8 +4,9 @@
 - **0.158 (part A) signed and installed.** **Part B brief written and handed to Supernova Coding to run overnight:**
   `docs/0.158/BRIEF_0158_B.md` (new look first, then the 0.157.2 review; signs 0.158.1, .2 … as it goes).
 - **Remind the owner, next session:**
-  1. **Episodes and Guest:** owner said "remind me to get back to that". Decisions so far are recorded (episodes in
-     `docs/0.158/OWNER_NOTES.md` §2, Guest in `docs/REVISIT_LATER.md` round 8); both need mock-ups.
+  1. **Guest** (and the rest of users and tags): owner said "remind me to get back to that"; decisions in
+     `docs/REVISIT_LATER.md` round 8; needs a mock-up. (Episodes and the Settings redesign were added to part B on
+     19 Nov; onboarding waits.)
   2. **0.158 part A checklist** for the owner's Shield review (include the Documentaries top bar, R2).
   3. **Diagnostics report from 0.158** (Drive › Supernova › Media › For Claude, or the inbox).
 
