@@ -1897,9 +1897,10 @@ public final class PreviewMoviePage extends ScrollView {
                 seasonInfo.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
                 seasonInfo.setPadding(dp(10), dp(5), dp(10), dp(5));
                 // Focused: the white box with black text (D5); at rest the heading sits plain on the page.
-                seasonInfo.setBackground(SupernovaStyle.focusFill(getContext(), 8));
+                seasonInfo.setBackground(SupernovaStyle.focusFill(getContext(), SupernovaStyle.SMALL_BOX_RADIUS_DP));
+                // DT4 (owner, 18 Nov 2026): the gap from a season's row to the next season's heading halved.
                 LinearLayout.LayoutParams headingSize = new LinearLayout.LayoutParams(-2, dp(44));
-                headingSize.topMargin = dp(8);
+                headingSize.topMargin = episodeRows.isEmpty() ? dp(8) : -dp(10);
                 headingSize.bottomMargin = dp(6);
                 episodes.addView(seasonInfo, headingSize);
             } else
