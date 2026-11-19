@@ -47,58 +47,60 @@ final class SettingsLayout {
         COPY.put(key, new String[] {title, description});
     }
 
-    /**
-     * The seven tabs of the 0.158 Settings page (page sheet docs/design/pages/SETTINGS.md; owner, 14 and 19 Nov
-     * 2026): Playback · Audio · Subtitles · Library · Services · System · About. Each tab shows its sections one under
-     * the other with a heading each. Category 6 is no longer a tab; About keeps category 7.
-     */
-    static final int[] TABS = {0, 1, 2, 3, 4, 5, 7};
-    static final String[] TAB_NAMES = {"Playback", "Audio", "Subtitles", "Library", "Services", "System", "About"};
-    static final String[] TAB_ICONS = {"play", "audio", "sub", "library", "streaming", "settings.gear", "info"};
-
     static {
         page(0,
-             "General", new String[] {"hide_controls_on_pause", "seek_thumbnails_enabled", "allow_3rd_party_player"},
-             "Resume", new String[] {"display_resume_box", "supernova_save_resume"},
-             "Skipping", new String[] {"supernova_segment_enabled", "supernova_segment_intro",
-                                       "supernova_segment_recap", "supernova_segment_preview",
-                                       "supernova_segment_outro", "supernova_segment_credits"},
-             "Picture", new String[] {"enable_tv_refreshrate_switch_mode", "dolby_vision_mode"});
+             "Playback", new String[] {"playback_speed", "hide_controls_on_pause", "allow_3rd_party_player",
+                                       "reset_brightness_on_start", "player_projector_mode_key"},
+             "Resume & Progress", new String[] {"display_resume_box", "supernova_save_resume", "network_bookmarks"},
+             "Skipping", new String[] {"supernova_segment_intro", "supernova_segment_recap",
+                                       "supernova_segment_preview", "supernova_segment_outro",
+                                       "supernova_segment_credits"},
+             "Video & Display", new String[] {"enable_tv_refreshrate_switch_mode", "dolby_vision_mode",
+                                              "activate_tv_switch"});
         page(1,
-             "Language", new String[] {"favAudioLang", "prefer_original_audio_track"},
-             "Sound", new String[] {"force_audio_passthrough_multiple", "player_spatialization_enabled",
-                                    "audio_decoder_choice"});
+             "Audio output & tracks", new String[] {"favAudioLang", "prefer_original_audio_track",
+                                                    "force_audio_passthrough_multiple",
+                                                    "player_spatialization_enabled"},
+             "Subtitles", new String[] {"preview_subtitles_by_default", "favSubLang", "languages_list",
+                                        "supernova_subtitle_season_prefetch", "supernova_subtitle_discovery",
+                                        "subtitles_hide_default", "subtitles_show_full_for_local_audio"},
+             "Subtitle style", new String[] {"subtitle_default_font", "subtitle_fonts_folder_uri",
+                                             "subtitle_use_margins"});
         page(2,
-             "When To Show", new String[] {"preview_subtitles_by_default", "subtitles_show_full_for_local_audio"},
-             "Languages", new String[] {"favSubLang", "languages_list"},
-             "Downloading", new String[] {"supernova_subtitle_discovery", "supernova_subtitle_season_prefetch"},
-             "OpenSubtitles", new String[] {},
-             "Default Appearance", new String[] {"subtitle_default_font", "subtitle_fonts_folder_uri",
-                                                 "subtitle_use_margins", "codepage"});
+             "Library", new String[] {"hide_watched", "sort_ignore_articles", "recreate_sort_titles_prefkey"},
+             "Library & metadata", new String[] {"enable_auto_scrap_key", "favScraperLang", "network_nfo_parse",
+                                                 "nfo_export_auto", "export_manual_prefkey",
+                                                 "pref_create_remote_thumbs",
+                                                 "scrape_from_database_key", "omdb_api_key"},
+             "Home", new String[] {"preview_home_editor", "preview_featured_recent", "preview_featured_trending",
+                                   "preview_featured_popular"},
+             "Watch history", new String[] {"supernova_track_viewing_history", "supernova_clear_history"});
         page(3,
-             "Your Library", new String[] {"sort_ignore_articles", "pref_create_remote_thumbs"},
-             "Details", new String[] {"enable_auto_scrap_key", "favScraperLang", "network_nfo_parse",
-                                      "nfo_export_auto", "export_manual_prefkey"},
-             "Home Hero", new String[] {"preview_featured_recent", "preview_featured_trending",
-                                        "preview_featured_popular"},
-             "Viewing History", new String[] {"supernova_track_viewing_history", "supernova_clear_history"});
+             "Streaming services", new String[] {"streaming_enabled", "streaming_country",
+                                                 "streaming_providers_{country}", "streaming_preferred_{country}",
+                                                 "streaming_show_all", "(JustWatch)"});
         page(4,
-             "Where To Watch", new String[] {"streaming_enabled", "streaming_country",
-                                             "streaming_providers_{country}"},
+             "Interface & theme", new String[] {"ui_lang"});
+        page(5,
+             "Service integrations", new String[] {"supernova_integration_trakt",
+                                                   "supernova_integration_opensubtitles",
+                                                   "supernova_segment_enabled"},
              "Trakt", new String[] {"trakt_signin", "trakt_live_scrobbling", "trakt_sync_resume", "trakt_getfull",
                                     "trakt_force_push", "trakt_force_pull", "trakt_wipe"},
-             "Ratings", new String[] {"omdb_api_key", "(JustWatch)"});
-        page(5,
-             "General", new String[] {"ui_lang"},
+             "OpenSubtitles", new String[] {"subtitles_credentials"});
+        page(6,
              "Backup & restore", new String[] {},
-             "Diagnostics", new String[] {"supernova_diagnostic_logging", "export_diagnostic_report",
+             "Diagnostics", new String[] {"export_diagnostic_report", "supernova_diagnostic_logging",
                                           "supernova_diagnostic_clear"},
-             "Advanced", new String[] {"player_projector_mode_key", "force_software_decoding", "dec_choice",
-                                       "parser_sync_mode", "stream_buffer_size", "stream_max_iframe_size",
-                                       "audio_interface_choice", "supernova_pcm_speed_engine",
-                                       "enable_downmix_androidtv", "enable_dynamic_audio_delay"});
+             "Advanced", new String[] {"seek_thumbnails_enabled", "force_software_decoding", "dec_choice", "parser_sync_mode",
+                                       "stream_max_iframe_size", "audio_interface_choice", "audio_decoder_choice",
+                                       "force_passthrough", "audio_speed_audiotrack", "enable_dynamic_audio_delay",
+                                       "disable_downmix", "enable_downmix_androidtv", "supernova_pcm_speed_engine",
+                                       "stream_buffer_size", "pref_smbj", "pref_smbv2", "pref_smb_resolv",
+                                       "pref_smb_disable_tcp_discovery", "pref_smb_disable_udp_discovery",
+                                       "pref_smb_disable_mdns_discovery", "pref_sshj", "codepage"});
 
-        TAB_LABELS.put("Backup & restore", "Backup");
+        TAB_LABELS.put("Playback", "General");
         TAB_LABELS.put("Resume & Progress", "Resume");
         TAB_LABELS.put("Video & Display", "Picture");
         TAB_LABELS.put("Audio output & tracks", "Audio");
@@ -164,22 +166,9 @@ final class SettingsLayout {
              "Deletes watched history Supernova sent. Your library is not affected.");
         copy("export_diagnostic_report", "Save a diagnostic report",
              "A ZIP of everything Supernova has recorded, for finding and fixing problems. Never includes passwords.");
-        copy("seek_thumbnails_enabled", "Seek previews · Experimental",
+        copy("seek_thumbnails_enabled", "Seek previews (experimental)",
              "Shows a small picture above the seek bar while you skip through a video.");
         copy("supernova_diagnostic_logging", "Diagnostic logging", "Records everything the app does in full detail.");
-        // 0.158 page sheet wording (SETTINGS.md).
-        copy("supernova_segment_enabled", "Look up skip times online",
-             "TheIntroDB and IntroDB, when the file doesn’t mark its parts.");
-        copy("display_resume_box", "When a video was started", "Ask, resume, or start over.");
-        copy("supernova_save_resume", "Remember where you stopped", "On this device and network files.");
-        copy("supernova_subtitle_season_prefetch", "Have subtitles ready",
-             "Fetched while a video prepares, and for the next two episodes.");
-        copy("sort_ignore_articles", "Ignore “The” and “A” when sorting", "Sort titles rebuild by themselves.");
-        copy("pref_create_remote_thumbs", "Make thumbnails for network videos",
-             "Pictures for network files that have no artwork.");
-        copy("supernova_pcm_speed_engine", "Sound when speed changes", "FFmpeg or Sonic.");
-        copy("enable_downmix_androidtv", "Stereo downmix", "Turns surround sound into two channels.");
-        copy("player_projector_mode_key", "Projector mode", "Flips the picture for rear projection.");
     }
 
     static boolean has(int category) {
