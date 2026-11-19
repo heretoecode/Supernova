@@ -415,6 +415,12 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.
 - Settled 12–13 Nov: Details headings (icons, no underline) and Details lines (faint row lines, no column lines).
 
+
+**Library pages under the top bar (owner, 19 Nov; firm, raised several times):** on Movies, TV Shows and every
+own library page, scrolled content runs on **behind** the top bar and blends behind its words under the bar's soft
+fade (TopNavigation's fade, approved 4 Nov, `top-bar/01`–`04`). **Never a solid band** and never content clipped
+below the bar. Movies and TV Shows (0.158.4) are the reference.
+
 ## Replaced rules (do not use)
 - Panels at 95% (13 Nov) → 99% over the speckle (§11, 19 Nov).
 - Back from the middle of a long page first jumps to the top, then to the top bar → straight to the top bar; a page

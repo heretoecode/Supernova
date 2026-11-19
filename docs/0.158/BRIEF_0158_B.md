@@ -147,6 +147,13 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   1080p render pixel for pixel and fix the one that's off.
 - **DT3 again:** the Details hero's edge is cut off left and right; focused cards in Episodes (left) and More Like
   This (both sides) are cut off.
+- **R2, own library page (owner, firm; RULES "Library pages under the top bar"):** on your own page (Documentaries)
+  scrolled posters stop under a **solid band**; on Movies and TV Shows they run on behind the bar under its fade,
+  which is right. Make the own page do exactly what Movies does. The fade itself is allowed for it
+  (`TopNavigation.setScrollOffset`: indexes 0–2 and 6), so look for what differs in the own page's own layout (a
+  container that starts below the bar, clips to its padding, or paints its own background) and whether it reports
+  its scroll offset. Prove it with renders of Movies and the own page scrolled, side by side, and a test that the
+  own page's content reaches the top of the screen. It was marked done once without a render: not again.
 - **S1:** Settings' tabs as tall as every other tab box (RULES §3). **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).
 - **FL2** (already in group 7): placeholder rows instead of "Looking in this folder…".

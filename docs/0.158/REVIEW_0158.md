@@ -74,9 +74,7 @@ The owner will do the full walk-through when part B is finished; these are thing
 - **P8. Playback Settings on 0.158.4: "9 out of 10, very nice".** A few tweaks to come with the walk-through.
 
 ### Top bar over the library pages (owner's screenshots, 0.158.4, 18:40 local; Drive › For Claude)
-- **R2 seen the other way round.** Scrolled down: on **Movies and TV Shows** the posters run right up behind the top
-  bar with only a light dimming, so the words sit on artwork (Settings over a poster, the clock over another). On
-  **Documentaries** (your own page) the posters stop cleanly under the bar on a dark band, and the words sit on the
-  plain background. Nothing in RULES or LIBRARY.md settles which is meant.
-  [Claude: Documentaries' way reads better; give it a soft edge: the bar's strip is the speckle, and posters fade out
-  over about 40 px just below it, the same on all three pages. Owner to pick.]
+- **R2, still not fixed, and the intended look is now settled (owner, 19 Nov, firmly: raised several times).**
+  **Movies and TV Shows are right:** scrolled down, the artwork runs on behind the top bar under its soft fade and
+  blends behind the words. **Your own page (Documentaries) is wrong:** the posters stop under a solid dark band.
+  No solid band on any library page. Recorded in RULES §2 and LIBRARY.md so it can't be lost again.

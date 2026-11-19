@@ -99,3 +99,7 @@ closes. Group headings centred on their line, Title Case.
 ## Never opens from a library page
 NOVA's old browse screens or hidden grid, the old Edit library / Edit page panel, the old long-press dialog, the Fix match
 side panel, Android's keyboard.
+
+## Under the top bar (owner, 19 Nov; RULES, before "Replaced rules")
+Scrolled posters run on behind the top bar and blend behind its words under the bar's soft fade, exactly as on
+Movies and TV Shows in 0.158.4. Same on your own pages. Never a solid band; nothing clipped below the bar.
