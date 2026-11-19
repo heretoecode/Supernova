@@ -246,8 +246,11 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Reception: icons only (IMDb, Rotten Tomatoes, Metacritic, TMDB, the awards trophy), no written names.
 
 ## 14. Artwork, cards and heroes
-- **Every piece of artwork has one thin white line on its edge (about 60%) with a soft inner shade** — heroes, row
-  cards, Details tab cards, the player strip, library posters, Search thumbnails (§18 v17).
+- **Every piece of artwork has one thin white line on its edge with a soft inner shade** — heroes, row cards,
+  Details tab cards, the player strip, library posters, Search thumbnails (§18 v17). **Sizes (owner, 19 Nov, judged
+  on the TV, `rows-captions/tv/01`, `02`):** the line at rest is **solid white, 1 px at 1080p** (was 1.5 px at 60%:
+  washed out); the soft shade inside it unchanged. **The focus ring is solid white, 4 px at 1080p** (was 6 px: too
+  thick).
 - Focused artwork grows and gets the solid thick white ring (section 3). **Library posters:** the poster and its two
   lines underneath are one card; the whole card grows and the ring goes round both (owner, 13 Nov).
 - **Cast and crew (owner, 14 Nov 2026; `details-background/21`):** portrait cards (2:3, like TMDB's photos) with
@@ -452,6 +455,7 @@ Panels (Playback Settings) keep their own. Details' tabs: decided at the full wa
 - Navy glass at 97% with a light outline for panels → 90% `#16181C`, no outline (5 Nov).
 - White outline as row focus; blue glow focus → filled white box (5 Nov).
 - Open tab as a grey chip; plain-underline tabs → the focus-and-path rule (12 Nov).
+- Artwork line 1.5 px at 60% → solid white 1 px; focus ring 6 px → 4 px (§14, 19 Nov).
 - Card edge 1.5 px at 28%; "focus = grows only" → 60% edge with inner shade; focus = grow + thick ring (7 and 12 Nov).
 - Space Black behind full pages → plain charcoal (7 Nov).
 - Blue values; blue open tab; dark-blue chosen value on focused rows → chips, plain white values (5 Nov).
