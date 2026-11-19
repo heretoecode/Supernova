@@ -72,6 +72,16 @@ where the owner must decide.
   - **Track list on top (PS8 confirmed):** the panel behind collapses to a short clipped strip.
   - **Panel edge (P6 confirmed):** a light outline round the panel; over video, none.
 - **PS9. Playback tab "not very structured":** after PS1–PS6, look again with a photo.
+  **Owner's photos of 0.158.x (19 Nov):** better when focused, but: rows with many choices drop them onto a second line
+  (Text size, Background opacity, Stop playing at, Still watching?, Play mode, Skip intros & credits), so the
+  Subtitles tab scrolls (only down to Background shows); "3 hours" and "Repeat all" are cut at the edge and the chosen
+  "Off" is clipped on its left; the values ("English") sit above their row's centre line on Subtitles and Audio; the
+  panel is light and see-through. **Owner: never scroll in this panel; scale down; rethink rows with many choices.**
+  Cause: the panel was built narrower than the approved 1060 px. **Proposal (`player/31-v13`):** the approved width,
+  rows about 10% tighter (62 px), every row on one line, values on the centre line; rows with long choices (Stop
+  playing at, Still watching?, Play mode) show their value with › and open their list on top (PS8 behaviour);
+  short ones stay inline; quiet headings on the Playback tab (Picture and Speed · Playing On · For This Series);
+  panel 99% (RULES §11).
 - **PS10. Panel colour** (roadmap To discuss, P6): still different from the mock-up.
 
 ## Details
