@@ -21,8 +21,9 @@ underline, this sheet wins.
   only when you are watching the show and have watched up to the episode before it (built this way: every earlier
   episode of the season watched, the new one added after your last watch). A new episode of a show you haven't
   started never appears as that episode. Trending and Popular on Trakt are separate and may show any show.
-  Open (owner to answer): may an unstarted show itself still appear from Recently added when an episode is added;
-  a new season's first episode after you finished the last season; how long ago "watching" may be.
+  Decided (owner, 19 Nov): (1) a recently added show you haven't started stays a candidate **as the show** (from
+  Recently added); (2) **a new season counts**: finish season 2 and S3 E1 is the next episode, "Next Episode · S3
+  E1"; (3) **no time limit** on "watching": a show you followed long ago still gets its next-episode hero.
 - **Changing hero (§11):** the frame, edge and buttons stay still; the next and previous artwork are loaded first, so
   there's never an empty frame; the picture cross-fades (about 450 ms) with a slight drift; text fades out and back in
   just after; focus stays on the same button; dots glide; presses during a change finish it at once; automatic changes

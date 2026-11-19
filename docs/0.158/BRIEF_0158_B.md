@@ -165,6 +165,10 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   end of `library()`, or a hierarchy-change listener on the stage. **Prove it:** a Robolectric test that the own
   page's stage is laid out from y = 0 with the inset on its `PreviewPages` (it fails today), and renders of Movies
   and the own page scrolled, side by side.
+- **H6, next episode across seasons (owner, 19 Nov; HOME.md › TV shows on the hero):** `HeroEligibility.sequential`
+  refuses episode 1 of a season. Allow it when every episode of the previous season in the library is watched and the
+  new one was added after the last watch ("Next Episode · S3 E1"). No time limit. Unstarted shows stay candidates
+  as the show. Add tests for both.
 - **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
   box; RULES "Page tabs"), not the plain row; wait for the Settings mock-up before building. **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).

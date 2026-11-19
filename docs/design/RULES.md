@@ -425,7 +425,7 @@ below the bar. Movies and TV Shows (0.158.4) are the reference.
 
 **Page tabs (owner, 19 Nov):** tabs on a full page (Files, Settings) use Files' look: the same box size as the top
 bar, a line under the tab row, the white focus box; never a plain row of words that reads as a second top bar.
-Panels (Playback Settings) keep their own. Details' tabs: to confirm.
+Panels (Playback Settings) keep their own. Details' tabs: decided at the full walk-through.
 
 ## Replaced rules (do not use)
 - Panels at 95% (13 Nov) → 99% over the speckle (§11, 19 Nov).
