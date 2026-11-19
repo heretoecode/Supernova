@@ -23,8 +23,10 @@ at 0.158 (`docs/0.158/REVIEW_0158.md`) and the page sheets (`docs/design/pages/`
   [44531272454](https://github.com/heretoecode/Supernova/actions/runs/44531272454), from green conformance run
   [44521801198](https://github.com/heretoecode/Supernova/actions/runs/44521801198) on source `ef5af36`. Artifact
   `supernova-0157-signed-qa` (`Supernova_0.158.4.apk`). Playback Settings round two, panels at 99%, FL9.
-- **0.158.5** (code 1585) — 0.158.4 plus the Settings wording, Home Hero's two new rows, DT3, the episodes feature,
-  R3 and R4. Built after 0.158.4.
+- **0.158.5** (code 1585) — not signed: a render check found Settings would not open in it (a list declared after
+  the code that fills it). Its build was cancelled and everything in it goes into 0.158.6.
+- **0.158.6** (code 1586) — 0.158.4 plus everything since: the Settings wording, Home Hero's two new rows, the episodes
+  feature, R3, R4, R5, DT1, DT3, DT5, DT6, titles, PL8, X4, FL1–FL5, FL7, FL8, FL10, FL12. Building.
 
 ## Diagnostics report
 None in `docs/INBOX.md` and no "Inbox:" issue; the brief says the owner will send a fresh report from 0.158 for the
@@ -183,7 +185,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 ## For the next session
 - Branch: `claude/0158-part-b-continued-d5u9w1` holds everything; the working branch is fast-forwarded to it only
   when a build is due (a push there starts conformance; signing accepts only the working branch).
-- On the session branch after 0.158.5, not yet built: version 0.158.6 (1586) with FL1, FL2, FL4, FL7, FL8, FL10, FL12, DT1, DT3's edges, DT5, DT6, PL8, R5, X4, FL3, FL5.
+- 0.158.6 is building from the working branch; see Signed APKs above.
 - Still to do, in the brief's order: the look sweep renders (item 4),   the Settings leftovers above, and renders of everything built this session (episodes, titles, DT1, FL1, FL2, FL4).
 
 ## Judgement calls
