@@ -174,3 +174,8 @@ decide quickly.
     leave the library at once (with an Undo notice) and come back on Turn on; its settings and files are untouched. A
     scheduled scan may still visit it while it is off (its titles stay hidden). The buttons on every Files row with
     buttons are now the one small-box size (26 dp high, 13 sp words).
+57. **Save a diagnostic report** now saves from the row: the ZIP goes to Download › Supernova on this device (no
+    Android file picker); the row's second line reads "Saving…", then "Done · saved at 23:51 in Download › Supernova
+    · never includes passwords". The sheet's "Reports folder (› Change)" is not built, so the folder is fixed for now.
+58. **Action rows** in Settings show their verb instead of ›: Save, Clear (diagnostics, viewing history), Send,
+    Fetch, Remove (Trakt), Write (.nfo files for the whole library).

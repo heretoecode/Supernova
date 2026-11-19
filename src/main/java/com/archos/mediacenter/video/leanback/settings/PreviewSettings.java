@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.archos.filecorelibrary.sftp.SftpHostTrust;
 import com.archos.mediacenter.utils.introdb.IntroSegments;
 import com.archos.mediacenter.video.BuildConfig;
-import com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
 import com.archos.mediacenter.video.leanback.PreviewFocusRecycler;
@@ -367,9 +366,9 @@ public final class PreviewSettings {
         export.setKey("export_diagnostic_report");
         export.setTitle("Save a diagnostic report");
         export.setSummary("Recent logs and device details as a ZIP, saved where you choose.");
+        // Page sheet (SETTINGS.md): Save runs in the row, "Done · saved at 23:51", no Android file picker.
         export.setOnPreferenceClickListener(p -> {
-            fragment.startActivity(new Intent(
-                fragment.requireContext(), DiagnosticExportActivity.class));
+            com.archos.mediacenter.video.diagnostics.DiagnosticReportSaver.save(fragment.requireContext());
             return true;
         });
         categories.get("Advanced").addPreference(export);

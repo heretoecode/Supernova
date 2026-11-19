@@ -161,7 +161,7 @@ faint and went from 8% to 12% white (0.158.3). Floating panels sit very close to
 
 ## Not built (plain list, before you install)
 - **Settings, still to do from the sheet:** the in-row backup flow (What to back up chips, progress and Restart now in
-  the row), the OpenSubtitles and Trakt panels redrawn, "Also translate other languages", Reports folder, "When a
+  the row), the OpenSubtitles and Trakt panels redrawn, "Also translate other languages", Reports folder (Save now writes to Download › Supernova from the row), "When a
   video was started" as three chips (Ask · Resume · Start over; the old row was NOVA's resume box for its old main
   screen and is gone from the page, judgement call 38). Backup and OpenSubtitles open their existing views from a row.
 - **Look sweep** — Files, Details, the player and Settings not yet rendered on the speckle.

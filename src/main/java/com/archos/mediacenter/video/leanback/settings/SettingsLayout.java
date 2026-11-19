@@ -37,6 +37,8 @@ final class SettingsLayout {
     private static final Map<Integer, LinkedHashMap<String, List<String>>> PAGES = new LinkedHashMap<>();
     private static final Map<String, String> TAB_LABELS = new LinkedHashMap<>();
     private static final Map<String, String[]> COPY = new LinkedHashMap<>();
+    /** Action rows show their verb as plain text (page sheet, RULES §8), not ›. */
+    private static final Map<String, String> VERBS = new LinkedHashMap<>();
     /** Declared before the static block below fills it (static fields initialise in order). */
     private static final Map<String, String[]> CHOICES = new LinkedHashMap<>();
 
@@ -224,6 +226,14 @@ final class SettingsLayout {
         copy("audio_interface_choice", "Audio interface", "How sound reaches the device.");
         copy("enable_dynamic_audio_delay", "Automatic audio delay", "Keeps sound in step with the picture.");
 
+        VERBS.put("export_diagnostic_report", "Save");
+        VERBS.put("supernova_diagnostic_clear", "Clear");
+        VERBS.put("supernova_clear_history", "Clear");
+        VERBS.put("trakt_force_push", "Send");
+        VERBS.put("trakt_force_pull", "Fetch");
+        VERBS.put("trakt_wipe", "Remove");
+        VERBS.put("export_manual_prefkey", "Write");
+
         // Choice names from the page sheet, value → name, in the sheet's order (values kept, names only).
         choices("supernova_segment_{type}", "NORMAL", "Off", "PROMPT", "Show button", "AUTO", "Skip", "SMART",
                 "Skip when binge-watching");
@@ -279,6 +289,11 @@ final class SettingsLayout {
     static String label(String section) {
         String label = TAB_LABELS.get(section);
         return label == null ? section : label;
+    }
+
+    /** The verb an action row shows (Save, Clear, Send …), or null. */
+    static String verb(String key) {
+        return VERBS.get(key);
     }
 
     /** {title, explanation} for a row, or null to use the setting's own title and summary. */

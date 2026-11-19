@@ -894,8 +894,15 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
                 value.setText(((MultiSelectListPreference)preference).getValues().size() + " selected");
                 spoken = value.getText().toString();
             } else {
-                value.setText("›");
-                spoken = "";
+                String verb = SettingsLayout.verb(entry.key);
+                value.setText(verb != null ? verb : "›");
+                spoken = verb != null ? verb : "";
+            }
+            if ("export_diagnostic_report".equals(entry.key)) {
+                String status = prefs.getString(
+                    com.archos.mediacenter.video.diagnostics.DiagnosticReportSaver.STATUS, "");
+                if (!status.isEmpty())
+                    help = status;
             }
             description.setText(help);
             description.setVisibility(help.isEmpty() ? GONE : VISIBLE);
