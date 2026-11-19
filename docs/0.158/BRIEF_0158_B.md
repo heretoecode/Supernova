@@ -179,6 +179,10 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   evenly (LIBRARY.md, `rows-captions/08` After).
   One shared view for the badge, used everywhere; a test that no card in the app draws a progress bar. The player's
   seek bar and task progress in rows stay.
+- **Artwork line and focus ring (owner, 19 Nov, judged on the TV; RULES §14):** the line at rest solid white, 1 px at
+  1080p (`ArtworkEdge`: 0.5 dp at full white, was 0.75 dp at 60%); the soft shade unchanged; **every** artwork focus
+  ring solid white 4 px (2 dp, was 3 dp / 6 px), one shared value for posters, row cards, the player's rows and
+  anything else with the ring.
 - **S1 (owner, 19 Nov):** Settings' tabs take **Files' tab look** (same size, a line under the tab row, white focus
   box; RULES "Page tabs"), not the plain row; wait for the Settings mock-up before building. **S3:** scroll arrows on Settings tabs that
   scroll (RULES §16).

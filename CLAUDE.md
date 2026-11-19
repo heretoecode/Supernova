@@ -101,9 +101,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - In choice rows the chosen option sits in a small chip; single values are plain white. No blue for values.
   - **Artwork edge (owner, 7 Nov 2026; replaces the 28% edge/white ring):** every piece of artwork — both heroes
     (Home and Details), every row card (Home, Details tabs: Seasons & Episodes, Extras, More Like This), the player's
-    Chapters/Episodes strip and library-page posters — has one thin white line exactly on its edge (about 60%) with a
+    Chapters/Episodes strip and library-page posters — has one thin white line exactly on its edge (solid white, 1 px at 1080p; 19 Nov) with a
     soft inner shade just inside it, so the edge shows on light and dark artwork alike. Every item has the edge all the
-    time. **Focused artwork grows and gets a solid, thick white ring** (owner, 12 Nov 2026), with space around it so
+    time. **Focused artwork grows and gets a solid white ring, 4 px at 1080p** (owner, 12 Nov 2026; 4 px from 19 Nov), with space around it so
     the grown card never crowds a line or heading. Hero cards show focus on their first button instead. Mock-ups
     `details-background/07-v17-top`, `tab-style/15-v3`. No blue caption bars.
   - **Focus and path (owner, 12 Nov 2026), everywhere incl. top bar and tabs:** white box with black text and icon =
