@@ -27,19 +27,19 @@ const FILES = [[S.run, 'Running time'], [S.size, 'Size']];
 
 const SIZED = [
   ['Mountain Light', '2023 · 1 h 47 min', '24.6 GB', null],
-  ['Frozen Frontier', '3 seasons · 18 episodes', '3.1 GB per episode', null],
-  ['Deep Blue Planet', 'S1 E3 · 4 of 6 left', '2.5 GB per episode', 0.4],
+  ['Frozen Frontier', '3 seasons · 18 episodes', '3.1 GB each · 55.8 GB', null],
+  ['Deep Blue Planet', 'S1 E3 · 4 of 6 left', '2.5 GB each · 15.0 GB', 0.4],
   ['Inside the Hive', '2023 · 1 h 24 min', '2.4 GB', 'w'],
-  ['The Lost Rivers', '4 episodes', '2.2 GB per episode', null],
+  ['The Lost Rivers', '4 episodes', '2.2 GB each · 8.8 GB', null],
   ['City of Birds', '2019 · 1 h 28 min', '2.1 GB', null],
-  ['Tidelands', 'S1 E2 · 31 of 32 left', '1.4 GB per episode', 0.1],
-  ['Wild Isles of the North', '5 episodes', '1.2 GB per episode', 'w'],
+  ['Tidelands', 'S1 E2 · 31 of 32 left', '1.4 GB each · 44.8 GB', 0.1],
+  ['Wild Isles of the North', '5 episodes', '1.2 GB each · 6.0 GB', 'w'],
   ['Desert Bloom', '2020 · 1 h 22 min', '1.1 GB', null],
-  ['The Green Valley', '5 episodes', '1.0 GB per episode', null],
+  ['The Green Valley', '5 episodes', '1.0 GB each · 5.0 GB', null],
   ['The Salt Road', '42 min left', '0.9 GB', 0.6],
-  ['Rails Across Asia', '3 episodes', '0.8 GB per episode', null],
+  ['Rails Across Asia', '3 episodes', '0.8 GB each · 2.4 GB', null],
   ['The Coral Clock', '2019 · 1 h 41 min', '0.7 GB', 'w'],
-  ['Night Shift Ocean', '15 episodes', '0.5 GB per episode', null],
+  ['Night Shift Ocean', '15 episodes', '0.5 GB each · 7.5 GB', null],
 ];
 
 const css = `${extraCss}
@@ -52,8 +52,8 @@ function frame() {
   const groups = group('General', GENERAL) + group('Trakt', TRAKT) + group('Series', SERIES)
     + group('Files', FILES, 'Size', 'Size');
   const bar = toolbar('Documentaries', 'Size', 'Largest first').replace('width:210px', 'width:226px');
-  return bar + grid(SIZED) + `<div class="menu sortm">${groups}</div>`
-    + '<div class="cap2">14 · Sort, final: one Size (films by file, shows per episode)</div>';
+  return bar + grid(SIZED)
+    + '<div class="cap2">15 · Size: a show gives each episode, then its total</div>';
 }
 
-render([['48-v17-sort-final', frame]], css);
+render([['49-v17-size-caption', frame]], css);

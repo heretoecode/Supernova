@@ -273,8 +273,10 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   Number of seasons = **numbered list** (B). Number of episodes keeps the screen with a play mark.
 - **Resolution removed too; one Size (owner, 20 Nov; `tv/48`):** File size and Size per episode become **one sort**:
   a film by its file size, a show by its size per episode (a show's total is dropped: it only grows with the episode
-  count). Its name follows the page like Release date / Air date: Movies "File size", TV Shows "Size per episode",
-  mixed pages "Size". Caption line 3 "24.6 GB" / "2.5 GB per episode". Order words Largest / Smallest first.
+  count). A show's figure is the **average**: the episodes' total size divided by the episodes the library holds.
+  **Caption line 3 (proposed `tv/49`):** a film "24.6 GB"; a show "**2.2 GB each · 8.8 GB**" (the sorted figure
+  first, then the total; fits the caption at 1080p where "2.2 GB per episode (8.8 GB)" would not). If the owner
+  approves, the sort is called **"Size"** on every page. Order words Largest / Smallest first.
 - **Final Sort (proposed `tv/48`, awaiting the owner's nod):** General (Date added · Title · Release date) · Trakt
   (Trending · Popular) · Series (Last episode added · Number of seasons · Number of episodes) · Files (Running time ·
   Size). Ten at most; never scrolls. Last episode added's icon: a screen with a plus.
