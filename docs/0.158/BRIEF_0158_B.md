@@ -187,6 +187,9 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   menu and side panel keeps `#16181C` at 99% and gains a white outline at 70% (about 1.5 px at 1080p) and a dark
   shadow spreading outwards (black about 85%, about 48 px soft, 18 px down). One shared look, so all change together.
   Playback Settings over video: leave as it is until the player walk-through.
+- **Poster caption colour and pie rim (owner, 19 Nov, judged on the TV; `rows-captions/tv/10`):** the caption box under
+  library posters solid `#141619` (`PreviewCardPresenter.POSTER_CAPTION_FILL`, was `#23262C`); the progress badge's white
+  rim 3 px (the black pie 42 px across inside the 48 px circle).
 - **Library toolbar sizes (owner, 19 Nov, judged on the TV; LIBRARY.md › Toolbar; `rows-captions/tv/08`):** buttons in
   the one 52 px small-box shape (today the toolbar forces about 88 px: `PreviewToolbar` min height 44 dp and 12 / 6 dp
   padding override `SupernovaStyle`); the line white at 35%, about 2 px, thinning to a hair at both margins; 24 px

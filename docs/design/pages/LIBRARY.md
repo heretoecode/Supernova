@@ -47,7 +47,8 @@ focused top-row poster and its ring still clear it). In list view the column hea
 
 ## Grid (default)
 - One portrait poster size on every library page, seven a row, artwork edge (RULES §14).
-- **Poster and caption are one card** (`27`, `31`): charcoal-grey caption box under the artwork. Line 1 the title (the
+- **Poster and caption are one card** (`27`, `31`): caption box under the artwork in **`#141619`, solid** (owner, 19 Nov,
+  judged on the TV, `rows-captions/tv/10` E; was `#23262C`). Line 1 the title (the
   only bright line); line 2 always a TV show's size or progress: not started "3 seasons · 30 episodes" (one season: "10
   episodes"), started "S2 E3 · 18 of 30 left"; films started "42 min left"; **line 3 follows the sort** (e.g. "1.0 GB
   per episode"). **No progress bar:** progress is the corner badge (RULES §14c: 48 px white circle, black pie from

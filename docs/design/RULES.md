@@ -284,7 +284,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   Episodes rows, Search results, and anything else that shows a title, film or episode.
 - **The badge** (`rows-captions/06-pie-badge.png` B, `04-ring-sizes.png` medium): a white circle **48 px at 1080p**,
   inset about 8 px from the corner, soft shadow. Inside, black fills like a clock **from 12 o'clock clockwise**
-  (a pie), inside a thin white rim so it never vanishes on dark artwork. **Watched:** the same circle with a black
+  (a pie), inside a **white rim of 3 px** (owner, 19 Nov, judged on the TV, `rows-captions/tv/10`; the black pie is
+  42 px across) so it never vanishes on dark artwork. **Watched:** the same circle with a black
   tick. **Not started:** no badge. A show's badge shows episodes watched out of all; a film or episode, time watched.
 - **Row cards (Home, Details, player): design A** (`rows-captions/02-rows-A-B-C.png` frame 2): 16:9, 400 × 225
   (focused 440 × 248); title and one line **over the bottom of the artwork** on a dark fade; no caption box under the
