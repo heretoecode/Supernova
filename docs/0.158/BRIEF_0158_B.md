@@ -204,7 +204,11 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   in**, set to `sans-serif-light`, an unscaled 19 sp and `setIncludeFontPadding(true)`, so it is lighter, a different
   size and not centred on its digits. The other pages have no Overlay, so they keep the right clock. Fix: Overlay
   keeps `TopNavigation`'s `BarClock` (one font, weight and size for every word and the clock, RULES §2) and only moves
-  the scan progress; test that every page's clock has the bar's typeface and size.
+  the scan progress; test that every page's clock has the bar's typeface and size. **Better (owner, 20 Nov): remove
+  NOVA's old Overlay altogether** (`overlay/Overlay.java`, its `leanback_overlay` layout, `Clock`,
+  `ScannerAndScraperProgress` use in `MainFragment`): its only visible effect today is the wrong clock, because the top
+  bar's own scan signal replaced its progress pill (`TopNavigation` keeps `scanStatus` GONE). Check the scan ring beside
+  Files still shows scans after it goes.
 - **Top bar spacing (owner, 20 Nov):** the gap from Settings to the clock looks bigger than Files → Search → Settings.
   The clock sits right-aligned in a `status` box at least 64 dp wide, wider than "18:40", so spare room lands on its
   left. Make the space between the words Files, Search, Settings and the clock's digits equal (word to word, as the

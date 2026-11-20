@@ -14,6 +14,11 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### To discuss (owner, 16 Nov)
 
+- **NOVA clean-out (owner asked, 20 Nov):** remove NOVA's leftover screens and code batch by batch: classic movie and
+  anime grids, collection routes, the `try_new_ui` switch, the old status overlay (first, in part B's next round), each
+  batch proven unreachable (whole-app no-old-screens test, renders, a Shield check) before it goes. Its own version, like
+  the engine catch-up?
+
 - [Moved to 0.158 part B, 19 Nov] Episodes (answered 18 Nov): OK on an episode card plays it; long-press opens the same menu as More;
   deleting one offers the earlier episodes of the season: only this one · all · choose (with Select all)
 - Network statistics: split by source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library
@@ -69,7 +74,10 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### Old NOVA out
 
-- Hidden grid and hidden screens
+- Hidden grid and hidden screens — **not done** (checked 20 Nov): Codex's report found nothing provably safe to
+  remove in one go (49 files still check NOVA's `try_new_ui` switch; classic grids, anime grids, collection routes
+  UNSURE). Only Issues Digest, picture in picture and the old file-access screens went. `NoOldScreensTest` stops
+  redesigned pages opening old screens. To schedule: a clean-out done batch by batch (see To discuss).
 - Picture in picture, Issue digest
 - All files access once (no Android screens)
 
