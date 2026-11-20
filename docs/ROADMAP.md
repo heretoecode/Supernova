@@ -10,6 +10,11 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 ### Ready (designed and approved)
 
 These wait until the polish phase is done (owner, 20 Nov): improving what exists comes first.
+**Before any of them is built (owner, 20 Nov):** redraw its mock-ups with the rules as they are by then (button size,
+background, menu outline and shadow, separators, captions, progress pie…), the owner checks them, and only then write
+its page sheet (none exists yet: Onboarding's design is in RULES §23 and the 0.157 notes, the Trakt row's in
+`docs/0.158/OWNER_NOTES.md` §4, Media Transfers' in `docs/0.158/MEDIA_TRANSFERS.md`). No redesign, just brought up to
+date, so nothing is built on an old look.
 
 - Onboarding (on Home, Start fresh / Restore, smart steps; designed 14 Nov): no version yet (owner, 20 Nov)
 - A Trakt list as a Home row: only what streams on your services, logo on every card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)
