@@ -89,11 +89,10 @@ closes. Group headings centred on their line, Title Case.
   Resolution · HDR · Sound · Video codec that the file has), under it file name · where it lives · size; the app's tick on
   the right; all ticked to start. Total under the list ("Deletes **2 files · 72.3 GB**."); the button follows the ticks
   ("Delete 2 files").
-- **A show (Delete all episode files):** "Tick the episodes to delete. Every video file in the show's folders is listed,
-  including any not yet in your library." Select all switch; episodes grouped by season, each "S1 E1 · Episode name" over
+- **A show (Delete all episode files):** "Tick the episodes to delete, including any not yet in your library." (one line) Select all switch; episodes grouped by season, each "S1 E1 · Episode name" over
   the facts line · size; files the library doesn't know carry a **Not in library** pill centred between the text and the
-  tick; **four episodes visible** with both scroll arrows in the right margin (up dimmed at the top). Total: "Deletes **8
-  files · 19.2 GB**. An episode's own subtitle files go with it; anything else in the folders stays." Pictures, PDFs and
+  tick; **four episodes visible** with both scroll arrows in the right margin (up dimmed at the top). Total on its own line: "Deletes **8
+  files · 19.2 GB**."; under it: "An episode's own subtitle files go with it; anything else in the folders stays." Pictures, PDFs and
   other non-video files are never listed or deleted.
 - **Clean Up** (a heading centred on a thin line, on every delete warning): Also clear viewing history in Supernova (the
   official mark, monochrome; off) · Also remove it from your Trakt history (Trakt's official one-colour logo; off) ·
