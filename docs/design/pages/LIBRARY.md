@@ -72,12 +72,34 @@ closes. Group headings centred on their line, Title Case.
 - Delete page (own pages only) at the foot, apart by a plain line, no heading; real deletion uses the delete warning.
 - Movies and TV Shows hide rows that don't apply (no Page name, no Includes, no Delete page).
 
-## Long-press (or Menu) on a poster — beside the poster (`30`)
-- Movie: Play (or Resume) · Mark as watched · Fix match · Remove from library · Delete file.
-- TV show: Resume S1 E2 · Play from the start · Mark show as watched · Fix match · Remove from library · Delete all
-  episode files.
-- Icons each, no two alike; Playback / Library / Files & Media groups; no "More info" (OK already opens Details); no
-  Restart on an unstarted title.
+## Long-press (or Menu) on a poster — beside the poster (`30`; reviewed by the owner 19–20 Nov, mock-ups `rows-captions/tv/11`, `12`)
+- Movie: **Playback** Play (started: Resume · 42 min left, then Play from the start) · **Library** Mark as watched · Fix
+  match · Remove from library · **Files & Media** Delete file.
+- TV show: **Playback** Resume S1 E2 · Play from the start (not started: Play) · **Library** Mark show as watched · Fix
+  match · Remove from library · **Files & Media** Delete all episode files.
+- Icons each, no two alike; group headings centred on a thin line; no "More info" (OK already opens Details); no Play
+  from the start on an unstarted title. Times read "2 h 22 min left", never "142 min". The menu is as wide as its longest
+  line plus the standard padding.
+
+## Delete warnings (owner, 20 Nov; mock-ups `rows-captions/tv/16a`, `16`, `17`, `18`; RULES §7b)
+- **One file:** "Delete <title>?"; one line "Deletes **<file name>** (2160p · 58.2 GB) from **<server or drive>**.";
+  then **Clean Up**; buttons **Keep file** (focused when it opens) · **Delete file**.
+- **Several versions of a film:** "You have **2 versions**. Tick the ones to delete." **Select all** as a switch (on =
+  all ticked; unticking one turns it off), then one row per version: the facts line (first three of Edition ·
+  Resolution · HDR · Sound · Video codec that the file has), under it file name · where it lives · size; the app's tick on
+  the right; all ticked to start. Total under the list ("Deletes **2 files · 72.3 GB**."); the button follows the ticks
+  ("Delete 2 files").
+- **A show (Delete all episode files):** "Tick the episodes to delete. Every video file in the show's folders is listed,
+  including any not yet in your library." Select all switch; episodes grouped by season, each "S1 E1 · Episode name" over
+  the facts line · size; files the library doesn't know carry a **Not in library** pill centred between the text and the
+  tick; **four episodes visible** with both scroll arrows in the right margin (up dimmed at the top). Total: "Deletes **8
+  files · 19.2 GB**. An episode's own subtitle files go with it; anything else in the folders stays." Pictures, PDFs and
+  other non-video files are never listed or deleted.
+- **Clean Up** (a heading centred on a thin line, on every delete warning): Also clear viewing history in Supernova (the
+  official mark, monochrome; off) · Also remove it from your Trakt history (Trakt's official one-colour logo; off) ·
+  Delete the folder if it's left empty (folder icon; **on**; the folder goes only if nothing at all is left in it).
+- **"This can't be undone."** appears **only while Delete is focused**, beside the button, in white, with a full stop
+  (owner, 20 Nov: no exclamation mark). Left-aligned throughout (RULES §7b).
 
 ## Empty pages (`34`, RULES §23)
 **Reviewed by the owner, 19 Nov** (`34` with today's top bar, speckle and 52 px button; wording below replaces `34`'s):

@@ -148,6 +148,13 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   folder for Movies"), one breadcrumb shows the location; "Current" marks the folder in use; the focused folder offers
   Use this folder · Open; New folder at the bottom (§28).
 - **Warnings:** left-aligned (heading, name, text, options, buttons); the safe choice has focus first ("Keep file").
+  **Delete warnings (owner, 20 Nov; LIBRARY.md › Delete warnings):** "This can't be undone." shows only while the
+  Delete button is focused, beside it, with a full stop; options sit under a **Clean Up** heading (history in
+  Supernova, Trakt history, delete the folder if it's left empty: on); with more than one file, a ticked list (ticks
+  on the right, a **Select all** switch) and a running total; the Delete button names the count.
+- **Technical facts line (owner, 20 Nov):** wherever files are told apart (delete, choose a version, Files), show the
+  first three a file has of **Edition · Resolution · HDR · Sound · Video codec**; a missing one lets the next move up.
+  Size goes on the line below with the file name and where it lives.
 - **Offer real options, not just yes/no** (owner, 12 Nov): e.g. Delete has switches for Supernova history and Trakt
   history, off by default.
 - **Badges and counts agree:** a tab's badge, its summary fact and its rows use the same number and words (§28).

@@ -104,3 +104,6 @@ The owner will do the full walk-through when part B is finished; these are thing
   plus a dark shadow** (RULES §11).
 - **L3 / L4 decided (owner, 19 Nov, on the TV):** 52 px boxes, 24 px either side of the line, line white at 35%
   thinning at the ends (LIBRARY.md).
+- **L6. Long-press menu and delete warnings: approved (owner, 20 Nov)** with every change in LIBRARY.md (versions list,
+  episode list with Not in library, Clean Up, folder switch, warning only beside a focused Delete, no exclamation mark,
+  four episodes visible).

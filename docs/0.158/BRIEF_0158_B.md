@@ -187,6 +187,12 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   menu and side panel keeps `#16181C` at 99% and gains a white outline at 70% (about 1.5 px at 1080p) and a dark
   shadow spreading outwards (black about 85%, about 48 px soft, 18 px down). One shared look, so all change together.
   Playback Settings over video: leave as it is until the player walk-through.
+- **Long-press menu and delete warnings (owner, 20 Nov; LIBRARY.md › Long-press, Delete warnings; RULES §7b;
+  mock-ups `rows-captions/tv/11`–`18`):** build the warnings exactly as the sheet says, for Delete file, versions of a
+  film and Delete all episode files: Keep focused first; "This can't be undone." only beside a focused Delete; the
+  ticked list with a Select all switch, facts line, Not in library pill, four rows visible with scroll arrows; Clean Up
+  with the three switches (folder switch on by default and only removing an empty folder); totals; the button names
+  the count. This replaces D1's "one notice" wording: the list is how nothing gets left behind. Times as "2 h 22 min".
 - **Empty library pages (owner, 19 Nov; LIBRARY.md › Empty pages):** "No movies yet" (never "films"), "Add a folder,
   a drive or a network share and your movies will appear here." (TV shows likewise); while the first scan runs, the
   shared spinning loading ring, animated as on Preparing playback, **no grey circle behind it**, and "The first ones
