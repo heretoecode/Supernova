@@ -59,6 +59,17 @@ body{background:#111215;font-family:Roboto,Inter,Arial,sans-serif;width:1920px}
 .tot{color:#c9d3e6;font-size:21px;margin-top:16px}
 .tot b{color:#fff;font-weight:500}
 .arrow{position:absolute;right:-30px;bottom:18px;color:#fff;font-size:24px}
+.r .rt{margin-left:auto;color:#fff;font-size:20px;white-space:nowrap}
+.r .body{flex:1;min-width:0}
+.r .row1{display:flex;align-items:center}
+.r .row1 .pmid{flex:1;display:flex;justify-content:center}
+.tr{width:30px;flex:0 0 30px;text-align:right;font-size:26px;color:#fff}
+.r.on .tr{color:#000}
+.sel2{display:flex;align-items:center;height:52px;padding:0 14px;color:#fff;font-size:22px}
+.sel2 .tr{margin-left:auto}
+.mark{width:28px;height:28px;flex:0 0 28px}
+.bd .warn{display:block;color:#fff;font-weight:500;margin-top:6px}
+.sw i.on{background:#fff}.sw i.on:after{left:26px;background:#111215}
 </style></head><body>
 <div class="screen" id="e"></div><div class="screen" id="f"></div><div class="screen" id="g"></div>
 <script>
@@ -81,19 +92,19 @@ const TV=[["The Harbour","2 seasons · 16 episodes","Added 16 Nov 2026",null],["
 const movMenu=[["Playback",[["▷","Resume · 42 min left",true],["↺","Play from the start"]]],["Library",[["◎","Mark as watched"],["⌕","Fix match"],["⊟","Remove from library"]]],["Files & Media",[["🗑","Delete file"]]]];
 const tvMenu=[["Playback",[["▷","Resume S1 E4",true],["↺","Play from the start"]]],["Library",[["◎","Mark show as watched"],["⌕","Fix match"],["⊟","Remove from library"]]],["Files & Media",[["🗑","Delete all episode files"]]]];
 
-const SW='<div class="sw">⟲ Also clear viewing history in Supernova<i></i></div><div class="sw" style="margin-top:0">◎ Also remove it from your Trakt history<i></i></div>';
-document.getElementById('e').innerHTML=page("Movies",MOV,1)+`<div class="scrim"></div><div class="dialog"><div class="ti">🗑 Delete Golden Mile?</div><div class="bd">Deletes <b>Golden Mile (2025).mkv</b> · 2160p · 58.2 GB from <b>Media server</b>. This can't be undone.</div>${SW}<div class="bt"><span class="f">Keep file</span><span>Delete file</span></div></div><div class="cap2">5 · One file: the warning, with its two options (both off)</div><div class="border"></div>`;
+const SW='<div class="sw"><svg class="mark" viewBox="0 0 28 28"><path d="M14 4a10 10 0 1 1-9.3 6.3" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M14 9a5 5 0 1 1-4.6 3" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg> Also clear viewing history in Supernova<i></i></div><div class="sw" style="margin-top:0"><svg class="mark" viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M8.5 14.5l4 4 7.5-9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Also remove it from your Trakt history<i></i></div>';
+document.getElementById('e').innerHTML=page("Movies",MOV,1)+`<div class="scrim"></div><div class="dialog" style="width:940px"><div class="ti">🗑 Delete Golden Mile?</div><div class="bd">Deletes <b>Golden Mile (2025).mkv</b> (2160p · 58.2 GB) from <b>Media server</b>.<span class="warn">This can't be undone.</span></div>${SW}<div class="bt"><span class="f">Keep file</span><span>Delete file</span></div></div><div class="cap2">5 · One file: the warning, with its two options (both off)</div><div class="border"></div>`;
 document.getElementById('f').innerHTML=page("Movies",MOV,1)+`<div class="scrim"></div><div class="dialog tall"><div class="ti">🗑 Delete Golden Mile?</div><div class="bd">You have <b>2 versions</b>. Tick the ones to delete.</div>
-<div class="dl"><div class="sel"><span class="tk">✓</span>Select all</div>
-<div class="r on"><span class="tk">✓</span><div><div class="nm">2160p · HDR10 · Dolby Atmos</div><div class="sb">Golden Mile (2025) 2160p.mkv · Media server</div></div><div class="rt">58.2 GB</div></div>
-<div class="r"><span class="tk">✓</span><div><div class="nm">1080p · 5.1</div><div class="sb">Golden Mile (2025) 1080p.mp4 · This device › Backup drive 1</div></div><div class="rt">14.1 GB</div></div></div>
-${SW}<div class="tot">Deletes <b>2 files · 72.3 GB</b>. This can't be undone.</div><div class="bt"><span class="f">Keep files</span><span>Delete 2 files</span></div></div><div class="cap2">6 · Several versions of one film: tick which to delete</div><div class="border"></div>`;
-let eps='';for(let i=1;i<=4;i++)eps+=`<div class="r${i==1?' on':''}"><span class="tk">✓</span><div><div class="nm">S1 E${i} · Episode ${i}</div><div class="sb">1080p · 5.1</div></div><div class="rt">2.${i} GB</div></div>`;
-document.getElementById('g').innerHTML=page("TV Shows",TV,1)+`<div class="scrim"></div><div class="dialog tall" style="top:50%"><div class="ti">🗑 Delete Greenwood?</div><div class="bd">Tick the episodes to delete. Everything in the show's folders is listed, even files not yet in your library.</div>
-<div class="dl"><div class="sel"><span class="tk">✓</span>Select all</div><div class="gh">▤ Season 1</div>${eps}
-<div class="r"><span class="tk">✓</span><div><div class="nm">S1 E5 · Episode 5<span class="pill">Not in library</span></div><div class="sb">1080p · 5.1</div></div><div class="rt">2.4 GB</div></div>
+<div class="dl"><div class="sel2">Select all<span class="tr">✓</span></div>
+<div class="r on"><div class="body"><div class="nm">2160p · HDR10 · Dolby Atmos</div><div class="sb">Golden Mile (2025) 2160p.mkv · Media server · 58.2 GB</div></div><span class="tr">✓</span></div>
+<div class="r"><div class="body"><div class="nm">1080p · 5.1 · HEVC</div><div class="sb">Golden Mile (2025) 1080p.mp4 · This device › Backup drive 1 · 14.1 GB</div></div><span class="tr">✓</span></div></div>
+${SW}<div class="tot">Deletes <b>2 files · 72.3 GB</b>.<br><span style="color:#fff;font-weight:500">This can't be undone.</span></div><div class="bt"><span class="f">Keep files</span><span>Delete 2 files</span></div></div><div class="cap2">6 · Several versions of one film: tick which to delete</div><div class="border"></div>`;
+let eps='';for(let i=1;i<=4;i++)eps+=`<div class="r${i==1?' on':''}"><div class="body"><div class="nm">S1 E${i} · Episode ${i}</div><div class="sb">1080p · 5.1 · HEVC · 2.${i} GB</div></div><span class="tr">✓</span></div>`;
+document.getElementById('g').innerHTML=page("TV Shows",TV,1)+`<div class="scrim"></div><div class="dialog tall" style="top:50%;padding-top:30px;padding-bottom:28px"><div class="ti">🗑 Delete Greenwood?</div><div class="bd">Tick the episodes to delete. Every video file in the show's folders is listed, including any not yet in your library.</div>
+<div class="dl"><div class="sel2">Select all<span class="tr">✓</span></div><div class="gh">▤ Season 1</div>${eps}
+<div class="r"><div class="body" style="display:flex;align-items:center"><div><div class="nm">S1 E5 · Episode 5</div><div class="sb">1080p · 5.1 · HEVC · 2.4 GB</div></div><div style="flex:1;display:flex;justify-content:center"><span class="pill" style="margin:0">Not in library</span></div></div><span class="tr">✓</span></div>
 <div class="arrow">⌄</div></div>
-${SW}<div class="tot">Deletes <b>8 files · 19.2 GB</b>, with their subtitles. The empty folder goes too. This can't be undone.</div><div class="bt"><span class="f">Keep files</span><span>Delete 8 files</span></div></div><div class="cap2">7 · A show: every episode file, by season, all ticked; untick any to keep</div><div class="border"></div>`;
+${SW}<div class="sw" style="margin-top:0">▢ Delete the show's folders if they're left empty<i class="on"></i></div><div class="tot">Deletes <b>8 files · 19.2 GB</b>. An episode's own subtitle files go with it; anything else in the folders stays.<br><span style="color:#fff;font-weight:500">This can't be undone.</span></div><div class="bt"><span class="f">Keep files</span><span>Delete 8 files</span></div></div><div class="cap2">7 · A show: every episode file, by season, all ticked; untick any to keep</div><div class="border"></div>`;
 function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 document.querySelectorAll('.screen').forEach(sc=>{const cv=document.createElement('canvas');cv.width=1920;cv.height=1080;sc.prepend(cv);
  const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;g.fillStyle='#111215';g.fillRect(0,0,1920,1080);for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;g.fillStyle=`rgba(255,255,255,${a})`;g.fillRect(x,y,1,1)}});
