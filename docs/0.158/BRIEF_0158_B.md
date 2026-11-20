@@ -257,11 +257,22 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 
 ### Library toolbar review: Sort (owner, 20 Nov; mock-ups `library-pages/tv/44`–`46`; LIBRARY.md › Sort)
 - **Group order: General · Trakt · Series · Files** (Files last; Series only on pages holding TV shows).
-- **Removed:** Container, Path, Bitrate, Codec, HDR, Audio (owner). Date modified: waiting for the owner (for a show
-  it is the newest file's date on disk, not when an episode arrived; Date added already uses the newest episode's
-  arrival, `PreviewLibraryLoader`: `newest = max(e.added)`).
+- **Removed:** Container, Path, Bitrate, Codec, HDR, Audio, Date modified (owner, 20 Nov).
+- **Two dates (owner, 20 Nov):**
+  - **Date added** = when the title first came into the library: a film's file; a show's **first** episode. Newest
+    first puts the newest arrival top left and the title you've had longest bottom right. **Change:**
+    `PreviewLibraryLoader` gives a show the newest episode's date (`newest = max(e.added)`); Date added must use the
+    earliest (`min`). Caption line 3: "Added 3 Dec 2025".
+  - **Last episode added** (Series group; shows only, hidden on Movies) = when a show already in the library last
+    gained an episode: the newest episode's date (today's `max`). Caption line 3: "New episode 18 Nov 2026". On mixed
+    pages films fall back to their Date added. Order words Newest first / Oldest first.
+  - Home's Recently Added row keeps using the newest arrival (a new episode lifts its show there); unchanged.
 - **Reworded (owner, 20 Nov):** Seasons → **Number of seasons**, Episodes → **Number of episodes** (how many the
-  library holds). Icons for Date added, Title and Number of seasons: choices in `tv/47`, waiting for the owner.
+  library holds).
+- **Icons (owner, 20 Nov; `tv/47`):** Date added = **an arrow into a tray** (A); Title = **A–Z with an arrow** (B);
+  Number of seasons = **numbered list** (B). Number of episodes keeps the screen with a play mark.
+- **Still open:** with Last episode added the own page has 12 sorts, one more than fits without scrolling; the owner
+  picks what goes (or tighter rows). Build nothing in Sort until settled.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
