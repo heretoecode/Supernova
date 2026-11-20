@@ -330,13 +330,13 @@ function frame6() {
 }
 
 function speckle() {
-  return `<script>
-  function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);
+  return `<script>{
+  const rng=function(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);
     t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   const sc=document.querySelector('.screen');const cv=document.createElement('canvas');cv.width=1920;cv.height=1080;
   sc.prepend(cv);const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;g.fillStyle='#111215';
   g.fillRect(0,0,1920,1080);for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;
-  g.fillStyle='rgba(255,255,255,'+a+')';g.fillRect(x,y,1,1)}</script>`;
+  g.fillStyle='rgba(255,255,255,'+a+')';g.fillRect(x,y,1,1)}}</script>`;
 }
 
 const FRAMES = [

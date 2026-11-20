@@ -287,6 +287,15 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   (Trending · Popular) · Series (Last episode added · Number of seasons · Number of episodes) · Files (Running time ·
   Size). Ten at most; never scrolls. Last episode added's icon: a screen with a plus.
 
+### Library toolbar review: list view (owner, 20 Nov; mock-ups `library-pages/tv/51`–`54`)
+- Approved: the progress pie / watched tick at the right edge of the Title column (same badges as the posters).
+- **Proposed, waiting for the owner:** columns named for what they hold, one figure each: **Average running time** ·
+  **Total running time** · **Average size** · **Total size** (films: their own length and file in both; shows: per
+  episode and all episodes). Defaults Average running time, Average size, Total size. Row lines: 8% today (lost in
+  the speckle); choices 14% square, 14% fading, 20% fading (`tv/52`–`54`), never as strong as the toolbar line.
+- **Scroll arrows** in the right margin on library pages, grid and list (RULES §16): up faint at the top, down at the
+  foot; check they are built.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

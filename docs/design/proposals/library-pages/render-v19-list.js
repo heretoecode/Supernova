@@ -18,22 +18,21 @@ const ART = [['#7a3b2e', '#26120d'], ['#2f5c4a', '#0e1d17'], ['#5a4a7a', '#1a142
   ['#2e4f78', '#0d1726'], ['#6d2f52', '#1f0c18'], ['#3f6b72', '#0f1e21']];
 
 // title, release, episodes, running time, resolution, file size, size per episode, added, state
+// v20 columns (owner, 20 Nov): title, release, episodes, average running time, average size, total size, added, state
 const ROWS = [
-  ['Frozen Frontier', '2021', '18', '15 h 36 min', '2160p', '55.8 GB', '3.1 GB', '16 Nov 2026', null],
-  ['Deep Blue Planet', '2025', '6', '5 h 12 min', '2160p', '15.0 GB', '2.5 GB', '15 Nov 2026', 0.4],
-  ['Inside the Hive', '2023', '—', '1 h 24 min', '1080p', '2.4 GB', '—', '14 Nov 2026', 'w'],
-  ['The Lost Rivers', '2022', '4', '3 h 28 min', '1080p', '8.8 GB', '2.2 GB', '12 Nov 2026', null],
-  ['The Green Valley', '2023', '5', '4 h 20 min', '1080p', '5.0 GB', '1.0 GB', '10 Nov 2026', null],
-  ['Tidelands: Voices of the Northern Coast', '2024', '32', '27 h 44 min', '1080p', '44.8 GB', '1.4 GB',
-    '9 Nov 2026', 0.1],
-  ['Mountain Light', '2023', '—', '1 h 47 min', '2160p', '24.6 GB', '—', '2 Nov 2026', null],
-  ['Wild Isles of the North', '2024', '5', '4 h 15 min', '1080p', '6.0 GB', '1.2 GB', '1 Nov 2026', 'w'],
-  ['Rails Across Asia', '2020', '3', '2 h 36 min', '720p', '2.4 GB', '0.8 GB', '30 Oct 2026', null],
-  ['City of Birds', '2019', '—', '1 h 28 min', '1080p', '2.1 GB', '—', '27 Oct 2026', null],
+  ['Frozen Frontier', '2021', '18', '52 min', '3.1 GB', '55.8 GB', '16 Nov 2026', null],
+  ['Deep Blue Planet', '2025', '6', '49 min', '2.5 GB', '15.0 GB', '15 Nov 2026', 0.4],
+  ['Inside the Hive', '2023', '—', '1 h 24 min', '2.4 GB', '2.4 GB', '14 Nov 2026', 'w'],
+  ['The Lost Rivers', '2022', '4', '58 min', '2.2 GB', '8.8 GB', '12 Nov 2026', null],
+  ['The Green Valley', '2023', '5', '44 min', '1.0 GB', '5.0 GB', '10 Nov 2026', null],
+  ['Tidelands: Voices of the Northern Coast', '2024', '32', '26 min', '1.4 GB', '44.8 GB', '9 Nov 2026', 0.1],
+  ['Mountain Light', '2023', '—', '1 h 47 min', '24.6 GB', '24.6 GB', '2 Nov 2026', null],
+  ['Wild Isles of the North', '2024', '5', '51 min', '1.2 GB', '6.0 GB', '1 Nov 2026', 'w'],
+  ['Rails Across Asia', '2020', '3', '52 min', '0.8 GB', '2.4 GB', '30 Oct 2026', null],
+  ['City of Birds', '2019', '—', '1 h 28 min', '2.1 GB', '2.1 GB', '27 Oct 2026', null],
 ];
-const HEAD = ['Title', 'Release date', 'Episodes', 'Running time', 'Resolution', 'File size', 'Size per episode',
-  'Date added'];
-const W = [520, 170, 130, 180, 160, 150, 210, 170];
+const HEAD = ['Title', 'Release date', 'Episodes', 'Average running time', 'Average size', 'Total size', 'Date added'];
+const W = [560, 180, 140, 270, 190, 180, 180];
 
 const css = `${extraCss}
 .lv{position:absolute;left:52px;top:203px;width:1816px;color:#fff}
@@ -77,8 +76,8 @@ function list(focus) {
     const a = ART[k % 7];
     const cls = `lr${k === focus ? ' on' : ''}${k === ROWS.length - 1 ? ' last' : ''}`;
     h += `<div class="${cls}"><span class="c t" style="width:${W[0]}px"><span class="thumb" style="background:
-      linear-gradient(155deg,${a[0]},${a[1]})"></span><span class="tt">${r[0]}</span>${state(r[8], k === focus)}</span>`;
-    for (let i = 1; i < 8; i++) {
+      linear-gradient(155deg,${a[0]},${a[1]})"></span><span class="tt">${r[0]}</span>${state(r[7], k === focus)}</span>`;
+    for (let i = 1; i < 7; i++) {
       h += `<span class="c" style="width:${W[i]}px">${r[i]}</span>`;
     }
     h += '<i class="ln"></i></div>';
@@ -111,8 +110,28 @@ function taper() {
     top.concat(bot).map(p => p.join(',')).join(' ')}" fill="rgba(255,255,255,.35)"/></svg>`;
 }
 
-function frame() {
-  return bar() + taper() + list(3) + '<div class="cap2">17 · List view on your own page, default columns</div>';
+const UP = '<path d="M6 15l6-6 6 6"/>';
+const DOWN = '<path d="M6 9l6 6 6-6"/>';
+
+// scroll arrows in the right-hand margin (RULES §16): up faint at the top (nothing above), down at the foot
+function arrows() {
+  return `<div style="position:absolute;left:1873px;top:246px;color:#fff;opacity:.35">${svg(UP, 34)}</div>
+    <div style="position:absolute;left:1873px;top:968px;color:#fff">${svg(DOWN, 34)}</div>`;
 }
 
-render([['51-v19-list-view', frame]], css);
+function lineCss(alpha, tapered) {
+  const c = `rgba(255,255,255,${alpha})`;
+  const bg = tapered ? `linear-gradient(90deg,rgba(255,255,255,0),${c} 18%,${c} 82%,rgba(255,255,255,0))` : c;
+  return `<style>.lr .ln{background:${bg}}</style>`;
+}
+
+function frame(n, alpha, tapered, label) {
+  return () => lineCss(alpha, tapered) + bar() + taper() + list(3) + arrows()
+    + `<div class="cap2">${n} · Row lines ${label}</div>`;
+}
+
+render([
+  ['52-v20-list-lines-14', frame(18, 0.14, false, '14%, square ends')],
+  ['53-v20-list-lines-14-taper', frame(19, 0.14, true, '14%, fading at both ends')],
+  ['54-v20-list-lines-20-taper', frame(20, 0.20, true, '20%, fading at both ends')],
+], css);
