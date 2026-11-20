@@ -257,9 +257,11 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 
 ### Library toolbar review: Sort (owner, 20 Nov; mock-ups `library-pages/tv/44`–`46`; LIBRARY.md › Sort)
 - **Group order: General · Trakt · Series · Files** (Files last; Series only on pages holding TV shows).
-- **Removed:** Container, Path, Bitrate, Codec (owner). **Proposed, waiting for the owner:** also Date modified, HDR
-  and Audio, so the longest menu (own page, 11 sorts, `tv/46`) fits without scrolling. Build nothing until settled.
-- Seasons and Episodes sort by how many the library holds.
+- **Removed:** Container, Path, Bitrate, Codec, HDR, Audio (owner). Date modified: waiting for the owner (for a show
+  it is the newest file's date on disk, not when an episode arrived; Date added already uses the newest episode's
+  arrival, `PreviewLibraryLoader`: `newest = max(e.added)`).
+- **Reworded (owner, 20 Nov):** Seasons → **Number of seasons**, Episodes → **Number of episodes** (how many the
+  library holds). Icons for Date added, Title and Number of seasons: choices in `tv/47`, waiting for the owner.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
