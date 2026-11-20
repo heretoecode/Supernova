@@ -37,7 +37,8 @@ focused top-row poster and its ring still clear it). In list view the column hea
   hidden when Trakt isn't connected) · Series (Last episode added · Number of seasons · Number of episodes, the
   numbers being how many the library holds; hidden on Movies; films fall back to Date added on mixed pages) · **Files
   last** (Running time · Size: a film's file, a show's size per episode; named "File size" on Movies, "Size per
-  episode" on TV Shows, "Size" on mixed pages). Removed (owner, 20 Nov): Container, Path, Bitrate, Codec, HDR, Audio,
+  episode" on TV Shows, "Size" on mixed pages; **owner 20 Nov: "Size" on every page**, caption "24.6 GB" or
+  "Average 2.2 GB · total 8.8 GB"). Removed (owner, 20 Nov): Container, Path, Bitrate, Codec, HDR, Audio,
   Date modified, Resolution, the separate File size. Icons: tray, A–Z arrow, calendar, trending line, heart, screen
   with a plus, numbered list, screen with play, stopwatch, drive. No Year sort. Tick on the current choice.
 - **Order:** one button whose words follow the sort; **its width is fixed to the wider of its two words**, so flipping it never moves the buttons after it (owner, 20 Nov): A → Z / Z → A, Newest / Oldest first, Largest / Smallest first,
@@ -49,7 +50,8 @@ focused top-row poster and its ring still clear it). In list view the column hea
   Running time, Resolution, File size, Size per episode, Date added.
 
 ## Grid (default)
-- One portrait poster size on every library page, seven a row, artwork edge (RULES §14).
+- One portrait poster size on every library page, **six a row** (owner, 20 Nov, `tv/50`; was seven: about 276 px wide
+  at 1080p, 32 px gaps, edges on the side margin), artwork edge (RULES §14).
 - **Poster and caption are one card** (`27`, `31`): caption box under the artwork in **`#141619`, solid** (owner, 19 Nov,
   judged on the TV, `rows-captions/tv/10` E; was `#23262C`). Line 1 the title (the
   only bright line); line 2 always a TV show's size or progress: not started "3 seasons · 30 episodes" (one season: "10
