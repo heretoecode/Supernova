@@ -29,7 +29,7 @@ margin to margin, **white at 35%**, about 2 px in the middle and **thinning towa
 **24 px** from the bottom of a focused button's box to the line, **24 px** from the line to the posters at rest (the
 focused top-row poster and its ring still clear it). In list view the column headings sit 24 px below the line.
 
-- **Filters** (`23`, `24`): Watched (All · Unwatched · In progress · Watched) · Genre (genre icons, Match: Any · All at the
+- **Filters** (`23`, `24`; redrawn on today's rules `tv/35`–`40`, owner 20 Nov): Watched (All · Unwatched · In progress · Watched; icons are the poster badge: grid, empty ring, pie, tick, `tv/41`) · Genre (genre icons, Match: Any · All at the
   top) · Year (quick choices plus From / To; only ranges that hold titles; Left / Right steps) · Streaming services
   (several); Clear filters at the bottom in its own group, apart by a line. Every list shows only values present, with
   counts. Lists use the shared choice list (RULES §9).

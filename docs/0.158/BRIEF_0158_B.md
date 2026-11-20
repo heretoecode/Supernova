@@ -234,6 +234,15 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
 - **FL2** (already in group 7): placeholder rows instead of "Looking in this folder…".
 Not for Coding yet (design to settle first): L1 caption space, R6 one row design, S2, A2, Files' tab underline.
 
+### Library toolbar review: Filters (owner, 20 Nov; mock-ups `library-pages/tv/35`–`42`; LIBRARY.md › Toolbar)
+- The Filters menu (Watched · Genre · Year · Streaming services, Clear filters apart by a line) and the Streaming
+  services list: approved as drawn in `tv/35`, `39`, `40`.
+- **Watched list icons = the poster badge** (`tv/41`): All a grid of four posters; Unwatched an empty white ring;
+  In progress the white disc with the black pie; Watched the white disc with the black tick. On the focused (white)
+  row the disc keeps a thin dark rim so it still shows. Use the shared badge drawing, not separate icons.
+- **Still to settle (do not build yet):** the Filters button's icon and its look when filters are on, the Genre icon,
+  the Match icon (`tv/42` choices), the Year list's quick choices.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

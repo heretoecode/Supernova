@@ -1,5 +1,13 @@
 # Discussion handover (updated 19 Nov 2026)
 
+## 20 Nov afternoon — Filters review (start here next time)
+- Filters redrawn on today's rules: `library-pages/tv/35`–`40` (Drive › From Claude › 2026-11-20 Library Filters).
+  Owner: Filters menu and Streaming services fine; Watched list icons = poster badges (`tv/41`, in the brief).
+- **Waiting for the owner:** picks from `tv/42` (Filters button A–D incl. a look when filters are on; Genre icon
+  A–C; Match icon A–C); the Year quick choices (owner: too many; to discuss); the idea of a streaming logo on
+  posters (new feature: Claude's view given; park unless the owner wants it now).
+- Then Sort, Order, List / Grid view with list view, Columns, Customise page on the own page.
+
 ## 19–20 Nov evening — library pages review (start here next time)
 - **The phase (owner, 20 Nov): polish, not features.** Go through every part of each page and ask "does that look
   right? should it be tweaked?" New features (onboarding, Trakt list row, Media Transfers) wait; before any is built, revisit its design

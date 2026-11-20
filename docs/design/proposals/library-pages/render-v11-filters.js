@@ -183,11 +183,11 @@ function taper(x0, x1, y, w, alpha) {
   return `<polygon points="${pts}" fill="rgba(255,255,255,${alpha})"/>`;
 }
 
-function page(items = MOV) {
+function page(items = MOV, filterIcon = svg(I.filter, 26)) {
   const words = ['Home', 'Movies', 'TV Shows', 'Documentaries'];
   let h = `<div class="bar">${words.map(w => `<span class="${w === 'Movies' ? 'open' : ''}">${w}</span>`).join('')}
     <span class="sp"></span><span>Files</span><span>Search</span><span>Settings</span><span>18:40</span></div>`;
-  h += `<div class="tb"><span>${svg(I.filter, 26)}Filters</span><span>${svg(I.sort, 26)}Sort: Date added</span>
+  h += `<div class="tb"><span>${filterIcon}Filters</span><span>${svg(I.sort, 26)}Sort: Date added</span>
     <span>${svg(I.order, 26)}Newest first</span><span>${svg(I.list, 26)}List view</span></div>`;
   h += `<svg style="position:absolute;left:0;top:0" width="1920" height="1080">${taper(52, 1868, 179, 2, 0.35)}</svg>`;
   for (let r = 0; r < 2; r++) {
@@ -345,16 +345,22 @@ const FRAMES = [
   ['40-v11-filters-all-set', frame6],
 ];
 
-(async () => {
+async function render(frames, extraCss = '') {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch();
   const pg = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
-  for (const [name, fn] of FRAMES) {
-    const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body>
+  for (const [name, fn] of frames) {
+    const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}${extraCss}</style></head><body>
       <div class="screen">${fn()}<div class="border"></div></div>${speckle()}</body></html>`;
     await pg.setContent(html);
     await pg.evaluate(() => document.fonts.ready);
     await pg.screenshot({ path: path.join(OUT, `${name}.png`) });
   }
   await browser.close();
-})();
+}
+
+module.exports = { svg, I, page, filtersMenu, heading, row, icon, render, NONE, MOV, UNW };
+
+if (require.main === module) {
+  render(FRAMES);
+}
