@@ -447,6 +447,10 @@ below the bar. Movies and TV Shows (0.158.4) are the reference.
 bar, a line under the tab row, the white focus box; never a plain row of words that reads as a second top bar.
 Panels (Playback Settings) keep their own. Details' tabs: decided at the full walk-through.
 
+**Information lines in sentence case (owner, 19 Nov):** captions, second lines, details and buttons' detail text
+capitalise only the first letter ("2 seasons · 16 episodes", "S1 E4 · 3 of 8 left", "Resume S1 E5 · 16 min left");
+Title Case is for headings and names only.
+
 ## Replaced rules (do not use)
 - Panels with no outline (5 Nov) / a faint edge over a page (13 Nov) → white outline at 70% plus a dark shadow,
   §11 (19 Nov).
