@@ -2,7 +2,8 @@
 
 ## 19–20 Nov evening — library pages review (start here next time)
 - **The phase (owner, 20 Nov): polish, not features.** Go through every part of each page and ask "does that look
-  right? should it be tweaked?" New features (onboarding, Trakt list row, Media Transfers) wait. See CLAUDE.md.
+  right? should it be tweaked?" New features (onboarding, Trakt list row, Media Transfers) wait; before any is built, revisit its design
+  with the current rules and write its page sheet. See CLAUDE.md.
 - **Installed: 0.158.7** (signed, run 44604872477). Part B paused; everything decided since is in `BRIEF_0158_B.md`
   (Coding merges this branch before each item). The owner reviews page by page; mock-ups for the TV go to Drive ›
   Supernova › Media › From Claude (dated folders); sources in `docs/design/proposals/rows-captions/` (`tv/` = 1920×1080).

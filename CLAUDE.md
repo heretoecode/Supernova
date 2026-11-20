@@ -78,6 +78,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   ("does that look right? should I tweak that?"), not adding features. New features wait until this phase is done:
   the new onboarding, the Trakt list row and Media Transfers stay under Ready with no version. Required improvements
   (the diagnostics upgrade, the NOVA clean-out, bug fixes) go ahead. When something new comes up, park it.
+  **Before any of those three is built:** (1) redraw its designs with the rules as they are then and get the owner's
+  check, (2) write its page sheet in `docs/design/pages/` (none exists yet). See ROADMAP › Ready.
 - **Freedom to rethink options (owner, 6 Nov 2026):** when redesigning, existing choices (from NOVA or earlier
   Supernova) are a starting point, not a constraint. Add, remove, merge or reword options and settings where it
   suits (e.g. Sleep timer becomes "Stop playing at" with clock times). Still propose; the owner approves.
