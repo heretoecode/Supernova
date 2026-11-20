@@ -12,6 +12,12 @@ the rest of Details (DT1, DT3–DT6, DT8, R3–R5, episodes), titles (group 6), 
 for part B: `claude/build-0158-part-b-wsupv2`, merged onto the working branch. Waiting for the owner: install the last
 signed APK; send a diagnostics report from it.
 
+## Discussion (19–20 Nov): polish phase
+The owner is reviewing page by page (library pages first), improving what exists; no new features (CLAUDE.md).
+Every decision is in RULES.md, the page sheets and `docs/0.158/BRIEF_0158_B.md` for the next build (which adds the
+diagnostics upgrade). 0.159 is the NOVA clean-out. Handover: `docs/DISCUSSION_HANDOVER.md` (start at "19–20 Nov
+evening").
+
 ## Released
 
 **0.158.3** (code 1583) — signed 19 Nov 2026 (run 44506040551, from green conformance run 44500505615 on `4d310f4`).

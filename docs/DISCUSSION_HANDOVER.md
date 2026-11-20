@@ -19,6 +19,10 @@
   Edition · Resolution · HDR · Sound · Codec; R2 cause found (TopNavigation decides scroll-behind before the own page's
   library exists).
 - **To remember at the Files review:** draw and settle the approved **To fix** row in Library Care (FILES.md, end).
+- **Where we stopped (20 Nov, about 02:30):** Filters. The approved mock-ups `library-pages/23`, `24` were sent with how
+  0.158.7 differs (counts on one line, genre/service lists tick in place with no Selected group, From / To step with
+  Left / Right). The owner is to look at Filters on the Shield and say what to tweak; then Sort, Order, List / Grid
+  view with list view itself, Columns; then Customise page on the own page.
 - **Next in the library review:** the five toolbar buttons (Filters, Sort, Order, List / Grid view, Columns), then
   Customise page on the own page. Then the other pages, one at a time.
 - **Reminder:** before Coding's next version, ask for the diagnostics report covering 19 Nov 14:30–14:45 (MobLand).
