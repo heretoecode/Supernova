@@ -1,5 +1,24 @@
 # Discussion handover (updated 19 Nov 2026)
 
+## 19–20 Nov evening — library pages review (start here next time)
+- **Installed: 0.158.7** (signed, run 44604872477). Part B paused; everything decided since is in `BRIEF_0158_B.md`
+  (Coding merges this branch before each item). The owner reviews page by page; mock-ups for the TV go to Drive ›
+  Supernova › Media › From Claude (dated folders); sources in `docs/design/proposals/rows-captions/` (`tv/` = 1920×1080).
+- **Decided tonight (all in RULES, the page sheets and the brief):** corner progress pie replaces every progress bar
+  (48 px, 3 px white rim, RULES §14c); row design A for every row (text over the artwork); library captions three lines,
+  sentence case, box `#141619`, about 100 px; artwork line solid white 1 px; focus ring 4 px; menus and panels white
+  outline 70% + dark shadow (§11); library toolbar 52 px boxes, 24 px either side of a line at 35% thinning at the ends;
+  Customise page only on own pages; empty pages ("No movies yet", "will appear", plain icons, the animated ring);
+  long-press menus and delete warnings (versions list, episode list with Not in library, Clean Up with the folder
+  switch, "This can't be undone." only beside a focused Delete, summary line on its own); Home hero one button (More),
+  heroes one size with the first row's heading showing; hero TV rules (next episode across seasons); page tabs take
+  Files' look; app icon on `#111215`, no grain; reports to Download, backups via the folder picker; the facts-line order
+  Edition · Resolution · HDR · Sound · Codec; R2 cause found (TopNavigation decides scroll-behind before the own page's
+  library exists).
+- **Next in the library review:** the five toolbar buttons (Filters, Sort, Order, List / Grid view, Columns), then
+  Customise page on the own page. Then the other pages, one at a time.
+- **Reminder:** before Coding's next version, ask for the diagnostics report covering 19 Nov 14:30–14:45 (MobLand).
+
 ## 19 Nov — start here
 - **Reminder (owner, 19 Nov): before the go-ahead for Coding's next version, ask the owner for the diagnostics
   report covering the MobLand delete, 19 Nov 14:30–14:45 local time** (D1 in `docs/0.158/REVIEW_0158.md`), and read it.
