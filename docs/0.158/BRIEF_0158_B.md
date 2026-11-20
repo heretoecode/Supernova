@@ -255,6 +255,12 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   centred, so flipping the order never moves anything. It may change width only when the sort changes. Test: both
   states lay out to the same width and List view's x does not move.
 
+### Library toolbar review: Sort (owner, 20 Nov; mock-ups `library-pages/tv/44`–`46`; LIBRARY.md › Sort)
+- **Group order: General · Trakt · Series · Files** (Files last; Series only on pages holding TV shows).
+- **Removed:** Container, Path, Bitrate, Codec (owner). **Proposed, waiting for the owner:** also Date modified, HDR
+  and Audio, so the longest menu (own page, 11 sorts, `tv/46`) fits without scrolling. Build nothing until settled.
+- Seasons and Episodes sort by how many the library holds.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

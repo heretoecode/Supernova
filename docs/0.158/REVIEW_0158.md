@@ -110,3 +110,10 @@ The owner will do the full walk-through when part B is finished; these are thing
 - **T1. Clock weight changes by page** (thin on Home, Movies, TV Shows, Files; right on own page, Search, Settings) and
   **T2. the gap before the clock is bigger** than between Files, Search and Settings (owner, 20 Nov). Causes found and
   fixes in the brief (NOVA's old overlay swaps in its own light clock; the clock's box is wider than the time).
+
+## M1 · Wrong TV show matches (owner, 20 Nov)
+TV Shows lists titles the owner does not have, e.g. **Come Dine With Me (2023), one episode**; probably a file of
+Father Ted or The O.C. matched wrongly. Two parts: (1) **see the file** (Details' Technical information and the Fix
+match page show the file name and location; layout at the Details and Files reviews, page sheets "To settle");
+(2) **why it mismatched**: to investigate once the file name is known (the name, folder and the matcher's choice;
+NOVA 6.6.5's match by file name is in). Ask the owner for the file name when it shows, or read it from diagnostics.

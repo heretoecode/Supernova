@@ -83,3 +83,9 @@ group then disappears).
 ## Never opens from Details
 NOVA's old Details screens, the old "Change info of all episodes" side panel, the old Fix match side panel, NOVA's
 subtitle dialogs, Android's keyboard.
+
+## To settle at the Details review (owner, 20 Nov)
+- **File name and location in Technical information** (Details tab): the file's name and where it lives (server or
+  drive and folder), on one line or two, so a wrong match can be spotted at a glance (the owner had "Come Dine With
+  Me (2023), 1 episode" in TV Shows without having the show, and no way to see which file it was). This breaks the
+  equal length of Key information and Technical information: settle the layout at the Details review.

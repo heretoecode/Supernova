@@ -351,6 +351,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **No scroll bars anywhere** (owner, 17 Nov; `files-review-0157-1/02` C): when a page or list runs off the screen, a
   small down arrow sits in the empty right-hand margin at the foot of the list, and an up arrow at the top once there
   is something above (faint when there isn't). No arrows when everything fits. A row half off the screen stays.
+  **In a menu or panel that scrolls, the arrows sit in its own right-hand margin** (top and foot), kept clear of the
+  rows' ticks (owner, 20 Nov, `library-pages/tv/44`, `45`: "a very clear indicator").
 - Rows a left arrow appears beside: move the whole row right to make room; never just the first card (§19).
 
 ## 17. Motion

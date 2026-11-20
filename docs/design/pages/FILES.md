@@ -102,3 +102,7 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
 match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on
 Files in the top bar shows while anything is waiting. **Mock-up and details at the Files review**, not before.
+
+## To settle at the Files review (owner, 20 Nov)
+- **Fix match shows the file:** the file name and its location on the Fix match page, so the owner can tell which
+  show or film the file really is before choosing a match. Place and look decided at the Files review.

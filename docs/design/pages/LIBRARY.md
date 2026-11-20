@@ -32,10 +32,11 @@ focused top-row poster and its ring still clear it). In list view the column hea
 - **Filters** (`23`, `24`; redrawn on today's rules `tv/35`–`40`, owner 20 Nov): Watched (All · Unwatched · In progress · Watched; icons are the poster badge: grid, empty ring, pie, tick, `tv/41`) · Genre (row icon: shapes; genre icons; Match: Any · All at the top, its icon a ticked list) · Year (Any year · Recent · Your Own Range with From / To, Left / Right stepping only through years that hold titles; `tv/43`) · Streaming services
   (several); Clear filters at the bottom in its own group, apart by a line. Every list shows only values present, with
   counts. Lists use the shared choice list (RULES §9).
-- **Sort** (`25`): grouped menu, no search row: General (Date added · Title · Release date / Air date) · Trakt (Trending ·
-  Popular; hidden when Trakt isn't connected) · Files (Running time, Resolution, HDR, Audio, File size, Date modified,
-  Codec, Bitrate, Container, Path) · Series (Seasons, Episodes, Size per episode; hidden on Movies; movies last on mixed
-  pages). No Year sort. Tick on the current choice.
+- **Sort** (`25`; redrawn `tv/44`–`46`, owner 20 Nov): grouped menu, no search row, **never scrolls**: General (Date
+  added · Title · Release date / Air date) · Trakt (Trending · Popular; hidden when Trakt isn't connected) · Series
+  (Seasons, Episodes, Size per episode: how many the library holds; hidden on Movies; movies last on mixed pages) ·
+  **Files last** (Running time, Resolution, File size; HDR, Audio and Date modified still to confirm). Container,
+  Path, Bitrate and Codec removed (owner, 20 Nov). No Year sort. Tick on the current choice.
 - **Order:** one button whose words follow the sort; **its width is fixed to the wider of its two words**, so flipping it never moves the buttons after it (owner, 20 Nov): A → Z / Z → A, Newest / Oldest first, Largest / Smallest first,
   Longest / Shortest first, Most / Fewest first, Highest / Lowest ranked first.
 - **Columns** (list view, `28`, `33`): menu under its button: Shown (ticked, in column order; OK picks a column up and
