@@ -183,11 +183,11 @@ function taper(x0, x1, y, w, alpha) {
   return `<polygon points="${pts}" fill="rgba(255,255,255,${alpha})"/>`;
 }
 
-function page(items = MOV, filterIcon = svg(I.filter, 26)) {
+function page(items = MOV, filterIcon = svg(I.filter, 26), filterWord = 'Filters') {
   const words = ['Home', 'Movies', 'TV Shows', 'Documentaries'];
   let h = `<div class="bar">${words.map(w => `<span class="${w === 'Movies' ? 'open' : ''}">${w}</span>`).join('')}
     <span class="sp"></span><span>Files</span><span>Search</span><span>Settings</span><span>18:40</span></div>`;
-  h += `<div class="tb"><span>${filterIcon}Filters</span><span>${svg(I.sort, 26)}Sort: Date added</span>
+  h += `<div class="tb"><span>${filterIcon}${filterWord}</span><span>${svg(I.sort, 26)}Sort: Date added</span>
     <span>${svg(I.order, 26)}Newest first</span><span>${svg(I.list, 26)}List view</span></div>`;
   h += `<svg style="position:absolute;left:0;top:0" width="1920" height="1080">${taper(52, 1868, 179, 2, 0.35)}</svg>`;
   for (let r = 0; r < 2; r++) {
@@ -359,7 +359,7 @@ async function render(frames, extraCss = '') {
   await browser.close();
 }
 
-module.exports = { svg, I, page, filtersMenu, heading, row, icon, render, NONE, MOV, UNW };
+module.exports = { svg, I, page, filtersMenu, heading, row, icon, render, NONE, MOV, UNW, css };
 
 if (require.main === module) {
   render(FRAMES);

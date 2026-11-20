@@ -19,7 +19,7 @@ SUPERNOVA wordmark, an underline in the top bar or a stats row, this sheet wins.
 - Scroll arrows in the right margin, never a scroll bar (RULES §16).
 
 ## Toolbar
-Left: **Filters ▾ · Sort: <choice> ▾ · Order · List view / Grid view** (· **Columns** in list view only, appearing beside
+Left: **Filters ▾ (sliders icon; "Filters · 2" when two filters are on; owner 20 Nov) · Sort: <choice> ▾ · Order · List view / Grid view** (· **Columns** in list view only, appearing beside
 the view button without anything moving). Right, locked: **Customise page, on your own pages only** (owner, 19 Nov: on Movies and TV Shows it only
 repeated Filters' Show and the toolbar's View, Sort and Order, so it is removed there). Focus is the white box; a button whose menu
 is open returns to rest. Menus open under the button pressed.
@@ -29,8 +29,7 @@ margin to margin, **white at 35%**, about 2 px in the middle and **thinning towa
 **24 px** from the bottom of a focused button's box to the line, **24 px** from the line to the posters at rest (the
 focused top-row poster and its ring still clear it). In list view the column headings sit 24 px below the line.
 
-- **Filters** (`23`, `24`; redrawn on today's rules `tv/35`–`40`, owner 20 Nov): Watched (All · Unwatched · In progress · Watched; icons are the poster badge: grid, empty ring, pie, tick, `tv/41`) · Genre (genre icons, Match: Any · All at the
-  top) · Year (quick choices plus From / To; only ranges that hold titles; Left / Right steps) · Streaming services
+- **Filters** (`23`, `24`; redrawn on today's rules `tv/35`–`40`, owner 20 Nov): Watched (All · Unwatched · In progress · Watched; icons are the poster badge: grid, empty ring, pie, tick, `tv/41`) · Genre (row icon: shapes; genre icons; Match: Any · All at the top, its icon a ticked list) · Year (quick choices plus From / To; only ranges that hold titles; Left / Right steps) · Streaming services
   (several); Clear filters at the bottom in its own group, apart by a line. Every list shows only values present, with
   counts. Lists use the shared choice list (RULES §9).
 - **Sort** (`25`): grouped menu, no search row: General (Date added · Title · Release date / Air date) · Trakt (Trending ·

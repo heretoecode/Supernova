@@ -240,8 +240,11 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 - **Watched list icons = the poster badge** (`tv/41`): All a grid of four posters; Unwatched an empty white ring;
   In progress the white disc with the black pie; Watched the white disc with the black tick. On the focused (white)
   row the disc keeps a thin dark rim so it still shows. Use the shared badge drawing, not separate icons.
-- **Still to settle (do not build yet):** the Filters button's icon and its look when filters are on, the Genre icon,
-  the Match icon (`tv/42` choices), the Year list's quick choices.
+- **Icons (owner, 20 Nov; `tv/42`):** the Filters button uses **sliders** (option D); with filters on, the button
+  reads **"Filters · 2"** (the number of filters in use: Watched not All, Genre, Year not Any year, Streaming
+  services each count one); the icon stays the same. **Genre: shapes** (circle, square, triangle, diamond; B). **Match:
+  ticked list** (B).
+- **Still to settle (do not build yet):** the Year list (proposal `tv/43`: Any year · Recent · Your Own Range).
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.

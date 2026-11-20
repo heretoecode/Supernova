@@ -331,3 +331,9 @@ is ever wanted back.
 ## Transfers: daytime full-speed windows (owner, 16 Nov 2026)
 - Full speed hours offers only overnight five-hour windows for now. Later: daytime windows (nobody home, network free)
   and perhaps days of the week, as download tools often offer.
+
+## Streaming logo on library posters (owner, 20 Nov 2026)
+- Idea: a small streaming-service logo in the top-left corner of any library poster whose title is also on one of
+  Your services, even with no filter on (the progress pie keeps the top right). Left for now (polish phase).
+  Claude's notes: two badges per poster may crowd the artwork; availability changes weekly and by region, so an
+  always-on badge goes stale; a lighter version shows the logo only while a Streaming services filter is on.
