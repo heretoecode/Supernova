@@ -194,7 +194,8 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   with the three switches (folder switch on by default and only removing an empty folder); totals; the button names
   the count. This replaces D1's "one notice" wording: the list is how nothing gets left behind. Times as "2 h 22 min".
 - **Undo notice and Mark as watched (owner, 20 Nov; RULES §7b; LIBRARY.md › Long-press):** the shared Undo notice gets
-  a film / TV show icon left of the title, more height so its 6-second line clears the 52 px Undo button; Mark as
+  a film / TV show icon left of the title; two buttons, **Understood** (focused, closes it, focus to the next poster)
+  and **Undo**; more height so its 6-second line clears the buttons; Back or 6 seconds close it, focus to the page; Mark as
   watched has no notice and its menu row flips to Mark as unwatched on a watched title.
   (The "To fix" row in Library Care is approved but waits for the Files review: do not build it yet.)
 - **Empty library pages (owner, 19 Nov; LIBRARY.md › Empty pages):** "No movies yet" (never "films"), "Add a folder,
