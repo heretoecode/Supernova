@@ -9,21 +9,19 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### Ready (designed and approved)
 
+- Onboarding (on Home, Start fresh / Restore, smart steps; designed 14 Nov): no version yet (owner, 20 Nov)
 - A Trakt list as a Home row: only what streams on your services, logo on every card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)
 - **Media Transfers, fully designed and approved (16 Nov):** copy, checks, resilience, keep free (percentage, 2% rule, Needs your OK), While you watch, full speed hours, Boost this / Boost all, Play warning during a boost, copies at once, one switch to remove the network copy, per-series "Bring new episodes" (`docs/0.158/MEDIA_TRANSFERS.md`, mock-ups `docs/design/proposals/transfers-settings/`)
 
 ### To discuss (owner, 16 Nov)
 
-- **NOVA clean-out (owner asked, 20 Nov):** remove NOVA's leftover screens and code batch by batch: classic movie and
-  anime grids, collection routes, the `try_new_ui` switch, the old status overlay (first, in part B's next round), each
-  batch proven unreachable (whole-app no-old-screens test, renders, a Shield check) before it goes. Its own version, like
-  the engine catch-up?
+- [Given a version, 20 Nov: 0.159] NOVA clean-out.
 
 - [Moved to 0.158 part B, 19 Nov] Episodes (answered 18 Nov): OK on an episode card plays it; long-press opens the same menu as More;
   deleting one offers the earlier episodes of the season: only this one · all · choose (with Select all)
 - Network statistics: split by source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library
 - Feature blueprint (research): pick ideas to take forward (`docs/research/FEATURE_BLUEPRINT.md`)
-- Diagnostics that catch problems before you notice them: a health snapshot (memory, threads, caches, database,
+- [Partly in the next build, 20 Nov: start-up and page-switch times, leftovers that run, the health summary] Diagnostics that catch problems before you notice them: a health snapshot (memory, threads, caches, database,
   free space, temperature), smoothness (dropped frames, slow remote response), speed (start-up, page and artwork times),
   playback quality, stability (crashes, freezes, leaks), and a Health summary at the top of each report flagging anything
   over its limit; later the build checks the same limits
@@ -156,6 +154,11 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 ### Also in 0.158
 - Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
 
+### Next build (owner, 20 Nov): part B's remaining items, tonight's decisions and the diagnostics upgrade
+- Everything in `docs/0.158/BRIEF_0158_B.md` not yet built, the owner's notes on 0.158.3–0.158.7 and the library
+  review decisions; plus the **diagnostics upgrade**: start-up time, page-switch times inside the top bar, a record of
+  every NOVA leftover that runs, and a health summary at the top of each report.
+
 ### 0.158 part B (owner, 18 Nov)
 - **First, the new look, so everything after it is checked on it:** the speckled background app-wide (density 20,
   `background-speckle/tv3-2`, no pane) and one shape for every small box (buttons, pills, chips, tab and top-bar
@@ -182,10 +185,17 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - The owner's notes on 0.158.3/0.158.4 (`docs/0.158/REVIEW_0158.md`): the delete bug first, About, Home hero one
   button, Settings tab size and scroll arrows; the NOVA app-side catch-up; release notes for every APK
 
-## 0.159
+## 0.159 — NOVA clean-out (owner, 20 Nov)
 
-- [Moved to 0.158 part B, 19 Nov] Settings (seven tabs, Backup and Restore, Diagnostics, About)
-- Onboarding (on Home, Start fresh / Restore, smart steps): it points into Settings and is seen once
+- Remove NOVA's leftover screens and code batch by batch: pin the `try_new_ui` switch to Supernova's path, list every
+  NOVA screen and what reaches it, rewrite the few live pieces Supernova still borrows, delete in batches, each with a
+  full build, tests and a Shield check. The playback engine and network-share code stay (engine catch-up is separate).
+- Lock it: the no-old-screens test covers the whole app; a test fails if a NOVA overlay or layout appears on a
+  Supernova page.
+- Measured: diagnostics baseline before (from the next build's upgraded reports), compared after each batch (memory,
+  start-up, page switches, stutters, freezes, focus anomalies, which leftovers ran).
+- Walkthroughs on the Shield of the pages not yet reviewed wait until after this; design reviews carry on meanwhile.
+- [Moved to 0.158 part B, 19 Nov] Settings. [Onboarding moved to Undecided › Ready, 20 Nov]
 
 ## Parked
 

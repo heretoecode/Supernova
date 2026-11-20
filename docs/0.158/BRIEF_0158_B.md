@@ -238,6 +238,15 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first
   time a folder outside Download is chosen. Default Download › Supernova. Built with the in-row backup flow.
 
+### Diagnostics upgrade (owner, 20 Nov; before the 0.159 clean-out, so its "before" numbers are real)
+- **Start-up time:** launch to Home ready (first frame and first usable focus), cold and warm.
+- **Page switches inside the top bar:** Home, Movies, TV Shows and own pages share `MainActivityLeanback`, so time each
+  switch (`page_switch`, from focus landing to the page drawn) beside `screen_open`.
+- **NOVA leftovers that run:** an event each time an old NOVA activity, fragment, overlay or background piece starts
+  (`legacy_component_started`, with its name and the page it ran on), so the clean-out works from a list.
+- **Health summary at the top of each report:** peak and average memory per page, start-up time, slowest page and
+  switch, slow frames, freezes, focus anomalies, leftovers that ran; each against a limit, over-limit lines first.
+
 ### NOVA catch-up (checked 19 Nov; approved 15 Nov: "all of NOVA 6.6.5 and later", 0.157 notes §35)
 NOVA's latest tag is 6.6.5 (10 Nov) with fixes since. 0.157 carried MediaLib's and FileCore's 6.6.5 changes
 (matching by file name, Trakt pagination, 64-bit list IDs and lastActivities2, SMB share credentials, messenger
