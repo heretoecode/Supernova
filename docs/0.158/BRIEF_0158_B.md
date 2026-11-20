@@ -211,8 +211,9 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   Files still shows scans after it goes.
 - **Top bar spacing (owner, 20 Nov):** the gap from Settings to the clock looks bigger than Files → Search → Settings.
   The clock sits right-aligned in a `status` box at least 64 dp wide, wider than "18:40", so spare room lands on its
-  left. Make the space between the words Files, Search, Settings and the clock's digits equal (word to word, as the
-  eye reads it), on every page; check in renders.
+  left. **One gap for the whole bar (owner, 20 Nov):** the space from word to word is the same everywhere: Home ·
+  Movies · TV Shows · your page on the left, and Files · Search · Settings · the clock on the right, measured between
+  the letters as the eye reads them (the boxes' padding included), on every page; check in renders, and add a test.
 - **Empty library pages (owner, 19 Nov; LIBRARY.md › Empty pages):** "No movies yet" (never "films"), "Add a folder,
   a drive or a network share and your movies will appear here." (TV shows likewise); while the first scan runs, the
   shared spinning loading ring, animated as on Preparing playback, **no grey circle behind it**, and "The first ones
