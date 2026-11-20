@@ -9,6 +9,8 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### Ready (designed and approved)
 
+These wait until the polish phase is done (owner, 20 Nov): improving what exists comes first.
+
 - Onboarding (on Home, Start fresh / Restore, smart steps; designed 14 Nov): no version yet (owner, 20 Nov)
 - A Trakt list as a Home row: only what streams on your services, logo on every card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)
 - **Media Transfers, fully designed and approved (16 Nov):** copy, checks, resilience, keep free (percentage, 2% rule, Needs your OK), While you watch, full speed hours, Boost this / Boost all, Play warning during a boost, copies at once, one switch to remove the network copy, per-series "Bring new episodes" (`docs/0.158/MEDIA_TRANSFERS.md`, mock-ups `docs/design/proposals/transfers-settings/`)
