@@ -408,9 +408,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Progress through the steps is written, not drawn: "Step 2 of 3" in soft text above the heading. Dots are kept for
   the Home carousel only (owner, 14 Nov 2026).
 - **Empty library pages** (`library-pages/34`): no toolbar while there is nothing to filter or sort; one centred
-  message with an icon. Nothing added yet: "No films yet" / "No TV shows yet" and **Add your videos** (to Home's
-  Add your videos step while setting up, otherwise Files). First scan running and nothing found yet: the loading ring,
-  "Finding your TV shows", "The first ones appear here in a moment." No count: the moment the first title is found
+  message with an icon. Nothing added yet: "No movies yet" / "No TV shows yet" ("… and your movies will appear here")
+  and **Add your videos** (to Home's Add your videos step while setting up, otherwise Files). First scan running and
+  nothing found yet: the one spinning loading ring (animated, no circle behind it; owner, 19 Nov), "Finding your TV
+  shows", "The first ones will appear here in a moment." No count: the moment the first title is found
   the message goes and the posters show, filling in as the scan goes on (the ring beside Files says it is still
   running) (owner, 14 Nov).
 - **The third page before it is set up:** a **+** icon in the top bar (like Search and Settings, an icon); its page says

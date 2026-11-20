@@ -187,6 +187,10 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   menu and side panel keeps `#16181C` at 99% and gains a white outline at 70% (about 1.5 px at 1080p) and a dark
   shadow spreading outwards (black about 85%, about 48 px soft, 18 px down). One shared look, so all change together.
   Playback Settings over video: leave as it is until the player walk-through.
+- **Empty library pages (owner, 19 Nov; LIBRARY.md › Empty pages):** "No movies yet" (never "films"), "Add a folder,
+  a drive or a network share and your movies will appear here." (TV shows likewise); while the first scan runs, the
+  shared spinning loading ring, animated as on Preparing playback, **no grey circle behind it**, and "The first ones
+  will appear here in a moment." Today's top bar, speckle and 52 px button throughout.
 - **Poster caption colour and pie rim (owner, 19 Nov, judged on the TV; `rows-captions/tv/10`):** the caption box under
   library posters solid `#141619` (`PreviewCardPresenter.POSTER_CAPTION_FILL`, was `#23262C`); the progress badge's white
   rim 3 px (the black pie 42 px across inside the 48 px circle).

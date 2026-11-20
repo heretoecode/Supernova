@@ -80,10 +80,14 @@ closes. Group headings centred on their line, Title Case.
   Restart on an unstarted title.
 
 ## Empty pages (`34`, RULES §23)
-- Nothing added yet: no toolbar; centred icon, "No films yet" / "No TV shows yet", **Add your videos** (to Home's step
-  while setting up, otherwise Files).
-- First scan running and nothing found yet: the loading ring, "Finding your TV shows", "The first ones appear here in a
-  moment." No count; posters appear as soon as one is found.
+**Reviewed by the owner, 19 Nov** (`34` with today's top bar, speckle and 52 px button; wording below replaces `34`'s):
+- Nothing added yet: no toolbar; centred icon in its soft circle, **"No movies yet"** / **"No TV shows yet"**, "Add a
+  folder, a drive or a network share and your movies will appear here." (TV shows: "… and your TV shows will appear
+  here."), **Add your videos** (to Home's step while setting up, otherwise Files).
+- First scan running and nothing found yet: **the one spinning loading ring, animated exactly as on Preparing playback
+  and the seek wait, with no grey circle behind it**; "Finding your TV shows" / "Finding your movies", **"The first
+  ones will appear here in a moment."** No count; posters appear as soon as one is found.
+- Your own page before set-up: approved as drawn in `34` (owner, 19 Nov).
 - Your third page before it is set up: a **+** in the top bar; the page says "Make this page your own", **Customise
   page** (the same panel, floating right; the message steps aside while it's open) and "More options for your library
   are in Files and Settings."
