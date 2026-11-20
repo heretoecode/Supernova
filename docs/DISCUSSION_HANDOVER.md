@@ -9,7 +9,7 @@
 - **Sort done (20 Nov):** final `tv/48`; one Size sort ("Average 2.2 GB · total 8.8 GB" for shows); **six posters a
   row** (`tv/50`). All in the brief and LIBRARY.md. Noted for later reviews: file name and location in Details'
   Technical information and on Fix match (page sheets › To settle; mismatch M1 in REVIEW_0158).
-- **Next:** List / Grid view with list view itself, then Columns, then Customise page on the own page.
+- **List view:** redrawn `tv/51` (Drive 17), waiting for the owner. Then Columns, then Customise page on the own page.
 - Then Sort, Order, List / Grid view with list view, Columns, Customise page on the own page.
 
 ## 19–20 Nov evening — library pages review (start here next time)
