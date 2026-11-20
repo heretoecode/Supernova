@@ -29,14 +29,14 @@ margin to margin, **white at 35%**, about 2 px in the middle and **thinning towa
 **24 px** from the bottom of a focused button's box to the line, **24 px** from the line to the posters at rest (the
 focused top-row poster and its ring still clear it). In list view the column headings sit 24 px below the line.
 
-- **Filters** (`23`, `24`; redrawn on today's rules `tv/35`–`40`, owner 20 Nov): Watched (All · Unwatched · In progress · Watched; icons are the poster badge: grid, empty ring, pie, tick, `tv/41`) · Genre (row icon: shapes; genre icons; Match: Any · All at the top, its icon a ticked list) · Year (quick choices plus From / To; only ranges that hold titles; Left / Right steps) · Streaming services
+- **Filters** (`23`, `24`; redrawn on today's rules `tv/35`–`40`, owner 20 Nov): Watched (All · Unwatched · In progress · Watched; icons are the poster badge: grid, empty ring, pie, tick, `tv/41`) · Genre (row icon: shapes; genre icons; Match: Any · All at the top, its icon a ticked list) · Year (Any year · Recent · Your Own Range with From / To, Left / Right stepping only through years that hold titles; `tv/43`) · Streaming services
   (several); Clear filters at the bottom in its own group, apart by a line. Every list shows only values present, with
   counts. Lists use the shared choice list (RULES §9).
 - **Sort** (`25`): grouped menu, no search row: General (Date added · Title · Release date / Air date) · Trakt (Trending ·
   Popular; hidden when Trakt isn't connected) · Files (Running time, Resolution, HDR, Audio, File size, Date modified,
   Codec, Bitrate, Container, Path) · Series (Seasons, Episodes, Size per episode; hidden on Movies; movies last on mixed
   pages). No Year sort. Tick on the current choice.
-- **Order:** one button whose words follow the sort: A → Z / Z → A, Newest / Oldest first, Largest / Smallest first,
+- **Order:** one button whose words follow the sort; **its width is fixed to the wider of its two words**, so flipping it never moves the buttons after it (owner, 20 Nov): A → Z / Z → A, Newest / Oldest first, Largest / Smallest first,
   Longest / Shortest first, Most / Fewest first, Highest / Lowest ranked first.
 - **Columns** (list view, `28`, `33`): menu under its button: Shown (ticked, in column order; OK picks a column up and
   Up / Down moves it, live), Hidden (A–Z), Reset to default at the bottom. No Done; Title always shows and keeps the most

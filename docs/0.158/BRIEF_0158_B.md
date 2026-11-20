@@ -244,7 +244,16 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   reads **"Filters · 2"** (the number of filters in use: Watched not All, Genre, Year not Any year, Streaming
   services each count one); the icon stays the same. **Genre: shapes** (circle, square, triangle, diamond; B). **Match:
   ticked list** (B).
-- **Still to settle (do not build yet):** the Year list (proposal `tv/43`: Any year · Recent · Your Own Range).
+- **Year list (owner, 20 Nov; `tv/43`):** **Any year** (the off choice, ticked when no year filter is on; second line
+  the library's span and count) · **Recent** (the last 5 years, span and count) · **Your Own Range** with **From** /
+  **To**, Left / Right stepping only through years that hold titles. No decades, no This year.
+- **Bug, Order button width (owner, 20 Nov):** the button grows when it reads "Newest first" and shrinks for "Oldest
+  first", pushing List view along. Cause: `toolbarButton` wraps its text (`-2` width) and Roboto is proportional:
+  "Newest first" is about 128 px at 1080p, "Oldest first" about 116 ("N" and "w" are wide, "l" and "d" narrow);
+  "Smallest first" / "Largest first" differ by 13. **Fix:** give the Order button a fixed width, measured as the
+  wider of its two words for the current sort (`Paint.measureText` on both `orderLabel(key, true/false)`), contents
+  centred, so flipping the order never moves anything. It may change width only when the sort changes. Test: both
+  states lay out to the same width and List view's x does not move.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.

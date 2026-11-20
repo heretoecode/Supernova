@@ -5,7 +5,9 @@
   Owner: Filters menu and Streaming services fine; Watched list icons = poster badges (`tv/41`, in the brief).
 - Decided: Filters button sliders + "Filters · 2" when on (D); Genre shapes (B); Match ticked list (B). Streaming
   logo on posters parked (REVISIT_LATER).
-- **Waiting for the owner:** the Year proposal `tv/43` (Any year · Recent · Your Own Range).
+- Year approved (`tv/43`); Order button width bug found and in the brief. **Filters done.**
+- **Sort:** redrawn `tv/44` (Movies, opened), `tv/45` (own page, scrolled to Series); Drive pictures 10, 11. Waiting for
+  the owner's notes. Then List / Grid view with list view, Columns, Customise page.
 - Then Sort, Order, List / Grid view with list view, Columns, Customise page on the own page.
 
 ## 19–20 Nov evening — library pages review (start here next time)
