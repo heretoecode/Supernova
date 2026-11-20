@@ -271,8 +271,13 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   library holds).
 - **Icons (owner, 20 Nov; `tv/47`):** Date added = **an arrow into a tray** (A); Title = **A–Z with an arrow** (B);
   Number of seasons = **numbered list** (B). Number of episodes keeps the screen with a play mark.
-- **Still open:** with Last episode added the own page has 12 sorts, one more than fits without scrolling; the owner
-  picks what goes (or tighter rows). Build nothing in Sort until settled.
+- **Resolution removed too; one Size (owner, 20 Nov; `tv/48`):** File size and Size per episode become **one sort**:
+  a film by its file size, a show by its size per episode (a show's total is dropped: it only grows with the episode
+  count). Its name follows the page like Release date / Air date: Movies "File size", TV Shows "Size per episode",
+  mixed pages "Size". Caption line 3 "24.6 GB" / "2.5 GB per episode". Order words Largest / Smallest first.
+- **Final Sort (proposed `tv/48`, awaiting the owner's nod):** General (Date added · Title · Release date) · Trakt
+  (Trending · Popular) · Series (Last episode added · Number of seasons · Number of episodes) · Files (Running time ·
+  Size). Ten at most; never scrolls. Last episode added's icon: a screen with a plus.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.

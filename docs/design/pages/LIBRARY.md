@@ -32,11 +32,14 @@ focused top-row poster and its ring still clear it). In list view the column hea
 - **Filters** (`23`, `24`; redrawn on today's rules `tv/35`–`40`, owner 20 Nov): Watched (All · Unwatched · In progress · Watched; icons are the poster badge: grid, empty ring, pie, tick, `tv/41`) · Genre (row icon: shapes; genre icons; Match: Any · All at the top, its icon a ticked list) · Year (Any year · Recent · Your Own Range with From / To, Left / Right stepping only through years that hold titles; `tv/43`) · Streaming services
   (several); Clear filters at the bottom in its own group, apart by a line. Every list shows only values present, with
   counts. Lists use the shared choice list (RULES §9).
-- **Sort** (`25`; redrawn `tv/44`–`46`, owner 20 Nov): grouped menu, no search row, **never scrolls**: General (Date
-  added · Title · Release date / Air date) · Trakt (Trending · Popular; hidden when Trakt isn't connected) · Series
-  (Number of seasons, Number of episodes, Size per episode; the numbers are how many the library holds; hidden on Movies; movies last on mixed pages) ·
-  **Files last** (Running time, Resolution, File size; Date modified to confirm). Container, Path, Bitrate,
-  Codec, HDR and Audio removed (owner, 20 Nov). No Year sort. Tick on the current choice.
+- **Sort** (`25`; final `tv/48`, owner 20 Nov): grouped menu, no search row, **never scrolls**: General (Date added:
+  when the title first arrived, a show's first episode · Title · Release date / Air date) · Trakt (Trending · Popular;
+  hidden when Trakt isn't connected) · Series (Last episode added · Number of seasons · Number of episodes, the
+  numbers being how many the library holds; hidden on Movies; films fall back to Date added on mixed pages) · **Files
+  last** (Running time · Size: a film's file, a show's size per episode; named "File size" on Movies, "Size per
+  episode" on TV Shows, "Size" on mixed pages). Removed (owner, 20 Nov): Container, Path, Bitrate, Codec, HDR, Audio,
+  Date modified, Resolution, the separate File size. Icons: tray, A–Z arrow, calendar, trending line, heart, screen
+  with a plus, numbered list, screen with play, stopwatch, drive. No Year sort. Tick on the current choice.
 - **Order:** one button whose words follow the sort; **its width is fixed to the wider of its two words**, so flipping it never moves the buttons after it (owner, 20 Nov): A → Z / Z → A, Newest / Oldest first, Largest / Smallest first,
   Longest / Shortest first, Most / Fewest first, Highest / Lowest ranked first.
 - **Columns** (list view, `28`, `33`): menu under its button: Shown (ticked, in column order; OK picks a column up and
