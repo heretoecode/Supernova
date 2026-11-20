@@ -1,0 +1,66 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111215;font-family:Roboto,Inter,Arial,sans-serif;width:1920px}
+.screen{position:relative;width:1920px;height:1080px;overflow:hidden}
+.screen>canvas{position:absolute;left:0;top:0}
+.border{position:absolute;inset:0;border:2px solid #c9ccd3;z-index:9}
+.bar{position:absolute;top:0;left:0;right:0;height:84px;display:flex;align-items:center;padding:0 52px;color:#fff;font-size:30px}
+.bar span{padding:9px 22px;border-radius:20px;margin-right:6px}
+.bar .open{background:rgba(255,255,255,.15);color:rgba(255,255,255,.72)}
+.bar .sp{flex:1}
+.tb{position:absolute;left:52px;right:52px;top:102px;height:52px;display:flex;gap:8px;color:#fff;font-size:24px}
+.tb span{height:52px;padding:0 22px;border-radius:20px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.tb .f{background:#fff;color:#000}
+.tb .gap{flex:1;padding:0}
+.poster{position:absolute;width:236px;border-radius:12px;background:#23262C}
+.pedge{position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 1px #fff;pointer-events:none;z-index:2}
+.art{position:relative;height:354px;border-radius:12px 12px 0 0;overflow:hidden}
+.logo{position:absolute;left:8px;right:8px;bottom:40px;text-align:center;font-size:24px;color:#f4f6fa;font-weight:900;letter-spacing:2px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.cap{height:100px;padding:9px 8px 0 14px}
+.t1{color:#fff;font-size:24px;font-weight:500;line-height:28px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t2,.t3{color:#c9d3e6;font-size:18px;line-height:22px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{position:absolute;top:8px;right:8px;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.45);overflow:hidden}
+.badge svg{position:absolute;left:0;top:0}
+.zoom{position:relative;width:1920px;height:1080px;overflow:hidden;background:#111215}
+.zl{position:absolute;left:80px;color:#e8ebf2;font-size:34px}
+</style></head><body>
+<div class="screen" id="s"></div>
+<div class="zoom" id="z"></div>
+<script>
+const LINE_Y=178;
+function taper(x0,x1,y,w,alpha,scale){ // pen stroke: full width in the middle, thinning to a hair at both ends
+ const n=120,pts=[],bot=[];for(let i=0;i<=n;i++){const t=i/n,x=x0+(x1-x0)*t;const e=Math.min(t,1-t);const k=e>=.22?1:.18+.82*Math.sin(Math.PI/2*e/.22);const h=w*k/2;pts.push([x,y-h]);bot.unshift([x,y+h])}
+ const all=pts.concat(bot).map(p=>p.map(v=>v*scale));return `<polygon points="${all.map(p=>p.join(',')).join(' ')}" fill="rgba(255,255,255,${alpha})"/>`}
+const D=48,C=24;
+function pt(p,r){const a=2*Math.PI*p-Math.PI/2;return [C+r*Math.cos(a),C+r*Math.sin(a)]}
+function pie(p,r=18){const [x,y]=pt(p,r),l=p>.5?1:0;return `<path d="M${C} ${C} L${C} ${C-r} A${r} ${r} 0 ${l} 1 ${x} ${y} Z" fill="#000"/>`}
+function tick(){return `<path d="M15 24.5l6 6 12-13" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`}
+const P=[["The Harbour","2 seasons · 16 episodes",null,"#7a3b2e","#26120d"],["Greenwood","S1 E4 · 5 of 8 left",.4,"#2f5c4a","#0e1d17"],["Night Shift","3 seasons · 30 episodes",'w',"#5a4a7a","#1a1426"],["Golden Mile","S1 E6 · 1 of 6 left",.83,"#8a6a2a","#2a1f0a"],["Deep Water","4 episodes",null,"#2e4f78","#0d1726"],["Velvet","S1 E3 · 18 of 20 left",.1,"#6d2f52","#1f0c18"],["The Isle","6 episodes",'w',"#3f6b72","#0f1e21"]];
+let h=`<div class="bar"><span>Home</span><span>Movies</span><span class="open">TV Shows</span><span>Documentaries</span><span class="sp"></span><span style="font-size:26px">◌</span><span>Files</span><span>Search</span><span>Settings</span><span style="padding-right:0">18:40</span></div>
+`;
+const rims=[6,5,4,3,2,1];
+const cols=[["#1D1F23","A · #1D1F23"],["#1B1D21","B · #1B1D21 (was 2)"],["#191B1F","C · #191B1F"],["#16181C","D · #16181C (was 3)"],["#141619","E · #141619"],["#121316","F · #121316"]];
+const X=c=>52+c*(236+80);
+for(let c=0;c<6;c++){const it=P[c%7];const x=X(c);
+ // top row: rim widths, caption in D (#16181C)
+ let y=118;
+ h+=`<div style="position:absolute;left:${x-40}px;width:316px;top:${y-30}px;text-align:center;color:#e8ebf2;font-size:21px">Rim ${rims[c]} px</div>`;
+ h+=`<div class="poster" style="left:${x}px;top:${y}px;background:#16181C"><div class="art" style="background:radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.18),transparent 60%),linear-gradient(155deg,${it[3]},${it[4]})"><div class="logo">${it[0].toUpperCase()}</div><div class="badge"><svg width="${D}" height="${D}" viewBox="0 0 ${D} ${D}">${pie(.6,24-rims[c])}</svg></div></div><div class="cap"><div class="t1">${it[0]}</div><div class="t2">S1 E5 · 3 of 8 left</div><div class="t3">Added 16 Nov 2026</div></div><div class="pedge"></div></div>`;
+ // bottom row: caption colours
+ const jt=P[(c+3)%7];y=118+454+44;
+ h+=`<div style="position:absolute;left:${x-40}px;width:316px;top:${y-30}px;text-align:center;color:#e8ebf2;font-size:21px">${cols[c][1]}</div>`;
+ h+=`<div class="poster" style="left:${x}px;top:${y}px;background:${cols[c][0]}"><div class="art" style="background:radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.18),transparent 60%),linear-gradient(155deg,${jt[3]},${jt[4]})"><div class="logo">${jt[0].toUpperCase()}</div></div><div class="cap"><div class="t1">${jt[0]}</div><div class="t2">2 seasons · 16 episodes</div><div class="t3">Added 16 Nov 2026</div></div><div class="pedge"></div></div>`;
+}
+const s=document.getElementById('s');s.innerHTML=h+'<div class="border"></div>';
+// zoom: today's line vs the new one, magnified 4x, left end and middle
+const Z=4;let z=`<div class="zl" style="top:120px">1 · Today: white at 12%, solid (the left end, magnified 4×)</div><div class="zl" style="top:560px">2 · New: white at 35%, thinning towards each end like a pen stroke (magnified 4×)</div>
+<svg style="position:absolute;left:0;top:0" width="1920" height="1080">
+<rect x="${80}" y="${300}" width="${1760}" height="${2*Z}" fill="rgba(255,255,255,.12)"/>
+${(function(){const x0=20,len=1816;let s='';s+=`<g transform="translate(${80-x0*Z},${740-180*Z})">${taper(x0,x0+len,180,2,.35,Z)}</g>`;return s})()}
+</svg><div class="border"></div>`;
+document.getElementById('z').innerHTML=z;
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+document.querySelectorAll('.screen,.zoom').forEach(sc=>{const cv=document.createElement('canvas');cv.width=1920;cv.height=1080;sc.prepend(cv);cv.style.position='absolute';cv.style.left=0;cv.style.top=0;
+ const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;g.fillStyle='#111215';g.fillRect(0,0,1920,1080);for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;g.fillStyle=`rgba(255,255,255,${a})`;g.fillRect(x,y,1,1)}});
+</script></body></html>
