@@ -198,6 +198,17 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   and **Undo**; more height so its 6-second line clears the buttons; Back or 6 seconds close it, focus to the page; Mark as
   watched has no notice and its menu row flips to Mark as unwatched on a watched title.
   (The "To fix" row in Library Care is approved but waits for the Files review: do not build it yet.)
+- **Top bar clock (owner, 20 Nov; cause found in discussion):** on Home, Movies, TV Shows and Files the clock is thinner
+  than the words; on the own page, Search and Settings it matches. Cause: `overlay/Overlay.java` (NOVA's old leanback
+  overlay, created by `MainFragment`) **removes `TopNavigation`'s own clock (`preview-default-clock`) and puts its own
+  in**, set to `sans-serif-light`, an unscaled 19 sp and `setIncludeFontPadding(true)`, so it is lighter, a different
+  size and not centred on its digits. The other pages have no Overlay, so they keep the right clock. Fix: Overlay
+  keeps `TopNavigation`'s `BarClock` (one font, weight and size for every word and the clock, RULES §2) and only moves
+  the scan progress; test that every page's clock has the bar's typeface and size.
+- **Top bar spacing (owner, 20 Nov):** the gap from Settings to the clock looks bigger than Files → Search → Settings.
+  The clock sits right-aligned in a `status` box at least 64 dp wide, wider than "18:40", so spare room lands on its
+  left. Make the space between the words Files, Search, Settings and the clock's digits equal (word to word, as the
+  eye reads it), on every page; check in renders.
 - **Empty library pages (owner, 19 Nov; LIBRARY.md › Empty pages):** "No movies yet" (never "films"), "Add a folder,
   a drive or a network share and your movies will appear here." (TV shows likewise); while the first scan runs, the
   shared spinning loading ring, animated as on Preparing playback, **no grey circle behind it**, and "The first ones

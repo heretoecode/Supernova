@@ -107,3 +107,6 @@ The owner will do the full walk-through when part B is finished; these are thing
 - **L6. Long-press menu and delete warnings: approved (owner, 20 Nov)** with every change in LIBRARY.md (versions list,
   episode list with Not in library, Clean Up, folder switch, warning only beside a focused Delete, no exclamation mark,
   four episodes visible).
+- **T1. Clock weight changes by page** (thin on Home, Movies, TV Shows, Files; right on own page, Search, Settings) and
+  **T2. the gap before the clock is bigger** than between Files, Search and Settings (owner, 20 Nov). Causes found and
+  fixes in the brief (NOVA's old overlay swaps in its own light clock; the clock's box is wider than the time).
