@@ -288,11 +288,15 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   Size). Ten at most; never scrolls. Last episode added's icon: a screen with a plus.
 
 ### Library toolbar review: list view (owner, 20 Nov; mock-ups `library-pages/tv/51`–`54`)
-- Approved: the progress pie / watched tick at the right edge of the Title column (same badges as the posters).
+- Approved: the progress pie / watched tick at the right edge of the Title column (same badges as the posters),
+  with **about 32 px between the title's last letter (or "…") and the badge and 40 px between the badge and the next
+  column** (owner, 20 Nov; `tv/55`).
+- **Row lines (owner, 20 Nov; `tv/54`, `tv/55`):** white at **20%**, 1 px, **fading out at both ends** (clear over the
+  middle, gone at the row's edges); never as strong as the toolbar line (35%, 2 px). None under the last row or
+  beside the focused row.
 - **Proposed, waiting for the owner:** columns named for what they hold, one figure each: **Average running time** ·
   **Total running time** · **Average size** · **Total size** (films: their own length and file in both; shows: per
-  episode and all episodes). Defaults Average running time, Average size, Total size. Row lines: 8% today (lost in
-  the speckle); choices 14% square, 14% fading, 20% fading (`tv/52`–`54`), never as strong as the toolbar line.
+  episode and all episodes). Defaults Average running time, Average size, Total size.
 - **Scroll arrows** in the right margin on library pages, grid and list (RULES §16): up faint at the top, down at the
   foot; check they are built.
 

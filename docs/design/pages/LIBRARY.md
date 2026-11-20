@@ -64,8 +64,9 @@ focused top-row poster and its ring still clear it). In list view the column hea
 - Focus: the whole card grows about 8%, the thick white ring exactly on the card's edge, round artwork and caption.
 
 ## List view (`26`, `28`)
-Rows with Title first, then the shown columns; long values end in "…"; faint lines between rows; the focused row is the
-white box. Same Filters / Sort / Order as the grid.
+Rows with Title first, then the shown columns; long values end in "…"; lines between rows white at 20%, 1 px, fading
+out at both ends (owner, 20 Nov); the focused row is the white box. The progress badge sits at the right edge of the
+Title column with room either side (`tv/55`). Scroll arrows in the right margin. Same Filters / Sort / Order as the grid.
 
 ## Customise page (`32`, `29`) — your own pages only (owner, 19 Nov)
 A side panel floating on the right, sized to fit without scrolling; changes apply live, **no Save button**, Back

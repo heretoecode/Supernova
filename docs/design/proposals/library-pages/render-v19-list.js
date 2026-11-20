@@ -32,7 +32,7 @@ const ROWS = [
   ['City of Birds', '2019', '—', '1 h 28 min', '2.1 GB', '2.1 GB', '27 Oct 2026', null],
 ];
 const HEAD = ['Title', 'Release date', 'Episodes', 'Average running time', 'Average size', 'Total size', 'Date added'];
-const W = [560, 180, 140, 270, 190, 180, 180];
+const W = [580, 170, 140, 270, 190, 180, 180];
 
 const css = `${extraCss}
 .lv{position:absolute;left:52px;top:203px;width:1816px;color:#fff}
@@ -46,7 +46,8 @@ const css = `${extraCss}
 .c.t{display:flex;align-items:center;gap:18px;font-weight:500}
 .thumb{width:40px;height:60px;border-radius:5px;flex:none;box-shadow:inset 0 0 0 1px #fff;position:relative}
 .tt{overflow:hidden;text-overflow:ellipsis;flex:1;white-space:nowrap}
-.mini{width:30px;height:30px;flex:none}
+.mini{width:30px;height:30px;flex:none;margin-left:14px}
+.c.t{padding-right:40px}
 `;
 
 function pie(p) {
@@ -131,7 +132,5 @@ function frame(n, alpha, tapered, label) {
 }
 
 render([
-  ['52-v20-list-lines-14', frame(18, 0.14, false, '14%, square ends')],
-  ['53-v20-list-lines-14-taper', frame(19, 0.14, true, '14%, fading at both ends')],
-  ['54-v20-list-lines-20-taper', frame(20, 0.20, true, '20%, fading at both ends')],
+  ['55-v21-list-final', frame(21, 0.20, true, '20% fading; more room round the badge')],
 ], css);
