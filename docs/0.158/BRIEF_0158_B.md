@@ -193,6 +193,10 @@ Users and tags, Guest (still being designed). Onboarding (later). The Trakt list
   ticked list with a Select all switch, facts line, Not in library pill, four rows visible with scroll arrows; Clean Up
   with the three switches (folder switch on by default and only removing an empty folder); totals; the button names
   the count. This replaces D1's "one notice" wording: the list is how nothing gets left behind. Times as "2 h 22 min".
+- **Undo notice and Mark as watched (owner, 20 Nov; RULES §7b; LIBRARY.md › Long-press):** the shared Undo notice gets
+  a film / TV show icon left of the title, more height so its 6-second line clears the 52 px Undo button; Mark as
+  watched has no notice and its menu row flips to Mark as unwatched on a watched title.
+  (The "To fix" row in Library Care is approved but waits for the Files review: do not build it yet.)
 - **Empty library pages (owner, 19 Nov; LIBRARY.md › Empty pages):** "No movies yet" (never "films"), "Add a folder,
   a drive or a network share and your movies will appear here." (TV shows likewise); while the first scan runs, the
   shared spinning loading ring, animated as on Preparing playback, **no grey circle behind it**, and "The first ones

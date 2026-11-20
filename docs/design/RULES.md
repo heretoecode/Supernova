@@ -155,6 +155,11 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   **Summary line on its own (owner, 20 Nov):** the summary of what an action does ("Deletes **8 files · 19.2 GB**.")
   always has a line to itself; any further explanation goes on the line underneath, in the soft colour. Every warning
   and menu that sums something up follows this.
+- **Undo notice (owner, 20 Nov; `rows-captions/tv/20`, `21`):** after an instant action that can be put back (Remove
+  from library, Hide a row, Clear history, Remove a connection): a box at the foot, centred, in the menu look (§11);
+  a monochrome icon for what it was (film, TV show, row …) left of "<Title> removed from your library"; an **Undo**
+  button in the 52 px shape; a thin line along its foot runs down over 6 seconds, with clear room between it and the
+  button. Not for harmless toggles such as Mark as watched, which flip in their own menu instead.
 - **Technical facts line (owner, 20 Nov):** wherever files are told apart (delete, choose a version, Files), show the
   first three a file has of **Edition · Resolution · HDR · Sound · Video codec**; a missing one lets the next move up.
   Size goes on the line below with the file name and where it lives.

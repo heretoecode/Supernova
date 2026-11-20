@@ -97,3 +97,8 @@ facts on the right of the tabs: read them as This Device, Files, underline tabs,
 ## Never opens from Files
 NOVA's Network Shares / Saved Locations / "Browse a network share" pages, the "Add Network Source" pop-up, Android's
 keyboard, the three-panel browser (Locations · list · Information), the old Library Health screens.
+
+## To fix (approved idea, owner 20 Nov; draw at the Files review)
+A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
+match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on
+Files in the top bar shows while anything is waiting. **Mock-up and details at the Files review**, not before.

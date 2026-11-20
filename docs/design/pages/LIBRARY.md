@@ -78,7 +78,11 @@ closes. Group headings centred on their line, Title Case.
 - TV show: **Playback** Resume S1 E2 · Play from the start (not started: Play) · **Library** Mark show as watched · Fix
   match · Remove from library · **Files & Media** Delete all episode files.
 - Icons each, no two alike; group headings centred on a thin line; no "More info" (OK already opens Details); no Play
-  from the start on an unstarted title. Times read "2 h 22 min left", never "142 min". The menu is as wide as its longest
+  from the start on an unstarted title. Times read "2 h 22 min left", never "142 min".
+- **Mark as watched** happens at once with **no notice**; on a watched title the row reads **Mark as unwatched** (show:
+  Mark show as unwatched), so it is undone from the same menu (owner, 20 Nov).
+- **Remove from library** happens at once with the **Undo notice** (RULES §7b; `rows-captions/tv/20`, `21`): the poster
+  goes and the others close up. The menu is as wide as its longest
   line plus the standard padding.
 
 ## Delete warnings (owner, 20 Nov; mock-ups `rows-captions/tv/16a`, `16`, `17`, `18`; RULES §7b)

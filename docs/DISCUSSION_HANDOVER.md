@@ -15,6 +15,7 @@
   Files' look; app icon on `#111215`, no grain; reports to Download, backups via the folder picker; the facts-line order
   Edition · Resolution · HDR · Sound · Codec; R2 cause found (TopNavigation decides scroll-behind before the own page's
   library exists).
+- **To remember at the Files review:** draw and settle the approved **To fix** row in Library Care (FILES.md, end).
 - **Next in the library review:** the five toolbar buttons (Filters, Sort, Order, List / Grid view, Columns), then
   Customise page on the own page. Then the other pages, one at a time.
 - **Reminder:** before Coding's next version, ask for the diagnostics report covering 19 Nov 14:30–14:45 (MobLand).
