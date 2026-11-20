@@ -277,6 +277,10 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   **Caption line 3 (proposed `tv/49`):** a film "24.6 GB"; a show "**2.2 GB each · 8.8 GB**" (the sorted figure
   first, then the total; fits the caption at 1080p where "2.2 GB per episode (8.8 GB)" would not). If the owner
   approves, the sort is called **"Size"** on every page. Order words Largest / Smallest first.
+- **Six posters a row? (proposed `tv/50`, waiting for the owner):** seven a row was Claude's first-pass suggestion
+  (13 Nov), never chosen by the owner. Six gives posters about 276 px wide at 1080p (was 236; gaps 32 px, edges on
+  the side margin), artwork 414 px tall, and room for a show's line 3 to say "**Average 2.2 GB · total 8.8 GB**"
+  (both figures named, since "2.2 GB each" read as every episode's real size). Build nothing until approved.
 - **Final Sort (proposed `tv/48`, awaiting the owner's nod):** General (Date added · Title · Release date) · Trakt
   (Trending · Popular) · Series (Last episode added · Number of seasons · Number of episodes) · Files (Running time ·
   Size). Ten at most; never scrolls. Last episode added's icon: a screen with a plus.

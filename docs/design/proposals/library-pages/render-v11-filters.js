@@ -183,7 +183,10 @@ function taper(x0, x1, y, w, alpha) {
   return `<polygon points="${pts}" fill="rgba(255,255,255,${alpha})"/>`;
 }
 
-function page(items = MOV, filterIcon = svg(I.filter, 26), filterWord = 'Filters') {
+function page(items = MOV, filterIcon = svg(I.filter, 26), filterWord = 'Filters', cols = 7) {
+  const w = cols === 7 ? 236 : Math.floor((1816 - (cols - 1) * 32) / cols);
+  const step = cols === 7 ? 263 : w + 32;
+  const artH = Math.round(w * 1.5);
   const words = ['Home', 'Movies', 'TV Shows', 'Documentaries'];
   let h = `<div class="bar">${words.map(w => `<span class="${w === 'Movies' ? 'open' : ''}">${w}</span>`).join('')}
     <span class="sp"></span><span>Files</span><span>Search</span><span>Settings</span><span>18:40</span></div>`;
@@ -191,14 +194,14 @@ function page(items = MOV, filterIcon = svg(I.filter, 26), filterWord = 'Filters
     <span>${svg(I.order, 26)}Newest first</span><span>${svg(I.list, 26)}List view</span></div>`;
   h += `<svg style="position:absolute;left:0;top:0" width="1920" height="1080">${taper(52, 1868, 179, 2, 0.35)}</svg>`;
   for (let r = 0; r < 2; r++) {
-    for (let c = 0; c < 7; c++) {
-      const it = items[r * 7 + c];
+    for (let c = 0; c < cols; c++) {
+      const it = items[r * cols + c];
       const a = ART[(c + r * 3) % 7];
-      const x = 52 + c * 263;
-      const y = 204 + r * 498;
+      const x = 52 + c * step;
+      const y = 204 + r * (artH + 100 + 44);
       const bg = `radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.18),transparent 60%),`
         + `linear-gradient(155deg,${a[0]},${a[1]})`;
-      h += `<div class="poster" style="left:${x}px;top:${y}px"><div class="art" style="background:${bg}">
+      h += `<div class="poster" style="left:${x}px;top:${y}px;width:${w}px"><div class="art" style="background:${bg};height:${artH}px">
         <div class="logo">${it[0].toUpperCase()}</div>${badge(it[3])}</div><div class="cap"><div class="t1">${it[0]}</div>
         <div class="t2">${it[1]}</div><div class="t3">${it[2]}</div></div><div class="pedge"></div></div>`;
     }
