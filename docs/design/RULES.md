@@ -152,6 +152,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   Delete button is focused, beside it, with a full stop; options sit under a **Clean Up** heading (history in
   Supernova, Trakt history, delete the folder if it's left empty: on); with more than one file, a ticked list (ticks
   on the right, a **Select all** switch) and a running total; the Delete button names the count.
+  **Summary line on its own (owner, 20 Nov):** the summary of what an action does ("Deletes **8 files · 19.2 GB**.")
+  always has a line to itself; any further explanation goes on the line underneath, in the soft colour. Every warning
+  and menu that sums something up follows this.
 - **Technical facts line (owner, 20 Nov):** wherever files are told apart (delete, choose a version, Files), show the
   first three a file has of **Edition · Resolution · HDR · Sound · Video codec**; a missing one lets the next move up.
   Size goes on the line below with the file name and where it lives.

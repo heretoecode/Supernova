@@ -83,11 +83,13 @@ closes. Group headings centred on their line, Title Case.
 
 ## Delete warnings (owner, 20 Nov; mock-ups `rows-captions/tv/16a`, `16`, `17`, `18`; RULES §7b)
 - **One file:** "Delete <title>?"; one line "Deletes **<file name>** (2160p · 58.2 GB) from **<server or drive>**.";
+  under it "Its own subtitle and .nfo files go with it; anything else in the folder stays.";
   then **Clean Up**; buttons **Keep file** (focused when it opens) · **Delete file**.
 - **Several versions of a film:** "You have **2 versions**. Tick the ones to delete." **Select all** as a switch (on =
   all ticked; unticking one turns it off), then one row per version: the facts line (first three of Edition ·
   Resolution · HDR · Sound · Video codec that the file has), under it file name · where it lives · size; the app's tick on
-  the right; all ticked to start. Total under the list ("Deletes **2 files · 72.3 GB**."); the button follows the ticks
+  the right; all ticked to start. Total under the list on its own line ("Deletes **2 files · 72.3 GB**."), under it "Each file's own subtitle and
+  .nfo files go with it; anything else in the folder stays."; the button follows the ticks
   ("Delete 2 files").
 - **A show (Delete all episode files):** "Tick the episodes to delete, including any not yet in your library." (one line) Select all switch; episodes grouped by season, each "S1 E1 · Episode name" over
   the facts line · size; files the library doesn't know carry a **Not in library** pill centred between the text and the
