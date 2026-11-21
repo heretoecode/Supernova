@@ -52,14 +52,14 @@ function frame24() {
 }
 
 function frame25() {
-  const SEASON = { logo: 'Tidelands', age: '12', titleLine: 'Season 1',
-    facts: '2024 · 10 episodes · Documentary, Nature, History, Travel',
+  const SEASON = { logo: 'Tidelands', age: '12',
+    facts: '<span><b style="font-weight:500">Season 1</b> · 2024 · 10 episodes · Documentary, Nature, History, Travel</span>',
     desc: 'The first spring on the outer islands: seal hunters, ferrymen and a lighthouse family face the year the '
       + 'mainland finally comes for their children.' };
   const btns = `<span class="btn f">${svg(D.play, 24)}Resume S1 E3 · 31 min left</span><span class="btn">
     ${svg(I.more, 26)}More</span>`;
   return bar('TV Shows') + hero(SEASON, btns) + tabs(972, 'Details')
-    + '<div class="cap2">25 · The season page: the same hero, "Season 1" as its title line</div>';
+    + '<div class="cap2">25 · The season page: "Season 1" leads the facts line, no line of its own</div>';
 }
 
 (async () => {

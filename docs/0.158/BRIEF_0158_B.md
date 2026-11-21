@@ -469,10 +469,14 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
 
 ### Details review, round 6 (owner, 21 Nov; `details-v3/tv/26`–`28`)
 - Approved: the top-bar blur pictures (`tv/16`–`18`, `22`).
-- **Episode delete, earlier episodes (proposed `tv/28`):** the switch becomes a stepper (RULES §8), **Also delete:
+- **Season page hero (owner, 21 Nov; `tv/25` redrawn):** no separate "Season 1" line; the facts line starts with it
+  in medium weight: "[12] **Season 1** · 2024 · 10 episodes · genres". Episodes keep their title line ("Season 1 ·
+  Episode 3 · The Long Tide").
+- **Season card (owner, 21 Nov): option A, `tv/26`.** Option B dropped.
+- **Episode delete, earlier episodes (approved `tv/28`):** the switch becomes a stepper (RULES §8), **Also delete:
   None · Watched only (n) · All earlier (n)**; the value names the range ("E1 – E10 except E7"); starts on Watched
   only when any earlier one is watched, else None; the total and the button follow.
-- **Reaching a season page, two options (owner to pick):** A `tv/26` a season card first in each row with the
+- (Settled: A.) **Reaching a season page, two options:** A `tv/26` a season card first in each row with the
   season's own 2:3 poster whole on the left and "Season 1 · 10 episodes · 2 watched · Open season ›"; B `tv/27` a
   **‹ Season 1 ›** picker under the tabs (one season's episodes at a time, in rows below) with a **Season page**
   button beside it. Replaces `tv/24` (its "S1" was a placeholder, not centred).
