@@ -300,14 +300,17 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 - **Scroll arrows** in the right margin on library pages, grid and list (RULES §16): up faint at the top, down at the
   foot; check they are built.
 
-### Library toolbar review: Columns (proposed 20 Nov, waiting for the owner; `library-pages/tv/56`–`58`)
+### Library toolbar review: Columns (owner, 20–21 Nov; `library-pages/tv/56`–`58`)
 - Column names = the Columns menu's names = the headings (owner: headings mimic the menu).
-- Proposed list (16): Release date · Date added · Last episode added · Number of seasons · Number of episodes ·
+- List (16; owner to confirm): Release date · Date added · Last episode added · Number of seasons · Number of episodes ·
   Average running time · Total running time · Average size · Total size · Resolution · HDR · Audio · Video codec ·
   Bitrate · Container · Location (Date modified dropped, as in Sort).
-- **At most seven columns besides Title** (16 at once is unreadable at 1080p, `tv/56`): the Shown heading reads
+- **At most seven columns besides Title (owner, 21 Nov: approved)** (16 at once is unreadable at 1080p, `tv/56`): the Shown heading reads
   "Shown · 7 of 7"; while full, Hidden rows are dimmed until one is hidden. The menu scrolls with the arrows in its
   margin (`tv/57`, `58`). Shown in column order (OK picks one up, Up / Down moves it), Hidden A–Z, Reset to default.
+- Defaults (seven): own page Release date · Number of episodes · Average running time · Average size · Total size ·
+  Resolution · Date added. Movies and TV Shows to confirm with the owner (Claude's proposal: on Movies the
+  average / total pairs read "Running time" and "File size", as a film's average and total are the same).
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.

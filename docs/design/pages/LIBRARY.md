@@ -43,11 +43,11 @@ focused top-row poster and its ring still clear it). In list view the column hea
   with a plus, numbered list, screen with play, stopwatch, drive. No Year sort. Tick on the current choice.
 - **Order:** one button whose words follow the sort; **its width is fixed to the wider of its two words**, so flipping it never moves the buttons after it (owner, 20 Nov): A → Z / Z → A, Newest / Oldest first, Largest / Smallest first,
   Longest / Shortest first, Most / Fewest first, Highest / Lowest ranked first.
-- **Columns** (list view, `28`, `33`): menu under its button: Shown (ticked, in column order; OK picks a column up and
-  Up / Down moves it, live), Hidden (A–Z), Reset to default at the bottom. No Done; Title always shows and keeps the most
-  room. Defaults: Movies — Release date, Running time, Resolution, Audio, File size, Date added; TV Shows — Seasons,
-  Episodes, Running time, Resolution, File size, Size per episode, Date added; own page — Release date, Episodes,
-  Running time, Resolution, File size, Size per episode, Date added.
+- **Columns** (list view, `28`, `33`; redrawn `tv/57`, `58`, owner 20–21 Nov): menu under its button: **Shown ·
+  n of 7** (ticked, in column order; OK picks a column up and Up / Down moves it, live), Hidden (A–Z; dimmed while
+  seven are shown), Reset to default at the bottom; scrolls with arrows in its margin. **At most seven columns
+  besides Title.** No Done; Title always shows and keeps the most room. Column headings use the menu's names. List
+  and defaults: see BRIEF_0158_B › Columns.
 
 ## Grid (default)
 - One portrait poster size on every library page, **six a row** (owner, 20 Nov, `tv/50`; was seven: about 276 px wide
