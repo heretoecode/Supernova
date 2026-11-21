@@ -481,6 +481,9 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
   **‹ Season 1 ›** picker under the tabs (one season's episodes at a time, in rows below) with a **Season page**
   button beside it. Replaces `tv/24` (its "S1" was a placeholder, not centred).
 
+### Details page sheet (21 Nov)
+`docs/design/pages/DETAILS.md` is rewritten from the six review rounds above and wins over them where they differ.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

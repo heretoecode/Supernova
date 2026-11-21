@@ -1,97 +1,122 @@
 # Page sheet: Details
 
-The one place to build Details from (CLAUDE.md "Definition of done"). Latest decisions as of 17 Nov 2026. Sources:
-`docs/design/RULES.md` (§14, §14b), `docs/0.157/OWNER_NOTES.md` (§1, §29), mock-ups in
-`docs/design/proposals/details-background/` (latest `21`, `16`–`20`; tabs `12`–`14`) and `fix-match-from-details/`.
-Where an older mock-up differs, this sheet wins: the tab is called **Episodes** (not "Seasons & Episodes"), the
-background is plain charcoal, menu group headings are centred on their line in Title Case, the description is two
-lines, and there is no tagline.
+The one place to build Details from (CLAUDE.md "Definition of done"). **Rewritten 21 Nov 2026** from the owner's
+review (rounds 1–6, all approved); replaces every earlier version. Mock-ups `docs/design/proposals/details-v3/tv/`
+(`01`–`28`; Drive › From Claude › 2026-11-21 Details). Rules: `docs/design/RULES.md` (§3, §4, §8, §10, §11, §14,
+§14c, §14d, §16, behind the top bar, long lists, no lone word). Where an older mock-up or doc differs, this sheet wins.
 
 ## Four kinds
 Movie, TV show, season, episode. Single-season shows have no season page.
 
-| Kind | Tabs (master order, hidden when they don't apply) | Opens on |
+| Kind | Tabs (hidden when empty; all drawn at once, never popping in) | Opens on |
 | --- | --- | --- |
 | Movie | Details · Extras · More Like This | Details |
 | TV show | Details · Episodes · Extras · More Like This | Episodes |
 | Season | Details · Episodes · Extras · More Like This | Episodes |
 | Episode | Details · Episodes · Extras · More Like This | Details |
 
-Empty tabs hide and the rest close up; all tabs are drawn at once, never popping in.
+## Whole page
+- One page: the hero, then the tabs below it. Speckled background. **Side margin 52 px** (the top bar's edges) for the
+  hero, tabs, headings, the Details tab and the start of rows. Rows run off both screen edges, never cut at an
+  invisible line (also on the left once scrolled).
+- **On a tab** the page scrolls so **the hero's foot (about 56 px) peeks above the tabs**; no title or logo is
+  repeated; no scroll arrows on the page.
+- **Behind the top bar** (`tv/16`–`18`): scrolled content runs on behind the bar blurred and dimmed, fading out at the
+  bar's foot; never a solid band or hard line; the bar's words on top. While focus is below the hero, its buttons
+  are at rest (never white).
 
-## Hero
-- Same size and place as Home's (1776×820 at 1080p), thin white edge with inner shade, the tab row peeking below.
-  Artwork changes once (no flicker); buttons are not rebuilt while loading.
-- **Logo:** the title's official logo artwork; its name in plain text when it has none. Going down into the tabs it
-  glides and shrinks to the compact logo top left.
-- **Title line** (seasons and episodes): "Season 2" / "Season 2 · Episode 8 · Title", as in the player.
-- **Metadata row:** Age rating (outlined badge) · Year · Length · Genres (TMDB order, four at most; owner 21 Nov); missing items
-  left out. Length: running time (movie, episode), seasons (show), episodes (season).
-- **Description:** two lines; no tagline.
-- **Buttons:** fixed place at the bottom left, whatever the text length. First: "Play" or "Resume S1 E5 · 16 min
-  left" (focus starts here); a streaming title: the service's name with the open-in-app icon; then More.
+## Hero (the one shared hero, RULES §14d; `tv/01`, `tv/25`)
+- 1816 × 820 at x 52, y 112; 1 px white edge with inner shade; dark shade from the left; text block bottom-left,
+  anchored up from the buttons.
+- **Logo** (official artwork, placed per RULES §19; the name in house style when none).
+- **Title line:** episodes only, "Season 1 · Episode 3 · The Long Tide". **Seasons have no title line:** the facts
+  line starts with "Season 1" in medium weight.
+- **Facts line:** age badge (no dot after it) · year (show: "2024–2025") · length (movie/episode running time;
+  season "10 episodes"; show "2 seasons") · up to four genres.
+- **Description:** two lines.
+- **Buttons** fixed at the bottom left: Play / "Resume S1 E3 · 31 min left" (or the streaming button) · More.
+  Focus starts on the first. The tabs sit at the same height as Home's first row heading.
 
 ## Tabs
-- Plain words with icons; focus is the white box; the open tab's underline as RULES §3/§4. Moving along switches the
-  tab at once. Up into the tab row lands on the open tab. Down from a tab goes to its first row.
-- **Details (one screen, no scrolling; owner, 17 Nov; mock-up `files-review-0157-1/06` B2):** three columns with icon headings: Reception (IMDb, Rotten Tomatoes, Metacritic, TMDB, awards; icons,
-  no written names) · Key information · Technical information. Soft labels, white values, faint row lines, no column
-  lines; "Unknown" for missing values. Then Cast and Crew: 2:3 portrait cards, rounded, artwork edge, name and role
-  underneath, initials when no photo, **seven each, Cast and Crew side by side** under the columns. Everything fits
-  on one 1080p screen (smaller text, tighter rows than `21`). **Nothing focusable;** Up returns to the tabs.
-- **Episodes:** on a show, one Home-style row per season (season heading lined up with the cards); on a season or
-  episode, that season's episodes. Cards 16:9 in row design A (RULES §14c): title and one line over the artwork, the corner badge, no bar.
-- **Extras:** Home-row cards, one row per kind, Trailers first; most specific first (episode, season, show).
-- **More Like This:** rows "In your library" and "On your services" (only with Where to Watch on). Service titles:
-  centred colour logo, title · year; no play icon on library items.
+Plain words with icons; **focus = white box; open tab = underline** (tabs are tabs). Line under the tab row = the
+library toolbar line (white 35%, about 2 px, fading at both ends). Moving along switches the tab at once; Up lands
+on the open tab; Down goes to the tab's first row.
 
-## More menu
-Opens beside More, sized to its longest item, an icon per item (no two alike), tick for a current choice, group
-headings centred on a thin line in Title Case. Only what makes sense: no Restart on an unstarted title (the Playback
-group then disappears).
+## Details tab (one screen, nothing focusable; `tv/02` movie, `13` show, `14` season, `15` episode)
+- Three columns with icon headings: **Reception** (IMDb, Rotten Tomatoes, Metacritic, TMDB, awards; rows about 76 px,
+  28 px values) · **Key information** · **Technical information**; soft labels, white values, quiet "Unknown",
+  faint fading row lines; both right-hand columns the same number of rows.
+- Then **Cast** and **Crew** side by side, seven each, 2:3 portraits 112 × 168 with the artwork edge, name and role
+  under (show: "Main cast"; season: "Season cast"; episode: guests included).
+- **Long lists** (studios, countries, languages, subtitles, mixed formats): at most two, then "and N more"; mixed
+  technical values across files: the most common, then "· n files differ" (or "1080p · 2 in 2160p"). Never a full line.
 
-| Group | Items (episode in progress shown; others the same where they apply) |
-| --- | --- |
-| Playback | Restart episode / Restart movie (only when started) |
-| Library | Mark as watched / Mark as unwatched · Fix match · Remove from library |
-| Files & Media | Subtitles · Artwork · Full description · Delete file |
-| (foot, set apart by a line) | TMDB page (QR icon) |
+| Row | Movie | Episode | Season | Show |
+| --- | --- | --- | --- | --- |
+| Date | Released | Aired | Aired (first – last) | First aired |
+| Second | Runtime | Episode "Season 2 · Episode 3"; Runtime | Season "2 of 2"; Episodes "8 · 8 in your library"; Episode length "Average 50 min"; Total running time | Status "Returning · 2 seasons"; Episodes "18 · 16 in your library"; Episode length; Total running time |
+| People | Directed by, Written by | Directed by, Written by, Guest stars | "Ruth Kane and 2 others" | Created by |
+| Other | Genres, Studio, Country, Language, Original title, Budget | Genres, Network, Country, Language | Genres, Network, Language | Genres, Network, Country, Language |
+| Technical | Resolution, Video, HDR, Frame rate, Audio, Audio languages, Subtitles, Size, **File**, **Location** | the same | the same with "Average 2.9 GB · total 23.2 GB", **Files** "8 episodes", Location = the season folder | the same, Location = the show folder |
+
+No Container (the file name shows it), no Revenue, no Bitrate (list-view column only). Reception on a season or
+episode shows its own scores where they exist, otherwise "Unknown".
+
+## Episodes tab (`tv/06`, `tv/26`)
+- One shared row per season, heading "Season 1" (not focusable).
+- **Season card first in each row (A, `tv/26`):** same size as an episode card; the season's own 2:3 poster whole on
+  the left; "Season 1", "10 episodes · 2 watched" (or "not started" / "all watched"), "Open season ›". OK opens the
+  season page; long-press opens the season's More menu (artwork, Delete season). Not on single-season shows, not on
+  a season page's own Episodes tab.
+- Episode cards: row design A, corner badge. **OK plays the episode.** **Long-press** (`tv/17`), beside the card on
+  whichever side has room: Playback (Resume · n min left / Play, Play from the start) · Library (Mark as watched ⇄
+  Mark as unwatched, Mark earlier episodes as watched) · Files & Media (Subtitles, Delete episode file).
+
+## Extras tab (`tv/18`, `tv/19`)
+Shared rows, one per kind, Trailers first; most specific first (episode, season, show). YouTube's red mark the size
+of the streaming logos, centred on each card. OK plays it **as large as possible**, page blurred behind, no title,
+**no YouTube controls**, a thin progress line at the foot; Back closes.
+
+## More Like This tab (`tv/04`, `tv/20`)
+"In Your Library" first (OK opens its Details; **long-press**: Playback (Resume / Play, Play from the start) ·
+Library (Add to Watch Next, Mark as watched)). Then one row per service, headed with the service's logo and
+**"On Netflix"** ("On Prime Video" …); the logo centred on each card; OK opens the title in that app.
+
+## More menu (`tv/05`)
+Beside the button, sized to its longest item, an icon each (no two alike), centred Title Case headings. Only what
+makes sense (no Restart on an unstarted title).
+Playback: Restart movie / episode · Library: Mark as watched ⇄ unwatched, Fix match (pencil icon), Remove from
+library (crossed-off list) · Files & Media: Subtitles, Artwork, Full description, Delete file · foot, after a line:
+**TMDB page QR code**.
 
 ## Actions and where they lead
 
 | Action | Leads to |
 | --- | --- |
-| Play / Resume | Preparing playback, then the player; Back from the player returns here, focus on the same button |
-| Streaming button | The title in that service's app (deep link where possible); the top service in Your services when several |
-| More | The menu beside the button |
+| Play / Resume | Preparing playback, then the player; Back returns here, focus on the same button |
+| Streaming button | The title in that service's app; the top service in Your services when several |
 | Restart | Preparing playback from the start |
-| Mark as watched / unwatched | Changes at once, with an Undo notice; the button and progress update in place |
-| Fix match | Files › Library Care's Fix match page for this title: Match and return (back to this page, refreshed) · Match and stay; Back without choosing returns here unchanged (`fix-match-v2-on-files-from-a-title`) |
-| Remove from library | Removed at once with Undo; Back to where the page was opened from |
-| Subtitles | Subtitle search and download for this title (to confirm against its own mock-up) |
-| Artwork | Side panel floating on the right: Hero and rows · Library page; the hero previews the picture you are on (`17`, `20`) |
-| Full description | Pop-up sized to the text: title, title line, then the text; no icon (`19`) |
-| Delete file | One warning in Supernova's design: name, text, switches for Supernova history and Trakt history (off), "Keep file" focused first, then Delete |
-| OK on a season heading | That season's page (not on single-season shows) |
-| OK on an episode card | That episode's page (To discuss on the roadmap: OK plays, long-press menu) |
-| TMDB page | Pop-up sized to its content: one line "Scan to open the TMDB page" and the QR code (170 px); the page blurred behind; Back closes (`files-review-0157-1/07`) |
-| OK on an Extras card | Plays the video nearly full screen with a small margin, the page blurred behind, no title bar and no player controls; Back closes |
-| OK on More Like This (library) | That title's Details page |
-| OK on More Like This (service) | The title in that service's app straight away (no Supernova page) |
-| Back | From deep in a tab: to the tab row first; then to where Details was opened from, focus restored |
+| Mark as watched / unwatched | Changes at once, no notice; the menu row flips |
+| Fix match | Files › Library Care's Fix match page (Match and return · Match and stay); redesign at the Files review |
+| Remove from library | Removed at once; back to the page you came from, the poster gone; Undo notice (`tv/07`) |
+| Subtitles | Side panel about 560 px (`tv/08`): Built In · Subtitle Files · Online; OK ticks |
+| Find subtitles online | On top of Subtitles (`tv/08b`): Language ‹ English › (stepper), Results (release name, downloads; pills Best match · SDH · Forced); OK downloads and ticks |
+| Artwork | Side panel (`tv/09`), no title or footer: For (Hero and rows · Library page) fixed at the top; pictures scroll beneath it with arrows in the margin; **Suggested** badge; tick on the current; the hero previews the focused picture |
+| Full description | The text alone, page blurred; Back closes (`tv/10`) |
+| Delete file | Warning (`tv/21`): "Delete <title>?"; the file name on its own line, its facts under it; Clean Up (history, Trakt when connected, empty folder on); Keep file focused |
+| Delete episode file | The same warning; with earlier episodes in the library (`tv/28`): **Also delete ‹ None · Watched only (n) · All earlier (n) ›** naming the range ("E1 – E10 except E7"), starts on Watched only when any is watched; total; "Delete n files" |
+| TMDB page QR code | The code alone, page blurred; Back closes (`tv/12`) |
+| Season card | That season's page (`tv/25`) |
+| OK on an episode | Plays it |
+| OK on an Extras card | The Extras player |
+| OK on More Like This (library / service) | Its Details page / the service's app |
+| Long-press (episode, library title, season card) | Its menu beside the card |
+| Back | From a tab's rows to the tab row, then to where Details was opened from, focus restored |
 
 ## Never opens from Details
-NOVA's old Details screens, the old "Change info of all episodes" side panel, the old Fix match side panel, NOVA's
-subtitle dialogs, Android's keyboard.
+NOVA's old Details screens, the old "Change info of all episodes" panel, the old Fix match side panel, NOVA's
+subtitle dialogs, Android's keyboard, YouTube's own player controls.
 
-## To settle at the Details review (owner, 20 Nov)
-- **File name and location in Technical information** (Details tab): the file's name and where it lives (server or
-  drive and folder), on one line or two, so a wrong match can be spotted at a glance (the owner had "Come Dine With
-  Me (2023), 1 episode" in TV Shows without having the show, and no way to see which file it was). This breaks the
-  equal length of Key information and Technical information: settle the layout at the Details review.
-- **Round 1 (owner, 21 Nov):** see BRIEF_0158_B › Details review, round 1 (`details-v3/tv/01`–`12`).
-- **The four kinds (to settle next):** for movie, show, season and episode: the hero's facts line, and every row of
-  Key information and Technical information (e.g. a season's size as total and per-episode average, its runtime as
-  total and average, who "Directed by" lists). Proposal drafted in chat 21 Nov; mock-ups to follow.
-- **Reaching a season page:** row headings are no longer focusable (RULES §14d); decide how (proposal in chat).
-- **More Like This wording:** replace "Stream more from the world of …" (owner, 21 Nov).
+## Bugs to fix on 0.158.7 (owner's photos, 21 Nov)
+Hero clipped left and right by an invisible frame (DT3); rows cut off at both ends (More Like This); a solid band
+under the top bar instead of the blur. See BRIEF_0158_B › Details review, round 3.
