@@ -45,17 +45,17 @@ const D = {
 };
 
 const extra = `${css}
-.tabs{position:absolute;left:72px;display:flex;gap:8px;font-size:28px;z-index:3}
+.tabs{position:absolute;left:52px;display:flex;gap:8px;font-size:28px;z-index:3}
 .tabs span{height:52px;padding:0 22px;border-radius:20px;display:flex;align-items:center;gap:12px}
 .tabs .open{box-shadow:inset 0 -3px 0 rgba(255,255,255,.95);border-radius:0}
 .tabs .f{background:#f4f6fb;color:#0b0d12}
-.tline2{position:absolute;left:72px;right:72px;height:2px;border-radius:1px;background:linear-gradient(90deg,
+.tline2{position:absolute;left:52px;right:52px;height:2px;border-radius:1px;background:linear-gradient(90deg,
  rgba(255,255,255,.04),rgba(255,255,255,.35) 22%,rgba(255,255,255,.35) 78%,rgba(255,255,255,.04))}
-.mini-logo{position:absolute;left:72px;top:84px;width:1776px;height:56px;border-radius:0 0 24px 24px;overflow:hidden;
+.mini-logo{position:absolute;left:52px;top:84px;width:1816px;height:56px;border-radius:0 0 24px 24px;overflow:hidden;
  font-size:0;background:radial-gradient(ellipse 60% 400% at 72% -300%,rgba(150,180,200,.5),transparent 60%),
  linear-gradient(90deg,#0b1116 0%,#16242e 45%,#2c4656 75%,#1a2c38 100%);
  box-shadow:inset 1px 0 0 #fff,inset -1px 0 0 #fff,inset 0 -1px 0 #fff}
-.cols3{position:absolute;left:72px;right:72px;top:262px;display:grid;grid-template-columns:1fr 1.15fr 1.15fr;gap:56px}
+.cols3{position:absolute;left:52px;right:52px;top:262px;display:grid;grid-template-columns:1fr 1.15fr 1.15fr;gap:56px}
 .ch3{display:flex;align-items:center;gap:12px;font-size:26px;font-weight:500;margin-bottom:10px}
 .kv{display:flex;justify-content:space-between;align-items:center;height:38px;font-size:21px;position:relative}
 .kv span:first-child{color:#c9d3e6}
@@ -71,7 +71,7 @@ const extra = `${css}
 .rec:last-child:after{display:none}
 .rec .brand{width:96px;font-weight:700;font-size:30px;display:flex}
 .rec small{font-size:20px;color:#c9d3e6;font-weight:400}
-.people{position:absolute;left:72px;right:72px;top:724px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.people{position:absolute;left:52px;right:52px;top:724px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
 .prow{display:flex;gap:12px}
 .pc{width:112px;text-align:center}
 .pc .ph{width:112px;height:168px;border-radius:10px;box-shadow:inset 0 0 0 1px #fff;position:relative;overflow:hidden}
@@ -81,7 +81,7 @@ const extra = `${css}
 .pc b{display:block;font-size:18px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;
  text-overflow:ellipsis}
 .pc small{font-size:15px;color:#c9d3e6;white-space:nowrap}
-.svc{position:absolute;left:0;right:0;top:30%;height:56px;display:flex;justify-content:center;z-index:2}
+.svc{position:absolute;left:0;right:0;top:calc(50% - 28px);height:56px;display:flex;justify-content:center;z-index:2}
 .svc svg{height:56px;width:160px}
 .rowlogo{height:30px;width:90px;display:flex}
 .rowlogo svg{height:30px;width:90px}
@@ -154,8 +154,8 @@ const BTS = [['Making The Last Crossing', '12 min', null], ['The Ferry', '6 min'
 function frame3() {
   return bar('Movies') + '<div class="mini-logo">The Last Crossing</div>'
     + tabs(170, 'Extras')
-    + row(72, 262, { icon: D.trailer, title: 'Trailers' }, TRAIL, 0)
-    + row(72, 600, { icon: D.behind, title: 'Behind the Scenes' }, BTS, -1, { shift: 3 })
+    + row(52, 262, { icon: D.trailer, title: 'Trailers' }, TRAIL, 0)
+    + row(52, 600, { icon: D.behind, title: 'Behind the Scenes' }, BTS, -1, { shift: 3 })
     + '<div class="cap2">3 · Extras: the shared rows, one per kind, Trailers first</div>';
 }
 
@@ -179,8 +179,8 @@ function frame4() {
     ['Ferryman\'s Daughter', '2025']];
   return bar('Movies') + '<div class="mini-logo">The Last Crossing</div>'
     + tabs(170, 'More Like This')
-    + row(72, 262, { icon: D.lib, title: 'In Your Library' }, LIB, -1)
-    + serviceRow(72, 600, 'netflix', '#E50914', NF, 'On Netflix')
+    + row(52, 262, { icon: D.lib, title: 'In Your Library' }, LIB, -1)
+    + serviceRow(52, 600, 'netflix', '#E50914', NF, 'On Netflix')
     + '<div class="cap2">4 · More Like This: your library, then a row per service</div>';
 }
 
@@ -208,8 +208,8 @@ function frame6() {
     ['Fog', 'S2 E3 · 52 min', null], ['Wreck', 'S2 E4 · 50 min', null], ['Landfall', 'S2 E5 · 58 min', null]];
   const SEASON = '<path d="M4 6h1.5v4M4 10h3M4 14.5c0-1 2.8-1 2.8.3 0 1.2-2.8 2-2.8 3.2h3M11 7h9M11 12h9M11 17h9"/>';
   return bar('TV Shows') + '<div class="mini-logo">Tidelands</div>' + tabs(170, 'Episodes')
-    + row(72, 262, { icon: SEASON, title: 'Season 1' }, S1, 2)
-    + row(72, 600, { icon: SEASON, title: 'Season 2' }, S2, -1, { shift: 3 })
+    + row(52, 262, { icon: SEASON, title: 'Season 1' }, S1, 2)
+    + row(52, 600, { icon: SEASON, title: 'Season 2' }, S2, -1, { shift: 3 })
     + '<div class="cap2">6 · Episodes: a row per season (TV shows, seasons, episodes)</div>';
 }
 

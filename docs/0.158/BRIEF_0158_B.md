@@ -432,6 +432,26 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
 - **Long lists** (RULES §6): Studio, Country, Language, Audio languages, Subtitles, and mixed Video / Resolution /
   HDR across files: at most two then "and N more", never a full line.
 
+### Details review, round 4 (owner, 21 Nov; mock-ups `details-v3/tv/16`–`22`)
+- **Top bar, one effect everywhere (owner, firm):** on Home, Movies, TV Shows, **your own page and every Details
+  page**, content scrolled up runs behind the top bar **blurred and dimmed, fading out at the bar's foot, with no
+  solid band and no hard line**; the bar's words sit on top (`tv/16`–`18`). Same component on every page; test that
+  no page draws a solid strip under the bar.
+- **Side margin (owner: Claude's recommendation):** the hero (Home and Details, one component) is **1816 × 820 at x 52**
+  so its edges sit on the top bar's edges (52 px); tabs, headings, the Details tab and the start of rows on Details
+  use the same 52 px. Replaces 1776 (RULES §14d).
+- **Long-press menus stay on screen:** a menu opens beside the card on whichever side has room (left when the right
+  edge would cut it, `tv/17`).
+- **Episode long-press approved (`tv/17`)**; Mark as watched reads **Mark as unwatched** on a watched episode.
+- **Delete episode file (`tv/22`):** the delete warning (real deletion, no Undo); when earlier episodes of the same
+  season are in the library, an **Earlier Episodes** switch "Also delete S1 E1 and S1 E2 (watched)" (**on** when they
+  are all watched, off otherwise), the total under it, the button naming the count ("Delete 3 files"). Replaces the
+  "only this one · all · choose" step (group 5).
+- **Extras (`tv/18`, `tv/19`):** YouTube's red mark the same size as the streaming logos and **centred on the
+  artwork** (streaming logos centred too); the player as drawn (as large as possible, page blurred behind), the thin
+  progress line at the foot, **no YouTube controls over the video**.
+- **More Like This library long-press (`tv/20`), Delete file wording (`tv/21`), long lists:** approved.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

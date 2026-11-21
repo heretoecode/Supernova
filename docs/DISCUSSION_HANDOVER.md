@@ -7,8 +7,8 @@
   Round 1 notes in the brief (tab line, Reception and people bigger, Container and Revenue out, More flows `tv/07`–`12`).
   Round 2 (`tv/02`–`15`, in the brief): hero foot instead of a title, Subtitles and Find online, Artwork scrolling,
   Delete wording, TMDB QR code, "On Netflix", the four kinds (`13`–`15`). Round 3 `tv/16`–`21` (top bar blur, long-press menus,
-  Extras YouTube and player, Delete reworded); bugs from photos in the brief. Open: hero width vs the 52 px margin;
-  season card. **Before coding: ask for diagnostics AND whether to check NOVA updates (CLAUDE.md).**
+  Extras YouTube and player, Delete reworded); bugs from photos in the brief. Round 4 `tv/16`–`22` (blur fixed, margin 52 px
+  with hero 1816, episode delete with earlier episodes, YouTube mark centred). Open: season card. **Before coding: ask for diagnostics AND whether to check NOVA updates (CLAUDE.md).**
 
 ## 21 Nov — Home review
 - Owner: one global hero (Home and Details identical, same code) and one global row design (Home and Details tabs;

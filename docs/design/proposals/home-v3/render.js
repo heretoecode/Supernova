@@ -52,7 +52,7 @@ body{background:#111215;font-family:R,sans-serif;width:1920px;height:1080px;over
 .bar span{height:52px;padding:0 22px;border-radius:20px;display:flex;align-items:center}
 .bar .open{background:rgba(255,255,255,.15);color:rgba(255,255,255,.72)}
 .bar .sp{flex:1}
-.hero{position:absolute;left:72px;top:112px;width:1776px;height:820px;border-radius:24px;overflow:hidden}
+.hero{position:absolute;left:52px;top:112px;width:1816px;height:820px;border-radius:24px;overflow:hidden}
 .hero .art{position:absolute;inset:0}
 .hero .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,11,13,.92) 0%,rgba(10,11,13,.75) 30%,
  rgba(10,11,13,.25) 58%,rgba(10,11,13,0) 75%),linear-gradient(0deg,rgba(10,11,13,.55),rgba(10,11,13,0) 45%)}

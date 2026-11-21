@@ -54,6 +54,8 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   word = the open page while focus is elsewhere. No underlines in the top bar. **Every item is a word, tools
   included (Files · Search · Settings, no icons); one font, weight and size for every word and the clock; words
   centred on their letters** (owner, 18 Nov; `files-review-0157-1/09` A). Tabs elsewhere keep §3/§4 for now.
+- **Behind the top bar, every page (owner, 21 Nov):** content scrolled up runs behind the bar blurred and dimmed,
+  fading out at the bar's foot; never a solid band or a hard line (Home, library pages, Details).
 - **Grey box follows focus at once (owner, 21 Nov):** when focus moves to another media page in the bar, the old
   page loses its grey box immediately, not when the new page has loaded. Resting on a tool (needs OK) leaves the
   open page's grey box where it is.
@@ -311,7 +313,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **The hero is one shared component**, the same code and layout wherever it appears (Home, Details: movie, show,
   season, episode). Only the buttons and what sits under it differ: Home has one button (More) and carousel dots;
   Details has Play / Resume (or the streaming button) and More, with the tabs below.
-- Proposed layout (1080p): 1776 × 820 at x 72, y 112, 24 px corners, the 1 px white edge with inner shade; a dark
+- Layout (1080p): **1816 × 820 at x 52** (owner, 21 Nov: edges on the top bar's edges; was 1776 at 72), y 112, 24 px corners, the 1 px white edge with inner shade; a dark
   shade from the left (and a little from the foot); the text block **anchored to the bottom**, so the buttons never
   move whatever the text: buttons 56 px above the foot, the two-line description 40 px above them, the facts line 16
   px above that, an optional title line ("Season 2 · Episode 8 · Title") above it, the logo (inside 900 × 240) 24 px
