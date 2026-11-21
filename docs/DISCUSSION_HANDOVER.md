@@ -1,6 +1,11 @@
 # Discussion handover (updated 19 Nov 2026)
 
-## 21 Nov evening — Details done (start here next time)
+## 21 Nov evening — Player review started (start here next time)
+- Player redrawn on today's rules: `player-v16/tv/01`–`07` (Drive › From Claude › 2026-11-21 Player): controls with
+  Chapters, tab focused, Episodes, Playback Settings × 3 tabs, skip alone. Asked: Skipping chips vs stepper; panel
+  edge over video. Waiting for notes. No page sheet for the player yet: write `docs/design/pages/PLAYER.md` after.
+
+## 21 Nov evening — Details done
 - **Details done:** page sheet `docs/design/pages/DETAILS.md` rewritten from rounds 1–6. Done so far: library pages,
   Home, Details. Next page: owner's choice. Still to ask at the Playback Settings review: Skipping chips vs stepper.
   At the Files review: Library Care › Excluded from hero; Fix match showing the file.
