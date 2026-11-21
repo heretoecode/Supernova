@@ -3,7 +3,9 @@
 ## 21 Nov — Home review (start here next time)
 - Owner: one global hero (Home and Details identical, same code) and one global row design (Home and Details tabs;
   the player separate). Drawn `home-v3/tv/01`–`05` (Drive › From Claude › 2026-11-21 Home); RULES §14d (proposed
-  measurements). Waiting for the owner's notes on Home. Then Customise Home.
+  measurements). Decided 21 Nov (RULES §14d): two-line description; first line under the hero aligned on Home and Details; no Move /
+  Hide (order in Customise Home); cards 40 px apart, focus 8%, no overlap. **Open:** text block top-left or
+  bottom-left; mock-up of the hero's More menu; Customise Home with row ordering.
 
 ## 20 Nov afternoon — Filters review
 - Filters redrawn on today's rules: `library-pages/tv/35`–`40` (Drive › From Claude › 2026-11-20 Library Filters).

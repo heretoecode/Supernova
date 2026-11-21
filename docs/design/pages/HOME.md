@@ -35,7 +35,7 @@ underline, this sheet wins.
 - **Row design A (owner, 19 Nov; RULES §14c; replaces the caption box under each card):** title and one soft line
   over the bottom of the artwork on a dark fade; progress as the corner badge, never a bar; no play icon on library
   items.
-- Row heading with its icon. **Move and Hide** appear beside the heading as plain buttons (no filled circles; Hide a
+- **Replaced 21 Nov (RULES §14d): headings are not focusable; no Move or Hide on Home; ordering lives in Customise Home; cards 40 px apart, focus grows 8%, no overlap.** Old: Row heading with its icon. **Move and Hide** appear beside the heading as plain buttons (no filled circles; Hide a
   minus circle) when focus reaches the heading. Down from a card lands on Move; Down again on the next row's first card;
   Right from Move to Hide.
 - Rows a left arrow appears beside: the whole row moves right to make room (never just the first card) (RULES §16).

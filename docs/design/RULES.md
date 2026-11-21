@@ -310,7 +310,14 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **The row is one shared component** wherever rows appear (Home, Details Episodes / Extras / More Like This, and any
   row added later): heading with its icon (32 px, medium), 26 px to the cards; cards 400 × 225, 24 px apart, row
   design A (title and one line over the artwork's foot), the corner badge; focus grows to 440 × 248 with the 4 px
-  ring. Home adds Move and Hide beside a heading (Home only); Details rows have none. The player's rows are separate.
+  ring. The player's rows are separate.
+- **Decided (owner, 21 Nov):** the description is two lines at most. **The first line under the hero lines up on
+  Home and Details:** Home's first row heading and Details' tab row sit at the same height (the heading moves up a
+  little, the tabs down a little, to meet; the text centred about 66 px below the hero's foot). **Row headings are
+  never focusable** and have no buttons: Move and Hide are removed from Home; rows are ordered and switched on and
+  off only in Customise Home (OK picks a row up, Up / Down moves it, as in Columns). **A focused card never overlaps
+  its neighbours** (as library posters): it grows 8% (432 × 243, was 10%) and cards sit 40 px apart (was 24), so
+  the grown card and its 4 px ring keep about 20 px clear. Text block top or bottom: owner to decide.
 
 ## 14c. Progress badge and row cards (owner, 19 Nov 2026; replaces every progress bar on artwork)
 - **No progress bars on artwork or captions anywhere.** Progress is one **badge in the top-right corner** of the
