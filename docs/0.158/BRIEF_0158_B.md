@@ -411,6 +411,27 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
   lists Created by, a season "Ruth Kane and 2 others", an episode Guest stars; Files / File and Location follow the
   kind (folder for groups). Season pages: a season card first in each season row (to draw).
 
+### Details review, round 3 (owner, 21 Nov; mock-ups `details-v3/tv/16`–`21`; photos of 0.158.7)
+- **Bugs seen on the Shield (fix first):**
+  - **Hero clipped left and right** on Details by an invisible frame (DT3 still not fixed): the hero card, its white
+    edge and corners must be whole. Test: the hero's bounds lie fully inside the visible area on every Details kind.
+  - **Rows cut off at both ends** on More Like This (the "On Netflix" row) and other Details rows: rows run off the
+    screen edges, never ending at an invisible line, also on the left once scrolled.
+  - **Top bar must not be a solid band on Details:** content scrolling up runs behind the bar, blurred and darkened,
+    the bar's words on top, as on Movies and TV Shows (`tv/16`; RULES "Library pages under the top bar"; R2's cause
+    applies here too).
+- **Side margin:** library pages use the top bar's edges (52 px at 1080p). Details must use the same for tabs,
+  headings, the Details tab and the start of rows. Hero width to settle with the owner (1776 at 72 px today).
+- **Approved:** the hero's foot peeking above the tabs (no title); the narrower Subtitles panel and its wording.
+- **Proposed:** episode long-press (`tv/17`: Resume / Play, Play from the start · Mark as watched, Mark earlier
+  episodes as watched · Subtitles, Delete episode file); Extras cards carry YouTube's red mark (`tv/18`); the Extras
+  player (`tv/19`); library titles on More Like This get the long-press menu (`tv/20`: Resume / Play, Play from the
+  start · Add to Watch Next, Mark as watched); Delete file: the file name on its own line, its facts under it
+  (`tv/21`; RULES "No lone word on a line").
+- **Find subtitles online:** the Language value steps with Left / Right (‹ English ›, arrows on focus; RULES §8).
+- **Long lists** (RULES §6): Studio, Country, Language, Audio languages, Subtitles, and mixed Video / Resolution /
+  HDR across files: at most two then "and N more", never a full line.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

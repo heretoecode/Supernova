@@ -129,6 +129,12 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
     from <person>" (§26). Never "similar" in Search.
   - Empty states say what is going on: "Everything looks fine", "Nothing in your library matches …".
 - Typed letters show in bold inside matching results (Search).
+- **Long lists in one value (owner, 21 Nov):** a value that can list many things (studios, countries, languages,
+  audio languages, subtitles, video formats across files, genres beyond the limit) shows **at most two, then "and N
+  more"**, and never fills its line: if two don't fit, one and "and N more". Mixed technical values across a show's
+  files show the most common, then "· 6 files differ" (e.g. "1080p H.264 · 6 files differ").
+- **No lone word on a line (owner, 21 Nov):** a sentence is never allowed to wrap so that one word sits alone on the
+  next line; split facts onto their own lines instead (e.g. the file name on one line, its facts under it).
 
 ## 7. Rows
 - One row style everywhere: icon (or thumbnail), name, plain second line; long names end in "…".

@@ -74,6 +74,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   remind them to send the latest diagnostics report from the Shield, and read it for faults to fix in that version.
   **The read ends with what the owner did not see (owner, 16 Nov 2026):** faults, slowness, memory and anything else the
   report shows, each with a recommended fix, so the report catches what eyes on the screen miss.
+  **Also ask about NOVA (owner, 21 Nov 2026):** at the same moment, ask the owner whether to check NOVA Video Player
+  for new releases and unreleased code changes since our last catch-up (e.g. the new IntroDB API), and list anything
+  worth bringing in for that version.
 - **Polish phase (owner, 20 Nov 2026):** the current work is improving what exists, page by page, element by element
   ("does that look right? should I tweak that?"), not adding features. New features wait until this phase is done:
   the new onboarding, the Trakt list row and Media Transfers stay under Ready with no version. Required improvements
