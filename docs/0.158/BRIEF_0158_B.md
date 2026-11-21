@@ -459,6 +459,14 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
   progress line at the foot, **no YouTube controls over the video**.
 - **More Like This library long-press (`tv/20`), Delete file wording (`tv/21`), long lists:** approved.
 
+### Details review, round 5 (proposed 21 Nov; `details-v3/tv/24`, `25`)
+- **Season card:** on a show's Episodes tab each season row starts with a season card (the shared 16:9 card): the
+  season's own artwork, "Season 1", "10 episodes · 2 watched" (or "not started" / "all watched"), the progress badge
+  for the season (episodes watched out of all). OK opens the season page; long-press opens the season's More menu
+  (R4). Not on single-season shows (no season page) or on a season page's own Episodes tab.
+- **Season page (`tv/25`):** the shared hero, "Season 1" as its title line, facts "2024 · 10 episodes · genres",
+  Resume S1 E3 (or Play S1 E1) and More, tabs below opening on Episodes.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first
