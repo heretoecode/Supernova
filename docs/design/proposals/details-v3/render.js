@@ -134,7 +134,7 @@ function frame2() {
   const crew = [['Anna Reyes', 'Director'], ['Jon Feld', 'Writer'], ['Sam Ortiz', 'Writer'], ['Lena Kroll', 'Producer'],
     ['Max Ibsen', 'Cinematography'], ['Ola Grey', 'Music'], ['Bea Holm', 'Editor']];
   return bar('Movies') + '<div class="mini-logo">The Last Crossing</div>'
-    + tabs(170, 'Details').replace('<span class="">' + svg(D.eps, 26) + 'Episodes</span>', '')
+    + tabs(170, 'Details')
     + `<div class="cols3"><div><div class="ch3">${svg(D.star, 28)}Reception</div>${rec}</div>
       <div><div class="ch3">${svg(D.list, 28)}Key information</div>${key}</div>
       <div><div class="ch3">${svg(D.chip, 28)}Technical information</div>${tech}</div></div>
@@ -148,7 +148,7 @@ const BTS = [['Making The Last Crossing', '12 min', null], ['The Ferry', '6 min'
 
 function frame3() {
   return bar('Movies') + '<div class="mini-logo">The Last Crossing</div>'
-    + tabs(170, 'Extras').replace('<span class="">' + svg(D.eps, 26) + 'Episodes</span>', '')
+    + tabs(170, 'Extras')
     + row(72, 262, { icon: D.trailer, title: 'Trailers' }, TRAIL, 0)
     + row(72, 600, { icon: D.behind, title: 'Behind the Scenes' }, BTS, -1, { shift: 3 })
     + '<div class="cap2">3 · Extras: the shared rows, one per kind, Trailers first</div>';
@@ -173,7 +173,7 @@ function frame4() {
   const NF = [['The Tideline', '2023'], ['Breakwater', '2021'], ['Strait Lines', '2024'], ['Hollow Bay', '2022'],
     ['Ferryman\'s Daughter', '2025']];
   return bar('Movies') + '<div class="mini-logo">The Last Crossing</div>'
-    + tabs(170, 'More Like This').replace('<span class="">' + svg(D.eps, 26) + 'Episodes</span>', '')
+    + tabs(170, 'More Like This')
     + row(72, 262, { icon: D.lib, title: 'In Your Library' }, LIB, -1)
     + serviceRow(72, 600, 'netflix', '#E50914', NF, 'Stream more from the world of The Last Crossing')
     + '<div class="cap2">4 · More Like This: your library, then a row per service</div>';
@@ -191,12 +191,25 @@ function frame5() {
     ${item(J.art, 'Artwork', { nosep: true })}${item(J.desc, 'Full description', { nosep: true })}
     ${item(J.bin, 'Delete file', { nosep: true })}<div class="rule"></div>${item(J.qr, 'TMDB page', { nosep: true })}</div>`;
   return bar('Movies') + hero(FILM, `<span class="btn">${svg(D.play, 24)}Resume · 42 min left</span><span class="btn">
-    ${svg(I.more, 26)}More</span>`) + tabs(972, 'Details').replace('<span class="">' + svg(D.eps, 26) + 'Episodes</span>', '')
+    ${svg(I.more, 26)}More</span>`) + tabs(972, 'Details')
     + menu + '<div class="cap2">5 · More on Details, with the new Fix match and Remove icons</div>';
 }
 
+function frame6() {
+  const S1 = [['Arrival', 'S1 E1 · 52 min', 'w'], ['Low Water', 'S1 E2 · 49 min', 'w'],
+    ['The Long Tide', 'S1 E3 · 31 min left', 0.4], ['Harbour Lights', 'S1 E4 · 51 min', null],
+    ['Salt', 'S1 E5 · 50 min', null]];
+  const S2 = [['Return', 'S2 E1 · 55 min', null], ['Driftwood', 'S2 E2 · 48 min', null],
+    ['Fog', 'S2 E3 · 52 min', null], ['Wreck', 'S2 E4 · 50 min', null], ['Landfall', 'S2 E5 · 58 min', null]];
+  const SEASON = '<path d="M4 6h1.5v4M4 10h3M4 14.5c0-1 2.8-1 2.8.3 0 1.2-2.8 2-2.8 3.2h3M11 7h9M11 12h9M11 17h9"/>';
+  return bar('TV Shows') + '<div class="mini-logo">Tidelands</div>' + tabs(170, 'Episodes')
+    + row(72, 262, { icon: SEASON, title: 'Season 1' }, S1, 2)
+    + row(72, 600, { icon: SEASON, title: 'Season 2' }, S2, -1, { shift: 3 })
+    + '<div class="cap2">6 · Episodes: a row per season (TV shows, seasons, episodes)</div>';
+}
+
 const FRAMES = [['01-episode-hero', frame1], ['02-details-tab', frame2], ['03-extras', frame3],
-  ['04-more-like-this', frame4], ['05-more-menu', frame5]];
+  ['04-more-like-this', frame4], ['05-more-menu', frame5], ['06-episodes', frame6]];
 
 (async () => {
   const browser = await chromium.launch();
