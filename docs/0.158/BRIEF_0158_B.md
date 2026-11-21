@@ -362,6 +362,18 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 - **Icons (owner, 21 Nov; `tv/10`):** Fix match = a pencil putting it right (B); Remove from library = crossed off the
   list (A); everywhere these appear (Details More, long-press).
 
+### Bug: the grey "open page" box trails behind in the top bar (owner, 21 Nov)
+Moving along the bar from Home to Movies (or between any media pages), Movies gets the white focus box at once but
+Home **keeps its grey open-page box until Movies has finished loading**, which looks slow. **Cause:**
+`TopNavigation.refreshPath()` draws the grey box on `tab == selected && !focused`; `selected` only changes in
+`selectTab()`, which runs after `OPEN_ON_FOCUS_MS` (250 ms) and the new page's build. **Fix:** the moment focus lands
+on a different **media** page in the bar (Home, Movies, TV Shows, own page: the ones that open on focus), drop the
+grey box from the old page straight away (e.g. treat the pending page as the open one in `refreshPath()`, or call
+`refreshPath()` from the bar's focus change with `pendingOpen` counted). **Keep:** the grey box while focus is
+below the bar on the page you're on; and when focus rests on a **tool** (Files, Search, Settings), which needs OK,
+the current page keeps its grey box, because it is still the open page. Test: focus moves Home → Movies; on the very
+next frame Home has no box and Movies the white one; Home → Settings (no OK): Home keeps the grey box.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

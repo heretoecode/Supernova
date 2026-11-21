@@ -54,6 +54,9 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   word = the open page while focus is elsewhere. No underlines in the top bar. **Every item is a word, tools
   included (Files · Search · Settings, no icons); one font, weight and size for every word and the clock; words
   centred on their letters** (owner, 18 Nov; `files-review-0157-1/09` A). Tabs elsewhere keep §3/§4 for now.
+- **Grey box follows focus at once (owner, 21 Nov):** when focus moves to another media page in the bar, the old
+  page loses its grey box immediately, not when the new page has loaded. Resting on a tool (needs OK) leaves the
+  open page's grey box where it is.
 
 ## 3. Focus and "where am I" (the most important rule)
 One brightness scale that follows your path, everywhere, top bar and tabs included (§25; mock-ups
