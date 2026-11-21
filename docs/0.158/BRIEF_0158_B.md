@@ -447,6 +447,13 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
   season are in the library, an **Earlier Episodes** switch "Also delete S1 E1 and S1 E2 (watched)" (**on** when they
   are all watched, off otherwise), the total under it, the button naming the count ("Delete 3 files"). Replaces the
   "only this one · all · choose" step (group 5).
+  **Many earlier episodes (`tv/23`):** a range, never a list: "Also delete S1 E1 – E10 (all watched)"; with gaps,
+  "the 7 earlier episodes in your library (E1 – E10)". The switch only ever covers **watched** earlier episodes; if
+  some aren't watched: "Also delete the 6 watched earlier episodes (E1 – E8)". **Clean Up** shows the Trakt row
+  ("Also remove them from your Trakt history", off) whenever Trakt is connected, hidden otherwise; on every delete
+  warning.
+- **Behind the top bar:** while focus is below the hero (on the tabs or rows), the hero's buttons are at rest, never
+  white; only blurred artwork and text run behind the bar.
 - **Extras (`tv/18`, `tv/19`):** YouTube's red mark the same size as the streaming logos and **centred on the
   artwork** (streaming logos centred too); the player as drawn (as large as possible, page blurred behind), the thin
   progress line at the foot, **no YouTube controls over the video**.

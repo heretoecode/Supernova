@@ -13,7 +13,9 @@ src = src.replace("return { extra, svg, I, J, K, D, bar, hero, item, speckle, ta
 const m = new Function('require', '__dirname', `${src}
 return { css, svg, I, J, K, D, P, bar, hero, item, speckle, tabs, details, FILM, BTNS, m };`)(require, __dirname);
 const { chromium } = require('playwright');
-const { css, svg, I, J, K, D, P, bar, hero, item, speckle, tabs, FILM, BTNS } = m;
+const { css, svg, I, J, K, D, P, bar, hero, item, speckle, tabs, FILM } = m;
+// scrolled to the tabs: focus is below, so the hero's buttons are at rest (no white box)
+const BTNS = `<span class="btn">${svg(D.play, 24)}Resume · 42 min left</span><span class="btn">${svg(I.more, 26)}More</span>`;
 const inner = m.m;
 
 const css2 = `${css}
@@ -127,8 +129,27 @@ function frame22() {
     + '<div class="cap2">22 · Deleting an episode with earlier ones watched: one switch takes them too</div>';
 }
 
+function frame23() {
+  const sw = on => `<span class="sw${on ? ' on' : ''}"></span>`;
+  const base = inner.frame6().replace(/<div class="mini-logo">[^<]*<\/div>/, hero(FILM, BTNS, -680) + '<div class="barblur"></div>')
+    .replace(/<div class="cap2">[\s\S]*?<\/div>/, '');
+  const trakt = '<svg width="28" height="28" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
+  return base + `<div class="scrim"></div><div class="pop dlg"><div class="ti">Delete Harbour Lights?</div>
+    <div class="l1"><b>Tidelands.S01E11.Harbour.Lights.1080p.mkv</b></div>
+    <div class="l2" style="font-size:24px">S1 E11 · 1080p · 2.3 GB · Media server</div>
+    <div class="h">Earlier Episodes</div>
+    ${item(K.fixA, 'Also delete S1 E1 – E10 (all watched)', { nosep: true, right: sw(true) })}
+    <div class="l2" style="margin:2px 0 0 52px">Deletes 11 files · 25.6 GB.</div>
+    <div class="h">Clean Up</div>
+    ${item(P.hist, 'Also clear viewing history in Supernova', { nosep: true, right: sw(false) })}
+    <div class="i nosep" style="margin:0;padding:0 4px;height:62px"><span class="ic">${trakt}</span><span>Also remove them from your Trakt history</span><span class="fill"></span>${sw(false)}</div>
+    ${item(P.folder, "Delete the folder if it's left empty", { nosep: true, right: sw(true) })}
+    <div class="bt"><span class="f">Keep files</span><span>${svg(J.bin, 24)}Delete 11 files</span></div></div>`
+    + '<div class="cap2">23 · Episode 11: earlier ones as a range, never a list; Trakt row when Trakt is connected</div>';
+}
+
 const FRAMES = [['16-tab-behind-bar', frame16], ['17-episode-long-press', frame17], ['18-extras-youtube', frame18],
-  ['19-extras-player', frame19], ['20-library-long-press', frame20], ['21-delete-file-v2', frame21], ['22-delete-episode-earlier', frame22]];
+  ['19-extras-player', frame19], ['20-library-long-press', frame20], ['21-delete-file-v2', frame21], ['22-delete-episode-earlier', frame22], ['23-delete-episode-11', frame23]];
 
 (async () => {
   const browser = await chromium.launch();
