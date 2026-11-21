@@ -508,7 +508,7 @@ or underline intersects the line under the tab row.
   Wind River"; facts line age badge · year · length · up to four genres; long lists rule; no reasons line.
   **Anchored to the facts line (`tv/09`, `tv/10`):** the facts line sits at the same height for films and episodes;
   the episode's title line sits just above it, the logo above that (a two-line logo grows upwards). A film has no
-  title line and no Episodes tab. Test: the
+  title line (no tagline either: owner, 21 Nov, confirming RULES' no-tagline rule) and no Episodes tab. Test: the
   title block's bounds match pixel for pixel on both screens.
 - Title block = Preparing playback's (facts line with the badge first, no reasons line); clock in the bar's regular
   weight; chapter and episode cards with the artwork edge and the corner badge, no bars; no stub chapters under 10 s.
