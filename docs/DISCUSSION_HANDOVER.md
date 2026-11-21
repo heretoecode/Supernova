@@ -1,6 +1,11 @@
 # Discussion handover (updated 19 Nov 2026)
 
-## 20 Nov afternoon — Filters review (start here next time)
+## 21 Nov — Home review (start here next time)
+- Owner: one global hero (Home and Details identical, same code) and one global row design (Home and Details tabs;
+  the player separate). Drawn `home-v3/tv/01`–`05` (Drive › From Claude › 2026-11-21 Home); RULES §14d (proposed
+  measurements). Waiting for the owner's notes on Home. Then Customise Home.
+
+## 20 Nov afternoon — Filters review
 - Filters redrawn on today's rules: `library-pages/tv/35`–`40` (Drive › From Claude › 2026-11-20 Library Filters).
   Owner: Filters menu and Streaming services fine; Watched list icons = poster badges (`tv/41`, in the brief).
 - Decided: Filters button sliders + "Filters · 2" when on (D); Genre shapes (B); Match ticked list (B). Streaming

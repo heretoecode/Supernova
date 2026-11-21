@@ -298,6 +298,20 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   corner badge, every row alike).
 - Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
 
+## 14d. One hero, one row (owner, 21 Nov 2026: principle approved; measurements proposed, `home-v3/tv/01`–`05`)
+- **The hero is one shared component**, the same code and layout wherever it appears (Home, Details: movie, show,
+  season, episode). Only the buttons and what sits under it differ: Home has one button (More) and carousel dots;
+  Details has Play / Resume (or the streaming button) and More, with the tabs below.
+- Proposed layout (1080p): 1776 × 820 at x 72, y 112, 24 px corners, the 1 px white edge with inner shade; a dark
+  shade from the left (and a little from the foot); the text block **anchored to the bottom**, so the buttons never
+  move whatever the text: buttons 56 px above the foot, the two-line description 40 px above them, the facts line 16
+  px above that, an optional title line ("Season 2 · Episode 8 · Title") above it, the logo (inside 900 × 240) 24 px
+  above. Left edge of text and buttons 64 px in.
+- **The row is one shared component** wherever rows appear (Home, Details Episodes / Extras / More Like This, and any
+  row added later): heading with its icon (32 px, medium), 26 px to the cards; cards 400 × 225, 24 px apart, row
+  design A (title and one line over the artwork's foot), the corner badge; focus grows to 440 × 248 with the 4 px
+  ring. Home adds Move and Hide beside a heading (Home only); Details rows have none. The player's rows are separate.
+
 ## 14c. Progress badge and row cards (owner, 19 Nov 2026; replaces every progress bar on artwork)
 - **No progress bars on artwork or captions anywhere.** Progress is one **badge in the top-right corner** of the
   artwork: library posters, Home rows, Details rows (Episodes, Extras, More Like This), the player's Chapters and
