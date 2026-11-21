@@ -34,6 +34,8 @@
   Files' look; app icon on `#111215`, no grain; reports to Download, backups via the folder picker; the facts-line order
   Edition · Resolution · HDR · Sound · Codec; R2 cause found (TopNavigation decides scroll-behind before the own page's
   library exists).
+- **To ask at the Playback Settings review (owner, 21 Nov):** should Skipping (Off · Show button · Skip) step with Left /
+  Right like every other 3+ choice row (RULES §8)? It kept chips in v15 (19 Nov, REVIEW_0157_2 PS9).
 - **To remember at the Files review:** draw and settle the approved **To fix** row in Library Care (FILES.md, end).
 - **Where we stopped (20 Nov, about 02:30):** Filters. The approved mock-ups `library-pages/23`, `24` were sent with how
   0.158.7 differs (counts on one line, genre/service lists tick in place with no Selected group, From / To step with

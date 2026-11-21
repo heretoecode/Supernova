@@ -332,8 +332,9 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 - **Keyboard (`tv/66`; RULES §15 changed):** the shared keyboard (its own layout, Phone key included) floats over the
   panel, its top straight under Page name, the panel's width; Done returns to the row.
 - **Last episode added icon (`tv/67`): A**, a screen with a play mark and a filled "new" dot top right (Sort, Columns).
-- **App-wide, from RULES §8:** Playback Settings' Skipping (Off · Show button · Skip) and any Settings row with three or
-  more chips become Left / Right values when next built; list each change in the report.
+- **App-wide, from RULES §8:** any Settings row with three or more chips becomes a Left / Right value when next built;
+  list each change in the report. **Not Playback Settings' Skipping** (Off · Show button · Skip): leave it as chips
+  until the owner reviews the Playback Settings page (owner, 21 Nov).
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
