@@ -173,11 +173,25 @@ function f8() {
     <span class="time">3:40 / 46:12 · Ends 22:48</span><span class="sbtn">${svg(I.cog, 26)}Settings</span><span class="sbtn f">${svg(I.skip, 26)}Skip intro</span></div>`
     + tabs(688, 'Chapters') + cards(784, CH, -1) + '<div class="cap2">8 · Skip with the controls: it takes the far right, Settings moves in, the seek bar shortens</div>';
 }
+function tb(logo, line, facts) {
+  return `<div class="dim"></div><div class="tblock" style="top:auto;bottom:858px"><div class="logo" style="margin-bottom:24px">${logo}</div>${line ? `<div class="tl" style="margin:0 0 10px">${line}</div>` : ''}
+    <div class="facts" style="margin:0"><span class="age">${facts[0]}</span>${facts[1]}</div></div><div class="clock">21:40</div>`;
+}
+function f9() {
+  return tb('Dune<br><span style="font-size:52px;letter-spacing:6px">Part Two</span>', '', ['12A', '2024 · 2 h 46 min · Science Fiction, Adventure, Drama, Action'])
+    + controls(596, null) + tabs(688, 'Chapters').replace(/<span class="">[^]*?Episodes<\/span>/, '') + cards(784, CH, -1)
+    + '<div class="cap2">9 · Film: logo, then facts; its facts line level with the episode facts line</div>';
+}
+function f10() {
+  return tb('Marshals', 'Season 1 · Episode 5 · Wind River', ['15', '2026 · 46 min · Drama, Crime, Action & Adventure, Western'])
+    + controls(596, null) + tabs(688, 'Episodes') + cards(784, EP, -1)
+    + '<div class="cap2">10 · Episode: logo, title line, then facts level with the film facts line</div>';
+}
 function f7() { return `<div class="ctrl" style="top:960px;justify-content:flex-end"><span class="sbtn f">${svg(I.skip, 26)}Skip intro</span></div>` + '<div class="cap2" style="right:auto;left:52px">7 · Skip button alone, in its place on the controls\' line</div>'; }
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const b = await chromium.launch(); const pg = await b.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [n, fn] of [['01-controls-chapters', f1], ['02-chapters-tab-focused', f2], ['03-episodes', f3], ['04-settings-subtitles', f4], ['05-settings-audio', f5], ['06-settings-playback', f6], ['07-skip-alone', f7], ['08-skip-with-controls', f8]]) {
+  for (const [n, fn] of [['01-controls-chapters', f1], ['02-chapters-tab-focused', f2], ['03-episodes', f3], ['04-settings-subtitles', f4], ['05-settings-audio', f5], ['06-settings-playback', f6], ['07-skip-alone', f7], ['08-skip-with-controls', f8], ['09-title-block-film', f9], ['10-title-block-episode', f10]]) {
     await pg.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body><div class="screen">${fn()}<div class="border"></div></div></body></html>`);
     await pg.evaluate(() => document.fonts.ready); await pg.screenshot({ path: path.join(OUT, `${n}.png`) });
   }

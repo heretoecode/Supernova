@@ -505,7 +505,10 @@ or underline intersects the line under the tab row.
   it takes **the far right**, Settings moves in beside it, the seek bar shortens to make room.
 - **Title block (owner, 21 Nov):** one component, in exactly the same place on Preparing playback and the player, and
   the same pieces as the hero (RULES §14d): logo inside 900 × 240; episodes' title line "Season 1 · Episode 5 ·
-  Wind River"; facts line age badge · year · length · up to four genres; long lists rule; no reasons line. Test: the
+  Wind River"; facts line age badge · year · length · up to four genres; long lists rule; no reasons line.
+  **Anchored to the facts line (`tv/09`, `tv/10`):** the facts line sits at the same height for films and episodes;
+  the episode's title line sits just above it, the logo above that (a two-line logo grows upwards). A film has no
+  title line and no Episodes tab. Test: the
   title block's bounds match pixel for pixel on both screens.
 - Title block = Preparing playback's (facts line with the badge first, no reasons line); clock in the bar's regular
   weight; chapter and episode cards with the artwork edge and the corner badge, no bars; no stub chapters under 10 s.
