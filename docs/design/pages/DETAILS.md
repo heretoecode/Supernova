@@ -89,3 +89,9 @@ subtitle dialogs, Android's keyboard.
   drive and folder), on one line or two, so a wrong match can be spotted at a glance (the owner had "Come Dine With
   Me (2023), 1 episode" in TV Shows without having the show, and no way to see which file it was). This breaks the
   equal length of Key information and Technical information: settle the layout at the Details review.
+- **Round 1 (owner, 21 Nov):** see BRIEF_0158_B › Details review, round 1 (`details-v3/tv/01`–`12`).
+- **The four kinds (to settle next):** for movie, show, season and episode: the hero's facts line, and every row of
+  Key information and Technical information (e.g. a season's size as total and per-episode average, its runtime as
+  total and average, who "Directed by" lists). Proposal drafted in chat 21 Nov; mock-ups to follow.
+- **Reaching a season page:** row headings are no longer focusable (RULES §14d); decide how (proposal in chat).
+- **More Like This wording:** replace "Stream more from the world of …" (owner, 21 Nov).

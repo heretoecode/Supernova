@@ -49,7 +49,8 @@ const extra = `${css}
 .tabs span{height:52px;padding:0 22px;border-radius:20px;display:flex;align-items:center;gap:12px}
 .tabs .open{box-shadow:inset 0 -3px 0 rgba(255,255,255,.95);border-radius:0}
 .tabs .f{background:#f4f6fb;color:#0b0d12}
-.tline2{position:absolute;left:72px;right:72px;height:1px;background:rgba(255,255,255,.18)}
+.tline2{position:absolute;left:72px;right:72px;height:2px;border-radius:1px;background:linear-gradient(90deg,
+ rgba(255,255,255,.04),rgba(255,255,255,.35) 22%,rgba(255,255,255,.35) 78%,rgba(255,255,255,.04))}
 .mini-logo{position:absolute;left:72px;top:104px;font-weight:900;font-size:40px;letter-spacing:-.5px;
  text-transform:uppercase}
 .cols3{position:absolute;left:72px;right:72px;top:262px;display:grid;grid-template-columns:1fr 1.15fr 1.15fr;gap:56px}
@@ -62,19 +63,22 @@ const extra = `${css}
  rgba(255,255,255,0),rgba(255,255,255,.16) 18%,rgba(255,255,255,.16) 82%,rgba(255,255,255,0))}
 .kv.last:after{display:none}
 .kv.new b{color:#fff}
-.rec{display:flex;align-items:center;gap:18px;height:50px;font-size:23px;position:relative}
-.rec .brand{width:76px;font-weight:700;font-size:24px}
-.rec small{font-size:17px;color:#c9d3e6}
-.people{position:absolute;left:72px;right:72px;top:772px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.rec{display:flex;align-items:center;gap:22px;height:76px;font-size:28px;font-weight:500;position:relative}
+.rec:after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,
+ rgba(255,255,255,0),rgba(255,255,255,.16) 18%,rgba(255,255,255,.16) 82%,rgba(255,255,255,0))}
+.rec:last-child:after{display:none}
+.rec .brand{width:96px;font-weight:700;font-size:30px;display:flex}
+.rec small{font-size:20px;color:#c9d3e6;font-weight:400}
+.people{position:absolute;left:72px;right:72px;top:724px;display:grid;grid-template-columns:1fr 1fr;gap:56px}
 .prow{display:flex;gap:12px}
-.pc{width:100px;text-align:center}
-.pc .ph{width:100px;height:150px;border-radius:10px;box-shadow:inset 0 0 0 1px #fff;position:relative;overflow:hidden}
-.pc .ph i{position:absolute;left:30px;top:26px;width:40px;height:40px;border-radius:20px;background:rgba(255,255,255,.25)}
-.pc .ph em{position:absolute;left:14px;top:76px;width:72px;height:80px;border-radius:36px 36px 0 0;
+.pc{width:112px;text-align:center}
+.pc .ph{width:112px;height:168px;border-radius:10px;box-shadow:inset 0 0 0 1px #fff;position:relative;overflow:hidden}
+.pc .ph i{position:absolute;left:34px;top:30px;width:44px;height:44px;border-radius:22px;background:rgba(255,255,255,.25)}
+.pc .ph em{position:absolute;left:16px;top:86px;width:80px;height:90px;border-radius:40px 40px 0 0;
  background:rgba(255,255,255,.2)}
-.pc b{display:block;font-size:16px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;
+.pc b{display:block;font-size:18px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;
  text-overflow:ellipsis}
-.pc small{font-size:14px;color:#c9d3e6;white-space:nowrap}
+.pc small{font-size:15px;color:#c9d3e6;white-space:nowrap}
 .svc{position:absolute;left:0;right:0;top:30%;height:56px;display:flex;justify-content:center;z-index:2}
 .svc svg{height:56px;width:160px}
 .rowlogo{height:30px;width:90px;display:flex}
@@ -117,17 +121,16 @@ function people(list) {
 
 function frame2() {
   const rec = `<div class="rec"><span class="brand" style="color:#f5c518">IMDb</span>7.4/10<small>212K votes</small></div>
-    <div class="rec"><span class="brand" style="color:#fa320a">●</span>91%</div>
+    <div class="rec"><span class="brand"><svg width="34" height="34" viewBox="0 0 24 24"><circle cx="12" cy="13" r="9" fill="#fa320a"/></svg></span>91%</div>
     <div class="rec"><span class="brand" style="color:#ffcc33">◯</span>78</div>
     <div class="rec"><span class="brand" style="color:#01b4e4">TMDB</span>7.6/10<small>3,104 votes</small></div>
     <div class="rec"><span class="brand">${svg(D.trophy, 26)}</span>2 BAFTA nominations</div>`;
   const key = kv([['Released', '14 March 2025'], ['Runtime', '2 h 11 min'], ['Genres', 'Drama, Thriller, Mystery, Crime'],
     ['Directed by', 'Anna Reyes'], ['Written by', 'Jon Feld, Sam Ortiz'], ['Studio', 'Northlight Pictures'],
-    ['Country', 'Canada'], ['Language', 'English'], ['Original title', 'The Last Crossing'], ['Budget', 'Unknown', 1],
-    ['Revenue', 'Unknown', 1]]);
+    ['Country', 'Canada'], ['Language', 'English'], ['Original title', 'The Last Crossing'], ['Budget', 'Unknown', 1]]);
   const tech = kv([['Resolution', '2160p (3840 × 2160)'], ['Video', 'HEVC (H.265) · 10-bit'], ['HDR', 'HDR10'],
     ['Frame rate', '23.976 fps'], ['Audio', 'Dolby Atmos · 7.1'], ['Audio languages', 'English'],
-    ['Subtitles', 'English, English SDH'], ['Container', 'MKV'], ['Size', '18.7 GB'],
+    ['Subtitles', 'English, English SDH'], ['Size', '18.7 GB'],
     ['File', 'The.Last.Crossing.2025.2160p.mkv', 0, 1], ['Location', 'Media server › Movies › The Last Crossing', 0, 1]]);
   const cast = [['Nora Hale', 'Ellen Marsh'], ['Tomas Vey', 'Daniel Crane'], ['Ada Okafor', 'Ruth Abara'],
     ['Leon Brandt', 'Sheriff Cole'], ['Mina Sato', 'Kiko'], ['Rafe Dunmore', 'Pike'], ['Iris Penrose', 'Grace']];
@@ -140,7 +143,7 @@ function frame2() {
       <div><div class="ch3">${svg(D.chip, 28)}Technical information</div>${tech}</div></div>
       <div class="people"><div><div class="ch3">${svg(D.cast, 28)}Cast</div>${people(cast)}</div>
       <div><div class="ch3">${svg(D.crew, 28)}Crew</div>${people(crew)}</div></div>`
-    + '<div class="cap2">2 · Details tab on one screen; File and Location added (Bitrate moved out)</div>';
+    + '<div class="cap2">2 · Details tab: the library line, bigger Reception and people, no Container or Revenue</div>';
 }
 
 const TRAIL = [['Official Trailer', '2 min 31 s', null], ['Teaser', '1 min 2 s', null], ['Trailer 2', '2 min 10 s', 'w']];

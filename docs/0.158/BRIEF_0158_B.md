@@ -374,6 +374,23 @@ below the bar on the page you're on; and when focus rests on a **tool** (Files, 
 the current page keeps its grey box, because it is still the open page. Test: focus moves Home → Movies; on the very
 next frame Home has no box and Movies the white one; Home → Settings (no OK): Home keeps the grey box.
 
+### Details review, round 1 (owner, 21 Nov; mock-ups `details-v3/tv/01`–`12`; DETAILS.md)
+- **Tab row line = the library toolbar line:** white 35%, about 2 px, fading out at both ends; tabs keep the
+  **underline** for the open tab (owner: tabs are tabs). Tabs at Home's first-row height (RULES §14d).
+- **Details tab (`tv/02`):** Reception bigger (rows about 76 px, 28 px values, the faint fading lines) so it fills
+  its column; Cast and Crew bigger (112 × 168 portraits, moved up into the free space); **Container removed** (the
+  file name shows the extension) and **Revenue removed** so both columns stay level; **File** and **Location** added
+  to Technical information; Bitrate only as a list-view column.
+- **More menu leads to (`tv/07`–`12`, to approve):** Remove from library → straight back to the page you came from,
+  the poster gone, the Undo notice; Subtitles → side panel (In The File · Next To The File · Download › Find
+  subtitles online), OK ticks; Artwork → side panel (For: Hero and rows · Library page; a grid, the hero previews the
+  focused picture; tick on the current one); Full description → the text alone, page blurred; Delete file → the
+  approved warning; TMDB page → one line and the code. Fix match → Files › Library Care's Fix match page (redesign at
+  the Files review).
+- **Still open (do not build):** the wording "Stream more from the world of …" on More Like This (owner: it sounds
+  like the same franchise); what each of the four kinds (movie, show, season, episode) shows on the Details tab and
+  hero; how a season page is reached now that row headings are not focusable.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

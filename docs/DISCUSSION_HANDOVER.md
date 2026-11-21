@@ -4,7 +4,9 @@
 - Done so far: library pages, Home (with one hero / one row, RULES §14d), the top-bar grey-box bug (brief).
 - Details redrawn on today's rules: `details-v3/tv/01`–`06` (Drive › From Claude › 2026-11-21 Details; all four tabs shown on every frame, 06 Episodes): episode hero,
   Details tab with File and Location (Bitrate moved to Columns only), Extras, More Like This by service, More menu.
-  Checklist sent in chat (DETAILS.md + DT1–DT9). Waiting for the owner's notes.
+  Round 1 notes in the brief (tab line, Reception and people bigger, Container and Revenue out, More flows `tv/07`–`12`).
+  **Open:** More Like This wording; the four kinds (movie/show/season/episode) on the Details tab and hero; how to
+  reach a season page (headings not focusable).
 
 ## 21 Nov — Home review
 - Owner: one global hero (Home and Details identical, same code) and one global row design (Home and Details tabs;
