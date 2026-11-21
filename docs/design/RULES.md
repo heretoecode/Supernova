@@ -318,6 +318,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   off only in Customise Home (OK picks a row up, Up / Down moves it, as in Columns). **A focused card never overlaps
   its neighbours** (as library posters): it grows 8% (432 × 243, was 10%) and cards sit 40 px apart (was 24), so
   the grown card and its 4 px ring keep about 20 px clear. **Text block bottom-left** (owner, 21 Nov), anchored as above.
+- **Pickers opened from a panel row** (icon picker, like the keyboard, §15) open under that row, the panel's width
+  (owner, 21 Nov).
 - **Facts line (owner, 21 Nov):** Age rating badge · Year · Length · Genres, **up to four genres** (TMDB order; was
   three). No dot after the age badge: its outline already separates it (dots separate plain facts, §6).
 

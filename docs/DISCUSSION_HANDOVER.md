@@ -7,7 +7,9 @@
   Hide (order in Customise Home); cards 40 px apart, focus 8%, no overlap. Text block bottom-left; up to four genres. More menu and Customise Home drawn `home-v3/tv/06`–`08`; Customise Home with buttons on the focused row (owner chose it over
   Columns' OK-picks-up). Round 3 `tv/09`–`13` (Drive 9–13) waiting: trimmed Home More menu with Not on the hero,
   filling dot (8 s interval, after 30 s idle), Fix match / Remove icons, Kept off the hero in Customise Home, row
-  settings and icon picker on today's rules.
+  settings and icon picker on today's rules. Round 4 `tv/14`–`18`: Exclude from hero (menu, Undo notice
+  pointing to Files › Library Care › Excluded from hero, list page), icon picker under its row. Owner to pick the
+  Exclude from hero icon (`tv/16`); all else in the brief.
 
 ## 20 Nov afternoon — Filters review
 - Filters redrawn on today's rules: `library-pages/tv/35`–`40` (Drive › From Claude › 2026-11-20 Library Filters).
