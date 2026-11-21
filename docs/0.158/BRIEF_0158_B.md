@@ -317,6 +317,20 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   TV Shows Number of seasons · Number of episodes · Average running time · Average size · Total size · Last episode
   added.
 
+### Library review: Customise page (owner, 21 Nov; mock-ups `library-pages/tv/59`–`67`; proposals marked)
+- Approved from `tv/59`: the panel on today's rules (no "This Page" heading; Genres shapes icon; Years opens the Year
+  list, value "From 1990"; quiet "Any", bright set values; Sort by a row opening the Sort list, `tv/61` approved;
+  Order chips follow the sort).
+- **Proposed (`tv/63`):** Show is one choice stepped with Left / Right ("‹ All ›", arrows only on the focused row);
+  the panel narrows to about 800 px.
+- **Proposed (`tv/64`, `tv/65`):** **Delete this page** has no pop-up: while focused, the row shows "Your videos
+  stay in your library." on its right; OK deletes at once and the shared **Undo notice** ("Documentaries page
+  deleted" · Understood · Undo) offers it back; the top bar shows + and the "Make this page your own" page.
+- **Proposed (`tv/66`):** the one keyboard opens **over the panel, its top straight under Page name**, the panel's
+  width, so the row and keyboard read as one; Done returns to the row.
+- **Last episode added icon:** choices `tv/67` (A screen with a "new" dot · B arriving on the screen · C a new one on
+  the list), waiting for the owner.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first
