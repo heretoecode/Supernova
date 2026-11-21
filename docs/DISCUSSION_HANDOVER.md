@@ -1,6 +1,12 @@
 # Discussion handover (updated 19 Nov 2026)
 
-## 21 Nov — Home review (start here next time)
+## 21 Nov evening — Details review (start here next time)
+- Done so far: library pages, Home (with one hero / one row, RULES §14d), the top-bar grey-box bug (brief).
+- Details redrawn on today's rules: `details-v3/tv/01`–`05` (Drive › From Claude › 2026-11-21 Details): episode hero,
+  Details tab with File and Location (Bitrate moved to Columns only), Extras, More Like This by service, More menu.
+  Checklist sent in chat (DETAILS.md + DT1–DT9). Waiting for the owner's notes.
+
+## 21 Nov — Home review
 - Owner: one global hero (Home and Details identical, same code) and one global row design (Home and Details tabs;
   the player separate). Drawn `home-v3/tv/01`–`05` (Drive › From Claude › 2026-11-21 Home); RULES §14d (proposed
   measurements). Decided 21 Nov (RULES §14d): two-line description; first line under the hero aligned on Home and Details; no Move /
