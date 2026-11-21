@@ -2,8 +2,9 @@
 
 ## 21 Nov evening — Player review started (start here next time)
 - Player redrawn on today's rules: `player-v16/tv/01`–`07` (Drive › From Claude › 2026-11-21 Player): controls with
-  Chapters, tab focused, Episodes, Playback Settings × 3 tabs, skip alone. Asked: Skipping chips vs stepper; panel
-  edge over video. Waiting for notes. No page sheet for the player yet: write `docs/design/pages/PLAYER.md` after.
+  Chapters, tab focused, Episodes, Playback Settings × 3 tabs, skip alone. Decided: Skipping steps, panel 700 px, edge
+  outline+shadow over video, skip button far right with controls (`tv/08`), seek preview setting Off · Chapter
+  pictures · Video frames, bugs (previews, age badge clipped). In the brief. No page sheet for the player yet: write `docs/design/pages/PLAYER.md` after.
 
 ## 21 Nov evening — Details done
 - **Details done:** page sheet `docs/design/pages/DETAILS.md` rewritten from rounds 1–6. Done so far: library pages,

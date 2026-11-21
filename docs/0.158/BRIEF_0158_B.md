@@ -488,6 +488,24 @@ Episodes tab behaviour exactly: white box in the 52 px shape with a gap above th
 underline under the open tab's word, clear of the line. Reuse the player's tab code or values; test that no tab box
 or underline intersects the line under the tab row.
 
+### Player review (owner, 21 Nov; mock-ups `player-v16/tv/01`–`08`; page sheet PLAYER.md to follow)
+- **Bugs on the Shield:** (1) **seek previews still fail** (grey box); (2) with the Seek previews setting off, a
+  picture box still shows (chapter pictures, often grey too); (3) the **age badge's bottom edge is cut off** in the
+  title block (e.g. "12A" on a film): size the badge from its text's real bounds, no clipping; test that the badge's
+  outline is drawn whole on Preparing playback, the player and the heroes.
+- **Seek preview setting (Settings › Playback, and Playback Settings if listed):** a stepper **Seek preview: Off ·
+  Chapter pictures · Video frames**. **Off** shows no picture at all, only the time box (time over the chapter name).
+  And whichever is chosen, **never a grey box**: if a picture isn't ready in time, the time box shows alone.
+- **Tabs (Chapters · Episodes):** the reference for every tab row (RULES); the line under them = the library toolbar
+  line (white 35%, about 2 px, fading at both ends).
+- **Playback Settings:** **Skipping steps with Left / Right** (‹ Show button ›; Off · Show button · Skip) like every
+  row with more than two choices; panel narrowed to about **700 px** (`tv/06`). Edge over video: **the same white
+  outline at 70% and dark shadow** as every panel (owner, 21 Nov; RULES §11 settled).
+- **Skip button (`tv/07`, `tv/08`):** alone, in its place at the right of the controls' line; with the controls shown
+  it takes **the far right**, Settings moves in beside it, the seek bar shortens to make room.
+- Title block = Preparing playback's (facts line with the badge first, no reasons line); clock in the bar's regular
+  weight; chapter and episode cards with the artwork edge and the corner badge, no bars; no stub chapters under 10 s.
+
 ### Details page sheet (21 Nov)
 `docs/design/pages/DETAILS.md` is rewritten from the six review rounds above and wins over them where they differ.
 

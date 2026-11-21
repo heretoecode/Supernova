@@ -255,7 +255,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   one shared value (§4). **Edge (owner, 19 Nov, judged on the TV, `rows-captions/tv/05` no. 3):** a thin **white
   outline at 70%** (about 1.5 px at 1080p) **plus a dark shadow spreading outwards** (black at about 85%, about 48 px
   soft, offset 18 px down), so menus float above the page and keep a crisp edge over poster captions. Same for every
-  pop-up, menu and side panel. **Over video** (Playback Settings): to settle in the player walk-through.
+  pop-up, menu and side panel. **Over video** (Playback Settings): the same outline and shadow (owner, 21 Nov).
 - Focused item: filled white, black text and icon (section 3).
 - **A list opened from a panel sits on top of it** (owner, 13 Nov; replaces "never stack", 0.156 P5): the panel behind
   is darkened and pushed back slightly (about 45% brightness, 96% size) with the row you came from still visible; the
@@ -426,6 +426,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **One loading ring for the player, in the centre of the screen** (the app's ring, as on Preparing playback and the
   Files scan) whenever playback waits (after a seek, slow network). The time box only ever shows the time over the
   chapter name; the seek preview picture uses exactly that layout inside it (owner, 12 Nov; replaces §14 A).
+- **Seek preview (owner, 21 Nov):** a setting Off · Chapter pictures · Video frames; Off shows no picture; never a grey
+  box: a picture not ready in time leaves the time box alone.
 
 ---
 

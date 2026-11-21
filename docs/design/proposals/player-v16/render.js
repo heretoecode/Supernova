@@ -78,7 +78,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R,sans-serif;color:#
 .card .c2{font-size:19px;color:#c9d3e6;margin-top:4px}
 .badge{position:absolute;top:8px;right:8px;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.45)}
 .badge svg{position:absolute;left:0;top:0}
-.panel{position:absolute;right:72px;top:56px;width:820px;border-radius:20px;background:rgba(22,24,28,.99);padding:16px 0 18px;
+.panel{position:absolute;right:72px;top:56px;width:700px;border-radius:20px;background:rgba(22,24,28,.99);padding:16px 0 18px;
  box-shadow:0 0 0 1.5px rgba(255,255,255,.7),0 18px 48px 12px rgba(0,0,0,.85)}
 .ptabs{display:flex;gap:8px;padding:0 20px 14px;font-size:26px}
 .ptabs span{height:52px;padding:0 20px;border-radius:20px;display:flex;align-items:center;gap:10px;position:relative}
@@ -163,15 +163,21 @@ function f6() {
   return '<div class="subline">Who you really are, and why you use it.</div>' + `<div class="panel">${ptabs('Playback')}
     <div class="h">Picture and Speed</div>${row(I.format, 'Format', step('Fit'))}${row(I.speed, 'Speed', step('1×'))}
     <div class="h">Playing On</div>${row(I.moon, 'Stop playing at', step('22:40', true), true)}${row(I.ask, 'Still watching?', step('Off'))}
-    ${row(I.mode, 'Play mode', step('Play next'))}${row(I.skip, 'Skipping', '<span class="chips"><b>Off</b><b class="sel">Show button</b><b>Skip</b></span>')}
+    ${row(I.mode, 'Play mode', step('Play next'))}${row(I.skip, 'Skipping', step('Show button'))}
     <div class="h">This Show</div>${row(I.remember, 'Remember for this show', sw(false))}</div>`
-    + '<div class="cap2">6 · Playback Settings › Playback (Stop playing at focused; Skipping still chips)</div>';
+    + '<div class="cap2">6 · Playback (Skipping now steps; panel narrowed to about 700 px)</div>';
+}
+function f8() {
+  return top() + `<div class="ctrl" style="top:596px"><span class="pbtn">${svg(I.pause, 26)}</span>
+    <div class="seek"><div class="buf"></div><b style="width:8%"></b><i style="left:3%"></i><i style="left:15%"></i><span class="knob" style="left:8%"></span></div>
+    <span class="time">3:40 / 46:12 · Ends 22:48</span><span class="sbtn">${svg(I.cog, 26)}Settings</span><span class="sbtn f">${svg(I.skip, 26)}Skip intro</span></div>`
+    + tabs(688, 'Chapters') + cards(784, CH, -1) + '<div class="cap2">8 · Skip with the controls: it takes the far right, Settings moves in, the seek bar shortens</div>';
 }
 function f7() { return `<div class="ctrl" style="top:960px;justify-content:flex-end"><span class="sbtn f">${svg(I.skip, 26)}Skip intro</span></div>` + '<div class="cap2" style="right:auto;left:52px">7 · Skip button alone, in its place on the controls\' line</div>'; }
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const b = await chromium.launch(); const pg = await b.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [n, fn] of [['01-controls-chapters', f1], ['02-chapters-tab-focused', f2], ['03-episodes', f3], ['04-settings-subtitles', f4], ['05-settings-audio', f5], ['06-settings-playback', f6], ['07-skip-alone', f7]]) {
+  for (const [n, fn] of [['01-controls-chapters', f1], ['02-chapters-tab-focused', f2], ['03-episodes', f3], ['04-settings-subtitles', f4], ['05-settings-audio', f5], ['06-settings-playback', f6], ['07-skip-alone', f7], ['08-skip-with-controls', f8]]) {
     await pg.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body><div class="screen">${fn()}<div class="border"></div></div></body></html>`);
     await pg.evaluate(() => document.fonts.ready); await pg.screenshot({ path: path.join(OUT, `${n}.png`) });
   }
