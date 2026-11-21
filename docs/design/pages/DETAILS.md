@@ -25,7 +25,7 @@ Empty tabs hide and the rest close up; all tabs are drawn at once, never popping
 - **Logo:** the title's official logo artwork; its name in plain text when it has none. Going down into the tabs it
   glides and shrinks to the compact logo top left.
 - **Title line** (seasons and episodes): "Season 2" / "Season 2 · Episode 8 · Title", as in the player.
-- **Metadata row:** Age rating (outlined badge) · Year · Length · Genres (TMDB order, three at most); missing items
+- **Metadata row:** Age rating (outlined badge) · Year · Length · Genres (TMDB order, four at most; owner 21 Nov); missing items
   left out. Length: running time (movie, episode), seasons (show), episodes (season).
 - **Description:** two lines; no tagline.
 - **Buttons:** fixed place at the bottom left, whatever the text length. First: "Play" or "Resume S1 E5 · 16 min

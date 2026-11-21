@@ -15,7 +15,7 @@ underline, this sheet wins.
 
 ## Hero
 - **Same design as Details** (1776×820 at 1080p): logo artwork (or the name), metadata row (Age rating · Year · Length ·
-  Genres), two-line description, no tagline, one button fixed at the bottom left, **More** (owner, 19 Nov: replaces "Play / Resume, then More";
+  Genres, four at most), two-line description, no tagline, one button fixed at the bottom left, **More** (owner, 19 Nov: replaces "Play / Resume, then More";
   its menu: Details, Play / Resume, Library, Files & Media), artwork edge, the first row peeking below (at least its heading, any amount of its cards; never only the hero; owner, 19 Nov). **Carousel dots** under the hero.
 - **TV shows on the hero (owner, 19 Nov):** a new episode appears **as that episode** ("Next Episode · S2 E5")
   only when you are watching the show and have watched up to the episode before it (built this way: every earlier

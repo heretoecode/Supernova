@@ -317,7 +317,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   never focusable** and have no buttons: Move and Hide are removed from Home; rows are ordered and switched on and
   off only in Customise Home (OK picks a row up, Up / Down moves it, as in Columns). **A focused card never overlaps
   its neighbours** (as library posters): it grows 8% (432 × 243, was 10%) and cards sit 40 px apart (was 24), so
-  the grown card and its 4 px ring keep about 20 px clear. Text block top or bottom: owner to decide.
+  the grown card and its 4 px ring keep about 20 px clear. **Text block bottom-left** (owner, 21 Nov), anchored as above.
+- **Facts line (owner, 21 Nov):** Age rating badge · Year · Length · Genres, **up to four genres** (TMDB order; was
+  three). No dot after the age badge: its outline already separates it (dots separate plain facts, §6).
 
 ## 14c. Progress badge and row cards (owner, 19 Nov 2026; replaces every progress bar on artwork)
 - **No progress bars on artwork or captions anywhere.** Progress is one **badge in the top-right corner** of the
