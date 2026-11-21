@@ -507,6 +507,12 @@ below the bar. Movies and TV Shows (0.158.4) are the reference.
 **Page tabs (owner, 19 Nov):** tabs on a full page (Files, Settings) use Files' look: the same box size as the top
 bar, a line under the tab row, the white focus box; never a plain row of words that reads as a second top bar.
 Panels (Playback Settings) keep their own. Details' tabs: decided at the full walk-through.
+**One tab behaviour everywhere (owner, 21 Nov; reference: the player's Chapters · Episodes tabs as built today):**
+focused tab = the white box in the one small-box shape (52 px, 20 px corners), sized to its word, with a clear gap
+above the line under the tab row: **the box never touches or overlaps that line**. When focus goes down into the
+tab's content, the open tab shows a **white underline** under its word (no grey box); the underline sits above the
+line, never on it. Moving along the tabs switches at once. Same on Details, Files, Settings and the player: copy
+the player's sizes and gaps (measure them in its code) rather than inventing new ones.
 
 **Information lines in sentence case (owner, 19 Nov):** captions, second lines, details and buttons' detail text
 capitalise only the first letter ("2 seasons · 16 episodes", "S1 E4 · 3 of 8 left", "Resume S1 E5 · 16 min left");

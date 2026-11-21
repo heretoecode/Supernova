@@ -481,6 +481,13 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
   **‹ Season 1 ›** picker under the tabs (one season's episodes at a time, in rows below) with a **Season page**
   button beside it. Replaces `tv/24` (its "S1" was a placeholder, not centred).
 
+### Tabs: one behaviour everywhere (owner, 21 Nov; RULES "One tab behaviour everywhere")
+Seen on 0.158.7: Details' focused tab box is too big and overlaps the line under the tabs; inside a tab the open tab
+turns into a grey box, also over the line. **Fix:** Details (and Files, Settings) take the player's Chapters ·
+Episodes tab behaviour exactly: white box in the 52 px shape with a gap above the line; inside the tab, a white
+underline under the open tab's word, clear of the line. Reuse the player's tab code or values; test that no tab box
+or underline intersects the line under the tab row.
+
 ### Details page sheet (21 Nov)
 `docs/design/pages/DETAILS.md` is rewritten from the six review rounds above and wins over them where they differ.
 

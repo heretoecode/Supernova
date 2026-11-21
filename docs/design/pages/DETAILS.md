@@ -38,7 +38,9 @@ Movie, TV show, season, episode. Single-season shows have no season page.
   Focus starts on the first. The tabs sit at the same height as Home's first row heading.
 
 ## Tabs
-Plain words with icons; **focus = white box; open tab = underline** (tabs are tabs). Line under the tab row = the
+Plain words with icons; **the player's tab behaviour** (RULES "One tab behaviour everywhere"): focus = the white
+box, sized to the word, clear of the line; inside the tab the open tab keeps a white underline, never a grey box,
+never overlapping the line. Line under the tab row = the
 library toolbar line (white 35%, about 2 px, fading at both ends). Moving along switches the tab at once; Up lands
 on the open tab; Down goes to the tab's first row.
 
@@ -119,4 +121,5 @@ subtitle dialogs, Android's keyboard, YouTube's own player controls.
 
 ## Bugs to fix on 0.158.7 (owner's photos, 21 Nov)
 Hero clipped left and right by an invisible frame (DT3); rows cut off at both ends (More Like This); a solid band
-under the top bar instead of the blur. See BRIEF_0158_B › Details review, round 3.
+under the top bar instead of the blur; the tab focus box too big and overlapping the line, and a grey box (also
+overlapping) on the open tab instead of the underline. See BRIEF_0158_B › Details review, round 3.
