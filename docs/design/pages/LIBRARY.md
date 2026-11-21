@@ -76,8 +76,9 @@ Left / Right (RULES §8); two choices are chips.
   the text appears in the row; Done returns) · Includes (‹ Movies and TV shows · Movies · TV shows ›) · Genres (shapes
   icon; Match: Any · All inside the list) · Years (the Year list: Any year · Recent · Your Own Range; value "From
   1990") · Minimum rating (‹ Any · 6+ · 7+ · 8+ · 9+ ›) · Original language · Studio / Network (search only above 12).
-- **How To Show It:** Show (‹ All · Unwatched · In progress · Watched ›) · View (Grid · List) · Sort by (opens the
-  Sort list on top) · Order (two chips that follow the sort) — how the page **opens**.
+- **How To Show It** (in this order, owner 21 Nov: no staircase of widths): Sort by (opens the Sort list on top) ·
+  Order (two chips that follow the sort) · View (Grid · List) · Show (‹ All · Unwatched · In progress · Watched ›) —
+  how the page **opens**.
 - **Delete this page** at the foot after a plain line, no heading. While focused it shows "Your videos stay in your
   library." on the right; OK deletes at once with the Undo notice; the top bar shows + and "Make this page your own".
 - Movies and TV Shows have no Customise page (owner, 19 Nov).

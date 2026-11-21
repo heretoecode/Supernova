@@ -324,6 +324,8 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
 - **More than two choices step with Left / Right (`tv/68`; new RULES §8):** Includes ("Movies and TV shows" · Movies ·
   TV shows), Minimum rating (Any · 6+ · 7+ · 8+ · 9+) and Show (All · Unwatched · In progress · Watched); ‹ › only on
   the focused row; values line up at rest. The panel narrows to about 700 px.
+- **How To Show It order (owner, 21 Nov):** Sort by · Order · View · Show (so the rows' widths don't climb like a
+  staircase; Sort by and its Order sit together).
 - **Delete this page (`tv/64`, `tv/65`):** no pop-up; while focused the row shows "Your videos stay in your library."
   on its right; OK deletes at once with the shared **Undo notice** ("Documentaries page deleted" · Understood · Undo);
   the top bar shows + and the "Make this page your own" page.
