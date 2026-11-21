@@ -58,6 +58,8 @@ const css = `${extra}
 .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:8px 24px 6px}
 .th{height:180px;border-radius:12px;position:relative;box-shadow:inset 0 0 0 1px #fff}
 .th.on{box-shadow:0 0 0 4px #fff}
+.th .sug{position:absolute;left:8px;top:8px;height:32px;padding:0 12px;border-radius:16px;background:rgba(10,11,13,.8);
+ display:flex;align-items:center;gap:6px;font-size:17px}
 .th .tk{position:absolute;right:8px;top:8px;width:36px;height:36px;border-radius:18px;background:#fff;color:#000;
  display:flex;align-items:center;justify-content:center}
 .chips{display:flex;gap:6px}
@@ -106,25 +108,52 @@ function frame8() {
   const r = (label, sub, pill, tick, on, ic) => item(ic || P.file, `${label}${sub ? `<small>${sub}</small>` : ''}`,
     { on, nosep: true, right: `${pill ? `<span class="pill">${pill}</span>` : ''}<span style="width:28px;display:flex">
     ${tick ? svg(P.tick) : ''}</span>` });
-  const panel = `<div class="side"><div class="h">In The File</div>
+  const panel = `<div class="side" style="width:560px"><div class="h">Built In</div>
     ${r('Off', '', '', false, false, P.off)}${r('English', '', '', true, true)}${r('English', '', 'SDH', false)}
-    ${r('French', '', 'Forced', false)}<div class="h">Next To The File</div>
-    ${r('English', 'The.Last.Crossing.en.srt', '', false)}<div class="h">Download</div>
+    ${r('French', '', 'Forced', false)}<div class="h">Subtitle Files</div>
+    ${r('English', '', '.srt', false)}<div class="h">Online</div>
     ${item(P.dl, 'Find subtitles online', { nosep: true, right: `<span class="ch">${svg(K.chev, 26)}</span>` })}</div>`;
-  return details(panel) + '<div class="cap2">8 · Subtitles: what this title plays with; OK ticks</div>';
+  return details(panel) + '<div class="cap2">8 · Subtitles: Built In · Subtitle Files · Online; OK ticks</div>';
+}
+
+function frame8b() {
+  const back = `<div class="side" style="width:560px;filter:brightness(.45);transform:scale(.96);transform-origin:top right">
+    <div class="h">Built In</div>${item(P.off, 'Off', { nosep: true })}${item(P.file, 'English', { nosep: true })}
+    <div class="h">Subtitle Files</div>${item(P.file, 'English', { nosep: true })}<div class="h">Online</div>
+    ${item(P.dl, 'Find subtitles online', { nosep: true })}</div>`;
+  const res = (name, sub, pills, on) => `<div class="i${on ? ' on' : ''}" style="height:78px"><span style="display:flex;
+    flex-direction:column;gap:4px;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    max-width:520px">${name}</span><small style="margin:0">${sub}</small></span><span class="fill"></span>
+    ${pills.map(x => `<span class="pill">${x}</span>`).join('')}${on ? `<span style="display:flex">${svg(P.dl)}</span>` : '<span style="width:28px"></span>'}</div>`;
+  const list = `<div class="side" style="width:860px;top:60px;right:120px;z-index:11;
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.7),0 24px 64px 16px rgba(0,0,0,.9)">
+    ${item('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>', 'Language', { nosep: true, right: '<span class="step" style="display:flex;gap:10px;font-weight:500">English</span>' })}
+    <div class="h">Results</div>
+    ${res('The.Last.Crossing.2025.2160p.WEB-DL', 'Matches your file · 12,400 downloads', ['Best match'], true)}
+    ${res('The.Last.Crossing.2025.1080p.BluRay', '8,210 downloads', [])}
+    ${res('The.Last.Crossing.2025.1080p.BluRay', '3,050 downloads', ['SDH'])}
+    ${res('The Last Crossing (2025) English', '1,120 downloads', [])}
+    ${res('The.Last.Crossing.2025.WEBRip', '640 downloads', ['Forced'])}</div>`;
+  return details(back + list) + '<div class="cap2">8b · Find subtitles online: on top; OK downloads, then it plays with it ticked</div>';
 }
 
 function frame9() {
-  const back = ['#2c4656', '#0e1820'];
   let thumbs = '';
-  [['#2c4656', '#0e1820'], ['#5a3a2a', '#1a0e08'], ['#2f4a3a', '#0e1a12'], ['#4a3a5a', '#160e1e'],
-    ['#5a5a3a', '#1c1c0e'], ['#3a4a5a', '#0e141c']].forEach((a, k) => {
-    thumbs += `<div class="th${k === 0 ? ' on' : ''}" style="background:linear-gradient(155deg,${a[0]},${a[1]})">
+  const cols = [['#2c4656', '#0e1820'], ['#5a3a2a', '#1a0e08'], ['#2f4a3a', '#0e1a12'], ['#4a3a5a', '#160e1e'],
+    ['#5a5a3a', '#1c1c0e'], ['#3a4a5a', '#0e141c'], ['#4a2f2f', '#180e0e'], ['#2f3f4a', '#0e1418']];
+  cols.forEach((a, k) => {
+    thumbs += `<div class="th${k === 2 ? ' on' : ''}" style="background:linear-gradient(155deg,${a[0]},${a[1]})">
+      ${k === 0 ? '<span class="sug">' + svg(K.star || '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>', 20) + 'Suggested</span>' : ''}
       ${k === 1 ? `<span class="tk">${svg(P.tick, 22)}</span>` : ''}</div>`;
   });
-  const panel = `<div class="side">${item(J.art, 'For', { nosep: true, right: '<span class="chips"><b class="sel">Hero and rows</b><b>Library page</b></span>' })}
-    <div class="thumbs">${thumbs}</div></div>`;
-  return details(panel) + '<div class="cap2">9 · Artwork: the hero previews the picture you are on; OK chooses</div>';
+  const panel = `<div class="side" style="padding-bottom:0">${item(J.art, 'For', { nosep: true,
+    right: '<span class="chips"><b class="sel">Hero and rows</b><b>Library page</b></span>' })}
+    <div style="height:1px;margin:6px 24px 0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.2) 18%,rgba(255,255,255,.2) 82%,rgba(255,255,255,0))"></div>
+    <div style="height:610px;overflow:hidden;position:relative;margin-right:44px"><div>
+    <div class="thumbs" style="padding-top:22px">${thumbs}</div></div></div>
+    <div style="position:absolute;right:8px;top:96px;color:#fff;opacity:.35">${svg('<path d="M6 15l6-6 6 6"/>', 30)}</div>
+    <div style="position:absolute;right:8px;bottom:14px;color:#fff">${svg('<path d="M6 9l6 6 6-6"/>', 30)}</div></div>`;
+  return details(panel) + '<div class="cap2">9 · Artwork: chooser stays put, pictures scroll under it; Suggested marked</div>';
 }
 
 function frame10() {
@@ -138,7 +167,7 @@ function frame10() {
 function frame11() {
   const sw = on => `<span class="sw${on ? ' on' : ''}"></span>`;
   return details('') + `<div class="scrim"></div><div class="pop dlg"><div class="ti">Delete The Last Crossing?</div>
-    <div class="l1">Deletes <b>The.Last.Crossing.2025.2160p.mkv</b> (2160p · 18.7 GB) from <b>Media server</b>.</div>
+    <div class="l1"><b>The.Last.Crossing.2025.2160p.mkv</b> (2160p · 18.7 GB) on <b>Media server</b>.</div>
     <div class="l2">Its own subtitle and .nfo files go with it; anything else in the folder stays.</div>
     <div class="h">Clean Up</div>
     ${item(P.hist, 'Also clear viewing history in Supernova', { nosep: true, right: sw(false) })}
@@ -168,12 +197,11 @@ function qr() {
 }
 
 function frame12() {
-  return details('') + `<div class="blur"></div><div class="pop" style="padding:36px 44px;text-align:center">
-    <div style="font-size:26px;margin-bottom:24px">Scan to open the TMDB page</div>${qr()}</div>`
-    + '<div class="cap2">12 · TMDB page: one line and the code; Back closes</div>';
+  return details('') + `<div class="blur"></div><div class="pop" style="padding:36px;text-align:center">${qr()}</div>`
+    + '<div class="cap2">12 · TMDB page QR code: the code alone; Back closes</div>';
 }
 
-const FRAMES = [['07-removed-undo', frame7], ['08-subtitles', frame8], ['09-artwork', frame9],
+const FRAMES = [['07-removed-undo', frame7], ['08-subtitles', frame8], ['08b-find-online', frame8b], ['09-artwork', frame9],
   ['10-full-description', frame10], ['11-delete-file', frame11], ['12-tmdb-page', frame12]];
 
 (async () => {

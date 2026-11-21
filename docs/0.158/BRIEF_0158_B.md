@@ -391,6 +391,26 @@ next frame Home has no box and Movies the white one; Home → Settings (no OK): 
   like the same franchise); what each of the four kinds (movie, show, season, episode) shows on the Details tab and
   hero; how a season page is reached now that row headings are not focusable.
 
+### Details review, round 2 (owner, 21 Nov; mock-ups `details-v3/tv/02`–`15`)
+- Approved: the Details tab layout (`tv/02`), Remove from library with Undo (`tv/07`), Full description (`tv/10`),
+  More Like This rows headed with the service's logo and **"On Netflix"** (on Prime Video, on Disney+ …), replacing
+  "Stream more from the world of …".
+- **One page, no title (proposed `tv/02`–`06`, `13`–`15`):** on a tab the page scrolls so **the hero's foot peeks above
+  the tabs** (about 56 px of the card's bottom edge) instead of a separate title or logo; no scroll arrows here.
+- **Subtitles (proposed `tv/08`, `08b`):** narrower panel (about 560 px); groups **Built In · Subtitle Files ·
+  Online**; Find subtitles online opens on top: Language (stepper), Results (release name, downloads, pills Best match
+  · SDH · Forced), the focused result shows the download icon; OK downloads and ticks it.
+- **Artwork (proposed `tv/09`):** no title, no footer text; the For chooser stays fixed at the top and the pictures
+  scroll underneath it, clipped below a line; scroll arrows in the panel's margin; the suggested picture carries a
+  **Suggested** badge (star); no "Backdrop 1 / Poster 1" labels.
+- **Delete file (proposed `tv/11`):** the second line drops "Deletes": "**<file>** (2160p · 18.7 GB) on **<server>**."
+- **TMDB:** the More item reads **"TMDB page QR code"**; the pop-up shows the code alone (`tv/12`).
+- **The four kinds on the Details tab (proposed `tv/02` movie, `13` show, `14` season, `15` episode):** groups show
+  Average · total for running time and size; mixed technical values show the most common and the odd ones out
+  ("1080p · 2 in 2160p"); seasons and episodes show their own scores where they exist, otherwise "Unknown"; a show
+  lists Created by, a season "Ruth Kane and 2 others", an episode Guest stars; Files / File and Location follow the
+  kind (folder for groups). Season pages: a season card first in each season row (to draw).
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first

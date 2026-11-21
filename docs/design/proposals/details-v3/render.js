@@ -51,8 +51,10 @@ const extra = `${css}
 .tabs .f{background:#f4f6fb;color:#0b0d12}
 .tline2{position:absolute;left:72px;right:72px;height:2px;border-radius:1px;background:linear-gradient(90deg,
  rgba(255,255,255,.04),rgba(255,255,255,.35) 22%,rgba(255,255,255,.35) 78%,rgba(255,255,255,.04))}
-.mini-logo{position:absolute;left:72px;top:104px;font-weight:900;font-size:40px;letter-spacing:-.5px;
- text-transform:uppercase}
+.mini-logo{position:absolute;left:72px;top:84px;width:1776px;height:56px;border-radius:0 0 24px 24px;overflow:hidden;
+ font-size:0;background:radial-gradient(ellipse 60% 400% at 72% -300%,rgba(150,180,200,.5),transparent 60%),
+ linear-gradient(90deg,#0b1116 0%,#16242e 45%,#2c4656 75%,#1a2c38 100%);
+ box-shadow:inset 1px 0 0 #fff,inset -1px 0 0 #fff,inset 0 -1px 0 #fff}
 .cols3{position:absolute;left:72px;right:72px;top:262px;display:grid;grid-template-columns:1fr 1.15fr 1.15fr;gap:56px}
 .ch3{display:flex;align-items:center;gap:12px;font-size:26px;font-weight:500;margin-bottom:10px}
 .kv{display:flex;justify-content:space-between;align-items:center;height:38px;font-size:21px;position:relative}
@@ -178,7 +180,7 @@ function frame4() {
   return bar('Movies') + '<div class="mini-logo">The Last Crossing</div>'
     + tabs(170, 'More Like This')
     + row(72, 262, { icon: D.lib, title: 'In Your Library' }, LIB, -1)
-    + serviceRow(72, 600, 'netflix', '#E50914', NF, 'Stream more from the world of The Last Crossing')
+    + serviceRow(72, 600, 'netflix', '#E50914', NF, 'On Netflix')
     + '<div class="cap2">4 · More Like This: your library, then a row per service</div>';
 }
 
@@ -192,7 +194,7 @@ function frame5() {
     ${item(K.fixB, 'Fix match', { nosep: true })}${item(K.remA, 'Remove from library', { nosep: true })}
     <div class="h">Files &amp; Media</div>${item(J.subs, 'Subtitles', { nosep: true })}
     ${item(J.art, 'Artwork', { nosep: true })}${item(J.desc, 'Full description', { nosep: true })}
-    ${item(J.bin, 'Delete file', { nosep: true })}<div class="rule"></div>${item(J.qr, 'TMDB page', { nosep: true })}</div>`;
+    ${item(J.bin, 'Delete file', { nosep: true })}<div class="rule"></div>${item(J.qr, 'TMDB page QR code', { nosep: true })}</div>`;
   return bar('Movies') + hero(FILM, `<span class="btn">${svg(D.play, 24)}Resume · 42 min left</span><span class="btn">
     ${svg(I.more, 26)}More</span>`) + tabs(972, 'Details')
     + menu + '<div class="cap2">5 · More on Details, with the new Fix match and Remove icons</div>';
