@@ -503,6 +503,10 @@ or underline intersects the line under the tab row.
   outline at 70% and dark shadow** as every panel (owner, 21 Nov; RULES §11 settled).
 - **Skip button (`tv/07`, `tv/08`):** alone, in its place at the right of the controls' line; with the controls shown
   it takes **the far right**, Settings moves in beside it, the seek bar shortens to make room.
+- **Title block (owner, 21 Nov):** one component, in exactly the same place on Preparing playback and the player, and
+  the same pieces as the hero (RULES §14d): logo inside 900 × 240; episodes' title line "Season 1 · Episode 5 ·
+  Wind River"; facts line age badge · year · length · up to four genres; long lists rule; no reasons line. Test: the
+  title block's bounds match pixel for pixel on both screens.
 - Title block = Preparing playback's (facts line with the badge first, no reasons line); clock in the bar's regular
   weight; chapter and episode cards with the artwork edge and the corner badge, no bars; no stub chapters under 10 s.
 
