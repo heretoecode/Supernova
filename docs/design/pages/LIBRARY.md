@@ -68,15 +68,19 @@ Rows with Title first, then the shown columns; long values end in "…"; lines b
 out at both ends (owner, 20 Nov); the focused row is the white box. The progress badge sits at the right edge of the
 Title column with room either side (`tv/55`). Scroll arrows in the right margin. Same Filters / Sort / Order as the grid.
 
-## Customise page (`32`, `29`) — your own pages only (owner, 19 Nov)
-A side panel floating on the right, sized to fit without scrolling; changes apply live, **no Save button**, Back
-closes. Group headings centred on their line, Title Case.
-- **What To Show:** Page name (types with the one keyboard in its own panel beside this one; the text appears in the
-  row) · Includes · Genres (Match: Any · All inside the list) · Years · Minimum rating (stepper) · Original language ·
-  Studio / Network (search only above 12 items).
-- **How To Show It:** Show · View (Grid / List) · Sort by · Order — how the page **opens**.
-- Delete page (own pages only) at the foot, apart by a plain line, no heading; real deletion uses the delete warning.
-- Movies and TV Shows hide rows that don't apply (no Page name, no Includes, no Delete page).
+## Customise page (`32`, `29`; redrawn and approved `tv/59`–`68`, owner 21 Nov) — your own pages only
+A side panel floating on the right (about 700 px), sized to fit without scrolling; changes apply live, **no Save
+button**, Back closes. Group headings centred on their line, Title Case. Rows with more than two choices step with
+Left / Right (RULES §8); two choices are chips.
+- **What To Show:** Page name (the one keyboard floats over the panel straight under this row, the panel's width;
+  the text appears in the row; Done returns) · Includes (‹ Movies and TV shows · Movies · TV shows ›) · Genres (shapes
+  icon; Match: Any · All inside the list) · Years (the Year list: Any year · Recent · Your Own Range; value "From
+  1990") · Minimum rating (‹ Any · 6+ · 7+ · 8+ · 9+ ›) · Original language · Studio / Network (search only above 12).
+- **How To Show It:** Show (‹ All · Unwatched · In progress · Watched ›) · View (Grid · List) · Sort by (opens the
+  Sort list on top) · Order (two chips that follow the sort) — how the page **opens**.
+- **Delete this page** at the foot after a plain line, no heading. While focused it shows "Your videos stay in your
+  library." on the right; OK deletes at once with the Undo notice; the top bar shows + and "Make this page your own".
+- Movies and TV Shows have no Customise page (owner, 19 Nov).
 
 ## Long-press (or Menu) on a poster — beside the poster (`30`; reviewed by the owner 19–20 Nov, mock-ups `rows-captions/tv/11`, `12`)
 - Movie: **Playback** Play (started: Resume · 42 min left, then Play from the start) · **Library** Mark as watched · Fix

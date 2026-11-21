@@ -11,8 +11,9 @@
   Technical information and on Fix match (page sheets › To settle; mismatch M1 in REVIEW_0158).
 - **List view done** (20% fading row lines, badge spacing, `tv/55`). **Columns:** cap of seven approved (21 Nov);
   list of 16 approved; names follow what the page holds. **Columns done.**
-- **Customise page:** redrawn `tv/59`–`62` (Drive 25–28: panel, Page name keyboard, Sort by list, Delete page
-  warning), waiting for the owner's notes. Then the library pages are done; next page to review: owner's choice.
+- **Customise page done (21 Nov):** `tv/59`–`68` approved (steppers for 3+ choices, inline delete with Undo,
+  keyboard under Page name, Last episode added icon A). New app-wide rules: RULES §8 (more than two choices step with
+  Left / Right), §15 (keyboard over the panel under its row). **The library pages are done.** Next page: owner's choice.
 - Then Sort, Order, List / Grid view with list view, Columns, Customise page on the own page.
 
 ## 19–20 Nov evening — library pages review (start here next time)

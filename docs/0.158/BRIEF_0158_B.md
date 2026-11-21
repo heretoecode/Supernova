@@ -317,19 +317,21 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   TV Shows Number of seasons · Number of episodes · Average running time · Average size · Total size · Last episode
   added.
 
-### Library review: Customise page (owner, 21 Nov; mock-ups `library-pages/tv/59`–`67`; proposals marked)
-- Approved from `tv/59`: the panel on today's rules (no "This Page" heading; Genres shapes icon; Years opens the Year
-  list, value "From 1990"; quiet "Any", bright set values; Sort by a row opening the Sort list, `tv/61` approved;
-  Order chips follow the sort).
-- **Proposed (`tv/63`):** Show is one choice stepped with Left / Right ("‹ All ›", arrows only on the focused row);
-  the panel narrows to about 800 px.
-- **Proposed (`tv/64`, `tv/65`):** **Delete this page** has no pop-up: while focused, the row shows "Your videos
-  stay in your library." on its right; OK deletes at once and the shared **Undo notice** ("Documentaries page
-  deleted" · Understood · Undo) offers it back; the top bar shows + and the "Make this page your own" page.
-- **Proposed (`tv/66`):** the one keyboard opens **over the panel, its top straight under Page name**, the panel's
-  width, so the row and keyboard read as one; Done returns to the row.
-- **Last episode added icon:** choices `tv/67` (A screen with a "new" dot · B arriving on the screen · C a new one on
-  the list), waiting for the owner.
+### Library review: Customise page (owner, 21 Nov; mock-ups `library-pages/tv/59`–`68`; approved)
+- The panel on today's rules (`tv/59`): no "This Page" heading; Genres shapes icon; Years opens the Year list (value
+  "From 1990"); quiet "Any", bright set values; Sort by a row opening the Sort list on top (`tv/61`); Order chips
+  follow the sort (two choices stay chips).
+- **More than two choices step with Left / Right (`tv/68`; new RULES §8):** Includes ("Movies and TV shows" · Movies ·
+  TV shows), Minimum rating (Any · 6+ · 7+ · 8+ · 9+) and Show (All · Unwatched · In progress · Watched); ‹ › only on
+  the focused row; values line up at rest. The panel narrows to about 700 px.
+- **Delete this page (`tv/64`, `tv/65`):** no pop-up; while focused the row shows "Your videos stay in your library."
+  on its right; OK deletes at once with the shared **Undo notice** ("Documentaries page deleted" · Understood · Undo);
+  the top bar shows + and the "Make this page your own" page.
+- **Keyboard (`tv/66`; RULES §15 changed):** the shared keyboard (its own layout, Phone key included) floats over the
+  panel, its top straight under Page name, the panel's width; Done returns to the row.
+- **Last episode added icon (`tv/67`): A**, a screen with a play mark and a filled "new" dot top right (Sort, Columns).
+- **App-wide, from RULES §8:** Playback Settings' Skipping (Off · Show button · Skip) and any Settings row with three or
+  more chips become Left / Right values when next built; list each change in the report.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.

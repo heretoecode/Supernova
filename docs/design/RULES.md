@@ -175,8 +175,12 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ## 8. Choices and settings
 - **One setting is one row.** Up/Down moves between settings; Left/Right goes through its choices. Chips never wrap
   and a setting is never split across two rows (REVIEW_0156 ideas).
-- **Up to five choices → inline chips on the row.** The chosen one sits in a small rounded chip (light grey at rest;
-  black with white text on a focused row). No separators between chips (§6).
+- **Two choices → inline chips on the row.** The chosen one sits in a small rounded chip (light grey at rest; black
+  with white text on a focused row). No separators between chips (§6).
+- **More than two choices → one value stepped with Left / Right (owner, 21 Nov; `library-pages/tv/63`, `68`):** the row
+  shows only the current value; ‹ › appear beside it only while the row is focused; at rest the value keeps the
+  arrow's room so values line up down the panel. Applies app-wide from now on (Customise page, Playback Settings,
+  Settings …): any row still drawn with three or more chips changes when its page is next built.
 - **On/off → a switch.**
 - More than five → **reduce or reword** the options first (freedom to rethink, CLAUDE.md); only then the shared
   choice list (section 9).
@@ -330,8 +334,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Focus starts on T** (the most common first letter of film and series titles).
 - **Focus stays on the key you pressed,** however fast you type. Results arriving or the page refreshing never take
   it away (Fix match bug, §27).
-- Shown on the page, not in a side panel. **Opened from a menu or side panel** (e.g. a choice list's search), it sits
-  beside that panel, never covering it, in a panel of its own with the same background (owner, 13 Nov). On Search the field and keyboard are on the left, results on the right; the
+- Shown on the page, not in a side panel. **Opened from a row in a menu or side panel** (Page name in Customise page,
+  a choice list's search): it floats **over that panel, its top straight under the row being typed into, the
+  panel's width**, so the text and the keys are in one place (owner, 21 Nov, `library-pages/tv/66`; replaces "beside
+  the panel, never covering it", 13 Nov). Done returns to the row. On Search the field and keyboard are on the left, results on the right; the
   keyboard stays visible.
 - Typing is forgiving wherever it searches: capitals, punctuation and a leading "The" ignored, one-letter typos,
   original titles, TMDB / IMDb / TVDB / Trakt numbers (Files v11).
@@ -471,6 +477,8 @@ capitalise only the first letter ("2 seasons · 16 episodes", "S1 E4 · 3 of 8 l
 Title Case is for headings and names only.
 
 ## Replaced rules (do not use)
+- Up to five choices as inline chips → two choices as chips, more than two stepped with Left / Right (§8, 21 Nov).
+- Keyboard beside a panel, never covering it → over the panel, straight under the row (§15, 21 Nov).
 - Panels with no outline (5 Nov) / a faint edge over a page (13 Nov) → white outline at 70% plus a dark shadow,
   §11 (19 Nov).
 - Progress bars on cards, posters and captions; caption box under Home row cards → the corner badge and row

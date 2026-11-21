@@ -22,7 +22,7 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   while the app stays open).
 - Side margin on the top bar's edges (RULES §1). Section headings with icons, 26 px below / 64 px above (RULES §5).
   Every row: icon, name, one plain second line, the control on the right, everything on the row's centre line.
-- Controls (RULES §8): **switch** for on/off; **chips** inline for up to five choices (chosen one in its chip); **›**
+- Controls (RULES §8): **switch** for on/off; **chips** inline for two choices; **more than two: one value stepped with Left / Right** (RULES §8, owner 21 Nov; replaces chips for up to five); **›**
   only on rows that open a list, panel or page, with the current value before it; **actions** show their verb as
   plain text (Clear, Send, Fetch, Save, Back up now), progress and "Done · …" appear in the row itself, with Stop
   while running; a warning only where something is lost (Supernova's own delete warning).

@@ -123,10 +123,10 @@ function prow(ic, label, right, focus, last) {
     <span class="tx">${label}</span><span class="fill"></span>${right}<i class="sep"></i></div>`;
 }
 
-function stepper(v, focused) {
+function stepper(v, focused, quiet) {
   const l = focused ? svg(I.chevL, 26) : '';
-  const r = focused ? svg(I.chev, 26) : '';
-  return `<span class="step">${l}<span class="val">${v}</span>${r}</span>`;
+  const r = focused ? svg(I.chev, 26) : '<span style="width:26px;display:inline-block"></span>';
+  return `<span class="step">${l}<span class="val${quiet && !focused ? ' quiet' : ''}">${v}</span>${r}</span>`;
 }
 
 function more(v) {
@@ -137,13 +137,14 @@ function more(v) {
 function panel(focus, opts = {}) {
   const f = k => focus === k;
   const nameVal = opts.typing ? `<span class="val">Documentar<i class="caret"></i></span>` : more('Documentaries');
-  return `<div class="menu panel${opts.back ? ' back' : ''}">
+  const w = opts.step3 ? ' style="width:700px"' : '';
+  return `<div class="menu panel${opts.back ? ' back' : ''}"${w}>
     <div class="h">What To Show</div>
     ${prow(IC.name, 'Page name', nameVal, f('name'))}
-    ${prow(IC.incl, 'Includes', chips(['Movies', 'TV Shows', 'Both'], 'Both'), f('incl'))}
+    ${prow(IC.incl, 'Includes', opts.step3 ? stepper('Movies and TV shows', f('incl')) : chips(['Movies', 'TV Shows', 'Both'], 'Both'), f('incl'))}
     ${prow(IC.shapes, 'Genres', more('Documentary, Nature'), f('genres'))}
     ${prow(IC.cal, 'Years', more('From 1990'), f('years'))}
-    ${prow(IC.star, 'Minimum rating', chips(['Any', '6+', '7+', '8+', '9+'], 'Any'), f('rating'))}
+    ${prow(IC.star, 'Minimum rating', opts.step3 ? stepper('Any', f('rating'), true) : chips(['Any', '6+', '7+', '8+', '9+'], 'Any'), f('rating'))}
     ${prow(IC.lang, 'Original language', more('Any'), f('lang'))}
     ${prow(IC.studio, 'Studio / Network', more('Any'), f('studio'), true)}
     <div class="h" style="margin-top:14px">How To Show It</div>
@@ -221,5 +222,7 @@ render([
     + '<div class="cap2">31 · OK: the page goes, the Undo notice offers it back</div>'],
   ['66-v24-customise-keyboard-over', () => page() + panel(null, { typing: true }) + keyboard()
     + '<div class="cap2">32 · The keyboard opens over the panel, under Page name</div>'],
+  ['68-v24-customise-steppers', () => page() + panel('incl', { step3: true })
+    + '<div class="cap2">34 · More than two choices step with Left / Right</div>'],
   ['67-v24-last-episode-icons', () => iconBoard() + '<div class="cap2">33 · Last episode added: icon choices</div>'],
 ], css);
