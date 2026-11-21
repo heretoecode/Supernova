@@ -318,8 +318,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   off only in Customise Home (OK picks a row up, Up / Down moves it, as in Columns). **A focused card never overlaps
   its neighbours** (as library posters): it grows 8% (432 × 243, was 10%) and cards sit 40 px apart (was 24), so
   the grown card and its 4 px ring keep about 20 px clear. **Text block bottom-left** (owner, 21 Nov), anchored as above.
-- **Pickers opened from a panel row** (icon picker, like the keyboard, §15) open under that row, the panel's width
-  (owner, 21 Nov).
+- **Pickers opened from a panel row** (icon picker, like the keyboard, §15) open under that row, the panel's width;
+  **the row that opened it is never covered**, it stays fully visible above the picker (owner, 21 Nov).
 - **Facts line (owner, 21 Nov):** Age rating badge · Year · Length · Genres, **up to four genres** (TMDB order; was
   three). No dot after the age badge: its outline already separates it (dots separate plain facts, §6).
 
@@ -361,7 +361,7 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   it away (Fix match bug, §27).
 - Shown on the page, not in a side panel. **Opened from a row in a menu or side panel** (Page name in Customise page,
   a choice list's search): it floats **over that panel, its top straight under the row being typed into, the
-  panel's width**, so the text and the keys are in one place (owner, 21 Nov, `library-pages/tv/66`; replaces "beside
+  panel's width, never covering the row**, so the text and the keys are in one place (owner, 21 Nov, `library-pages/tv/66`; replaces "beside
   the panel, never covering it", 13 Nov). Done returns to the row. On Search the field and keyboard are on the left, results on the right; the
   keyboard stays visible.
 - Typing is forgiving wherever it searches: capitals, punctuation and a leading "The" ignored, one-letter typos,

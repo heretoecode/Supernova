@@ -106,3 +106,6 @@ Files in the top bar shows while anything is waiting. **Mock-up and details at t
 ## To settle at the Files review (owner, 20 Nov)
 - **Fix match shows the file:** the file name and its location on the Fix match page, so the owner can tell which
   show or film the file really is before choosing a match. Place and look decided at the Files review.
+
+- **New, to walk through at the Files review (owner, 21 Nov):** Library Care › **Excluded from hero** (list of titles
+  kept off Home's hero; mock-up `home-v3/tv/17`, approved in principle only) and its row in Library Care.

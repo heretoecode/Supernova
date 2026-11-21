@@ -52,7 +52,8 @@ Floating side panel on the right; changes apply live; Back closes.
 - **Add a row / a row's settings** (`05`, `06`), opening on top of Customise Home (panel behind darkened): Row name (one
   keyboard), Icon (opens the icon picker), Includes, Genres (+ Match), Years, Minimum rating, Sort by, Order, Maximum
   items (10 · 15 · 20 · 25 · 30), Add new titles automatically; Delete row at the foot apart by a plain line.
-- **Icon picker** (`07`): a grid of icons with names, tick on the current one, no box on tiles at rest. Automatic icon:
+- **Icon picker** (`07`; redrawn `home-v3/tv/18`, owner 21 Nov): opens under the Icon row, the panel's width,
+  never covering the Icon row; a grid of icons with names, tick on the current one, no box on tiles at rest. Automatic icon:
   the first genre chosen gives its icon; no genre, a plain list icon.
 
 ## Actions and where they lead
@@ -82,3 +83,10 @@ Settings in 0.159.
 ## Never opens from Home
 NOVA's old browse screens, the old Edit row / Home settings dialogs, filled-circle row buttons, the old long-press dialog,
 Android's keyboard.
+
+
+## Latest (owner, 21 Nov): see BRIEF_0158_B › Home review and RULES §14d
+One hero and one row; no Move / Hide; trimmed More menu with Exclude from hero (list in Files › Library Care,
+approved in principle, settle at the Files walkthrough); filling carousel dot; Customise Home with Move · Hide · Edit
+on the focused row; row settings on today's rules. Mock-ups `home-v3/tv/01`–`18`. Where older lines above differ,
+this wins.

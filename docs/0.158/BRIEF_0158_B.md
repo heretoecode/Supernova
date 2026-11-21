@@ -350,13 +350,15 @@ Not for Coding yet (design to settle first): L1 caption space, R6 one row design
   (TMDB id), so it stays excluded if the title is removed and added again, until included again. **Files › Library
   Care › Excluded from hero** (`tv/17`): A–Z, search above 12 items, a count, the focused row shows **Include
   again**, **Include all again** at the top right; scroll arrows. A row for it in Library Care with its count
-  (draw with the Files review). Same words in the menu, the notice and Files. Icon: owner to pick (`tv/16`).
+  (draw with the Files review). Same words in the menu, the notice and Files. **Icon: A**, the hero screen with a minus (owner, 21 Nov). The
+  Library Care page is approved in principle only: settle it at the Files walkthrough.
 - **Customise Home (`tv/07`, `tv/08`; owner chose buttons on the focused row):** Shown on Home (Home's order) ·
   Hidden (A–Z) · Add a row. The focused row shows Move · Hide (own rows also Edit); a hidden row shows Show. Move lifts
   the row, Up / Down, Home follows live; OK or Back puts it down. (No "Kept off the hero" row: that list is in Files.)
 - **Row settings (`tv/12`):** today's rules: Includes, Minimum rating, Maximum items step with Left / Right; Sort by
   opens the Sort list; Order two chips; Delete this row warns beside itself and uses Undo, no pop-up.
-- **Icon picker (`tv/18`):** opens under the Icon row, the panel's width, like the keyboard (RULES §15).
+- **Icon picker (`tv/18`):** opens under the Icon row, the panel's width, like the keyboard (RULES §15); it **never
+  covers the Icon row itself** (its top edge sits just below that row, the row stays fully visible).
 - **Icons (owner, 21 Nov; `tv/10`):** Fix match = a pencil putting it right (B); Remove from library = crossed off the
   list (A); everywhere these appear (Details More, long-press).
 
