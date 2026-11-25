@@ -560,7 +560,10 @@ or underline intersects the line under the tab row.
 - **Search history setting** (owner): Settings › Library › Viewing History gains **Keep search history** (switch, on
   by default; off: nothing is recorded, Recent searches is not shown, the history is cleared) and **Clear search
   history** (Clear; "Done · cleared"). Search's own Clear history stays (Undo notice, `tv/05`).
-- Waiting for the owner: the fuller landing page (`tv/09`–`11`), frames 4, 6, 7. 
+- **Landing page approved (owner, 25 Nov; `tv/09`, `tv/10`):** tips under the keyboard; on the right Recent searches
+  (three), Genres in your library (artwork cards with counts) and People in your library (cast cards with counts);
+  without history, two rows of genres. OK on a card fills the field (`tv/11`). Details in SEARCH.md › Before typing.
+- Waiting for the owner: frames 4, 6, 7, `tv/11`. 
 - **No Phone key (owner, 25 Nov: "I've never needed a special button in other apps"):** remove it from the one
   keyboard (RULES §15). The phone app only offers its typing box when Android reports an active text session, which
   our keyboard switches off (0.157 notes §36: `setShowSoftInputOnFocus(false)`, the box never takes focus). Keep a
