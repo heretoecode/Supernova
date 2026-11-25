@@ -30,6 +30,10 @@ to check NOVA for new changes (CLAUDE.md).
 - Waiting for the owner: A (badge on the thumbnail, words only for "Resume S2 E3") or B (pills only); the loading
   line; the Voice listening look; the reworded empty message; Menu on a library title = the library long-press menu.
   Nothing decided yet: once decided, into SEARCH.md, RULES and BRIEF_0158_B.
+- Also 25 Nov: owner's saved notes → Parked: Seerr requests from Search (Plozz already does it), finer settings
+  after Plozz (candidates listed). **Next episode on the hero** approved in principle for Details, before its coding:
+  `next-episode/tv/01`–`03` (Drive › 2026-11-25 Next episode on the hero), waiting: A above the logo or B in the
+  facts line. In BRIEF_0158_B and DETAILS.md.
 
 ## 25 Nov — Player done
 - Player page sheet `docs/design/pages/PLAYER.md` (mock-ups `player-v16/tv/01`–`13`).

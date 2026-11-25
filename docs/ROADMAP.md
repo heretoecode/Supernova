@@ -139,6 +139,7 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
   the stats row goes)
 - Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)
 - Search (library first, On your services, recent searches)
+- Next episode on the hero and Details' Status (owner, 25 Nov; with Details, before its coding; placement A or B waiting)
 - Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
 - **One side margin (owner, 18 Nov):** every page except Home lines up with the top bar's own edges: the clock's right
   edge on the right, the first word's box on the left. Library pages, Files, Search and Settings use it for their
@@ -212,7 +213,6 @@ Ideas kept for later (details in `docs/REVISIT_LATER.md`). "Park that" adds here
 
 - Release notes: proper notes for every version (0.156 has two vague lines)
 - Request titles not in the library through Seerr, from Search (owner, 25 Nov; joins Discovery in Search)
-- When the next episode airs, on Details and the hero (owner, 25 Nov)
 - Finer settings, compared with Plozz (owner, 25 Nov; candidates listed, chosen at the Settings review)
 
 ### Planned

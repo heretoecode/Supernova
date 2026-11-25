@@ -37,6 +37,12 @@ Movie, TV show, season, episode. Single-season shows have no season page.
 - **Buttons** fixed at the bottom left: Play / "Resume S1 E3 · 31 min left" (or the streaming button) · More.
   Focus starts on the first. The tabs sit at the same height as Home's first row heading.
 
+- **Next episode label (owner, 25 Nov; approved in principle, placement A or B waiting; `next-episode/tv/01`–`03`):**
+  a running TV show whose next episode airs within 7 days shows a small outlined label with a calendar icon: "New
+  episode today" / "tomorrow" / "Sunday", or "New episode every Sunday" once the last three aired on that weekday.
+  Not on ended shows or unknown dates; not focusable; the same on Home's hero. Details tab › Status reads "Returning
+  · S2 E4 on Sun 30 Nov" when the date is known. Full spec: BRIEF_0158_B › Next episode on the hero.
+
 ## Tabs
 Plain words with icons; **the player's tab behaviour** (RULES "One tab behaviour everywhere"): focus = the white
 box, sized to the word, clear of the line; inside the tab the open tab keeps a white underline, never a grey box,

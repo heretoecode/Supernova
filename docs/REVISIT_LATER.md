@@ -41,7 +41,7 @@ Items already built or scheduled are left out (see the bottom of this file).
 - ~~GitHub cleanup~~ — **done by Claude on 5 Nov 2026** at the owner's request: `CLAUDE.md`, `AGENTS.md`, new README
   and PROJECT_STATUS, `docs/archive/`, and GitHub Issues #31–#102 (source in `docs/issues/`).
 
-## When the next episode airs, on Details (owner, 25 Nov 2026) — to discuss
+## When the next episode airs, on Details (owner, 25 Nov 2026) — moved to 0.158 (BRIEF_0158_B, DETAILS.md)
 - Seen in Plozz: the hero of a running show says "New episode every Sunday". The owner likes Details telling you
   when the next episode airs. TMDB gives the next episode's air date (and the last one), so the weekday can be
   worked out. Already there: Details tab › Status "Returning · 2 seasons".
