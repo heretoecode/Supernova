@@ -41,6 +41,16 @@ Items already built or scheduled are left out (see the bottom of this file).
 - ~~GitHub cleanup~~ — **done by Claude on 5 Nov 2026** at the owner's request: `CLAUDE.md`, `AGENTS.md`, new README
   and PROJECT_STATUS, `docs/archive/`, and GitHub Issues #31–#102 (source in `docs/issues/`).
 
+## When the next episode airs, on Details (owner, 25 Nov 2026) — to discuss
+- Seen in Plozz: the hero of a running show says "New episode every Sunday". The owner likes Details telling you
+  when the next episode airs. TMDB gives the next episode's air date (and the last one), so the weekday can be
+  worked out. Already there: Details tab › Status "Returning · 2 seasons".
+- Claude's suggestion: (1) the Status row gains the date: "Returning · S2 E4 on Sun 30 Nov"; (2) a small outlined
+  label in the hero, only when an episode airs within the next 7 days ("New episode Sunday"; "New episode today"),
+  same on Home's hero (one hero, RULES §14d); "every Sunday" only when the last three aired on that weekday; nothing
+  for ended shows or unknown dates. Never a tagline (RULES §14). Place to be drawn; at the Details walk-through or
+  when Details is next opened.
+
 ## Finer settings, after another player app (owner, 25 Nov 2026) — to discuss
 - The owner uses **Plozz** (plozz.app; free, open-source player for Apple TV, iPhone, iPad; Plex, Jellyfin, Emby,
   Silo and network shares) and likes how finely its settings can be tuned compared with Supernova's. Read its docs
@@ -60,6 +70,11 @@ Items already built or scheduled are left out (see the bottom of this file).
     age badges on or off; trailers off / server only / server + YouTube, Home autoplay muted, Details background
     (still / trailer / theme music with volume); rating sources and their order; **Circadian mode** (warms and dims
     the app at night, by sunset or set times).
+  - **From the owner's screenshots (25 Nov):** Playback page groups Autoplay & Up Next (Autoplay next episode;
+    Show Up Next card; "Time before the end: 30 sec", only when credits can't be detected) · Intros, credits & more
+    (one switch, then Customize: Default behaviour, "Enable for" Movies / TV Shows switches, then Intros · Credits ·
+    Recaps · Previews · **Commercials** each with its own behaviour; Use community markers) · Resuming playback (Ask
+    to resume or start over; Rewind on resume 5 s, with the line "Media will resume 5 seconds earlier.").
   - Claude's view: take the handful that add real control without turning Settings into a cockpit; the rest stay
     here. Plozz's way of splitting settings into an "everyone" level and per-title memory matches our For This
     Series.

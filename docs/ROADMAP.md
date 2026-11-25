@@ -212,6 +212,7 @@ Ideas kept for later (details in `docs/REVISIT_LATER.md`). "Park that" adds here
 
 - Release notes: proper notes for every version (0.156 has two vague lines)
 - Request titles not in the library through Seerr, from Search (owner, 25 Nov; joins Discovery in Search)
+- When the next episode airs, on Details and the hero (owner, 25 Nov)
 - Finer settings, compared with Plozz (owner, 25 Nov; candidates listed, chosen at the Settings review)
 
 ### Planned
