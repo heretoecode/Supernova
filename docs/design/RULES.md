@@ -329,6 +329,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   off only in Customise Home (OK picks a row up, Up / Down moves it, as in Columns). **A focused card never overlaps
   its neighbours** (as library posters): it grows 8% (432 × 243, was 10%) and cards sit 40 px apart (was 24), so
   the grown card and its 4 px ring keep about 20 px clear. **Text block bottom-left** (owner, 21 Nov), anchored as above.
+- **Next episode label (owner, 25 Nov; `next-episode/tv/01`, `03`):** a running TV show whose next episode airs
+  within 7 days gets a small outlined label (52 px shape, calendar icon) on its own line 22 px above the logo:
+  "New episode today / tomorrow / Sunday", or "every Sunday" once the last three aired that weekday. Never moves the
+  facts line or buttons; not focusable; Home and Details alike.
 - **Pickers opened from a panel row** (icon picker, like the keyboard, §15) open under that row, the panel's width;
   **the row that opened it is never covered**, it stays fully visible above the picker (owner, 21 Nov).
 - **Facts line (owner, 21 Nov):** Age rating badge · Year · Length · Genres, **up to four genres** (TMDB order; was

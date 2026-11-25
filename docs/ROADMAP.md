@@ -139,7 +139,7 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
   the stats row goes)
 - Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)
 - Search (library first, On your services, recent searches)
-- Next episode on the hero and Details' Status (owner, 25 Nov; with Details, before its coding; placement A or B waiting)
+- Next episode on the hero and Details' Status (owner, 25 Nov; with Details, before its coding; label above the logo)
 - Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
 - **One side margin (owner, 18 Nov):** every page except Home lines up with the top bar's own edges: the clock's right
   edge on the right, the first word's box on the left. Library pages, Files, Search and Settings use it for their

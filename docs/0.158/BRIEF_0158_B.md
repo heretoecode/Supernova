@@ -543,15 +543,16 @@ or underline intersects the line under the tab row.
 ### Details page sheet (21 Nov)
 `docs/design/pages/DETAILS.md` is rewritten from the six review rounds above and wins over them where they differ.
 
-### Next episode on the hero (owner, 25 Nov; mock-ups `next-episode/tv/01`–`03`; placement A or B waiting)
+### Next episode on the hero (owner, 25 Nov; mock-ups `next-episode/tv/01`, `03`; A chosen)
 - **Approved in principle; build with Details, before its coding starts.** A running TV show's hero (the one shared
   hero, so Home's too) shows when its next episode airs, as a small outlined label in the small-box shape (outline =
-  information, RULES §3) with a calendar icon. **Placement waiting for the owner:** A above the logo (`tv/01`,
-  `tv/03`; Claude's pick: the facts line never moves, RULES §19) or B at the end of the facts line (`tv/02`).
+  information, RULES §3) with a calendar icon. **Placement A (owner, 25 Nov): on its own line above the logo**, 22 px
+  above it (`tv/01` Details, `tv/03` Home); the facts line and buttons never move. B (`tv/02`) declined.
 - Shown only when TMDB's next episode airs within 7 days: "New episode today" · "New episode tomorrow" · "New
   episode Sunday"; "New episode every Sunday" once the last three episodes aired on that weekday and the next is
   due. Nothing for ended shows, unknown dates or later dates. Not focusable. Refreshed with the title's TMDB details.
-- Details tab › Status: "Returning · S2 E4 on Sun 30 Nov" when the date is known (else "Returning · 2 seasons").
+- Details tab › Status: "Returning · S2 E4 on Sun 30 Nov" when the date is known (else "Returning · 2 seasons"). No
+  separate "Next episode" row (Claude's proposal, 25 Nov, waiting for the owner): the columns keep equal rows.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
