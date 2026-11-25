@@ -23,6 +23,14 @@ video; seek preview never a grey box.
 **Before the next coding go-ahead:** ask for the diagnostics report (MobLand delete, 19 Nov 14:30–14:45) and whether
 to check NOVA for new changes (CLAUDE.md).
 
+## 25 Nov — Search review started
+- Owner chose Search first. Redrawn on today's rules: `search-v6/tv/01`–`08` (Drive › From Claude › 2026-11-25
+  Search): before typing, a show and its world, a person with more than fits plus Menu on a library title, streaming
+  still loading, Clear history's Undo notice, nothing in the library, the Voice key listening, progress A or B.
+- Waiting for the owner: A (badge on the thumbnail, words only for "Resume S2 E3") or B (pills only); the loading
+  line; the Voice listening look; the reworded empty message; Menu on a library title = the library long-press menu.
+  Nothing decided yet: once decided, into SEARCH.md, RULES and BRIEF_0158_B.
+
 ## 25 Nov — Player done
 - Player page sheet `docs/design/pages/PLAYER.md` (mock-ups `player-v16/tv/01`–`13`).
 

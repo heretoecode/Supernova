@@ -7,6 +7,9 @@ streaming rules, Where to Watch), §22–§23 (headings), §26 (final pass, appr
 `docs/design/proposals/search-flat/`: `17-v5-start`, `18-v5-family`, `19-v5-person`, `20-v5-non-fiction`,
 `21-v5-not-in-library`. The keyboard in those pictures is simplified; the app uses the one keyboard (RULES §15).
 
+**Review in progress (25 Nov):** redrawn on today's rules as `search-v6/tv/01`–`08`, waiting for the owner. Until
+decided, the 12 Nov pictures and the text below stand.
+
 ## Whole page
 - Plain charcoal, side margin on the top bar's edges (RULES §1). Search is a tool: it opens on OK in the top bar
   (0.158 top bar).
