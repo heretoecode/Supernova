@@ -537,6 +537,9 @@ or underline intersects the line under the tab row.
     12,400 downloads", pills Best match / SDH / Forced); OK downloads, then it is the ticked track.
   - **Audio track (`tv/13`):** flag, language, pills (Original · format · channels · Commentary); tick on the current.
 
+### Player page sheet (25 Nov)
+`docs/design/pages/PLAYER.md` collects the player review and wins over it where they differ.
+
 ### Details page sheet (21 Nov)
 `docs/design/pages/DETAILS.md` is rewritten from the six review rounds above and wins over them where they differ.
 

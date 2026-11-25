@@ -1,6 +1,11 @@
 # Discussion handover (updated 19 Nov 2026)
 
-## 21 Nov evening — Player review started (start here next time)
+## 25 Nov — Player done (start here next time)
+- **Player done:** page sheet `docs/design/pages/PLAYER.md` (mock-ups `player-v16/tv/01`–`13`). Done so far: library
+  pages, Home, Details, Player. Next page: owner's choice (left: Search, Files, Settings, Preparing playback is part of
+  the player's title block). At the Files review: Excluded from hero; Fix match showing the file.
+
+## 21 Nov evening — Player review started
 - Player redrawn on today's rules: `player-v16/tv/01`–`07` (Drive › From Claude › 2026-11-21 Player): controls with
   Chapters, tab focused, Episodes, Playback Settings × 3 tabs, skip alone. Decided: Skipping steps, panel 700 px, edge
   outline+shadow over video, skip button far right with controls (`tv/08`), seek preview setting Off · Chapter
