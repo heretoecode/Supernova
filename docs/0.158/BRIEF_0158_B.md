@@ -605,7 +605,7 @@ Not for a TV, skip: phone cutouts, rotation, double-tap zones, status bars, Andr
 **Checked again 25 Nov (unreleased: NOVA's last release is still 6.6.5, 10 Nov; everything below is after it):**
 - `aos-MediaLib a23d4b1`, `62dd006` (23 Nov) **USB library visible again after the TV wakes** (staggered wake) and
   pending USB recovery kept when Android's scanner starts: matters on the Shield with USB drives.
-- `aos-MediaLib 21c03c3`, `a4e7e8d` (20–22 Nov) and `aos-Video 8576e382` (22 Nov) **Trakt: refreshed tokens saved,
+- `aos-MediaLib 21a03c3`, `a4e7e8d` (20–22 Nov) and `aos-Video 8576e382` (22 Nov) **Trakt: refreshed tokens saved,
   stopping random sign-outs**; token refresh tied to the signed-in login; sync state kept when tokens change.
 - `aos-Video 7fca60f3` (23 Nov) **compressed audio (passthrough) kept on TV speaker routes**.
 - `aos-Video 6056f957` (21 Nov) **video keeps playing during notification sounds** (no pause on a ping).
