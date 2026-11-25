@@ -24,6 +24,14 @@ video; seek preview never a grey box.
 fully audited on 25 Nov (BRIEF_0158_B › NOVA catch-up: eleven items penned in); at the go-ahead, offer to
 recheck only what NOVA adds after 25 Nov (CLAUDE.md).
 
+## 25 Nov — Files review started
+- Rounds: 1 This Device and browsing a drive · 2 Connections and the form · 3 Library Care (Excluded from hero, To
+  fix, Fix match shows the file, M1) · 4 Your Library (statistics by source).
+- Round 1 drawn: `files-v2/tv/01`–`08` (Drive › From Claude › 2026-11-25 Files round 1). Waiting for the owner.
+  Proposed in it: pill top left on grid cards (the progress badge keeps top right); Exclude at once with the Undo
+  notice; Add to library / Scan this folder progress in the row's pill (ring in the top bar); "No videos in this
+  folder" with Show all files; the file menu grouped like the library long-press menu.
+
 ## 25 Nov — Search review started
 - Owner chose Search first. Redrawn on today's rules: `search-v6/tv/01`–`08` (Drive › From Claude › 2026-11-25
   Search): before typing, a show and its world, a person with more than fits plus Menu on a library title, streaming
