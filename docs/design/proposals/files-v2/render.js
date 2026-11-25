@@ -756,6 +756,74 @@ const ROUND23 = [['09-connections', f09, 1380], ['10-test-failed', f10], ['11-re
   ['16-library-care', f16, 1900], ['17-to-fix', f17], ['18-fix-match-file', f18], ['19-excluded-from-hero', f19],
   ['20-missing-files', f20], ['21-scan-one-source', f21, 1900]];
 
+
+// ---------- Round 4: Your Library (read-only, nothing focusable) ----------
+Object.assign(I, {
+  total: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  pages: '<rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/>',
+  space: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h4M7 14h7"/>',
+  pic: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  added: '<path d="M12 5v14M5 12h14"/>',
+  tv: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+});
+
+const css4 = `
+.stat{position:relative;display:flex;align-items:center;gap:24px;height:92px;padding:0 24px}
+.stat .ic{display:flex;color:#c9d3e6;flex:none}
+.stat .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:30px}
+.stat .t small{font-size:23px;color:#c9d3e6}
+.stat .v{font-size:30px;font-weight:500;white-space:nowrap;text-align:right}
+.stat .v small{display:block;font-size:22px;font-weight:400;color:#c9d3e6;margin-top:4px}
+.stat .ln{position:absolute;left:24px;right:24px;bottom:0;height:1px;background:linear-gradient(90deg,
+ rgba(255,255,255,0),rgba(255,255,255,.09) 12%,rgba(255,255,255,.09) 88%,rgba(255,255,255,0))}
+.stat.last .ln{display:none}
+.note{font-size:23px;color:#c9d3e6;margin:-12px 0 14px 4px}
+.qual{display:flex;gap:28px;font-size:28px;font-weight:500}
+.qual span small{font-weight:400;color:#c9d3e6;font-size:22px;margin-right:8px}
+`;
+
+function stat(icon, name, sub, value, vsub, last) {
+  return `<div class="stat${last ? ' last' : ''}"><span class="ic">${svg(icon, 32)}</span><span class="t">${name}
+    ${sub ? `<small>${sub}</small>` : ''}</span><span class="v">${value}${vsub ? `<small>${vsub}</small>` : ''}</span>
+    <i class="ln"></i></div>`;
+}
+
+function f22() {
+  const qual = `<span class="qual"><span><small>4K</small>406</span><span><small>1080p</small>1,120</span>
+    <span><small>720p</small>210</span><span><small>SD</small>72</span><span><small>HDR</small>229</span></span>`;
+  const h = `<style>${css4}</style><div class="list" style="top:212px">
+    ${hd(I.total, 'Total Library', true)}
+    ${stat(I.lib, 'All library pages', '520 titles · 1,808 videos', '3.4 TB')}
+    ${stat(I.watched, 'Watched', '318 of 520 titles', '61%')}
+    ${stat(I.clock, 'Time to watch everything', 'Every unwatched title and episode', '2,140 hours')}
+    ${stat(I.pic, 'Picture', 'Videos by quality', qual)}
+    ${stat(I.added, 'Added this month', 'Since 1 Nov 2026', '23 titles', '', true)}
+    ${hd(I.pages, 'By Library Page')}
+    ${stat(I.film, 'Movies', '214 titles', '1.4 TB')}
+    ${stat(I.tv, 'TV Shows', '210 titles · 1,412 episodes', '1.6 TB')}
+    ${stat(I.globe, 'Documentaries', '96 titles', '0.4 TB', '', true)}
+    ${hd(I.conn, 'By Source')}
+    <div class="note">The videos in your library on each source, not the space left on it.</div>
+    ${stat(I.internal, 'Internal storage', 'This device', '0.1 TB', '92 videos')}
+    ${stat(I.usb, 'Backup #1 · Extreme Pro portable drive (exFAT)', 'USB drive', '0.9 TB', '412 videos')}
+    ${stat(I.usb, 'Backup #2', 'USB drive', '1.2 TB', '268 videos')}
+    ${stat(I.nas, 'Living-room NAS', 'SMB · 3 folders', '0.8 TB', '610 videos')}
+    ${stat(I.cloud, 'Put.io', 'WebDAV', '0.3 TB', '302 videos')}
+    ${stat(I.server, 'Home server', 'SFTP · 2 folders', '0.1 TB', '124 videos')}
+    ${stat(I.conn, 'By connection type', 'USB 2.1 TB · SMB 0.8 TB · WebDAV 0.3 TB · SFTP 0.1 TB · this device 0.1 TB', '', '', true)}
+    ${hd(I.space, 'Most Space Per Episode')}
+    ${stat(I.tv, 'Frozen Frontier', '6 episodes · 14.4 GB', '2.4 GB', 'per episode')}
+    ${stat(I.tv, 'Tidelands', '16 episodes · 35.2 GB', '2.2 GB', 'per episode')}
+    ${stat(I.tv, 'Deep Blue Planet', '6 episodes · 12.6 GB', '2.1 GB', 'per episode', true)}
+    </div>`;
+  return bar() + tabs('Your Library', null) + h
+    + `<div class="arrow faint" style="top:260px">${svg(I.up, 32)}</div>`
+    + '<div class="cap2">22 · Your Library (whole page): read-only, Down / Up scroll; By Source added</div>';
+}
+ROUND23.push(['22-your-library', f22, 2460]);
+
 const FRAMES = [['01-this-device', f01], ['02-drive-list', f02], ['03-sort-menu', f03], ['04-grid-folder-menu', f04],
   ['05-file-menu', f05], ['06-exclude-undo', f06], ['07-add-progress', f07], ['08-no-videos', f08]].concat(ROUND23);
 
