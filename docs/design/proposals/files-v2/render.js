@@ -59,8 +59,8 @@ const I = {
 
 const css = `${[400, 500, 700, 900].map(font).join('')}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#111215;font-family:R,sans-serif;width:1920px;height:1080px;overflow:hidden;color:#fff}
-.screen{position:relative;width:1920px;height:1080px;overflow:hidden}
+body{background:#111215;font-family:R,sans-serif;width:1920px;overflow:hidden;color:#fff}
+.screen{position:relative;width:1920px;overflow:hidden}
 .screen>canvas{position:absolute;left:0;top:0}
 .border{position:absolute;inset:0;border:2px solid #c9ccd3;z-index:40}
 .bar{position:absolute;top:0;left:0;right:0;height:84px;display:flex;align-items:center;padding:0 30px;font-size:30px;
@@ -166,9 +166,9 @@ function speckle() {
   return `<script>{
   const rng=function(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);
     t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
-  const sc=document.querySelector('.screen');const cv=document.createElement('canvas');cv.width=1920;cv.height=1080;
-  sc.prepend(cv);const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;g.fillStyle='#111215';
-  g.fillRect(0,0,1920,1080);for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;
+  const sc=document.querySelector('.screen');const H=sc.offsetHeight;const cv=document.createElement('canvas');cv.width=1920;cv.height=H;
+  sc.prepend(cv);const g=cv.getContext('2d'),r=rng(20261118),n=1920*H*20/1000;g.fillStyle='#111215';
+  g.fillRect(0,0,1920,H);for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*H|0,a=r()<1/7?.45:.07+r()*.15;
   g.fillStyle='rgba(255,255,255,'+a+')';g.fillRect(x,y,1,1)}}</script>`;
 }
 
@@ -354,16 +354,419 @@ function f08() {
     + '<div class="cap2">8 · A folder with no videos</div>';
 }
 
+// ================= Round 2: Connections · Round 3: Library Care =================
+Object.assign(I, {
+  cloud: '<path d="M7 18h10a4 4 0 0 0 .6-8A6 6 0 0 0 6 9.5 4.3 4.3 0 0 0 7 18z"/>',
+  server: '<rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/>'
+    + '<path d="M7 7.5h.01M7 16.5h.01"/>',
+  nas: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M12 17h.01"/>',
+  pc: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  radar: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l6-6"/>',
+  sliders: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/>'
+    + '<circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  edit: '<path d="M14.5 5.5l4 4L8 20H4v-4z"/>',
+  test: '<path d="M4 12h3l2-5 4 10 2-5h5"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  smb: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>',
+  heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  missing: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M10 13l4 4M14 13l-4 4"/>',
+  unread: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 13l6 4M15 13l-6 4"/>',
+  question: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M9 9a2 2 0 1 1 2.5 2c-.6.3-.5.8-.5 1.5M11 14.5v.1"/>',
+  tofix: '<path d="M14.5 5.5l4 4L8 20H4v-4z"/><circle cx="18" cy="18" r="3.2"/>',
+  hero: '<rect x="3" y="5" width="18" height="11" rx="2"/><path d="M8 20h8"/><circle cx="18" cy="17" r="4.2" '
+    + 'fill="#111215"/><path d="M16 17h4"/>',
+  check: '<path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v4h-4M8.5 12.5l2.5 2.5 4.5-5"/>',
+  history: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  back: '<path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v4h4"/>',
+  ok: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  del: '<path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7z"/><path d="M12 9.5l5 5M17 9.5l-5 5"/>',
+  shift: '<path d="M12 4l8 8h-4.5v7h-7v-7H4z"/>',
+});
+
+const css2 = `
+.hd{display:flex;align-items:center;gap:16px;font-size:32px;font-weight:500;height:44px;margin:64px 0 26px}
+.hd.first{margin-top:0}
+.hd svg{color:#c9d3e6;flex:none}
+.rb{display:flex;gap:8px;flex:none;justify-content:flex-end;width:620px}
+.rb.wide{width:1180px}
+.rb span{height:52px;padding:0 20px;border-radius:20px;display:flex;align-items:center;gap:10px;font-size:24px;
+ white-space:nowrap;flex:none;box-shadow:inset 0 0 0 1.5px rgba(11,13,18,.45)}
+.rb span.f{background:#0b0d12;color:#fff;box-shadow:none}
+.r .t small.bad{color:#ffb4a8}
+.r.on .t small.bad{color:#8a1d10}
+.form{position:absolute;left:52px;top:270px;width:900px}
+.fr2{position:relative;display:flex;align-items:center;height:74px;padding:0 24px;border-radius:14px;font-size:29px}
+.fr2 .lb{width:300px;color:#c9d3e6;flex:none}
+.fr2 .vl{flex:1;min-width:0;display:flex;align-items:center;gap:12px;white-space:nowrap;overflow:hidden}
+.fr2 .vl.ph{color:#8a93a3}
+.fr2.typing{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+.fr2.on{background:#f4f6fb;color:#0b0d12}
+.fr2.on .lb{color:#3a4256}
+.fr2 .ln{position:absolute;left:24px;right:24px;bottom:0;height:1px;background:rgba(255,255,255,.1)}
+.fr2.on .ln,.fr2.typing .ln{display:none}
+.caret{display:inline-block;width:3px;height:36px;background:#fff;margin-left:-8px}
+.sw{width:64px;height:36px;border-radius:18px;background:#f4f6fb;position:relative;flex:none}
+.sw:after{content:'';position:absolute;right:4px;top:4px;width:28px;height:28px;border-radius:14px;background:#111215}
+.sw.off{background:rgba(255,255,255,.22)}
+.sw.off:after{left:4px;right:auto;background:#c9d3e6}
+.fr2.on .sw,.sw.swf{background:#0b0d12}
+.fr2.on .sw:after,.sw.swf:after{background:#fff}
+.step{display:flex;align-items:center;gap:14px;font-weight:500}
+.step i{font-style:normal;width:28px;display:flex;justify-content:center;opacity:0}
+.fr2.on .step i{opacity:1}
+.fbtns{display:flex;gap:12px;margin-top:30px;padding-left:24px}
+.fbtns span{height:52px;padding:0 24px;border-radius:20px;display:flex;align-items:center;gap:10px;font-size:24px}
+.fbtns .f{background:#f4f6fb;color:#0b0d12}
+.fres{margin-top:18px;padding-left:24px;font-size:24px;color:#c9d3e6;display:flex;align-items:center;gap:10px}
+.kbd{position:absolute;left:1016px;right:52px;top:270px}
+.kbd .krow{display:flex;gap:10px;margin-bottom:12px}
+.kbd .key{flex:1;height:64px;border-radius:16px;background:#24272d;display:flex;align-items:center;justify-content:center;
+ font-size:28px;font-weight:500}
+.kbd .key.w{flex:1.4;font-size:23px}
+.kbd .key.sp{flex:2.6}
+.kbd .key.f{background:#f4f6fb;color:#0b0d12}
+.kbd .help{margin-top:30px;font-size:24px;color:#c9d3e6;line-height:36px}
+.kbd .help b{color:#fff;font-weight:500}
+.adv{position:absolute;left:52px;right:110px;top:270px}
+.fm{position:absolute;left:52px;top:270px;width:900px}
+.fbox{padding:0 0 0 4px}
+.fbox .fn{font-size:30px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fbox .fl{font-size:24px;color:#c9d3e6;margin-top:6px}
+.fbox .fl b{color:#fff;font-weight:500}
+.sfield{height:76px;border-radius:20px;background:#24272d;display:flex;align-items:center;gap:16px;padding:0 24px;
+ font-size:32px;margin-top:30px}
+.sfield svg{color:#c9d3e6}
+.kb2 .krow{display:flex;gap:10px;margin-top:12px}
+.kb2 .key{flex:1;height:60px;border-radius:16px;background:#24272d;display:flex;align-items:center;justify-content:center;
+ font-size:28px;font-weight:500}
+.kb2 .key.w{flex:1.4;font-size:23px}
+.kb2 .key.sp{flex:2.6}
+.mres{position:absolute;left:1016px;right:110px;top:270px}
+.thumb{width:128px;height:72px;border-radius:8px;flex:none;box-shadow:inset 0 0 0 1px #fff,inset 0 0 12px 3px rgba(0,0,0,.45)}
+.r.on .thumb{box-shadow:inset 0 0 12px 3px rgba(0,0,0,.45)}
+.r.mt{height:104px;font-size:32px}
+`;
+
+function hd(icon, title, first, extra = '') {
+  return `<div class="hd${first ? ' first' : ''}">${svg(icon, 32)}${title}${extra}</div>`;
+}
+
+// buttons on a focused row: [label, icon, focused]
+function rbtns(list, wide) {
+  if (!list) {
+    return `<span class="rb${wide ? ' wide' : ''}"></span>`;
+  }
+  return `<span class="rb${wide ? ' wide' : ''}">${list.map(([l, ic, f]) => `<span class="${f ? 'f' : ''}">${svg(ic, 22)}${l}</span>`).join('')}</span>`;
+}
+
+function crow(o) {
+  const cls = ['r', 'std'];
+  if (o.on) {
+    cls.push('on');
+  }
+  if (o.last) {
+    cls.push('last');
+  }
+  const pill = o.pill === undefined ? '' : `<span class="pill${o.pill ? '' : ' none'}">${o.pill || ''}</span>`;
+  return `<div class="${cls.join(' ')}"><span class="ic">${svg(o.icon, 34)}</span><span class="t"><b>${o.name}</b>
+    <small class="${o.bad ? 'bad' : ''}">${o.line}</small></span>${pill}${o.noArea ? '' : rbtns(o.btns, o.wide)}
+    <span class="ch">${o.chev ? svg(I.chev, 28) : ''}</span><i class="ln"></i></div>`;
+}
+
+function connPage(opts = {}) {
+  const C = [
+    { icon: I.cloud, name: 'Put.io · alex.morgan', line: 'WebDAV · 1,204 videos', pill: 'Reachable', chev: true },
+    { icon: I.server, name: 'Home server · alex', line: 'SFTP · 2 folders · 512 videos', pill: 'Reachable', chev: true },
+    { icon: I.nas, name: 'Living-room NAS (Synology DS920+ in the cupboard) · media', line: 'SMB · 3 folders · 2,140 videos',
+      pill: 'Not reachable', chev: true },
+    { icon: I.plus, name: 'Add a connection', line: 'Computer or NAS, WebDAV, SFTP or FTP', chev: true, last: true },
+  ];
+  const F = [
+    { icon: I.pc, name: 'MEDIA-PC', line: 'Windows computer · SMB', pill: 'New', chev: true },
+    { icon: I.nas, name: 'backup-nas.local', line: 'NAS · SMB and SFTP', pill: 'New', chev: true, last: true },
+  ];
+  (opts.patch || []).forEach(([k, v]) => Object.assign(k < 10 ? C[k] : F[k - 10], v));
+  const rows = (opts.remove != null ? C.filter((_, k) => k !== opts.remove) : C).map(crow).join('');
+  let h = `<div class="list" style="top:212px">${hd(I.conn, 'Your connections', true)}${rows}
+    ${hd(I.radar, 'Found on your network')}${F.map(crow).join('')}`;
+  if (opts.tall) {
+    h += `${hd(I.sliders, 'Advanced')}${crow({ icon: I.sliders, name: 'Network options',
+      line: 'Windows shares, finding devices and SFTP', chev: true, last: true })}`;
+  }
+  return h + '</div>';
+}
+
+function f09() {
+  return bar() + tabs('Connections', null) + connPage({ tall: true, patch: [[1, { on: true,
+    btns: [['Open', I.open, true], ['Edit', I.edit], ['Test', I.test], ['Remove', I.trash]] }]] })
+    + '<div class="cap2">9 · Connections (whole page)</div>';
+}
+
+function f10() {
+  return bar() + tabs('Connections', null) + connPage({ patch: [[2, { on: true, bad: true,
+    line: 'Can\'t reach it · check it\'s switched on and on this network',
+    btns: [['Open', I.open], ['Edit', I.edit], ['Test', I.test, true], ['Remove', I.trash]] }]] })
+    + '<div class="arrow" style="top:1010px">' + svg(I.down, 32) + '</div>'
+    + '<div class="cap2">10 · Test: the answer in the row</div>';
+}
+
+function f11() {
+  const toast = `<div class="toast">${svg(I.cloud, 32)}<span class="tx">Put.io · alex.morgan removed
+    <small>Its videos leave your library. Nothing is deleted on Put.io.</small></span>
+    <span style="display:flex;gap:8px;margin-left:10px"><span class="u f">Understood</span><span class="u">Undo</span></span>
+    <i class="bar6"><b></b></i></div>`;
+  return bar() + tabs('Connections', null) + connPage({ remove: 0, patch: [[1, { on: true,
+    btns: [['Open', I.open], ['Edit', I.edit], ['Test', I.test], ['Remove', I.trash]] }]] }) + toast
+    + '<div class="cap2">11 · Remove: at once, with Undo</div>';
+}
+
+const KROWS = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/'], ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '@'],
+  ['#+=', 'mic', 'Space', 'del', 'Clear'], ['Done', 'Cancel']];
+const KIC = { shift: I.shift, mic: I.mic, del: I.del };
+
+function keyboard(focus, help) {
+  return `<div class="kbd">${KROWS.map((r, ri) => `<div class="krow">${r.map(k => {
+    const c = ['key'];
+    if (ri >= 4) {
+      c.push(k === 'Space' ? 'sp' : 'w');
+    }
+    if (k === focus) {
+      c.push('f');
+    }
+    return `<span class="${c.join(' ')}">${KIC[k] ? svg(KIC[k], 28) : k}</span>`;
+  }).join('')}</div>`).join('')}<div class="help">${help}</div></div>`;
+}
+
+// field: [label, value, kind] kind: 'typing' | 'on' | 'ph' | 'sw' | 'swoff' | 'step' | 'pw'
+function field([lb, vl, kind, on]) {
+  const cls = ['fr2'];
+  if (kind === 'typing') {
+    cls.push('typing');
+  }
+  if (on) {
+    cls.push('on');
+  }
+  let v = `<span style="overflow:hidden;text-overflow:ellipsis">${vl}</span>`;
+  if (kind === 'typing') {
+    v = `${vl}<i class="caret"></i>`;
+  } else if (kind === 'sw' || kind === 'swoff') {
+    v = `<span style="flex:1"></span><span class="sw${kind === 'swoff' ? ' off' : ''}"></span>`;
+  } else if (kind === 'step') {
+    v = `<span class="step"><i>‹</i>${vl}<i>›</i></span>`;
+  } else if (kind === 'pw') {
+    v = `<span style="flex:1">${vl}</span>${svg(I.eye, 30)}`;
+  }
+  return `<div class="${cls.join(' ')}"><span class="lb">${lb}</span><span class="vl${kind === 'ph' ? ' ph' : ''}">${v}</span>
+    <i class="ln"></i></div>`;
+}
+
+function formCrumb(t) {
+  return `<div class="crumb"><em>Connections ›</em>${t}</div>`;
+}
+
+function f12() {
+  const fields = [['Type', 'WebDAV', 'step'], ['Name', 'Put.io', ''], ['Address', 'webdav.put.io', 'typing'],
+    ['Encryption (HTTPS)', 'On', 'sw'], ['Port', '443 · the usual port with encryption', ''],
+    ['Folder', '/ (everything)', 'ph'], ['Username', 'alex.morgan', ''], ['Password', '••••••••••', 'pw'],
+    ['Remember password', 'On', 'sw']];
+  return bar() + tabs('Connections', null) + formCrumb('New connection')
+    + `<div class="form">${fields.map(field).join('')}<div class="fbtns"><span>${svg(I.test, 22)}Test connection</span>
+    <span>${svg(I.ok, 22)}Save and browse</span></div></div>`
+    + keyboard('o', '<b>WebDAV:</b> cloud storage and web servers (Put.io, Nextcloud).<br>Name fills in from the address; '
+      + 'change it any time.<br>Back leaves without saving.')
+    + '<div class="cap2">12 · New connection: the form and the one keyboard</div>';
+}
+
+function f13() {
+  const fields = [['Type', 'SMB', 'step'], ['Name', 'Living-room NAS (Synology DS920+ in the cupboard)', ''],
+    ['Address', 'nas.local', ''], ['Folders', 'Movies · TV Shows · Documentaries', ''],
+    ['Username', 'media', ''], ['Password', '••••••••', 'pw'], ['Remember password', 'On', 'sw']];
+  return bar() + tabs('Connections', null) + formCrumb('Edit · Living-room NAS')
+    + `<div class="form">${fields.map(field).join('')}<div class="fbtns"><span class="f">${svg(I.test, 22)}Test connection
+    </span><span>${svg(I.ok, 22)}Save</span></div><div class="fres">${svg(I.ok, 24)}Connected · 3 shared folders found
+    </div></div>`
+    + keyboard('', '<b>SMB:</b> shared folders on a Windows PC, Mac or NAS.<br>Back leaves without saving.')
+    + '<div class="cap2">13 · Edit: the same form, filled in; Test answers under the buttons</div>';
+}
+
+function f14() {
+  const fields = [['Username', 'alex', 'typing'], ['Password', '', 'pw'], ['Remember password', 'On', 'sw']];
+  return bar() + tabs('Connections', null) + formCrumb('Found on your network › MEDIA-PC')
+    + `<div class="form"><div class="fbox" style="margin-bottom:26px"><div class="fn">MEDIA-PC asks you to sign in</div>
+    <div class="fl">Windows computer · SMB · it keeps its shared folders private</div></div>${fields.map(field).join('')}
+    <div class="fbtns"><span>${svg(I.lock, 22)}Sign in and browse</span><span>${svg(I.plus, 22)}Add as a connection
+    </span></div></div>`
+    + keyboard('x', '<b>Only when needed:</b> a device that shares openly opens straight away.<br>Back leaves without '
+      + 'signing in.')
+    + '<div class="cap2">14 · Open on a found device that needs a sign-in</div>';
+}
+
+function f15() {
+  const sw = (n, l, on, last, f) => `<div class="r std${f ? ' on' : ''}${last ? ' last' : ''}"><span class="t"><b>${n}</b>
+    <small>${l}</small></span><span class="fr2" style="padding:0;height:auto;background:none"><span class="sw${on ? ''
+    : ' off'}${f ? ' swf' : ''}"></span></span><i class="ln"></i></div>`;
+  const chips = `<div class="r std last"><span class="t"><b>Name lookup order</b><small>How share names are found</small>
+    </span><span style="display:flex;gap:6px;font-size:24px"><span style="height:52px;padding:0 22px;border-radius:20px;
+    display:flex;align-items:center;background:rgba(255,255,255,.18)">Network first</span><span style="height:52px;
+    padding:0 22px;display:flex;align-items:center">Local first</span></span><i class="ln"></i></div>`;
+  return bar() + tabs('Connections', null) + formCrumb('Network options')
+    + `<div class="adv">${hd(I.smb, 'Windows Shares (SMB)', true)}
+    ${sw('Newer SMB method', 'SMB2 and later; turn off if an old share won\'t connect', true, false, true)}
+    ${sw('Allow SMBv1', 'For very old shares only', false)}${chips}
+    ${hd(I.radar, 'Finding Devices')}
+    ${sw('Look over TCP', 'Finds most computers and NAS boxes', true)}
+    ${sw('Look over UDP', 'Finds older Windows computers', true)}
+    ${sw('Look over mDNS (Bonjour)', 'Finds Macs and many NAS boxes', true, true)}
+    ${hd(I.key, 'SFTP')}${sw('Newer SFTP method', 'Turn off if an SFTP server won\'t connect', true, true)}</div>`
+    + '<div class="cap2">15 · Connections › Network options (moved from Settings)</div>';
+}
+
+// ---------- Round 3: Library Care ----------
+function careRows(focus) {
+  const R = [
+    { icon: I.missing, name: 'Missing files', line: 'In your library but no longer found', pill: '3 files', chev: true },
+    { icon: I.unread, name: 'Couldn\'t be read', line: 'Files Supernova could not open', pill: 'None' },
+    { icon: I.question, name: 'Not matched', line: 'Videos without a movie or TV show', pill: '4 videos', chev: true },
+    { icon: I.tofix, name: 'To fix', line: 'Opened in Fix match and left as they were', pill: '2 titles', chev: true },
+    { icon: I.check, name: 'Check matches', line: 'Look every title up again; you see the changes first',
+      pill: 'Last: 17 Nov', chev: true, last: true },
+  ];
+  const K = [
+    { icon: I.hero, name: 'Excluded from hero', line: 'Titles kept off Home\'s hero', pill: '46 titles', chev: true,
+      last: true },
+  ];
+  R.forEach(r => {
+    r.on = r.name === focus;
+  });
+  K.forEach(r => {
+    r.on = r.name === focus;
+  });
+  return `${hd(I.heart, 'Library health', true)}${R.map(crow).join('')}${hd(I.lib, 'Kept by you')}${K.map(crow).join('')}`;
+}
+
+function scanPart(focusScan) {
+  const btns = rbtns(focusScan ? [['This device', I.device], ['Backup #1', I.usb, true], ['Put.io', I.cloud],
+    ['Home server', I.server], ['Living-room NAS', I.nas]] : null, true);
+  const scan = `<div class="r std${focusScan ? ' on' : ''} last"><span class="ic">${svg(I.scan, 34)}</span><span class="t">
+    <b>Scan one source</b><small>${focusScan ? 'Put.io: Scanning · 42% · Backup #1: Waiting' : 'Look for new videos in one place only'}</small>
+    </span>${btns}<span class="ch"></span><i class="ln"></i></div>`;
+  const rec = [
+    { icon: I.cloud, name: 'Put.io', line: 'Today 18:28 · 3 new, 1 updated', pill: 'Finished' },
+    { icon: I.nas, name: 'Living-room NAS', line: 'Today 17:28 · could not connect', pill: 'Failed', bad: true },
+    { icon: I.usb, name: 'Backup #1', line: 'Today 16:02 · the drive was removed', pill: 'Stopped' },
+    { icon: I.history, name: 'Show all scans', line: 'The last ten', chev: true, last: true },
+  ];
+  return `${hd(I.scan, 'Scanning')}${scan}${hd(I.history, 'Recent scans')}${rec.map(crow).join('')}`;
+}
+
+function f16() {
+  return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>')
+    + `<div class="list" style="top:212px">${careRows('To fix')}${scanPart(false)}</div>`
+    + '<div class="cap2">16 · Library Care (whole page): To fix and Excluded from hero added</div>';
+}
+
+function subCrumb(t, sub) {
+  return `<div class="crumb"><em>Library Care ›</em>${t}<em style="font-size:24px;margin-left:6px">${sub}</em></div>`;
+}
+
+function f17() {
+  const rows = [
+    { icon: I.film, name: 'Dine Out', line: 'TV show · 1 episode · opened in Fix match on 20 Nov from TV Shows', on: true,
+      btns: [['Fix match', I.fix, true], ['It\'s right', I.ok]] },
+    { icon: I.film, name: 'Kingdom of Glass and Long Shadows: The Second Part of the Saga', line:
+      'Movie · opened in Fix match on 22 Nov from Details', last: true },
+  ];
+  return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>') + subCrumb('To fix', '2 titles')
+    + `<div class="list" style="top:270px">${rows.map(crow).join('')}</div>`
+    + '<div class="cap2">17 · To fix: kept until matched or marked "It\'s right"</div>';
+}
+
+function f18() {
+  const keys = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/'], ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '@'],
+    ['#+=', 'mic', 'Space', 'del', 'Clear']];
+  const kb = `<div class="kb2">${keys.map((r, ri) => `<div class="krow">${r.map(k => `<span class="key${ri === 4
+    ? (k === 'Space' ? ' sp' : ' w') : ''}">${KIC[k] ? svg(KIC[k], 26) : k}</span>`).join('')}</div>`).join('')}</div>`;
+  const file = `<div class="fbox">${hd(I.film, 'This file', true)}
+    <div class="fn">Harbour.Wives.S01E02.Dinner.Party.1080p.mkv</div>
+    <div class="fl">Backup #2 › TV Shows › Harbour Wives › Season 1 · 1.4 GB</div>
+    <div class="fl">Matched now as <b>Dine Out (2023)</b> · TV show · 1 episode</div></div>`;
+  const m = [
+    { name: 'Harbour Wives', line: '2020 · TV show · 3 seasons · <b style="font-weight:500;color:inherit">Best match</b>', on: true,
+      btns: [['Match and return', I.back, true], ['Match and stay', I.ok]] },
+    { name: 'Harbour Wives: Reunion', line: '2023 · TV show · 1 season' },
+    { name: 'Dine Out', line: '2023 · TV show · 1 season', last: true },
+  ];
+  const mrows = m.map((o, k) => `<div class="r mt${o.on ? ' on' : ''}${o.last ? ' last' : ''}"${o.on
+    ? ' style="height:172px;align-items:flex-start;padding-top:16px"' : ''}><span class="thumb"
+    style="background:${art(k)}"></span><span class="t"><b>${o.name}</b><small>${o.line}</small>${o.btns
+    ? rbtns(o.btns).replace('class="rb"', 'class="rb" style="width:auto;justify-content:flex-start;margin-top:14px"')
+    : ''}</span><i class="ln"></i></div>`)
+    .join('');
+  return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>')
+    + `<div class="crumb">Fix match<em style="font-size:24px;margin-left:6px">from Dine Out · Details</em></div>`
+    + `<div class="fm">${file}<div class="sfield">${svg(I.search, 30)}harbour wives<i class="caret"></i></div>${kb}</div>
+    <div class="mres">${hd(I.question, 'Matches', true)}${mrows}</div>`
+    + '<div class="cap2">18 · Fix match shows the file, where it is and what it\'s matched as now</div>';
+}
+
+function f19() {
+  const EX = [['A Field of Kites', 'Movie · 2021 · excluded 2 Nov 2026'],
+    ['Brightwater', 'TV show · 3 seasons · excluded 19 Nov 2026'], ['City of Birds', 'Movie · 2019 · excluded 14 Oct 2026'],
+    ['Cold Open', 'Movie · 2023 · excluded 8 Nov 2026'], ['Desert Bloom', 'Movie · 2020 · excluded 30 Oct 2026'],
+    ['Golden Mile', 'TV show · 1 season · excluded 12 Nov 2026']];
+  const rows = [crow({ icon: I.search, name: '<span style="color:#c9d3e6">Search excluded titles</span>', line: '' })]
+    .concat(EX.map(([n, l], k) => crow({ icon: I.film, name: n, line: l, on: k === 2, last: k === EX.length - 1,
+      btns: k === 2 ? [['Include again', I.back, true]] : null })));
+  return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>') + subCrumb('Excluded from hero', '46 titles · A–Z')
+    + `<div class="tools"><span>${svg(I.back, 24)}Include all again</span></div>`
+    + `<div class="list" style="top:270px">${rows.join('')}</div>` + arrows()
+    + '<div class="cap2">19 · Excluded from hero (approved in principle 21 Nov)</div>';
+}
+
+function f20() {
+  const rows = [
+    { icon: I.film, name: 'The Salt Road (2023)', line: 'Living-room NAS › Movies · since 3 Nov', on: true,
+      btns: [['Find it again', I.search, true], ['Remove', I.trash]] },
+    { icon: I.film, name: 'Tidelands · S2 E4', line: 'Backup #1 › TV Shows · since 5 Nov' },
+    { icon: I.film, name: 'Low Tide (2021)', line: 'Backup #1 › Movies · since 5 Nov', last: true },
+  ];
+  return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>') + subCrumb('Missing files', '3 files')
+    + `<div class="list" style="top:270px">${rows.map(crow).join('')}<div style="margin-top:30px;padding-left:24px;
+    font-size:24px;color:#c9d3e6;line-height:36px">Find it again looks for the same file and links it back, keeping where
+    you stopped.<br>Remove takes it out of your library only.</div></div>`
+    + '<div class="cap2">20 · Missing files (Couldn\'t be read and Not matched work the same way)</div>';
+}
+
+function f21() {
+  return bar('ring') + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>')
+    + `<div class="list" style="top:212px">${careRows('')}${scanPart(true)}</div>`
+    + '<div class="cap2">21 · Scan one source: one button per source; pressed ones wait their turn</div>';
+}
+
+const ROUND23 = [['09-connections', f09, 1380], ['10-test-failed', f10], ['11-remove-undo', f11],
+  ['12-new-connection', f12], ['13-edit-connection', f13], ['14-sign-in-found', f14], ['15-network-options', f15, 1380],
+  ['16-library-care', f16, 1900], ['17-to-fix', f17], ['18-fix-match-file', f18], ['19-excluded-from-hero', f19],
+  ['20-missing-files', f20], ['21-scan-one-source', f21, 1900]];
+
 const FRAMES = [['01-this-device', f01], ['02-drive-list', f02], ['03-sort-menu', f03], ['04-grid-folder-menu', f04],
-  ['05-file-menu', f05], ['06-exclude-undo', f06], ['07-add-progress', f07], ['08-no-videos', f08]];
+  ['05-file-menu', f05], ['06-exclude-undo', f06], ['07-add-progress', f07], ['08-no-videos', f08]].concat(ROUND23);
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch();
   const pg = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
-  for (const [name, fn] of FRAMES) {
-    const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body>
-      <div class="screen">${fn()}<div class="border"></div></div>${speckle()}</body></html>`;
+  for (const [name, fn, h = 1080] of FRAMES) {
+    await pg.setViewportSize({ width: 1920, height: h });
+    const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}${css2}</style></head><body>
+      <div class="screen" style="height:${h}px">${fn()}<div class="border"></div></div>${speckle()}</body></html>`;
     await pg.setContent(html);
     await pg.evaluate(() => document.fonts.ready);
     await pg.screenshot({ path: path.join(OUT, `${name}.png`) });

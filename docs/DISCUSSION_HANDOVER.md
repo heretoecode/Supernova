@@ -31,6 +31,14 @@ recheck only what NOVA adds after 25 Nov (CLAUDE.md).
   Proposed in it: pill top left on grid cards (the progress badge keeps top right); Exclude at once with the Undo
   notice; Add to library / Scan this folder progress in the row's pill (ring in the top bar); "No videos in this
   folder" with Show all files; the file menu grouped like the library long-press menu.
+- Rounds 2 and 3 drawn too (owner asked for all three before reviewing one by one): `files-v2/tv/09`–`15`
+  Connections (whole page; Test answer in the row; Remove with Undo; new connection and Edit forms with the one
+  keyboard, Type as a stepper per RULES §8; sign-in for a found device; Network options moved from Settings under an
+  Advanced heading) and `tv/16`–`21` Library Care (whole page with To fix and a "Kept by you" section holding Excluded
+  from hero; To fix page with Fix match · It's right; Fix match showing the file, where it lives and what it's matched
+  as now, the focused match growing for Match and return · Match and stay, "Best match" in its second line; Excluded
+  from hero; Missing files as the sample sub-page; Scan one source with a button per source). Drive › 2026-11-25 Files
+  round 2 Connections / round 3 Library Care. Round 4 (Your Library) not drawn yet.
 
 ## 25 Nov — Search review started
 - Owner chose Search first. Redrawn on today's rules: `search-v6/tv/01`–`08` (Drive › From Claude › 2026-11-25
