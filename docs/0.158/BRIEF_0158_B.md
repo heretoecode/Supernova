@@ -563,6 +563,7 @@ or underline intersects the line under the tab row.
 - **Landing page approved (owner, 25 Nov; `tv/09`, `tv/10`):** tips under the keyboard; on the right Recent searches
   (three), Genres in your library (artwork cards with counts) and People in your library (cast cards with counts);
   without history, two rows of genres. OK on a card fills the field (`tv/11`). Details in SEARCH.md › Before typing.
+  **The tips stay under the keyboard at all times** (owner, 25 Nov), with results too; not focusable.
 - Waiting for the owner: frames 4, 6, 7, `tv/11`. 
 - **No Phone key (owner, 25 Nov: "I've never needed a special button in other apps"):** remove it from the one
   keyboard (RULES §15). The phone app only offers its typing box when Android reports an active text session, which

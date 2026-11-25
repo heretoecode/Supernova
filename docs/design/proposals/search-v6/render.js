@@ -280,7 +280,7 @@ function f02() {
     + res({ i: 2, name: 'The Keeper of Gull Rock', line: '2024 · Movie · prequel', pill: ['ext', 'Paramount+'] })
     + res({ i: 3, name: 'Tidelands: North', line: '2026 · TV show · spin-off', pill: ['ext', 'Prime Video'],
       last: true });
-  return page(field('tideland') + kb(''), right) + '<div class="cap2">2 · A show and its world</div>';
+  return page(field('tideland') + kb('') + leftTips(), right) + '<div class="cap2">2 · A show and its world</div>';
 }
 
 // 03 a person, more than fits, Menu on a library title
@@ -305,7 +305,7 @@ function f03() {
     <div class="it">${svg(I.trash, 26)}Delete file</div></div>`;
   const arrows = `<div class="arrow faint" style="top:236px">${svg(I.up, 32)}</div>
     <div class="arrow" style="top:960px">${svg(I.down, 32)}</div>`;
-  return page(field('mara ellison') + kb(''), right) + menu + arrows
+  return page(field('mara ellison') + kb('') + leftTips(), right) + menu + arrows
     + '<div class="cap2">3 · A person, more than fits · Menu on a library title</div>';
 }
 
@@ -316,7 +316,7 @@ function f04() {
       state: 'w', on: true, last: true })
     + hd('cloud', 'Stream more related to Our Blue Planet II')
     + `<div class="load">${ring(36)}Looking on your services</div>`;
-  return page(field('planet') + kb(''), right) + '<div class="cap2">4 · Streaming still being fetched</div>';
+  return page(field('planet') + kb('') + leftTips(), right) + '<div class="cap2">4 · Streaming still being fetched</div>';
 }
 
 // 05 after Clear history
@@ -332,7 +332,7 @@ function f06() {
   const empty = `<div class="empty">${svg(I.nothing, 64)}<div class="et">Nothing in your library matches
     "terminus"</div><div class="ed">Search looks only in your library.<br>Titles you can stream show up under what it
     finds.</div></div>`;
-  return `${bar()}<div class="left">${field('terminus') + kb('s')}</div>${empty}`
+  return `${bar()}<div class="left">${field('terminus') + kb('s') + leftTips()}</div>${empty}`
     + '<div class="cap2">6 · Nothing in the library</div>';
 }
 
@@ -443,7 +443,7 @@ function f11() {
     + res({ i: 2, name: 'Low Tide', line: '2021 · Movie · 1 h 30 min', pill: null, last: true });
   const arrows = `<div class="arrow faint" style="top:236px">${svg(I.up, 32)}</div>
     <div class="arrow" style="top:960px">${svg(I.down, 32)}</div>`;
-  return page(field('Crime') + kb(''), right) + arrows + '<div class="cap2">11 · OK on Crime: its titles, as if typed</div>';
+  return page(field('Crime') + kb('') + leftTips(), right) + arrows + '<div class="cap2">11 · OK on Crime: its titles, as if typed</div>';
 }
 
 const FRAMES = [['01-start', f01], ['02-show-and-world', f02], ['03-person-menu', f03], ['04-streaming-loading', f04],

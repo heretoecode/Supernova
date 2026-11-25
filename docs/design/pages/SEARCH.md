@@ -24,7 +24,8 @@ pasting from the phone app works with no button, as in other apps (RULES §15); 
   selectable rows only; headings with icons, about 26 px below and 64 px above (RULES §5).
 
 ## Before typing (owner, 25 Nov: `search-v6/tv/09` with history, `tv/10` without; replaces `17`)
-- **Left, under the keyboard** (help under the keyboard, RULES §1): **What you can search** (light bulb): tips as plain
+- **Left, under the keyboard, at all times** (owner, 25 Nov: before typing and with results, so the left side never
+  changes; help under the keyboard, RULES §1): **What you can search** (light bulb): tips as plain
   text, no lines, compact rows (about 50 px): Titles · People · Genres · Years, and Your services ("related titles
   you can stream") only when Where to Watch is on.
 - **Right, top to bottom:**
