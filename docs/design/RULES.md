@@ -342,6 +342,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **No progress bars on artwork or captions anywhere.** Progress is one **badge in the top-right corner** of the
   artwork: library posters, Home rows, Details rows (Episodes, Extras, More Like This), the player's Chapters and
   Episodes rows, Search results, and anything else that shows a title, film or episode.
+  **Search's small thumbnails (owner, 25 Nov, `search-v6/tv/08` A):** the same badge scaled to 30 px; Search's pills
+  only where they add words ("Resume S2 E3"), no Watched / Unwatched pills.
 - **The badge** (`rows-captions/06-pie-badge.png` B, `04-ring-sizes.png` medium): a white circle **48 px at 1080p**,
   inset about 8 px from the corner, soft shadow. Inside, black fills like a clock **from 12 o'clock clockwise**
   (a pie), inside a **white rim of 3 px** (owner, 19 Nov, judged on the TV, `rows-captions/tv/10`; the black pie is

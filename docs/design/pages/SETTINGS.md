@@ -68,6 +68,8 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   stays on: the last one can't be turned off) · Change every (8 s · 12 s · 20 s); titles you've started leave the hero.
 - **Viewing History:** Keep viewing history (switch) · Clear viewing history (action, Clear: a warning with
   Supernova / Trakt switches; library and files kept).
+  **Search history (owner, 25 Nov):** Keep search history (switch, on; off records nothing, hides Search's Recent
+  searches and clears it) · Clear search history (Clear; "Done · cleared").
 
 ## Services (`15-b3-services`)
 - **Where To Watch:** Show where to watch (switch; off removes every streaming feature, RULES §18) · Country (› list

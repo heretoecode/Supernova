@@ -359,15 +359,101 @@ function f08() {
   return `${bar()}<div class="ab">${colA}${colB}</div><div class="cap2">8 · Progress on results: A or B</div>`;
 }
 
+// ---- round 2 (owner, 25 Nov): the landing page looked empty. Tips move under the keyboard (RULES §1: help under
+// the keyboard); the right holds Recent searches, then Genres and People from the library (artwork cards, OK fills
+// the field and shows the results).
+const GEN = [['Crime', 42, '#6b2f2f'], ['Drama', 118, '#2f4f6b'], ['Documentary', 37, '#2f6b55'],
+  ['Comedy', 51, '#6b5a2f'], ['Thriller', 33, '#4a2f6b'], ['Mystery', 19, '#2f5f6b'], ['Science Fiction', 24, '#3a3f78'],
+  ['History', 16, '#6b4a2f']];
+const PEOPLE = [['Mara Ellison', 6], ['Tom Oyelaran', 5], ['Ruth Kane', 5], ['Ilse Berg', 4], ['Kai Nolan', 4],
+  ['Pia Sund', 3]];
+
+const css3 = `
+.ltips{margin-top:64px}
+.ltips .hd{margin-top:0}
+.ltips .tip{height:50px;font-size:24px;padding:0 4px}
+.ltips .tip b{width:170px}
+.gcards{display:grid;grid-template-columns:repeat(4,214px);gap:24px}
+.gc{position:relative;width:214px;height:120px;border-radius:12px;overflow:hidden}
+.gc .e{position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 1px #fff,inset 0 0 14px rgba(0,0,0,.4)}
+.gc .f{position:absolute;left:0;right:0;bottom:0;height:70%;background:linear-gradient(0deg,rgba(8,9,11,.9),
+ rgba(8,9,11,0))}
+.gc b{position:absolute;left:14px;bottom:30px;font-size:24px;font-weight:500;white-space:nowrap}
+.gc small{position:absolute;left:14px;bottom:8px;font-size:19px;color:#c9d3e6}
+.pcards{display:flex;gap:24px}
+.pcard{width:112px;text-align:center}
+.pcard .ph{position:relative;width:112px;height:168px;border-radius:10px;overflow:hidden;
+ box-shadow:inset 0 0 0 1px #fff}
+.pcard .ph i{position:absolute;left:31px;top:30px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.3)}
+.pcard .ph em{position:absolute;left:16px;top:92px;width:80px;height:90px;border-radius:40px 40px 0 0;
+ background:rgba(255,255,255,.3)}
+.pcard b{display:block;font-size:20px;font-weight:500;margin-top:8px;white-space:nowrap}
+.pcard small{font-size:17px;color:#c9d3e6}
+`;
+
+function genres(n) {
+  return hd('tag', 'Genres in your library') + `<div class="gcards">${GEN.slice(0, n).map(([g, c, a]) => `<div class="gc"
+    style="background:radial-gradient(ellipse 70% 70% at 60% 30%,rgba(255,255,255,.18),transparent 60%),
+    linear-gradient(155deg,${a},#101215)"><div class="f"></div><b>${g}</b><small>${c} titles</small><div class="e"></div>
+    </div>`).join('')}</div>`;
+}
+
+function people() {
+  const ART = ['#3f6b52', '#7a4a3a', '#4a4a7a', '#7a6a3a', '#2f6672', '#6d3a5a'];
+  return hd('person', 'People in your library') + `<div class="pcards">${PEOPLE.map(([n, c], k) => `<div class="pcard">
+    <div class="ph" style="background:linear-gradient(160deg,${ART[k]},#14161a)"><i></i><em></em></div><b>${n}</b>
+    <small>${c} titles</small></div>`).join('')}</div>`;
+}
+
+function leftTips() {
+  return `<div class="ltips">${tips(true)}</div>`;
+}
+
+function recent3() {
+  const words = ['Tidelands', 'Cold Iron', 'Mara Ellison'];
+  const clr = `<span class="clr">${svg(I.x, 22)}Clear history</span>`;
+  return hd('clock', 'Recent searches', clr) + words.map((w, k) => `<div class="rec${k === 2 ? ' last' : ''}">
+    ${svg(I.search, 28)}<span>${w}</span><div class="ln"></div></div>`).join('');
+}
+
+// 09 landing with recent searches
+function f09() {
+  const right = recent3() + `<div style="margin-top:64px">${genres(4)}</div><div style="margin-top:64px">${people()}</div>`;
+  return page(field('') + kb('t') + leftTips(), right) + '<div class="cap2">9 · Landing, with recent searches</div>';
+}
+
+// 10 landing with no history (first visit, or search history off in Settings)
+function f10() {
+  const right = genres(8) + `<div style="margin-top:64px">${people()}</div>`;
+  return page(field('') + kb('t') + leftTips(), right)
+    + '<div class="cap2">10 · Landing, no history (or search history off)</div>';
+}
+
+// 11 OK on a genre card: the field fills and the results show, as if typed
+function f11() {
+  const right = hd('lib', 'In your library')
+    + res({ i: 0, name: 'Tidelands', line: '2024 · TV show · 2 seasons', pill: ['play', 'Resume S2 E3'], state: 0.4 })
+    + res({ i: 3, name: 'Cold Iron', line: '2025 · Movie · 1 h 52 min', pill: null, state: 'w', on: true })
+    + res({ i: 4, name: 'The Salt Road', line: '2023 · Movie · 2 h 4 min', pill: null })
+    + res({ i: 5, name: 'Harbour Wives', line: '2020 · TV show · 3 seasons', pill: null, state: 0.7 })
+    + res({ i: 6, name: 'Glass Bay', line: '2022 · TV show · 1 season', pill: null })
+    + res({ i: 1, name: 'Northern Lights', line: '2021 · Movie · 1 h 47 min', pill: null })
+    + res({ i: 2, name: 'Low Tide', line: '2021 · Movie · 1 h 30 min', pill: null, last: true });
+  const arrows = `<div class="arrow faint" style="top:236px">${svg(I.up, 32)}</div>
+    <div class="arrow" style="top:960px">${svg(I.down, 32)}</div>`;
+  return page(field('Crime') + kb(''), right) + arrows + '<div class="cap2">11 · OK on Crime: its titles, as if typed</div>';
+}
+
 const FRAMES = [['01-start', f01], ['02-show-and-world', f02], ['03-person-menu', f03], ['04-streaming-loading', f04],
-  ['05-clear-history-undo', f05], ['06-nothing-in-library', f06], ['07-voice', f07], ['08-badge-a-or-b', f08]];
+  ['05-clear-history-undo', f05], ['06-nothing-in-library', f06], ['07-voice', f07], ['08-badge-a-or-b', f08],
+  ['09-landing-recent', f09], ['10-landing-no-history', f10], ['11-genre-results', f11]];
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch();
   const pg = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
   for (const [name, fn] of FRAMES) {
-    const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body>
+    const html = `<!doctype html><html><head><meta charset="utf-8"><style>${css}${css3}</style></head><body>
       <div class="screen">${fn()}<div class="border"></div></div>${speckle()}</body></html>`;
     await pg.setContent(html);
     await pg.evaluate(() => document.fonts.ready);

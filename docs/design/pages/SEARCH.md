@@ -7,8 +7,11 @@ streaming rules, Where to Watch), §22–§23 (headings), §26 (final pass, appr
 `docs/design/proposals/search-flat/`: `17-v5-start`, `18-v5-family`, `19-v5-person`, `20-v5-non-fiction`,
 `21-v5-not-in-library`. The keyboard in those pictures is simplified; the app uses the one keyboard (RULES §15).
 
-**Review in progress (25 Nov):** redrawn on today's rules as `search-v6/tv/01`–`08`, waiting for the owner. Until
-decided, the 12 Nov pictures and the text below stand.
+**Review in progress (25 Nov):** redrawn on today's rules as `search-v6/tv/01`–`11`. Decided: **progress A** (corner
+badge on thumbnails, 30 px; a pill only for "Resume S2 E3"; no Watched / Unwatched pills; `tv/08`); **Keep search
+history** and **Clear search history** in Settings › Library › Viewing History (off: no Recent searches). Proposed,
+waiting: a fuller landing page (`tv/09`, `10`: tips under the keyboard; Genres and People in your library as artwork
+cards on the right; OK fills the field, `tv/11`), frames 4, 6, 7. Until decided, the rest below stands.
 
 ## Whole page
 - Plain charcoal, side margin on the top bar's edges (RULES §1). Search is a tool: it opens on OK in the top bar
@@ -22,7 +25,8 @@ decided, the 12 Nov pictures and the text below stand.
 
 ## Before typing (`17`)
 - **Recent searches** (clock icon): rows with a magnifying glass; **Clear history** (plain words with a small ✕, no box
-  until focused) at the end of the heading. Also in Settings.
+  until focused) at the end of the heading. Also in Settings (Library › Viewing History), where search history can be
+  turned off; off: this section is not shown.
 - **What you can search** (light bulb): tips as plain text, no lines; the streaming line ("Your services: related titles
   you can stream, for things already in your library") only when Where to Watch is on.
 

@@ -27,9 +27,8 @@ to check NOVA for new changes (CLAUDE.md).
 - Owner chose Search first. Redrawn on today's rules: `search-v6/tv/01`–`08` (Drive › From Claude › 2026-11-25
   Search): before typing, a show and its world, a person with more than fits plus Menu on a library title, streaming
   still loading, Clear history's Undo notice, nothing in the library, the Voice key listening, progress A or B.
-- Waiting for the owner: A (badge on the thumbnail, words only for "Resume S2 E3") or B (pills only); the loading
-  line; the Voice listening look; the reworded empty message; Menu on a library title = the library long-press menu.
-  Nothing decided yet: once decided, into SEARCH.md, RULES and BRIEF_0158_B.
+- Decided: progress A; Keep / Clear search history in Settings. Proposed (`tv/09`–`11`): fuller landing (tips under
+  the keyboard, Genres and People cards). Waiting: landing, frames 4, 6, 7, the Phone key (Claude: keep).
 - Also 25 Nov: owner's saved notes → Parked: Seerr requests from Search (Plozz already does it), finer settings
   after Plozz (candidates listed). **Next episode on the hero** approved in principle for Details, before its coding:
   `next-episode/tv/01`–`03` (Drive › 2026-11-25 Next episode on the hero), A chosen (above the logo); Details tab: date folded into

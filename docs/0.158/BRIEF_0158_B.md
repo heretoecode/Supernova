@@ -554,6 +554,14 @@ or underline intersects the line under the tab row.
 - Details tab › Status: "Returning · S2 E4 on Sun 30 Nov" when the date is known (else "Returning · 2 seasons"). No
   separate "Next episode" row (owner, 25 Nov, `next-episode/tv/04`): the columns keep equal rows.
 
+### Search review (owner, 25 Nov; mock-ups `search-v6/tv/01`–`11`; page sheet SEARCH.md)
+- **Progress on results: A** (`tv/08`): the corner badge on each library thumbnail, scaled to 30 px for the 128 × 72
+  thumbnail (RULES §14c); a pill only where it adds words ("Resume S2 E3"); no "Watched" / "Unwatched" pills.
+- **Search history setting** (owner): Settings › Library › Viewing History gains **Keep search history** (switch, on
+  by default; off: nothing is recorded, Recent searches is not shown, the history is cleared) and **Clear search
+  history** (Clear; "Done · cleared"). Search's own Clear history stays (Undo notice, `tv/05`).
+- Waiting for the owner: the fuller landing page (`tv/09`–`11`), frames 4, 6, 7, the Phone key.
+
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
 - **Backups:** Supernova's one folder picker (RULES §7b), with Android's folder grant shown once behind it the first
