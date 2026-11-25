@@ -143,7 +143,7 @@ body{background:#111215;font-family:R,sans-serif;width:1920px;height:1080px;over
 .pulse{position:relative;width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center}
 .pulse:before,.pulse:after{content:'';position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.35)}
 .pulse:before{inset:-8px}
-.pulse:after{inset:-16px;border-color:rgba(255,255,255,.15)}
+.pulse:after{inset:-13px;border-color:rgba(255,255,255,.15)}
 .ab{position:absolute;left:52px;right:52px;top:132px;display:grid;grid-template-columns:1fr 1fr;gap:72px}
 .ab .lab{font-size:28px;font-weight:500;margin-bottom:26px}
 .ab .thumb2{position:relative;width:128px;height:72px;border-radius:8px;flex:none;
@@ -174,7 +174,7 @@ function bar() {
 
 const KEYS = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
   ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/'], ['shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '@'],
-  ['#+=', 'mic', 'Space', 'del', 'Clear', 'phone']];
+  ['#+=', 'mic', 'Space', 'del', 'Clear']];
 const KEY_ICON = { shift: I.shift, mic: I.mic, del: I.del, phone: I.phone };
 
 function kb(focus) {
@@ -323,7 +323,8 @@ function f04() {
 function f05() {
   const toast = `<div class="toast">${svg(I.clock, 32)}<span>Recent searches cleared</span>
     <span class="u f">Understood</span><span class="u">Undo</span><span class="bar6"><b></b></span></div>`;
-  return page(field('') + kb(''), tips(true)) + toast + '<div class="cap2">5 · After Clear history</div>';
+  const right = genres(8) + `<div style="margin-top:64px">${people()}</div>`;
+  return page(field('') + kb('') + leftTips(), right) + toast + '<div class="cap2">5 · After Clear history</div>';
 }
 
 // 06 nothing in the library
@@ -337,7 +338,8 @@ function f06() {
 
 // 07 the Voice key
 function f07() {
-  return page(field('', { listening: true }) + kb('mic'), recent(false) + tips(true))
+  const right = recent3() + `<div style="margin-top:64px">${genres(4)}</div><div style="margin-top:64px">${people()}</div>`;
+  return page(field('', { listening: true }) + kb('mic') + leftTips(), right)
     + '<div class="cap2">7 · Voice key pressed: listening</div>';
 }
 
