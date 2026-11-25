@@ -589,43 +589,60 @@ or underline intersects the line under the tab row.
 - **Health summary at the top of each report:** peak and average memory per page, start-up time, slowest page and
   switch, slow frames, freezes, focus anomalies, leftovers that ran; each against a limit, over-limit lines first.
 
-### NOVA catch-up (checked 19 Nov; approved 15 Nov: "all of NOVA 6.6.5 and later", 0.157 notes §35)
-NOVA's latest tag is 6.6.5 (10 Nov) with fixes since. 0.157 carried MediaLib's and FileCore's 6.6.5 changes
-(matching by file name, Trakt pagination, 64-bit list IDs and lastActivities2, SMB share credentials, messenger
-folders skipped, Samba probes) and the software-decoding notice and decoder order. **Still missing, app side (bring
-in by hand, our fork is heavily changed):**
-- `aos-Video 567d53b` **HDMI refresh-rate switch pause race** (18 Nov): matters with Automatic refresh rate on.
-- `e13f8a3` / `68e316f` **picture subtitles (PGS / VobSub): vertical position, kept clear of the controls**; and
-  `f67e64a` **their size (scale)** (17 Nov). In our Subtitle Appearance as two rows that show only for a picture
-  subtitle track, Vertical position (− +) and Size (chips), same look as the text rows; note the native half below.
-- `8a1a231` duplicate Samba discovery at start-up (app side; the FileCore side is in).
-- `565ff59` subtitles' default shadow restored (check against our Outline / Background defaults first).
-- `aos-MediaLib` 14 Nov **lingering local import notifications** (may be behind the stuck "Scanning…" pill).
-Not for a TV, skip: phone cutouts, rotation, double-tap zones, status bars, Android 6 SPDIF, empty playlists.
-**Must do: TheIntroDB API v4 (found 25 Nov; deadline).** Our `aos-MediaLib` (both `claude/supernova-github-access-yfhe89`
-and `v6.4`) still calls `https://api.theintrodb.org/v3/`; **TheIntroDB removes v2 / v3 on 18 Jan 2027**, after which
-online skip times from TheIntroDB stop. Bring in NOVA's `aos-MediaLib 30fe48c` (18 Oct: move to `/v4`, read the
-`tvdb_id` the v4 response is keyed by, requests still by `tmdb_id` so seasons stay in TMDB numbering, ignore `end_ms
-== 0`) and `e5886e0` (28 Oct: validate bounds by type: intro / recap need a positive end; credits / preview need a
-positive start, may stay open-ended; otherwise `{start_ms: 0, end_ms: null}` credits spanned the whole episode; with
-its regression tests). The other provider (introdb.app) is unaffected. Our Skipping settings (Look up skip times
-online) are unchanged.
-**Checked again 25 Nov (unreleased: NOVA's last release is still 6.6.5, 10 Nov; everything below is after it):**
-- `aos-MediaLib a23d4b1`, `62dd006` (23 Nov) **USB library visible again after the TV wakes** (staggered wake) and
-  pending USB recovery kept when Android's scanner starts: matters on the Shield with USB drives.
-- `aos-MediaLib 21a03c3`, `a4e7e8d` (20–22 Nov) and `aos-Video 8576e382` (22 Nov) **Trakt: refreshed tokens saved,
-  stopping random sign-outs**; token refresh tied to the signed-in login; sync state kept when tokens change.
-- `aos-Video 7fca60f3` (23 Nov) **compressed audio (passthrough) kept on TV speaker routes**.
-- `aos-Video 6056f957` (21 Nov) **video keeps playing during notification sounds** (no pause on a ping).
-- Skip (NOVA screens we replaced): `fab3e939` TV details scrolling, `88435fd7` file browser focus after details.
-- **Engine (aos-avos, for the engine version):** `6308ae1`, `66ac7ce`, `dd6439f`, `f26cc61`, `fbd73bc` (21–24 Nov)
-  **audio drift recovery**: PCM clock lag corrected during playback, steadier AudioTrack buffers; plus debug
-  diagnostics. Adds to the Dolby Vision work below.
-**Native engine (not now):** ours is aos-avos at 4 Nov (`5cf3ae9`), 29 commits behind: Dolby Vision profile 7 → 8.1
-conversion and profile 5 reshaping (libdovi), the native half of the picture-subtitle position and size, Dolby
-Vision HDR metadata. That needs a new engine archive build: the roadmap's "Newer NOVA engine stack, as its own
-version". Until then, build the two subtitle rows only if the old engine honours them; otherwise list them as not
-built.
+### NOVA catch-up (full audit 25 Nov; approved 15 Nov: "all of NOVA 6.6.5 and later", 0.157 notes §35; owner 25 Nov: "pen them all in for the next build")
+**How it was checked (25 Nov):** the build's own dependency tree was rebuilt exactly (MediaLib fork at `5758074`,
+FileCore at `c4b760c`, then every patch in `supernova155-dependency-patches.json`), and every later NOVA commit was
+tested against it: applies in reverse = already in; otherwise the share of its added lines present (layout ignored).
+The app (no shared history) was compared file by file from 1 Sep. NOVA's last release is still **6.6.5 (10 Nov)**;
+most items below are unreleased. **Already in, nothing to do:** TheIntroDB **v4** (our patches moved to `/v4`), UPnP
+fixes, percent-encoded duplicate paths, genre ids, SMB share credentials, Trakt 64-bit list ids and pagination,
+scraper file-name preference, almost all FileCore network work (WebDAV, SFTP, FTP, SMB, Samba discovery), decoder
+ranking, HDR producer, Dolby Vision decoder order, network playback reopening at the seek point, subtitle cache
+fallback, subtitle association when renaming fails, the software-decoding notice (our own form).
+`aos-libnativehelper` and `aos-audiocompress` are at NOVA's latest.
+
+**Bring in for the next build** (by hand: our copies are heavily changed; carry NOVA's tests with each; each item
+one commit, build and tests):
+1. **TheIntroDB zero-start credits** (`aos-MediaLib e5886e04`, 28 Oct). We have v4, but our segment parser only
+   rejects `end_ms <= 0`: a credits / preview entry `{start_ms: 0, end_ms: null}` becomes a skip over the whole
+   episode. Validate by type: intro / recap need a positive end; credits / preview a positive start (may stay
+   open-ended). With `IntroDbApiHelperTest`.
+2. **Trakt random sign-outs** (`aos-MediaLib 21a03c3a` 20 Nov, `a4e7e8d9` 22 Nov; app `aos-Video 8576e382` 22 Nov):
+   save tokens that trakt-java refreshes; bind refreshes to the signed-in login; keep sync state when tokens change
+   (fit 8576e382's intent to our Trakt panel, not NOVA's preference screen). With `TraktTokenRefreshTest`. Take
+   trakt-java **6.22.0** with it (`b550e893`; also sentry 8.64.0 there and in FileCore `ce1d5e2d`).
+3. **USB library after the TV wakes** (`aos-MediaLib a23d4b1c`, `62dd006a`, 23 Nov): USB volumes reappear after a
+   staggered wake; pending USB recovery kept when Android's scanner starts. With `VolumeStateTest`,
+   `VideoStoreImportServiceTest`. Check against our own scan and library-ownership patches (0.157–0.158).
+4. **Lingering library-scan notifications** (`aos-MediaLib 24c78110`, 14 Nov; image scan progress suppressed): may be
+   behind the stuck "Scanning…" pill. With `VideoStoreImportNotificationTest`.
+5. **Video keeps playing during notification sounds** (`aos-Video 6056f957`, 21 Nov): our `Player.java` still pauses on
+   `AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK` and sets `setWillPauseWhenDucked(true)`; let Android duck instead.
+6. **Passthrough on TV speaker routes** (`aos-Video 7fca60f3`, 23 Nov): compressed-audio capabilities kept when sound
+   goes to the TV's speakers. With `TvSpeakerPassthroughTest`. Check against our Surround sound setting.
+7. **HDMI refresh-rate switch pause race** (`aos-Video 567d53bb`, 18 Nov): matters with Automatic refresh rate on.
+   With `PlaybackRouteRecoveryTest`.
+8. **Subtitle switched while paused** (`aos-Video 12cdaea1`, 18 Sep): a cue shown while paused must not start its
+   expiry timer; resume continues the remaining time (uptime deadlines, long arithmetic). Our `SubtitleManager` lacks it.
+9. **Duplicate Samba discovery at start-up**, app half (`aos-Video 8a1a2310`, 9 Nov; FileCore half already in).
+10. **Picture subtitles (PGS / VobSub)**: vertical position and size, kept clear of the controls (`aos-Video
+   13545901`, `820bef19`, `68e316f4`, `14414b5b`): in our Subtitle Appearance as two rows shown only for a picture
+   track, Vertical position (− +) and Size, same look as the text rows. The native half is in the engine (below):
+   build the rows only if the current engine honours them; otherwise list them as not built.
+11. **Subtitle default shadow** (`aos-Video a4d7bd60` / `565ff596`, 15 Nov): check against our Outline / Background
+   defaults first; take only if ours still lose the legacy shadow.
+**Not taken (deliberate):** auto-skip 2 s safety buffer (`2859eb92`; ours lands at the segment end by design);
+intro / outro skip on by default (`915347c7`; our Skipping settings decide); NOVA's own screens, which we replaced
+(details scrolling `fab3e939`, file-browser focus `88435fd7`, subtitle settings screens, menus, browsers, in-app
+updater); phone-only work (cutouts, rotation, double-tap zones, system bars, portrait); Android 6 SPDIF
+(`ac3a2182`); empty playlists (`c4af2c81`); debug-only timing and diagnostics; the reverted UPnP pair
+(`b58b9712` / `b1bcc081`); superseded jcifs-ng and SFTP window-size steps (the final ones are in).
+
+**For the engine version (parked; needs a new engine build, not this one):** ours is aos-avos at 4 Nov (`5cf3ae9`).
+Since then: Dolby Vision profile 7 → 8.1 and profile 5 reshaping on the GPU (libdovi), Dolby Vision HDR metadata to
+the display, the native half of picture-subtitle position and scale, **audio drift recovery** (PCM clock lag
+corrected during playback, steadier AudioTrack buffers; 21–24 Nov). With it, the app and MediaLib halves of the Dolby
+Vision colour-fallback warning (`aos-Video 4b0c3900`, `aos-MediaLib 46496b19`).
 
 ### Release notes and the front page (owner, 19 Nov; do with every signing from now on)
 - **Every signed APK gets its own release notes.** `docs/0.158/RELEASE_NOTES.md` (written 19 Nov for 0.158 to 0.158.5)
