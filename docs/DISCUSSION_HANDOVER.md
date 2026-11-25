@@ -38,7 +38,9 @@ recheck only what NOVA adds after 25 Nov (CLAUDE.md).
   from hero; To fix page with Fix match · It's right; Fix match showing the file, where it lives and what it's matched
   as now, the focused match growing for Match and return · Match and stay, "Best match" in its second line; Excluded
   from hero; Missing files as the sample sub-page; Scan one source with a button per source). Drive › 2026-11-25 Files
-  round 2 Connections / round 3 Library Care. Round 4 (Your Library) not drawn yet.
+  round 2 Connections / round 3 Library Care. Round 4 drawn: `tv/22` Your Library (whole page, read-only) with a new
+  By Source section (library videos and size per source, plus a by-connection-type line; real figures, not free
+  space). Drive › 2026-11-25 Files round 4 Your Library. All four rounds waiting for the owner.
 
 ## 25 Nov — Search review started
 - Owner chose Search first. Redrawn on today's rules: `search-v6/tv/01`–`08` (Drive › From Claude › 2026-11-25
