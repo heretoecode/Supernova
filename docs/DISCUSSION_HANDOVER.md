@@ -21,8 +21,8 @@ focus 8%); one tab behaviour everywhere (the player's); behind the top bar = blu
 "and N more"); no lone word on a line; keyboard / pickers open under their row; panels' outline and shadow also over
 video; seek preview never a grey box.
 **Before the next coding go-ahead:** ask for the diagnostics report (MobLand delete, 19 Nov 14:30–14:45). NOVA was
-fully audited on 25 Nov (BRIEF_0158_B › NOVA catch-up: eleven items penned in); recheck only what NOVA adds after that, and whether
-to check NOVA for new changes (CLAUDE.md).
+fully audited on 25 Nov (BRIEF_0158_B › NOVA catch-up: eleven items penned in); at the go-ahead, offer to
+recheck only what NOVA adds after 25 Nov (CLAUDE.md).
 
 ## 25 Nov — Search review started
 - Owner chose Search first. Redrawn on today's rules: `search-v6/tv/01`–`08` (Drive › From Claude › 2026-11-25
