@@ -42,10 +42,27 @@ Items already built or scheduled are left out (see the bottom of this file).
   and PROJECT_STATUS, `docs/archive/`, and GitHub Issues #31–#102 (source in `docs/issues/`).
 
 ## Finer settings, after another player app (owner, 25 Nov 2026) — to discuss
-- The owner uses another player app on a phone and tablet, connected to the same media server, and likes how finely
-  its settings can be tuned compared with Supernova's. Explore it together: list its settings beside ours, then
-  pick what is worth adding (freedom to rethink, CLAUDE.md). Waiting for the app's exact name and a few screenshots
-  of its settings. Natural place: the Settings review.
+- The owner uses **Plozz** (plozz.app; free, open-source player for Apple TV, iPhone, iPad; Plex, Jellyfin, Emby,
+  Silo and network shares) and likes how finely its settings can be tuned compared with Supernova's. Read its docs
+  (docs.plozz.app) on 25 Nov. Candidates for Supernova, to choose from at the Settings review (freedom to rethink):
+  - **Playback:** rewind on resume (0–60 s, default 5); skip "after N seconds" as well as button / instantly, and
+    skip rules per kind (movies / TV shows); hide controls: while playing / while playing or paused / never;
+    version choice: ask every time / choose automatically / server's first, remembered per series; Up Next card on
+    or off; which player tabs show (Chapters, Cast, Episodes, Continue Watching); default zoom (normal, crop black
+    bars, crop, stretch, custom %) remembered per movie or series; manual audio and subtitle delay.
+  - **Audio / subtitles:** preferred language Original / device / a language, optionally separate for movies and
+    TV shows; prefer lossless audio; **two subtitle languages at once**; subtitles at the foot of the screen or of the
+    picture, wrapped lines growing up / centre / down, move up out of the controls' way; ignore the file's
+    positions, colours, bold and italic, and override ASS/SSA styling; forced, prefer SDH, only SDH.
+  - **Home / pages:** **spoiler protection** (blur or replace unwatched episode pictures, hide their titles and
+    descriptions, hide ratings until watched); Continue Watching card style and what OK does (play or open
+    Details); hide watched titles in Recently Added and the hero; unwatched flag and episode count on posters; show
+    age badges on or off; trailers off / server only / server + YouTube, Home autoplay muted, Details background
+    (still / trailer / theme music with volume); rating sources and their order; **Circadian mode** (warms and dims
+    the app at night, by sunset or set times).
+  - Claude's view: take the handful that add real control without turning Settings into a cockpit; the rest stay
+    here. Plozz's way of splitting settings into an "everyone" level and per-title memory matches our For This
+    Series.
 
 ## From this session (4 Nov 2026)
 - **Discovery in Search** — owner: "maybe in the future but not for now". Search stays library-only in 0.156
@@ -58,6 +75,11 @@ Items already built or scheduled are left out (see the bottom of this file).
   showing Seerr's state (Request · Requested · Downloading · Available); Settings › Services gets a Seerr row
   (address, API key typed with the one keyboard, Test). Seerr is the merged Overseerr / Jellyseerr; its API takes a
   TMDB id. Could later reach More Like This and Details. Polish phase: design after the current page reviews.
+  **Plozz already does this** (docs.plozz.app/media-requests, /library, /discover; read 25 Nov): Search shows a "Not
+  in Your Library" section with Request; states Pending approval · Requested · Requested · Unreleased · Downloading
+  · Available; "Request Seasons" for missing seasons of a show in the library; a Discover page (Trending, Popular,
+  Upcoming) with an "Available now" filter; sign-in with a Seerr account or the media server's account, or an
+  admin API key with "Request as" a restricted user. A good model to follow.
 - **Rectangular QR codes** — not used because most phone cameras can't read them; square kept (item 32).
 
 ## Parked ideas from the older registers
