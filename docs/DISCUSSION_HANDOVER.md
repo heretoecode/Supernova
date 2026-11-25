@@ -1,9 +1,30 @@
-# Discussion handover (updated 19 Nov 2026)
+# Discussion handover (updated 25 Nov 2026)
 
-## 25 Nov — Player done (start here next time)
-- **Player done:** page sheet `docs/design/pages/PLAYER.md` (mock-ups `player-v16/tv/01`–`13`). Done so far: library
-  pages, Home, Details, Player. Next page: owner's choice (left: Search, Files, Settings, Preparing playback is part of
-  the player's title block). At the Files review: Excluded from hero; Fix match showing the file.
+## 25 Nov — START HERE (new discussion chat)
+**Phase:** polish, page by page; designs and planning only, no coding (CLAUDE.md "Polish phase").
+**Done and written up:** library pages (LIBRARY.md), Home (HOME.md + RULES §14d), Details (DETAILS.md, rewritten
+21 Nov), Player and Playback Settings (PLAYER.md, written 25 Nov). Every decision is also in `docs/0.158/BRIEF_0158_B.md`
+(sections "Library toolbar review" … "Player page sheet"), which Supernova Coding merges before each item.
+**Still to review:** Search (SEARCH.md), Files (FILES.md), Settings (SETTINGS.md). Owner picks the order.
+**Waiting at those reviews:**
+- Files: Library Care › **Excluded from hero** (new, approved in principle only, mock-up `home-v3/tv/17`); **Fix match
+  shows the file name and location**; the approved **To fix** row; bug M1 (wrong TV matches, REVIEW_0158).
+- Settings: the stepper rule (RULES §8: more than two choices step with Left / Right) applies to every row with 3+
+  chips; the Seek preview setting (Off · Chapter pictures · Video frames).
+**How we work (owner):** mock-ups for the TV at 1920 × 1080 on the speckle go to Google Drive › Supernova › Media ›
+From Claude › a dated folder; renderers live next to them in `docs/design/proposals/<topic>/render*.js` (fonts:
+`npm pack @fontsource/roboto@5.0.13`, FONT_DIR = its `files`). Look at every render before uploading (check the
+speckle drew: one renderer page per frame, speckle script in its own block). Record each decision the same day in
+RULES, the page sheet and the brief; push after each change.
+**New rules this week (RULES):** §8 steppers; §14d one hero (1816 × 820 at x 52) and one row (cards 40 px apart,
+focus 8%); one tab behaviour everywhere (the player's); behind the top bar = blur on every page; long lists (two then
+"and N more"); no lone word on a line; keyboard / pickers open under their row; panels' outline and shadow also over
+video; seek preview never a grey box.
+**Before the next coding go-ahead:** ask for the diagnostics report (MobLand delete, 19 Nov 14:30–14:45) and whether
+to check NOVA for new changes (CLAUDE.md).
+
+## 25 Nov — Player done
+- Player page sheet `docs/design/pages/PLAYER.md` (mock-ups `player-v16/tv/01`–`13`).
 
 ## 21 Nov evening — Player review started
 - Player redrawn on today's rules: `player-v16/tv/01`–`07` (Drive › From Claude › 2026-11-21 Player): controls with
