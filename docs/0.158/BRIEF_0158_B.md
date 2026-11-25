@@ -602,6 +602,17 @@ in by hand, our fork is heavily changed):**
 - `565ff59` subtitles' default shadow restored (check against our Outline / Background defaults first).
 - `aos-MediaLib` 14 Nov **lingering local import notifications** (may be behind the stuck "Scanning…" pill).
 Not for a TV, skip: phone cutouts, rotation, double-tap zones, status bars, Android 6 SPDIF, empty playlists.
+**Checked again 25 Nov (unreleased: NOVA's last release is still 6.6.5, 10 Nov; everything below is after it):**
+- `aos-MediaLib a23d4b1`, `62dd006` (23 Nov) **USB library visible again after the TV wakes** (staggered wake) and
+  pending USB recovery kept when Android's scanner starts: matters on the Shield with USB drives.
+- `aos-MediaLib 21c03c3`, `a4e7e8d` (20–22 Nov) and `aos-Video 8576e382` (22 Nov) **Trakt: refreshed tokens saved,
+  stopping random sign-outs**; token refresh tied to the signed-in login; sync state kept when tokens change.
+- `aos-Video 7fca60f3` (23 Nov) **compressed audio (passthrough) kept on TV speaker routes**.
+- `aos-Video 6056f957` (21 Nov) **video keeps playing during notification sounds** (no pause on a ping).
+- Skip (NOVA screens we replaced): `fab3e939` TV details scrolling, `88435fd7` file browser focus after details.
+- **Engine (aos-avos, for the engine version):** `6308ae1`, `66ac7ce`, `dd6439f`, `f26cc61`, `fbd73bc` (21–24 Nov)
+  **audio drift recovery**: PCM clock lag corrected during playback, steadier AudioTrack buffers; plus debug
+  diagnostics. Adds to the Dolby Vision work below.
 **Native engine (not now):** ours is aos-avos at 4 Nov (`5cf3ae9`), 29 commits behind: Dolby Vision profile 7 → 8.1
 conversion and profile 5 reshaping (libdovi), the native half of the picture-subtitle position and size, Dolby
 Vision HDR metadata. That needs a new engine archive build: the roadmap's "Newer NOVA engine stack, as its own
