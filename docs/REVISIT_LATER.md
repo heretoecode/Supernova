@@ -41,9 +41,23 @@ Items already built or scheduled are left out (see the bottom of this file).
 - ~~GitHub cleanup~~ — **done by Claude on 5 Nov 2026** at the owner's request: `CLAUDE.md`, `AGENTS.md`, new README
   and PROJECT_STATUS, `docs/archive/`, and GitHub Issues #31–#102 (source in `docs/issues/`).
 
+## Finer settings, after another player app (owner, 25 Nov 2026) — to discuss
+- The owner uses another player app on a phone and tablet, connected to the same media server, and likes how finely
+  its settings can be tuned compared with Supernova's. Explore it together: list its settings beside ours, then
+  pick what is worth adding (freedom to rethink, CLAUDE.md). Waiting for the app's exact name and a few screenshots
+  of its settings. Natural place: the Settings review.
+
 ## From this session (4 Nov 2026)
 - **Discovery in Search** — owner: "maybe in the future but not for now". Search stays library-only in 0.156
   (`docs/0.155/OWNER_NOTES.md` item 20).
+  **Added 25 Nov 2026 (owner's saved notes): request through Seerr.** Search shows titles not in the library too
+  (from TMDB), clearly apart from library titles; those get a **Request** button that sends the request to the
+  owner's own Seerr server, which passes it to Sonarr / Radarr; the title later appears in the library by itself. A
+  setting turns it on and off. Claude's view: a good fit, as a switch that is off by default (it deliberately bends
+  RULES §18 "the library is the key"); a third Search section after In your library and the Stream groups, its pill
+  showing Seerr's state (Request · Requested · Downloading · Available); Settings › Services gets a Seerr row
+  (address, API key typed with the one keyboard, Test). Seerr is the merged Overseerr / Jellyseerr; its API takes a
+  TMDB id. Could later reach More Like This and Details. Polish phase: design after the current page reviews.
 - **Rectangular QR codes** — not used because most phone cameras can't read them; square kept (item 32).
 
 ## Parked ideas from the older registers

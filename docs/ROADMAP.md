@@ -211,6 +211,8 @@ Ideas kept for later (details in `docs/REVISIT_LATER.md`). "Park that" adds here
 ### To discuss
 
 - Release notes: proper notes for every version (0.156 has two vague lines)
+- Request titles not in the library through Seerr, from Search (owner, 25 Nov; joins Discovery in Search)
+- Finer settings, compared with another player app the owner uses (owner, 25 Nov; at the Settings review)
 
 ### Planned
 
