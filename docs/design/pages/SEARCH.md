@@ -11,7 +11,9 @@ streaming rules, Where to Watch), §22–§23 (headings), §26 (final pass, appr
 badge on thumbnails, 30 px; a pill only for "Resume S2 E3"; no Watched / Unwatched pills; `tv/08`); **Keep search
 history** and **Clear search history** in Settings › Library › Viewing History (off: no Recent searches). Proposed,
 waiting: a fuller landing page (`tv/09`, `10`: tips under the keyboard; Genres and People in your library as artwork
-cards on the right; OK fills the field, `tv/11`), frames 4, 6, 7. Until decided, the rest below stands.
+cards on the right; OK fills the field, `tv/11`), frames 4, 6, 7. **Phone key (owner, 25 Nov: is it needed?):** owner to
+test on the Shield whether the phone app offers its typing box without pressing it (0.157 notes §36: the key was the
+fallback); if yes the key goes from the one keyboard; if not, coding first tries a hidden Android keyboard session. Until decided, the rest below stands.
 
 ## Whole page
 - Plain charcoal, side margin on the top bar's edges (RULES §1). Search is a tool: it opens on OK in the top bar

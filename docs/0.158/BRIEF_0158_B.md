@@ -560,7 +560,9 @@ or underline intersects the line under the tab row.
 - **Search history setting** (owner): Settings › Library › Viewing History gains **Keep search history** (switch, on
   by default; off: nothing is recorded, Recent searches is not shown, the history is cleared) and **Clear search
   history** (Clear; "Done · cleared"). Search's own Clear history stays (Undo notice, `tv/05`).
-- Waiting for the owner: the fuller landing page (`tv/09`–`11`), frames 4, 6, 7, the Phone key.
+- Waiting for the owner: the fuller landing page (`tv/09`–`11`), frames 4, 6, 7. **Phone key:** owner tests on the
+  Shield whether the phone app offers its typing box without the key (0.157 notes §36). Yes: remove the key from the
+  one keyboard. No: first try a hidden Android keyboard session on the box; keep the key only if that fails.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
