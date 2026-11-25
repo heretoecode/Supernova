@@ -139,5 +139,5 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
 
 ## Never opens from Settings
 The old Settings tiles and side panels (`SettingsLayout`'s grid), Android's preference screens, Android's folder
-picker, Android's "Open with" chooser, Android's keyboard except through the Phone key, the Issues Digest, NOVA's
+picker, Android's "Open with" chooser, Android's on-screen keyboard, the Issues Digest, NOVA's
 old About and licence screens. Add them to the no-old-screens test.

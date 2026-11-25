@@ -370,9 +370,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   subtitles search, everything. Any change or fix is made once, in it, and applies everywhere (owner, 12 Nov). No
   screen builds its own keyboard or its own keyboard focus handling.
 - Layout: number row always shown; lower-case QWERTY; `/` after L; `. @` after M; Shift; `#+=` opens the symbols
-  page (ABC returns); bottom row `#+=` · Voice · Space · Delete · Clear · Phone. Forms add Done · Cancel; Search does
-  not. **Phone** opens Android's keyboard on the same box so the phone app can type or paste (owner, 14 Nov; §36);
-  Back or Done returns to these keys. **Password boxes have a show/hide eye** beside the box (owner, 14 Nov).
+  page (ABC returns); bottom row `#+=` · Voice · Space · Delete · Clear. Forms add Done · Cancel; Search does
+  not. **No Phone key (owner, 25 Nov; replaces the key of 14 Nov):** typing or pasting from the phone app works as in
+  any other app, with no button: while our keyboard is open, the box keeps a real Android text session (Android's own
+  keyboard kept out of sight), so the phone app offers its typing box by itself and the text lands in the box. **Password boxes have a show/hide eye** beside the box (owner, 14 Nov).
 - **Focus starts on T** (the most common first letter of film and series titles).
 - **Focus stays on the key you pressed,** however fast you type. Results arriving or the page refreshing never take
   it away (Fix match bug, §27).
@@ -527,6 +528,7 @@ capitalise only the first letter ("2 seasons · 16 episodes", "S1 E4 · 3 of 8 l
 Title Case is for headings and names only.
 
 ## Replaced rules (do not use)
+- The keyboard's Phone key (14 Nov) → no key; the phone app types into the box as in other apps (§15, 25 Nov).
 - Up to five choices as inline chips → two choices as chips, more than two stepped with Left / Right (§8, 21 Nov).
 - Keyboard beside a panel, never covering it → over the panel, straight under the row (§15, 21 Nov).
 - Panels with no outline (5 Nov) / a faint edge over a page (13 Nov) → white outline at 70% plus a dark shadow,

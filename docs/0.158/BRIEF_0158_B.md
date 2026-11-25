@@ -560,9 +560,14 @@ or underline intersects the line under the tab row.
 - **Search history setting** (owner): Settings › Library › Viewing History gains **Keep search history** (switch, on
   by default; off: nothing is recorded, Recent searches is not shown, the history is cleared) and **Clear search
   history** (Clear; "Done · cleared"). Search's own Clear history stays (Undo notice, `tv/05`).
-- Waiting for the owner: the fuller landing page (`tv/09`–`11`), frames 4, 6, 7. **Phone key:** owner tests on the
-  Shield whether the phone app offers its typing box without the key (0.157 notes §36). Yes: remove the key from the
-  one keyboard. No: first try a hidden Android keyboard session on the box; keep the key only if that fails.
+- Waiting for the owner: the fuller landing page (`tv/09`–`11`), frames 4, 6, 7. 
+- **No Phone key (owner, 25 Nov: "I've never needed a special button in other apps"):** remove it from the one
+  keyboard (RULES §15). The phone app only offers its typing box when Android reports an active text session, which
+  our keyboard switches off (0.157 notes §36: `setShowSoftInputOnFocus(false)`, the box never takes focus). Keep a
+  real input connection on the box while our keyboard is open (e.g. the box stays the IME target via
+  `InputMethodManager.restartInput` while the keys hold remote focus), Android's on-screen keyboard suppressed. Check on
+  the Shield with the phone app: typing and pasting land in the box, Search and a password box. If Android truly
+  won't do it without its keyboard showing, tell the owner before adding any button back.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.
