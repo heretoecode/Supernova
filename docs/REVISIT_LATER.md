@@ -368,6 +368,12 @@ is ever wanted back.
     Guest"); **Clear guest** resets it without deleting the user.
   - **"Watch without Alex?" stays** (round 7, `06-v6-01`): opening a Together title alone asks Wait for Alex · Watch
     now · We're both here.
+- **Claude, 25 Nov (rereading against today's rules; owner chose to finish the page reviews first):** three points
+  for next time, plus the Guest mock-up. (1) The top bar is words only since 18 Nov; keep the user menu as the one
+  icon exception (a person, fixed size), or show the user's name? Claude: the icon. (2) "Everything" was a view, but
+  progress is per user since 18 Nov: drop it from the menu (Guest sees everything; Filters Off and Search show the
+  rest)? Claude: drop it. (3) Watching as Together also ticks the episode watched for each person in it? Claude: yes.
+  Before building: redraw on today's look (the Ready rule).
 
 ## Panels whose rows change with a choice (owner, 16 Nov 2026)
 - Idea from the Trakt list row: a choice at the top of a panel ("Row from: Your library · Trakt list") swaps the rows
