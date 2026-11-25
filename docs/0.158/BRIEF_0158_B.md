@@ -513,6 +513,30 @@ or underline intersects the line under the tab row.
 - Title block = Preparing playback's (facts line with the badge first, no reasons line); clock in the bar's regular
   weight; chapter and episode cards with the artwork edge and the corner badge, no bars; no stub chapters under 10 s.
 
+### Playback Settings: faults on the Shield and the lists (owner, 22 Nov; photos; mock-ups `player-v16/tv/11`–`13`)
+- **Bugs (fix first):**
+  - **Every value sits half a row above its label** (Subtitles, Audio): switches, "English ›", "− 0 ms +", "Medium",
+    the colour dots, "Off": each row's right-hand side must sit on that row's centre line (RULES §7). Test: each
+    row's value is vertically centred on its label.
+  - **Track values not aligned:** flag, language and pills sit on different heights ("chi" lower than its pills, the
+    flag higher). Flag, name and pills on one centre line.
+  - **Bare language codes:** "chi" must read **Chinese** (words everywhere; RULES §9).
+  - **Panel colour:** light and see-through over bright video; must be `#16181C` at 99% with the white outline and
+    shadow (RULES §11).
+  - **Focused tab:** white box with grey text; text and icon must be black (RULES §3).
+  - **Audio boost** is still a switch with a stray "Off" above it: build the stepper (Off · Low · Medium · High).
+  - **Spatial audio** shows dimmed with no switch: give it its switch (or hide the row with a reason line if the
+    device can't do it).
+  - **Subtitle track** row shows only the flag and "English" with no pills; Text size shows "Medium" without its
+    stepper arrows when focused: check against `tv/04`.
+- **The lists (approved designs, now drawn):** each opens **on top** of the panel (panel darkened about 45%, pushed
+  back to 96%, the row you came from visible), no title, Back returns to the row.
+  - **Subtitle track (`tv/11`):** Off · In The File (flag, language in words, pills Original / SDH / Forced / region)
+    · Subtitle Files (name over the file name, a .srt pill); tick on the current; OK chooses and closes.
+  - **Download subtitles (`tv/12`):** Language ‹ English › stepper · Results (release name over "Matches your file ·
+    12,400 downloads", pills Best match / SDH / Forced); OK downloads, then it is the ticked track.
+  - **Audio track (`tv/13`):** flag, language, pills (Original · format · channels · Commentary); tick on the current.
+
 ### Details page sheet (21 Nov)
 `docs/design/pages/DETAILS.md` is rewritten from the six review rounds above and wins over them where they differ.
 
