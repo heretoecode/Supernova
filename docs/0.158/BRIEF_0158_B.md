@@ -552,7 +552,7 @@ or underline intersects the line under the tab row.
   episode Sunday"; "New episode every Sunday" once the last three episodes aired on that weekday and the next is
   due. Nothing for ended shows, unknown dates or later dates. Not focusable. Refreshed with the title's TMDB details.
 - Details tab › Status: "Returning · S2 E4 on Sun 30 Nov" when the date is known (else "Returning · 2 seasons"). No
-  separate "Next episode" row (Claude's proposal, 25 Nov, waiting for the owner): the columns keep equal rows.
+  separate "Next episode" row (owner, 25 Nov, `next-episode/tv/04`): the columns keep equal rows.
 
 ### Reports and Backups folders (owner, 19 Nov: Claude's recommendation)
 - **Reports:** always saved to Download › Supernova; no Reports folder row to change it.

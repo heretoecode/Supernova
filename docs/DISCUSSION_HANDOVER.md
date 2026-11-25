@@ -33,7 +33,7 @@ to check NOVA for new changes (CLAUDE.md).
 - Also 25 Nov: owner's saved notes → Parked: Seerr requests from Search (Plozz already does it), finer settings
   after Plozz (candidates listed). **Next episode on the hero** approved in principle for Details, before its coding:
   `next-episode/tv/01`–`03` (Drive › 2026-11-25 Next episode on the hero), A chosen (above the logo); Details tab: date folded into
-  Status, no new row (proposed, waiting). In BRIEF_0158_B and DETAILS.md.
+  Status, no new row (agreed, `tv/04`). In BRIEF_0158_B and DETAILS.md.
 
 ## 25 Nov — Player done
 - Player page sheet `docs/design/pages/PLAYER.md` (mock-ups `player-v16/tv/01`–`13`).
