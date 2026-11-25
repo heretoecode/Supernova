@@ -564,7 +564,9 @@ or underline intersects the line under the tab row.
   (three), Genres in your library (artwork cards with counts) and People in your library (cast cards with counts);
   without history, two rows of genres. OK on a card fills the field (`tv/11`). Details in SEARCH.md › Before typing.
   **The tips stay under the keyboard at all times** (owner, 25 Nov), with results too; not focusable.
-- Waiting for the owner: frames 4, 6, 7, `tv/11`. 
+- **Approved (owner, 25 Nov):** frames 4 ("Looking on your services" with the small ring), 6 (nothing in the library),
+  7 (Voice: "Listening…"), 11 (OK on a genre). **Search is done:** build from `docs/design/pages/SEARCH.md`, which
+  wins over this section where they differ. 
 - **No Phone key (owner, 25 Nov: "I've never needed a special button in other apps"):** remove it from the one
   keyboard (RULES §15). The phone app only offers its typing box when Android reports an active text session, which
   our keyboard switches off (0.157 notes §36: `setShowSoftInputOnFocus(false)`, the box never takes focus). Keep a

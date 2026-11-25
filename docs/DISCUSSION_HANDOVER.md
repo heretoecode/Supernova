@@ -3,9 +3,9 @@
 ## 25 Nov — START HERE (new discussion chat)
 **Phase:** polish, page by page; designs and planning only, no coding (CLAUDE.md "Polish phase").
 **Done and written up:** library pages (LIBRARY.md), Home (HOME.md + RULES §14d), Details (DETAILS.md, rewritten
-21 Nov), Player and Playback Settings (PLAYER.md, written 25 Nov). Every decision is also in `docs/0.158/BRIEF_0158_B.md`
+21 Nov), Player and Playback Settings (PLAYER.md, written 25 Nov), Search (SEARCH.md, 25 Nov). Every decision is also in `docs/0.158/BRIEF_0158_B.md`
 (sections "Library toolbar review" … "Player page sheet"), which Supernova Coding merges before each item.
-**Still to review:** Search (SEARCH.md), Files (FILES.md), Settings (SETTINGS.md). Owner picks the order.
+**Still to review:** Files (FILES.md), Settings (SETTINGS.md). Owner picks the order. (Search done 25 Nov.)
 **Waiting at those reviews:**
 - Files: Library Care › **Excluded from hero** (new, approved in principle only, mock-up `home-v3/tv/17`); **Fix match
   shows the file name and location**; the approved **To fix** row; bug M1 (wrong TV matches, REVIEW_0158).
@@ -28,7 +28,7 @@ to check NOVA for new changes (CLAUDE.md).
   Search): before typing, a show and its world, a person with more than fits plus Menu on a library title, streaming
   still loading, Clear history's Undo notice, nothing in the library, the Voice key listening, progress A or B.
 - Decided: progress A; Keep / Clear search history in Settings. Landing approved (`tv/09`, `10`). No Phone key
-  (RULES §15). Waiting: frames 4, 6, 7, `tv/11`; then redraw the final set without the Phone key.
+  (RULES §15). **Search done (25 Nov):** SEARCH.md rewritten; final set on Drive › 2026-11-25 Search › Final.
 - Also 25 Nov: owner's saved notes → Parked: Seerr requests from Search (Plozz already does it), finer settings
   after Plozz (candidates listed). **Next episode on the hero** approved in principle for Details, before its coding:
   `next-episode/tv/01`–`03` (Drive › 2026-11-25 Next episode on the hero), A chosen (above the logo); Details tab: date folded into
