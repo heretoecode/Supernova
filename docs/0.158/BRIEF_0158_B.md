@@ -602,6 +602,14 @@ in by hand, our fork is heavily changed):**
 - `565ff59` subtitles' default shadow restored (check against our Outline / Background defaults first).
 - `aos-MediaLib` 14 Nov **lingering local import notifications** (may be behind the stuck "Scanning…" pill).
 Not for a TV, skip: phone cutouts, rotation, double-tap zones, status bars, Android 6 SPDIF, empty playlists.
+**Must do: TheIntroDB API v4 (found 25 Nov; deadline).** Our `aos-MediaLib` (both `claude/supernova-github-access-yfhe89`
+and `v6.4`) still calls `https://api.theintrodb.org/v3/`; **TheIntroDB removes v2 / v3 on 18 Jan 2027**, after which
+online skip times from TheIntroDB stop. Bring in NOVA's `aos-MediaLib 30fe48c` (18 Oct: move to `/v4`, read the
+`tvdb_id` the v4 response is keyed by, requests still by `tmdb_id` so seasons stay in TMDB numbering, ignore `end_ms
+== 0`) and `e5886e0` (28 Oct: validate bounds by type: intro / recap need a positive end; credits / preview need a
+positive start, may stay open-ended; otherwise `{start_ms: 0, end_ms: null}` credits spanned the whole episode; with
+its regression tests). The other provider (introdb.app) is unaffected. Our Skipping settings (Look up skip times
+online) are unchanged.
 **Checked again 25 Nov (unreleased: NOVA's last release is still 6.6.5, 10 Nov; everything below is after it):**
 - `aos-MediaLib a23d4b1`, `62dd006` (23 Nov) **USB library visible again after the TV wakes** (staggered wake) and
   pending USB recovery kept when Android's scanner starts: matters on the Shield with USB drives.
