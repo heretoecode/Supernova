@@ -4,6 +4,34 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
+## 0.158.11 (code 1591) — 26 Nov 2026: the Files page to its sheet
+**Files**
+- Browsing: folders show "Folder · 31 videos · 48.6 GB"; a folder with no videos says "No videos in this folder" with
+  Show all files; a folder's menu offers only what applies: Add to library or Scan this folder, and Fix match on a
+  folder holding one title.
+- The connection form: Type opens a short menu with each kind's line; Encryption always sits under it, greyed with
+  its reason for SFTP ("Always on with SFTP") and SMB ("Set by the server"); an icon on every row.
+- Connections › Advanced › Network options (moved from Settings): Windows shares, finding devices, SFTP.
+  Test answers in the row: "Connected" or "Can't reach it · check it's switched on and on this network".
+- Library Care: Couldn't be read offers Try again · It plays fine; Not matched shows a best guess from the file name
+  and offers Fix match · It's right, and says when new titles are still being matched; **To fix** lists titles TMDB
+  no longer knows; **Kept by you › Excluded from hero** lists them with Include again · Include all again; Missing
+  files ends with a short note on what each button does.
+- Fix match: This file (name, where and size, what it is matched as now), Best match on the first result, and Match
+  and return · Match and stay on their own line under the focused match.
+- Scanning: Scan one source opens a menu of every source with where it stands (Waiting, Scanning · 42 %, its last
+  scan, Couldn't connect); recent scans and Show all scans open their Scan details; the tab bar adds "· 2 more
+  waiting".
+
+**Also**
+- Player: Spatial audio keeps a clear switch, with "Not on this device" where it can't work; the Chapters · Episodes
+  line fades at both ends.
+- Delete warnings: "Also remove it from your Trakt history" now works.
+- Search: Genres in your library has the tag icon.
+- From NOVA (25 Nov): the skip button gets focus back once the controls fade; two shows with the same title (e.g. a
+  2005 original and a 2024 remake) no longer swap episodes.
+- Memory: going from Home or a library page to Files or Settings frees the artwork held in memory (D18).
+
 ## 0.158.10 (code 1590) — signed 26 Nov 2026 (run 45879328975): Search to its sheet; first pass on Home, Details, player and library pages
 **Search**
 - Before you type: your last three searches, then **Genres in your library** (cards with a picture and a count) and

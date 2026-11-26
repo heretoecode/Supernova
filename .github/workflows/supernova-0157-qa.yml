@@ -78,13 +78,13 @@ jobs:
           signing_dir="$RUNNER_TEMP/supernova-foundation-signing"
           signing_log="$RUNNER_TEMP/supernova-0157-signing.log"
           trap 'rm -rf -- "$signing_dir"; rm -f -- "$signing_log"' EXIT
-          python3 source/.github/signing/supernova_0157_qa_signing.py --evidence unsigned/unsigned-conformance.json --apk unsigned/Supernova_0.158.10_unsigned.apk
+          python3 source/.github/signing/supernova_0157_qa_signing.py --evidence unsigned/unsigned-conformance.json --apk unsigned/Supernova_0.158.11_unsigned.apk
           unset SUPERNOVA_P12_BASE64
           build_tools="$ANDROID_HOME/build-tools/36.0.0"
-          "$build_tools/zipalign" -c -P 16 4 unsigned/Supernova_0.158.10_unsigned.apk
+          "$build_tools/zipalign" -c -P 16 4 unsigned/Supernova_0.158.11_unsigned.apk
           if ! "$build_tools/apksigner" sign --ks "$signing_dir/foundation.p12" --ks-type PKCS12 \
             --ks-pass env:SUPERNOVA_STORE_PASSWORD --ks-key-alias "$SUPERNOVA_KEY_ALIAS" --key-pass env:SUPERNOVA_KEY_PASSWORD \
-            --out "$RUNNER_TEMP/supernova-0157-qa.apk" unsigned/Supernova_0.158.10_unsigned.apk > "$signing_log" 2>&1; then
+            --out "$RUNNER_TEMP/supernova-0157-qa.apk" unsigned/Supernova_0.158.11_unsigned.apk > "$signing_log" 2>&1; then
             echo 'QA signing failed; secret-scope diagnostics are withheld.'
             exit 1
           fi
@@ -93,7 +93,7 @@ jobs:
           set -euo pipefail
           build_tools="$ANDROID_HOME/build-tools/36.0.0"
           python3 source/.github/signing/verify_supernova_0157_qa_apk.py \
-            --apk "$RUNNER_TEMP/supernova-0157-qa.apk" --unsigned unsigned/Supernova_0.158.10_unsigned.apk --evidence unsigned/unsigned-conformance.json \
+            --apk "$RUNNER_TEMP/supernova-0157-qa.apk" --unsigned unsigned/Supernova_0.158.11_unsigned.apk --evidence unsigned/unsigned-conformance.json \
             --source source --apksigner "$build_tools/apksigner" --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" \
             --aapt2 "$build_tools/aapt2" --publish "$RUNNER_TEMP/supernova-0157-qa-publish"
       - name: Always remove private signing material and secret-scope logs
@@ -106,7 +106,7 @@ jobs:
         with:
           name: supernova-0157-signed-qa
           path: |
-            ${{ runner.temp }}/supernova-0157-qa-publish/Supernova_0.158.10.apk
+            ${{ runner.temp }}/supernova-0157-qa-publish/Supernova_0.158.11.apk
             ${{ runner.temp }}/supernova-0157-qa-publish/public-qa-evidence.json
           if-no-files-found: error
           retention-days: 14
@@ -120,7 +120,7 @@ jobs:
         run: |
           set +x
           python3 source/.github/delivery/drive_upload.py \
-            --apk "$RUNNER_TEMP/supernova-0157-qa-publish/Supernova_0.158.10.apk" \
+            --apk "$RUNNER_TEMP/supernova-0157-qa-publish/Supernova_0.158.11.apk" \
             --receipt "$RUNNER_TEMP/supernova-0157-drive-receipt.json"
       - name: Preserve Drive delivery receipt
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
