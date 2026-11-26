@@ -4,7 +4,7 @@
   "com.archos.mediacenter.video.leanback.Review01572FilesTest",
   "com.archos.mediacenter.video.leanback.files.FilesPageTest",
   "com.archos.mediacenter.video.leanback.search.SearchStreamingPersonTest",
-  "com.archos.mediacenter.video.leanback.search.Review0158cSearchTest"
+  "com.archos.mediacenter.video.leanback.Review0158cSearchTest"
  ],
  "variants": {
   "normal": {}
