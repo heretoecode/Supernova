@@ -157,6 +157,11 @@ When the owner sets Supernova Coding going (often overnight), the aim is a signe
   but wait for a run, first book a wake-up with `send_later` (claude-code-remote; about the run's remaining time, e.g.
   40 min, message "Check run <id> and carry on with BRIEF …"), then end the turn; on waking, check the run and carry on.
   Before any turn ends, ask: is everything in the brief built, signed and reported? If not, book the wake-up first.
+- **Signing is not the finish line (owner, 26 Nov).** A signed APK means "there is something to install", not "done".
+  After each signing carry straight on with the brief until its list is empty, day or night; sign each finished page
+  as the next point release so the newest work is always installable. Stop only when nothing in the brief is left.
+- **What the owner is waiting for comes first (owner, 26 Nov).** When a brief holds the owner's redesigned pages, build
+  those first, one page at a time to its sheet, unless the brief says otherwise; fixes fit around them.
 - **Don't stop for questions.** Use best judgement, follow the rules and page sheets, and list every judgement call
   for the owner at the end (with the reason), so they can be changed later.
 - Push after each finished item, so nothing is lost if the session stops.

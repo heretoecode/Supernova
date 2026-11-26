@@ -5,6 +5,26 @@ the latest NOVA changes, and the Settings Backup bug"). Installed on the Shield:
 (Definition of done, Working unattended) to the letter; sign as you go (standing approval), first signing **0.158.8**
 (code 1588), then .9 and so on.
 
+## Part C continued (owner, 26 Nov, after 0.158.9)
+0.158.9 built group 1, B1 and a slice of the pages, then stopped. **The rest of this brief is the job now, and the
+redesigned pages come first.** Work through `REPORT_0158_C.md` › "Not built", line by line, in this order, each page
+finished to its sheet (every action pressed and rendered) before the next:
+1. **Search** (SEARCH.md): landing Genres and People cards, progress badge A, streaming headings, the loading row,
+   the nothing-found panel, the long-press menu on results, Voice's "Listening…".
+2. **Home** (HOME.md, RULES §14d): one shared hero and row component with Details, the filling carousel dot, cards 40 px
+   apart with 8 % focus, row design A and the corner badge, Customise Home (Move · Hide · Edit on the focused row), row
+   settings.
+3. **Details** (DETAILS.md): every round 1–6 item not yet in (tab row line and height, More menu icons, the rest).
+4. **Player** (PLAYER.md): the shared title block, Chapters · Episodes tab look, the 700 px panel, lists opened on top of
+   the panel, Spatial audio's switch, the Seek preview stepper (Off · Chapter pictures · Video frames).
+5. **Library pages** (LIBRARY.md): toolbar line and sizes, Filters / Sort / Order / Columns, captions, Customise page,
+   delete warnings with versions.
+6. **App-wide check** (group 4): every rule checked on every page above.
+7. **NOVA leftovers:** N2's second half with trakt-java 6.22.0, N3, N6, N7, N8, N10, `60df7be7`.
+Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
+carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
+waiting on a run.
+
 ## Before you start
 1. Merge `claude/design-planning-discussion-9poejm` into the working branch (`claude/supernova-github-access-yfhe89`).
    It holds every decision from 19–26 Nov: RULES, page sheets, mock-ups, BRIEF_0158_B's later sections, this brief.
