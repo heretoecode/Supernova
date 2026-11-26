@@ -4,7 +4,7 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
-## 0.158.10 (code 1590) — 26 Nov 2026: Search to its sheet; first pass on Home, Details, player and library pages
+## 0.158.10 (code 1590) — signed 26 Nov 2026 (run 45879328975): Search to its sheet; first pass on Home, Details, player and library pages
 **Search**
 - Before you type: your last three searches, then **Genres in your library** (cards with a picture and a count) and
   **People in your library** (the six with the most titles). OK on a card searches for it.

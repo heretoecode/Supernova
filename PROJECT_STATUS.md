@@ -3,6 +3,12 @@
 Updated 26 November 2026 (discussion: Search and Files reviews finished; FILES.md final; next coding run ready: BRIEF_0158_C › Part C continued). Keep this page short and current: update it at the
 end of every session.
 
+## 0.158 part C continued (26 Nov): **0.158.10 signed** (run 45879328975, from green conformance run 45872415548 on `2f55102`)
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.10.apk`), the one to install. Search to its sheet; first passes on
+Home, Details, player and library pages; item 9; M2–M7 except the Files redesign pieces; D14, D16. Built from
+`claude/supernova-part-c-build-a9mvtg`, fast-forwarded onto the working branch. Next: the Files page (item 10), D18,
+the NOVA ports; see REPORT_0158_C.md › Part C continued › Not built.
+
 ## 0.158 part C (overnight 26 Nov): see `docs/0.158/REPORT_0158_C.md`
 
 Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`; judgement calls

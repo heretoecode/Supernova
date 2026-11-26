@@ -10,7 +10,7 @@ redesigned player.
 
 ## Current version
 
-**0.158.9** (code 1589), signed 26 November 2026. What each APK brought:
+**0.158.10** (code 1590), signed 26 November 2026. What each APK brought:
 [`docs/0.158/RELEASE_NOTES.md`](docs/0.158/RELEASE_NOTES.md) (one section per version).
 
 **0.158** is the redesign version, built in two parts:
