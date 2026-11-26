@@ -1,4 +1,4 @@
-com.uwetrottmann.trakt5:trakt-java:6.21.0
+com.uwetrottmann.trakt5:trakt-java:6.22.0
 Archive SHA-256: 7d0625a85014133f0a9c0cdd020933d2a60fcfe1329403bc143ae68e31df0024
 Licence: Apache-2.0
 

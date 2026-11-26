@@ -1191,7 +1191,7 @@
       "text_sha256": "3d00fa4d3816f3c677f0706120fcb707e8e2fe51f3f7eb188bab65b37a5887b6"
     },
     {
-      "id": "com.uwetrottmann.trakt5:trakt-java:6.21.0",
+      "id": "com.uwetrottmann.trakt5:trakt-java:6.22.0",
       "name": "trakt-java",
       "version": "6.21.0",
       "licence": "Apache-2.0",
