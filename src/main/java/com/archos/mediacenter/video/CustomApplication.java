@@ -1558,6 +1558,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     private long previewRefreshAt, previewRefreshRequestedWallTime;
     private boolean previewHasForegrounded;
     private String previewForegroundTrigger = "startup";
+    /** D14: the fixed six hours for now; Settings › Library › Look for new videos will set it later. */
+    static final long SCAN_AGAIN_AFTER_MS = 6L * 60 * 60 * 1000;
     private final SharedPreferences.OnSharedPreferenceChangeListener previewScanPreferences = (prefs, key) -> {
         if ("auto_rescan_on_app_restart".equals(key) || NetworkAutoRefresh.AUTO_RESCAN_PERIOD.equals(key))
             requestPreviewNetworkRefresh();
@@ -1584,8 +1586,12 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             long lastAttempt = prefs.getLong(PREVIEW_AUTO_SCAN_ATTEMPT, 0);
             long sinceLast = now - Math.max(lastScan, lastAttempt);
             boolean rested = sinceLast < 0 || sinceLast >= PREVIEW_AUTO_SCAN_REST_MS;
-            boolean due = rested && (previewScanOnReturn && NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)
-                || period > 0 && now - lastScan >= period);
+            // D14 (owner approved the rule, 26 Nov): servers are scanned again only when their last scan is over six
+            // hours old, on return or on the timer; Scan library and Scan one source still scan at once.
+            boolean stale = now - lastScan >= SCAN_AGAIN_AFTER_MS;
+            boolean due = rested && stale && (previewScanOnReturn
+                                                  && NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)
+                                              || period > 0 && now - lastScan >= period);
             if (previewScanOnReturn && !rested)
                 previewScanOnReturn = false;
             if (due
