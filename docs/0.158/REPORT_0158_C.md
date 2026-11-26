@@ -106,30 +106,42 @@ working branch (J20).
 - **Bugs:** M2 (already-gone deletes), M6 (rename), M7 (By Library Page size); Your Library gains By Source and
   Biggest Movies.
 
-### Not built (plain words)
-- **Home:** the row component is not yet literally shared with Details' rows (Episodes, Extras, More Like This still
-  use their own cards); Excluded from hero list in Library Care; the off-screen text label that sometimes takes focus
-  (D17) is not found yet.
-- **Details:** Episodes tab's season card, Extras player, More Like This "On Netflix" rows, the Subtitles side panel
-  (Built In · Subtitle Files · Online) and Find subtitles online, the Artwork panel's redesign, the hero's foot peeking
-  above the tabs, the four kinds' Details tab rows, the blur behind the top bar.
-- **Player:** the title block shared with Preparing playback; Chapters · Episodes tab look; the lists opened on top of
-  the panel; Spatial audio's switch (it shows greyed because the Shield's Android has no spatialiser; a render check
-  is still to do).
-- **Search:** "Stream more from <person>"; the genre heading icon is the funnel, not a tag.
-- **Library pages:** Filters / Sort / Order / Columns redraws; Customise page panel redraw; the Not in library pill on
-  show deletes; Trakt history removal on delete (the switch shows but does nothing).
-- **App-wide check (item 6):** the speckle, small boxes, focus and path, menus and panels were not re-checked page by
-  page; the artwork edge is still 0.75 dp at 60 % (RULES says solid 1 px) and the focus ring 3 dp (RULES 4 px).
-- **Files (item 10):** Scan library narration; browsing changes (sort menu, folder sizes, Fix match on one-title
-  folders, empty folder); Connections form (Type menu, Encryption greyed with reasons, Network options moved); Library
-  Care lists with their "this is fine" buttons, Not matched pending line (M5), To fix, Excluded from hero, the Fix
-  match page, Scan one source menu, focusable recent scans and Scan details.
-- **Bugs:** M3 (marking missing on a failed open), M4 (scans judging folder by folder; it lives in MediaLib's patched
-  scanner), M5 (pending look-ups counted as Not matched); D14 (scan only when there is something to find), D16 (TMDB
-  404 for a title), D18 (memory trims).
-- **NOVA (item 7):** the check of NOVA's commits since 25 Nov and the leftovers (N2's second half with trakt-java 6.22.0,
-  N3, N6, N7, N8, N10, `60df7be7`).
+### Not built (plain words; rewritten 26 Nov after 0.158.10, exactly what remains)
+Worked through in this order; each line is struck off here as it is built.
+
+**(C) Files page (item 10, FILES.md)**
+- C1 Browsing: Sort menu under its button (Name · Date modified · Size, tick), Order following it, folder sizes
+  ("Folder · 31 videos · 48.6 GB"), "No videos in this folder" with Show all files, Fix match on one-title folders,
+  pills that never wobble.
+- C2 Connections: the connection form's Type menu, Encryption greyed with its reason, an icon on every row; Network
+  options moved here from Settings; Test answers in the row.
+- C3 Library Care lists with their "this is fine" buttons (Missing files: Find it again · Remove; Couldn't be read:
+  Try again · It plays fine; Not matched: Fix match · It's right, best guess, the "Matching N new titles" line; To fix
+  with TMDB-gone titles; Excluded from hero: Include again · Include all again).
+- C4 The Fix match page (This file · Matches · Match and return · Match and stay).
+- C5 Scan one source menu; focusable recent scans; Show all scans; the Scan details page; matching and artwork steps
+  and "· n more waiting" in the narration.
+- C6 Your Library read-only (nothing focusable), values stacked.
+
+**(A) Page leftovers (items 1–6)**
+- A1 Details: the hero's foot peeking above the tabs; Episodes tab season card; More Like This "On Netflix" rows; the
+  Subtitles side panel and Find subtitles online; the Artwork panel redesign; Extras player; the four kinds' Details
+  tab rows; the blur behind the top bar.
+- A2 Player: the title block shared with Preparing playback; Chapters · Episodes tab look; lists opened on top of the
+  panel; Spatial audio's switch.
+- A3 Library pages: Filters / Sort / Columns redraws; Customise page panel redraw; Not in library pill on show
+  deletes; Trakt history removal on delete.
+- A4 Home: Details' rows sharing Home's row card; Excluded from hero list (with C3).
+- A5 Search: "Stream more from <person>"; the genre heading's tag icon.
+- A6 App-wide check: speckle, small boxes, focus and path, menus and panels, page by page.
+
+**Item 11**
+- D17: the off-screen text label that takes focus on Home; Settings' three off-screen rows.
+- D18: release artwork and lists on pages left behind; the custom library page's slow frames.
+
+**(E) NOVA (item 7)**
+- Take aos-Video `60df7be7` and aos-MediaLib `220f573` if still unreverted; N2's second half with trakt-java 6.22.0,
+  N3, N6, N7, N8, N10.
 
 ### NOVA check (item 7, 26 Nov, ~17:00 UTC): everything merged since the 25 Nov audit
 Checked NOVA's main branches of aos-Video, aos-MediaLib and aos-FileCoreLibrary; no new release tag.
