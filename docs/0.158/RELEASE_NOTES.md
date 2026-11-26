@@ -25,6 +25,16 @@ The app shows the same notes in About › What's New. Run links and test counts 
 - Home redraws less, and artwork uses less memory.
 - Diagnostics note what was running whenever the screen froze for a second.
 
+**Also new**
+- A TV show with a new episode this week says so above its title ("New episode tomorrow", "New episode every
+  Sunday"), on Details and on Home; Details › Status reads "Returning · S2 E4 on Sun 29 Nov".
+- Settings › Library › Viewing History: Keep search history and Clear search history.
+- The keyboard has no Phone key: the phone app should type and paste into the box straight away (to check).
+- From NOVA: zero-length credits never skip a whole episode; Trakt stays signed in; notification sounds no longer
+  pause the video; one network look-up at start-up.
+- Diagnostics reports open with a health summary: memory per page, start-up time, page switches, freezes and the
+  old NOVA parts that still ran.
+
 ## 0.158.7 (code 1587) — signed 19 Nov 2026
 **Settings and Details**
 - When a video was started: Ask, Resume or Start over
