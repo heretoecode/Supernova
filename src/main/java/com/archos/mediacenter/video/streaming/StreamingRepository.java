@@ -536,7 +536,9 @@ public final class StreamingRepository
         {
             Diagnostics.error("metadata_network_failed", error, "operation_id", operation, "service", service,
                               "endpoint_category", endpointCategory(Uri.parse(url).getPath()), "status", status,
-                              "body_bytes", facts[1]);
+                              "body_bytes", facts[1], "step", "fetching", "reason",
+                              error instanceof StatusException && ((StatusException) error).status == 404
+                                  ? "not_on_tmdb" : error.getClass().getSimpleName());
             throw error;
         }
         finally
@@ -707,7 +709,8 @@ public final class StreamingRepository
 
         StatusException(int status)
         {
-            super("Availability service unavailable");
+            // D16 (0.158.9 report): never "Availability service unavailable" for a 404; say what the answer was.
+            super(status == 404 ? "TMDB doesn't have this (404)" : "TMDB answered " + status);
             this.status = status;
         }
     }

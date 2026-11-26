@@ -279,6 +279,19 @@ public final class PreviewEnrichmentQueue {
             Diagnostics.event("metadata_package_stage", "operation_id", operation, "media_id", key, "section",
                 SECTIONS[stage], "complete", stage + 1 == SECTIONS.length);
         } catch (Exception failure) {
+            // D16 (0.158.9 report): TMDB no longer knows the title itself (404 on its own details, not its extras):
+            // stop asking every half hour, record it plainly and put it in Library Care › To fix.
+            boolean gone = SECTIONS[stage].isEmpty()
+                && failure instanceof StreamingRepository.StatusException
+                && ((StreamingRepository.StatusException) failure).status == 404;
+            if (gone) {
+                db.execSQL("UPDATE jobs SET stage=?,next_at=0,completed_at=? WHERE identity=?",
+                    new Object[] {SECTIONS.length, System.currentTimeMillis(), key});
+                TmdbGone.mark(app, kind, id);
+                Diagnostics.event("tmdb_title_gone", "operation_id", operation, "media_id", id, "kind", kind,
+                    "reason", "TMDB no longer has this title");
+                return;
+            }
             db.execSQL("UPDATE jobs SET next_at=? WHERE identity=?",
                 new Object[] {
                     System.currentTimeMillis() + 30 * 60 * 1000, key
