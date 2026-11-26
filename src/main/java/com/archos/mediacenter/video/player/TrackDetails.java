@@ -10,7 +10,7 @@ public record TrackDetails(String language, boolean original, String format, Str
 {
     public static TrackDetails of(String language, String format, String channels, int disposition) {
         String code = new TrackPreference(language, "", "", false, false).language;
-        String name = code.isEmpty() ? "" : Locale.forLanguageTag(code).getDisplayLanguage(Locale.UK);
+        String name = code.isEmpty() ? "" : LanguageNames.name(code);
         String codec = format == null ? "" : format.trim().toUpperCase(Locale.ROOT);
         String canonical = codec.replaceAll("[^A-Z0-9]", "");
         if (canonical.startsWith("EAC3"))
