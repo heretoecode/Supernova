@@ -62,6 +62,11 @@ final class PreviewFeaturedCard extends FrameLayout {
         copy.setTag("featured.copy");
         copy.setPadding(dp(24), dp(22), dp(18), dp(18));
         card.addView(copy, new LayoutParams(-1, -1));
+        // The next-episode label above the logo (owner, 25 Nov; placement A), the same as on Details.
+        TextView nextEpisode = NextEpisodeLabel.create(c);
+        LinearLayout.LayoutParams nextSize = new LinearLayout.LayoutParams(-2, dp(NextEpisodeLabel.LABEL_DP));
+        nextSize.bottomMargin = NextEpisodeLabel.gap(c);
+        copy.addView(nextEpisode, nextSize);
         TextView title = text(entry == null ? "" : PreviewPages.displayName(entry), 30);
         title.setTag("semantic:featured.title");
         title.setSingleLine(true);
@@ -70,6 +75,8 @@ final class PreviewFeaturedCard extends FrameLayout {
         // Text and logo sit at the bottom of the title box, just above the metadata (0.155 notes #2).
         title.setGravity(Gravity.BOTTOM | Gravity.START);
         copy.addView(title, new LinearLayout.LayoutParams(-1, dp(86)));
+        boolean series = entry != null && (entry.media instanceof Tvshow || entry.media instanceof Episode);
+        NextEpisodeLabel.bindCached(nextEpisode, title, dp(86), series ? entry.onlineId : 0);
         if (entry != null)
             OfficialTitleArtwork.bindStable(title, entry.media);
         else

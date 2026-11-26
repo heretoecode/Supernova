@@ -75,6 +75,8 @@ public final class PreviewMoviePage extends ScrollView {
     private final List<PreviewLandscapeCard> landscapeCards = new ArrayList<>(), extraCards = new ArrayList<>();
     private final TextView title, meta, plot, heroLine, play, trailer, context, moreButton, matchMetadata;
     private final LinearLayout pills;
+    /** Next-episode label above the logo (owner, 25 Nov; placement A; BRIEF_0158_B › Next episode on the hero). */
+    private final TextView nextEpisode;
     private final LinearLayout providerActions;
     private TextView versions;
     private Runnable chooseVersions = () -> {
@@ -194,12 +196,16 @@ public final class PreviewMoviePage extends ScrollView {
         cardCopy.setOrientation(LinearLayout.VERTICAL);
         cardCopy.setPadding(dp(24), dp(18), dp(24), dp(16));
         detailsCard.addView(cardCopy, new FrameLayout.LayoutParams(-1, -1));
+        nextEpisode = NextEpisodeLabel.create(c);
+        LinearLayout.LayoutParams nextSize = new LinearLayout.LayoutParams(-2, dp(NextEpisodeLabel.LABEL_DP));
+        nextSize.bottomMargin = NextEpisodeLabel.gap(c);
+        cardCopy.addView(nextEpisode, nextSize);
         title = text("", 34);
         title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         title.setMaxLines(2);
         title.setGravity(Gravity.CENTER_VERTICAL);
         title.setEllipsize(TextUtils.TruncateAt.END);
-        cardCopy.addView(title, new LinearLayout.LayoutParams(dp(430), dp(96)));
+        cardCopy.addView(title, new LinearLayout.LayoutParams(dp(430), dp(TITLE_BOX_DP)));
         meta = text("", 18);
         meta.setSingleLine(true);
         meta.setEllipsize(TextUtils.TruncateAt.END);
@@ -1083,6 +1089,27 @@ public final class PreviewMoviePage extends ScrollView {
         heroLine.setVisibility(heroLine.length() == 0 ? GONE : VISIBLE);
     }
 
+    static final int TITLE_BOX_DP = 96;
+
+    /**
+     * Shows or hides the next-episode label. Its line is taken from the title box above the facts line, so the facts
+     * line and the buttons never move (placement A).
+     */
+    private void bindNextEpisode(JSONObject enriched) {
+        boolean series = show != null || movie instanceof Episode || "tv".equals(remoteKind);
+        String words = !series || enriched == null ? null
+            : NextEpisodeLabel.words(enriched,
+                                     enrichment == null ? null : NextEpisodeLabel.airDates(enrichment.episodes.values()),
+                                     java.time.LocalDate.now());
+        NextEpisodeLabel.show(nextEpisode, words);
+        int box = dp(TITLE_BOX_DP) - (words == null ? 0 : NextEpisodeLabel.lineHeight(getContext()));
+        ViewGroup.LayoutParams size = title.getLayoutParams();
+        if (size != null && size.height != box) {
+            size.height = box;
+            title.setLayoutParams(size);
+        }
+    }
+
     private void renderDetails(String reason) {
         updateHeroLine();
         int previous = details.getChildCount();
@@ -1098,6 +1125,7 @@ public final class PreviewMoviePage extends ScrollView {
                      technical =
                          factPanel(panels, remoteDetails != null ? "Streaming Availability" : "Technical Information");
         JSONObject enriched = enrichment != null ? enrichment.details : remoteDetails;
+        bindNextEpisode(enriched);
         Episode selectedEpisode = movie instanceof Episode ? (Episode)movie : null;
         JSONObject episodeFacts =
             selectedEpisode != null && enrichment != null
@@ -1212,7 +1240,7 @@ public final class PreviewMoviePage extends ScrollView {
                  enriched.optString("original_title", enriched.optString("original_name")));
             if (show != null || "tv".equals(remoteKind)) {
                 fact(key, "Last air date", enriched.optString("last_air_date"));
-                fact(key, "Series status", enriched.optString("status"));
+                fact(key, "Status", NextEpisodeLabel.status(enriched, java.time.LocalDate.now()));
             }
             fact(key, "Countries", jsonNames(enriched.optJSONArray("production_countries"), "name"));
             JSONObject collection = enriched.optJSONObject("belongs_to_collection");
