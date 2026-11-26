@@ -413,8 +413,9 @@ public final class PreviewMoviePage extends ScrollView {
         ViewParent parent = getParent();
         while (parent != null) {
             if (parent instanceof TopNavigation) {
-                ((TopNavigation)parent).setScrolled(top > 0);
-                ((TopNavigation)parent).setDetailsExpanded(title != null && top > title.getBottom());
+                // DETAILS.md › Behind the top bar: the bar stays over the dimmed, fading content (never hidden).
+                ((TopNavigation)parent).setDetailsScrolled(top > 0);
+                ((TopNavigation)parent).setDetailsExpanded(false);
                 break;
             }
             parent = parent.getParent();

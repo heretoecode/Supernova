@@ -668,6 +668,25 @@ public final class TopNavigation extends LinearLayout {
     }
 
     /** FD-033 lower tabs retain the selected title, without the unrelated application bar. */
+    /**
+     * Details (DETAILS.md › Behind the top bar): scrolled content runs on behind the bar, dimmed and fading out at the
+     * bar's foot; the bar stays, its words on top. Whatever the page under the bar was opened from.
+     */
+    public void setDetailsScrolled(boolean value) {
+        if (scrolled == value)
+            return;
+        scrolled = value;
+        if (scrimAnimation != null)
+            scrimAnimation.cancel();
+        scrimAnimation = ValueAnimator.ofInt(scrimAlpha, value ? 255 : 0);
+        scrimAnimation.setDuration(220);
+        scrimAnimation.addUpdateListener(animation -> {
+            scrimAlpha = (int)animation.getAnimatedValue();
+            invalidate();
+        });
+        scrimAnimation.start();
+    }
+
     public void setDetailsExpanded(boolean expanded) {
         int visibility = expanded ? INVISIBLE : VISIBLE;
         if (bar.getVisibility() != visibility)
