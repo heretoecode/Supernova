@@ -50,6 +50,8 @@ The app shows the same notes in About › What's New. Run links and test counts 
 - Diagnostics record why (item 9): every failure carries its reason, step and kind of source; an unknown reason says so
   with what was tried and the last thing that worked; the summary lists the top reasons; each event is recorded once
   (D15). Player errors are named in words ("file unreadable", "connection lost").
+- New titles still being looked up are not counted as Not matched (M5). A title TMDB no longer has stops being asked
+  about every half hour and is recorded as such, never as "Availability service unavailable" (D16).
 
 ## 0.158.9 (code 1589) — signed 26 Nov 2026 (run 45774774374): Home, player, Search and library pages, plus everything listed under 0.158.8
 **Home**
