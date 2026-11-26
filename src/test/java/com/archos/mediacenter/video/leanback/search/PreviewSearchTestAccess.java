@@ -65,7 +65,9 @@ public final class PreviewSearchTestAccess
             org.robolectric.util.ReflectionHelpers.setField(result, "people", !reason.isEmpty());
             found.add(result);
         }
-        search.present(found, typed, null, search.generation());
+        int newer = search.generation() + 1;
+        org.robolectric.util.ReflectionHelpers.setField(search, "generation", newer);
+        search.present(found, typed, null, newer);
     }
 
     /** Adds the streaming group's "Looking on your services" row under its heading. */

@@ -329,6 +329,8 @@ public final class PreviewSearch extends LinearLayout {
         worker.execute(() -> {
             SearchLanding found = SearchLanding.load(app);
             main.post(() -> {
+                if (landing != null)
+                    return;
                 landing = found;
                 bindLanding();
             });
