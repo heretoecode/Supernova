@@ -1,10 +1,12 @@
 {
- "purpose": "0.158.12: Details rows at Home's card (A4); N7 refresh-rate pause race; Stream more from a person",
+ "purpose": "0.158.12: N7 tests, title block facts line (A2), Not in library pill (A3)",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review01572DetailsTest",
   "com.archos.mediacenter.video.player.PlaybackRouteRecoveryTest",
-  "com.archos.mediacenter.video.leanback.search.SearchStreamingPersonTest",
-  "com.archos.mediacenter.video.leanback.files.FilesPageTest"
+  "com.archos.mediacenter.video.player.TitleBlockFactsTest",
+  "com.archos.mediacenter.video.player.NextHudTest",
+  "com.archos.mediacenter.video.player.PreparingEpisodeLineTest",
+  "com.archos.mediacenter.video.leanback.Review0158cDeleteWarningTest",
+  "com.archos.mediacenter.video.player.Playback141RenderTest"
  ],
  "variants": {
   "normal": {}

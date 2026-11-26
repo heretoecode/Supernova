@@ -82,6 +82,8 @@ public class PlaybackRouteRecoveryTest {
         set("mHasAudio", true);
         set("mSessionPrepared", true);
         set("mAudioOutputSignature", "HDMI-A");
+        // Supernova: the network-recovery policy a mocked Player never builds (start() asks it).
+        set("networkRecovery", new NetworkRecoveryPolicy());
         application = mockStatic(CustomApplication.class);
         application.when(CustomApplication::getAudioOutputSignature).thenReturn("HDMI-A");
     }
