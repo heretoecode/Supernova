@@ -329,7 +329,7 @@
       "kind": "patch",
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova158c-scan-lock.patch",
-      "sha256": "28b62ead580040c8dbe67cd15bd7456b8c3254b61de8e1b36fd0cf7abffdc9a4"
+      "sha256": "c20e60e7947af59c97bb52874381dc3c920ac522ca146105953d3460f57ab542"
     }
   ],
   "supernova155": {

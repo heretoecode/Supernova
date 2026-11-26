@@ -272,7 +272,7 @@ index cabfb4d..92a636c 100644
      {
          for (Member member : new ArrayList<>(MEMBERS.values()))
 diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
-index 0e38597..253426b 100644
+index 0e38597..033a811 100644
 --- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 +++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 @@ -604,8 +604,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
@@ -296,7 +296,7 @@ index 0e38597..253426b 100644
          previewAdded = 0;
          previewUpdated = 0;
          previewBatchId = previewBatch(batchId);
-@@ -1045,8 +1048,28 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+@@ -1045,8 +1048,29 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
          }
          catch (java.io.IOException failure)
          {
@@ -316,7 +316,8 @@ index 0e38597..253426b 100644
 +        }
 +        catch (java.util.concurrent.CancellationException waiting)
 +        {
-+            if (!"process_lock".equals(ScanFailure.currentStage()))
++            // Only the service closing while this scan waited is "waiting"; a scan cancelled on purpose fails.
++            if (!mClosing || !"process_lock".equals(ScanFailure.currentStage()))
 +            {
 +                ScanFailure.record("traversal", waiting);
 +                scanHadDbError = true;
@@ -327,7 +328,7 @@ index 0e38597..253426b 100644
          }
          catch (RuntimeException failure)
          {
-@@ -1063,7 +1086,17 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+@@ -1063,7 +1087,17 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
              // no longer depends on whichever thread happens to finish last.
              try
              {
@@ -346,7 +347,7 @@ index 0e38597..253426b 100644
                  {
                      NetworkScanLedger.finish(member, scanHadDbError || !scanResolved, scanResolved, sFilesFoundCount,
                                               previewAdded, previewUpdated, previewRemoved);
-@@ -1130,8 +1163,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+@@ -1130,8 +1164,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
          ScanIoScope.checkpoint();
          if (ProviderDiscoveryGate.excludes(this, what))
          {
@@ -359,7 +360,7 @@ index 0e38597..253426b 100644
          }
          mFoundFiles = 0;
          sFilesFoundCount = 0;
-@@ -2548,5 +2583,22 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+@@ -2548,5 +2584,22 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
          if (log.isDebugEnabled())
              log.debug("onStart: LifecycleOwner app in foreground");
          isForeground = true;
