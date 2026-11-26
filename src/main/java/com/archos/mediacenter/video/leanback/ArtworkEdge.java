@@ -16,7 +16,8 @@ import android.graphics.drawable.Drawable;
  */
 public final class ArtworkEdge extends Drawable
 {
-    static final int REST_LINE_ALPHA = 153;
+    /** RULES §14 (owner, 19 Nov, judged on the TV): the line at rest is solid white (was 60%). */
+    static final int REST_LINE_ALPHA = 255;
     static final int SHADE_ALPHA = 64;
 
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -36,7 +37,8 @@ public final class ArtworkEdge extends Drawable
     /** Line width in dp: hairline at rest, thick when focused. */
     static float lineDp(boolean focused)
     {
-        return focused ? 3f : 0.75f;
+        // 1 px at rest and a 4 px ring when focused, at 1080p (owner, 19 Nov); dp is half a 1080p pixel.
+        return focused ? 2f : 0.5f;
     }
 
     @Override
