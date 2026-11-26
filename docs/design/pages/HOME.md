@@ -63,7 +63,7 @@ Floating side panel on the right; changes apply live; Back closes.
 | Focus lands on Home in the top bar | Home opens (no OK) |
 | Down from the top bar | The hero's first button |
 | Left / Right on the hero | Previous / next hero (as above); focus stays on the same button |
-| More (hero, the one button) | Its menu beside the button: Details, Play / Resume, then the Details More items; Play / Resume → Preparing playback, Back returns to the button |
+| More (hero, the one button) | Its menu beside the button, **Playback first (owner, 26 Nov)**: Playback (Resume S2 E3 / Play · Play from the start; focus starts on Resume / Play), then Details, then This Title (Mark as watched · Exclude from hero); Play / Resume → Preparing playback, Back returns to the button |
 | OK on the hero artwork / Down then Up | Details for that title (card stays in place) |
 | OK on a row card | That title's Details; Back returns with focus on the same card |
 | OK on a streaming-only card | The title in its service's app (no Supernova page) |

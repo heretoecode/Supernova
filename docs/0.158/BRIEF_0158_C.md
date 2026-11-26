@@ -18,7 +18,8 @@ finished to its sheet (every action pressed and rendered) before the next:
    the nothing-found panel, the long-press menu on results, Voice's "Listening…".
 2. **Home** (HOME.md, RULES §14d): one shared hero and row component with Details, the filling carousel dot, cards 40 px
    apart with 8 % focus, row design A and the corner badge, Customise Home (Move · Hide · Edit on the focused row), row
-   settings.
+   settings. **Hero More menu: Playback first (owner, 26 Nov)**: Resume / Play · Play from the start (focus starts there),
+   then Details, then This Title (Mark as watched · Exclude from hero); same order as the library long-press menu.
 3. **Details** (DETAILS.md): every round 1–6 item not yet in (tab row line and height, More menu icons, the rest).
 4. **Player** (PLAYER.md): the shared title block, Chapters · Episodes tab look, the 700 px panel, lists opened on top of
    the panel, Spatial audio's switch, the Seek preview stepper (Off · Chapter pictures · Video frames).
