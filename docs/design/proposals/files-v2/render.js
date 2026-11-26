@@ -347,7 +347,7 @@ function f06() {
 
 function f07() {
   return bar('ring') + tabs('This Device', null, 'Scanning New arrivals · 40%') + crumb('Movies', 'list')
-    + `<div class="list" style="top:270px">${listRows('New arrivals', { 'New arrivals': { pill: `${ring(24)}&nbsp;Adding · 40%`,
+    + `<div class="list" style="top:270px">${listRows('New arrivals', { 'New arrivals': { pill: `<span style="display:flex;align-items:center;gap:10px;width:100%;padding-left:18px;font-variant-numeric:tabular-nums">${ring(24)}Adding · 40%</span>`,
       line: 'Folder · 12 videos · 96.3 GB · 5 added so far' } })}</div>`
     + arrows() + '<div class="cap2">7 · Add to library (or Scan this folder): progress in the row</div>';
 }

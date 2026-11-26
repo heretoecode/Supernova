@@ -115,6 +115,12 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
   it re-matches everything inside in one go. Not offered on mixed folders. Folder menu then: Open · (Add to library ·
   Scan this folder) · Fix match · Exclude.
 - **"Show all files"** carries its file icon, black on the white focus (drawing fix).
+- **Progress in a pill doesn't wobble (owner, 26 Nov):** pills keep their one fixed width; while working, the ring is
+  pinned at the pill's left inset with the words left-aligned after it and fixed-width digits ("Adding · 40%",
+  "Scanning · 100%" fit).
+
+**Round 2 (owner, 26 Nov): agreed as drawn** (`files-v2/tv/09`–`15`): Advanced › Network options on Connections, Test's
+answer in the row, Remove with Undo, Type as a stepper, the sign-in for a found device.
 
 ## To fix (approved idea, owner 20 Nov; draw at the Files review)
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
