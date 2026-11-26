@@ -42,9 +42,11 @@ public class FoundationApplicationIdentityTest {
         assertEquals("Supernova "+BuildConfig.VERSION_NAME,CustomApplication.getNovaLongVersion());
         assertEquals("v"+BuildConfig.VERSION_NAME,CustomApplication.getNovaShortVersion());
         assertEquals(BuildConfig.VERSION_CODE,CustomApplication.getNovaVersionCode());
-        // Owner, 16 Nov 2026: codes are version x 10 (0.157.1 = 1571): 157, then the point release 1.
-        assertEquals(BuildConfig.VERSION_CODE / 10, CustomApplication.getNovaVersionArray()[1]);
-        assertEquals(BuildConfig.VERSION_CODE % 10, CustomApplication.getNovaVersionArray()[2]);
+        // The version array follows the version name (0.158.10: 158, then the point release 10), not the code,
+        // whose minor x 10 + point rule only reads back for point releases 0-9.
+        String[] parts = BuildConfig.VERSION_NAME.split("\\.");
+        assertEquals(Integer.parseInt(parts[1]), CustomApplication.getNovaVersionArray()[1]);
+        assertEquals(parts.length > 2 ? Integer.parseInt(parts[2]) : 0, CustomApplication.getNovaVersionArray()[2]);
     }
     @Test public void foundationCounterDoesNotRunLegacyPreferenceResetMigrations() throws Exception {
         Assume.assumeTrue(BuildConfig.FOUNDATION);

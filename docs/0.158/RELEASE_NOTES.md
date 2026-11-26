@@ -52,6 +52,14 @@ The app shows the same notes in About › What's New. Run links and test counts 
   (D15). Player errors are named in words ("file unreadable", "connection lost").
 - New titles still being looked up are not counted as Not matched (M5). A title TMDB no longer has stops being asked
   about every half hour and is recorded as such, never as "Availability service unavailable" (D16).
+- Scanning only when there is something to find (D14): coming back within 30 minutes starts nothing; after longer,
+  this device is read again only when its last look is over 6 hours old, and servers likewise.
+- Scans read every file the library knows even if you leave the app (a cut-short list made every file look new), and
+  judge missing files folder by folder: one unreadable folder holds back only its own files (M4).
+- A file found gone when it fails to play shows in Files › Library Care › Missing files at once (M3).
+- Scan library narrates its steps: "Connecting to Seedbox…", "Looking in Seedbox · 42%", "Done · 3 new · 1 missing", or
+  why it couldn't.
+- The artwork edge is solid white, 1 px, and the focus ring 4 px (RULES §14).
 
 ## 0.158.9 (code 1589) — signed 26 Nov 2026 (run 45774774374): Home, player, Search and library pages, plus everything listed under 0.158.8
 **Home**
