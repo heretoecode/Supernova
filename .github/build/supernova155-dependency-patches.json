@@ -336,6 +336,12 @@
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova158c-scan-rule.patch",
       "sha256": "e5a2ee92bb3304791239e664625af4cd8a213a314ec85089f18e998df6644471"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova158c-folder-missing.patch",
+      "sha256": "071bbf2de222c6cff9f704882116912c89595f7d25f433f7e9df64a9f52fdb75"
     }
   ],
   "supernova155": {
@@ -351,6 +357,6 @@
     "note": "0.158: medialib-supernova158-scan-queue (X4, 19 Nov): a network scan waits for the scan lease before its IO scope and five-minute source deadline start, bounded by a one-hour queue deadline instead, so queued scans wait their turn rather than timing out on 'scan lock wait interrupted'; the lease may be taken again by the thread that holds it. Then medialib-supernova158-connection-off (FL3, 19 Nov): titles under a connection turned off on Files › Connections count as excluded until it is turned on again."
   },
   "supernova158c": {
-    "note": "0.158 part C: medialib-supernova158c-scan-lock: D1 (26 Nov diagnostics): an interrupted wait for the scan lock in a matching save is deferred (MATCH_DEFERRED, interrupt kept, title tried on the next run) instead of crashing the app. D2: a scan or local import whose wait for the lock is cut short is not a failure: it shows as queued and runs again from DeferredScans when the app is next in front. medialib-supernova158c-scan-rule: D14 (owner approved the rule, 26 Nov): coming back to the app imports local storage only when it was away 30 minutes or more and the last import is over 6 hours old; Android's files-changed and drive broadcasts still import at once."
+    "note": "0.158 part C: medialib-supernova158c-scan-lock: D1 (26 Nov diagnostics): an interrupted wait for the scan lock in a matching save is deferred (MATCH_DEFERRED, interrupt kept, title tried on the next run) instead of crashing the app. D2: a scan or local import whose wait for the lock is cut short is not a failure: it shows as queued and runs again from DeferredScans when the app is next in front. medialib-supernova158c-scan-rule: D14 (owner approved the rule, 26 Nov): coming back to the app imports local storage only when it was away 30 minutes or more and the last import is over 6 hours old; Android's files-changed and drive broadcasts still import at once. medialib-supernova158c-folder-missing: M4 (owner, 26 Nov): a scan reads every known file even when the app leaves the screen (a cut-short list made every file look new), and judges missing files folder by folder: only files under a folder that couldn't be read are held back; each source's counts are kept for Library Care."
   }
 }
