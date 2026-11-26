@@ -59,6 +59,19 @@ public final class PreviewTrailer {
         web.setFocusable(false);
         web.setFocusableInTouchMode(false);
         layout.addView(web, new FrameLayout.LayoutParams(-1, -1));
+        // DETAILS.md › Extras: a thin progress line at the foot, fed by the embedded player's own time.
+        View progress = new View(activity);
+        progress.setTag("trailer.progress");
+        progress.setBackgroundColor(0xE6FFFFFF);
+        progress.setPivotX(0);
+        progress.setScaleX(0);
+        layout.addView(progress, new FrameLayout.LayoutParams(-1, Math.max(2, dp(activity, 2)), Gravity.BOTTOM));
+        web.addJavascriptInterface(new Object() {
+            @JavascriptInterface
+            public void progress(float fraction) {
+                progress.post(() -> progress.setScaleX(Math.max(0f, Math.min(1f, fraction))));
+            }
+        }, "SupernovaTrailer");
         dialog.setContentView(layout);
         dialog.setOnDismissListener(d -> {
             web.stopLoading();
@@ -83,11 +96,19 @@ public final class PreviewTrailer {
         window.setLayout(size[0], size[1]);
         web.loadDataWithBaseURL("https://" + activity.getPackageName() + "/",
             "<html style='height:100%'><body style='margin:0;background:#000;height:100%;overflow:hidden'>"
-                + "<iframe width='100%' height='100%' src='https://www.youtube.com/embed/" + trailer.mVideoKey
+                + "<iframe id='trailer' width='100%' height='100%' src='https://www.youtube.com/embed/"
+                + trailer.mVideoKey
                 + "?playsinline=1&autoplay=1&controls=0&disablekb=1&fs=0&rel=0&modestbranding=1&iv_load_policy=3"
-                + "&vq=hd1080' frameborder='0' allow='autoplay; encrypted-media' ></iframe></body></html>",
+                + "&vq=hd1080&enablejsapi=1' frameborder='0' allow='autoplay; encrypted-media' ></iframe>"
+                + PROGRESS_SCRIPT + "</body></html>",
             "text/html", "UTF-8", null);
     }
+
+    /** Reads the embedded player's time twice a second and hands the share played to the progress line. */
+    static final String PROGRESS_SCRIPT = "<script src='https://www.youtube.com/iframe_api'></script><script>"
+        + "var player;function onYouTubeIframeAPIReady(){player=new YT.Player('trailer');"
+        + "setInterval(function(){try{var d=player.getDuration();if(d>0)"
+        + "SupernovaTrailer.progress(player.getCurrentTime()/d);}catch(e){}},500);}</script>";
 
     /** The largest 16:9 window that leaves {@code margin} round it on the screen. Pure, for tests. */
     static int[] size(int screenWidth, int screenHeight, int margin) {
