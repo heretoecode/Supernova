@@ -374,11 +374,48 @@ index d7f6d1f..065dec6 100644
      public static void record(String stage, Throwable failure)
      {
          ScanFailure current = CURRENT.get();
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+index d51b63e..b5776a5 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -1277,13 +1277,16 @@ public class VideoStoreImportImpl
+                     continue;
+                 }
+                 PreviewLocalImportTrace.source(path);
+-                if (context instanceof VideoStoreImportService)
+-                {
+-                    ((VideoStoreImportService)context).updateScanNotification(remaining, path);
+-                }
+                 if (SupernovaLibraryPolicy.excluded(context, Uri.parse(path)))
+                     continue;
+                 Job job = new Job(path, id, blacklist);
++                // N4 (NOVA 24c7811, 0.158.8): MediaStore.Files also holds pictures and other rows that are not
++                // videos; only video metadata reading shows progress, so a picture-only pass never leaves a
++                // lingering "0/0" import notification.
++                if (job.mRetrieve && context instanceof VideoStoreImportService)
++                {
++                    ((VideoStoreImportService)context).updateScanNotification(remaining, path);
++                }
+                 if (log.isDebugEnabled())
+                     log.debug("handleScanCursor: scanning {}", job.mPath);
+                 // update property with current file
 diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportService.java b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
-index d7e3ed9..f3b69b6 100644
+index d7e3ed9..e2104e8 100644
 --- a/src/com/archos/mediaprovider/video/VideoStoreImportService.java
 +++ b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
-@@ -690,6 +690,7 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -587,6 +587,11 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+             // commands (remove file, metadata update, etc.) do not go through doImport()
+             // and were previously leaving the foreground notification visible forever.
+             ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
++            // N4 (NOVA 24c7811, 0.158.8): progress is posted with notify(), not startForeground(), so
++            // stopForeground alone cannot remove it while this service stays alive. Clear it even when the last
++            // command had no files to process.
++            if (nm != null)
++                nm.cancel(NOTIFICATION_ID);
+             if (msg.arg1 != DONT_KILL_SELF)
+             {
+                 if (log.isDebugEnabled())
+@@ -690,6 +695,7 @@ public class VideoStoreImportService extends Service implements Handler.Callback
          PreviewLocalImportTrace.begin(this, fullMode);
          previewImportAttempted = false;
          boolean returned = false;
@@ -386,7 +423,7 @@ index d7e3ed9..f3b69b6 100644
          try (ScanProcessLock processLock =
                   ScanProcessLock.acquire(new java.io.File(getFilesDir(), "supernova-scan.lock"), () -> !isForeground))
          {
-@@ -698,7 +699,17 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -698,7 +704,17 @@ public class VideoStoreImportService extends Service implements Handler.Callback
          }
          catch (java.io.IOException failure)
          {
@@ -405,7 +442,7 @@ index d7e3ed9..f3b69b6 100644
          }
          catch (RuntimeException failure)
          {
-@@ -707,8 +718,9 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+@@ -707,8 +723,9 @@ public class VideoStoreImportService extends Service implements Handler.Callback
          }
          finally
          {
