@@ -168,10 +168,13 @@ and backup-nas.local found on the network; empty folders; long file and title na
 Read-only, nothing focusable; Down / Up scroll; arrows as above. Faint row lines (a long read-only list of facts).
 - **Total Library:** All library pages ("520 titles · 1,808 videos", size) · Watched ("318 of 520 titles", %) · Time
   to watch everything (hours) · Picture (4K · 1080p · 720p · SD · HDR counts) · Added this month.
-- **By Library Page:** one row per library page with titles (episodes for TV) and size.
+- **By Library Page:** one row per library page, built-in or the owner's own, every one with its size on the right
+  (bug M7: the third page showed none).
 - **By Source:** note "The videos in your library on each source, not the space left on it."; one row per drive or
   connection (type, folders) with size and video count; last row **By connection type** (USB · SMB · WebDAV · SFTP ·
   this device).
+- **Biggest Movies** (proposed 26 Nov, `tv/22` v2, awaiting the owner): the three largest films, "2019 · 4K HDR ·
+  2 h 51 min", size on the right.
 - **Most Space Per Episode:** the top three shows, "6 episodes · 14.4 GB", "2.4 GB per episode".
 
 ## Never opens from Files

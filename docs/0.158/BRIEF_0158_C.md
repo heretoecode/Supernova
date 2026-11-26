@@ -52,6 +52,10 @@ finished to its sheet (every action pressed and rendered) before the next:
      finished without a match go there; while look-ups are pending, the Not matched page says "Matching N new titles:
      they're not listed while Supernova is still looking them up." Test: a freshly scanned file is not counted as Not
      matched until its look-up has ended.
+   - **M7. Your Library › By Library Page: the third page has no value on the right (owner, 26 Nov, 0.158.9 on the
+     Shield).** Movies and TV Shows show their size on the right; Documentaries shows only its second line ("36 titles ·
+     133 GB") and nothing on the right. Every library page, built-in or the owner's own, uses the same row with its
+     size on the right. Test: a third, user-made library page renders its value like Movies.
    - **M6. Renaming a connection doesn't save (owner, 26 Nov).** A connection renamed in its edit form keeps its old
      name in Connections and Library Care. Save the new name and show it everywhere the connection is named
      (Connections, Library Care, scans, Missing files) at once. Test: rename, leave Files, come back: the new name shows.
