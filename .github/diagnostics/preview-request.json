@@ -1,7 +1,10 @@
 {
- "purpose": "0.158.11: Files scan-one-source menu test",
+ "purpose": "0.158.12: Your Library read-only (C6); Stream more from a person (A5)",
  "tests": [
-  "com.archos.mediacenter.video.leanback.files.FilesPageTest"
+  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
+  "com.archos.mediacenter.video.leanback.search.SearchStreamingPersonTest",
+  "com.archos.mediacenter.video.leanback.search.Review0158cSearchTest"
  ],
  "variants": {
   "normal": {}
