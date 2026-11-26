@@ -4,7 +4,51 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
-## 0.158.5 (code 1585) — building, not signed yet
+## 0.158.8 (code 1588) — fixes from the 26 Nov diagnostics report
+**Fewer sudden closes**
+- Supernova no longer closes by itself while titles are being matched (six times, 20 and 22 Nov) or while it looks
+  for network devices.
+
+**Scans**
+- A scan that is waiting its turn shows as waiting and runs later, instead of being counted as failed.
+- No hourly wake-ups while Supernova is closed; a scan that fell due runs when you open it again.
+- The import notification no longer lingers at 0/0 (NOVA's fix).
+
+**Settings**
+- Up and Down reach every row, the Backup row on System included, and the row you are on is always on screen.
+
+**Everywhere**
+- The remote no longer slips onto a hidden grid on Home and the library pages.
+- A delete that fails says why in plain words. Files your Put.io connection looks after are deleted on Put.io.
+- Where to watch finds TV shows matched long ago, and stops asking about a show it can't find for a day.
+- TV show posters whose saved copy went missing are fetched again instead of staying blank.
+- Home redraws less, and artwork uses less memory.
+- Diagnostics note what was running whenever the screen froze for a second.
+
+## 0.158.7 (code 1587) — signed 19 Nov 2026
+**Settings and Details**
+- When a video was started: Ask, Resume or Start over
+- The OpenSubtitles panel redrawn; the Trakt sign-in in Supernova's look
+- Extras and season rows have icons on their headings
+
+**Files (from 0.158.6, not signed on its own)**
+- Lists on Files no longer show under the toolbar, tabs or top bar
+- Your Library lists your own library page under By Library Page
+- The dot beside Files shows only when Library Care has something to check
+- All scans: the remote moves through the scans instead of jumping to Home
+- The connection form fits on one screen
+- Placeholder cards show again while a folder loads
+- A TV show's More › Artwork opens the artwork side panel
+- The Skip button is the same size as the player's other buttons
+- The Details tab fits on one screen, Cast and Crew included
+- After you close Supernova fully, it opens at Home
+- With two or more files for a title, Play asks which one
+- More Like This in rows: In your library, then one row per service
+- Scans wait their turn instead of timing out while another scan runs
+- Connections can be turned off and on again; smaller buttons on Files rows
+- Save a diagnostic report saves straight to Download › Supernova; action rows show their verb
+
+## 0.158.5 (code 1585) — not signed; everything in it is in 0.158.7
 **Settings**
 - The skip rows read Off · Show button · Skip · Skip when binge-watching. Skip when binge-watching skips every part
   while you binge and shows the button otherwise.
