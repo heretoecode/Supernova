@@ -152,7 +152,9 @@ done from still renders. From now on a redesigned page is done only when all of 
 
 When the owner sets Supernova Coding going (often overnight), **the aim is hands-free (owner, 26 Nov): after the starting
 prompt, finish everything in the brief without the owner.** A signed APK is the result at the end, not a deadline or
-a finish line; there is no "night ending": keep going until the brief is done, signing finished work along the way:
+a finish line; there is no "night ending": keep going until the brief is done, signing finished work along the way.
+**"An APK ready when I wake" means no input needed from the owner, not a time limit: still running when they wake
+is perfect** (owner, 26 Nov):
 - **Never sit idle while a GitHub build runs.** Start it, carry on with the next item, check the run when it ends.
 - **Never end a turn while work remains (owner, 26 Nov).** A finished turn stops the session: nothing wakes it when a
   build ends, so it looks idle all night. Keep working the next item while runs go. If there is truly nothing left to do
