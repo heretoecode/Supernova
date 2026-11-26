@@ -1376,9 +1376,16 @@ public final class PreviewPages extends FrameLayout {
         files = f;
         if (sharedBrowser != null)
             sharedBrowser.browser().locations(files, librarySources, savedLocations, this::networkSection);
-        if (tab == 3 || tab == 0 && snapshot.technical.isEmpty())
-            render("storage_changed");
+        if (tab == 3 || tab == 0 && snapshot.technical.isEmpty()) {
+            // D9 (0.158.8): storage broadcasts come in bursts (27 of 54 renders that changed nothing, 26 Nov);
+            // one render after the burst settles.
+            removeCallbacks(storageRender);
+            postDelayed(storageRender, STORAGE_SETTLE_MS);
+        }
     }
+
+    static final long STORAGE_SETTLE_MS = 400;
+    private final Runnable storageRender = () -> render("storage_changed");
 
     /**
      * Approved empty page (0.156 #43, mock-up suggestions/07): one calm line, why the page is empty and one useful
@@ -1967,6 +1974,16 @@ public final class PreviewPages extends FrameLayout {
                     updates.onChanged(position, count, payload);
                 }
             });
+        boolean unchanged = previous.size() == cells.size() && changes[0] + changes[1] + changes[2] + changes[3] == 0;
+        if (unchanged && !preserve) {
+            // D9: nothing on the page changed, so nothing is re-laid out, re-scrolled or re-enriched.
+            Diagnostics.event("ui_rebuild_skipped", "surface", tab == 0 ? "home" : "library", "reason",
+                              "unchanged_cells", "trigger", reason);
+            removeCallbacks(importRefresh);
+            if (loaded && emptyHome() && isAttachedToWindow())
+                postDelayed(importRefresh, 1000);
+            return;
+        }
         Diagnostics.event(
             "home_page_render", "reason", reason, "tab", tab, "previous_cells", previous.size(), "cells", cells.size(),
             "inserted", changes[0], "removed", changes[1], "moved", changes[2], "rebound", changes[3],
