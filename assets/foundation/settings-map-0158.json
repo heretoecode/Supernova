@@ -4,10 +4,10 @@
  "rows": [
   {
    "id": "N15801",
-   "key": "seek_thumbnails_enabled",
+   "key": "seek_preview_mode",
    "destination": "Playback & Video",
    "subsection": "General",
-   "disposition": "Owner, 18 Nov 2026 (PL7): Seek previews, Experimental, in Playback › General; it had no definition, so Settings never showed it"
+   "disposition": "Owner, 18 Nov 2026 (PL7): Seek previews in Playback › General; PLAYER.md (owner, 21 Nov): Seek preview Off · Chapter pictures · Video frames replaces the switch seek_thumbnails_enabled"
   },
   {
    "id": "N15802",

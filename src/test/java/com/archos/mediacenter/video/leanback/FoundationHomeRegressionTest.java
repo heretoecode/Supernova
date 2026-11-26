@@ -238,11 +238,12 @@ public class FoundationHomeRegressionTest {
                         assertTrue(plot.getTop() - meta.getBottom() >= Math.round(8 * density));
                 }
                 assertTrue(info.getTop() >= 0);
+                // RULES §14d: the text block is anchored to the foot, so the button never moves, whatever the logo.
                 if (meta.getVisibility() == View.VISIBLE) {
                     if (baseline < 0)
-                        baseline = meta.getTop();
+                        baseline = info.getTop();
                     else
-                        assertEquals(baseline, meta.getTop());
+                        assertEquals(baseline, info.getTop());
                 } else
                     assertEquals("No unverified series score reserves a metadata row", View.GONE, meta.getVisibility());
                 assertNull("0.158.8: the hero's one button is More", card.findViewWithTag("hero:play"));
