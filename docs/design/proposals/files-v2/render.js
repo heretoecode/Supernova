@@ -68,7 +68,8 @@ body{background:#111215;font-family:R,sans-serif;width:1920px;overflow:hidden;co
 .bar span{height:52px;padding:0 22px;border-radius:20px;display:flex;align-items:center}
 .bar .open{background:rgba(255,255,255,.15);color:rgba(255,255,255,.72)}
 .bar .sp{flex:1}
-.bar .dot{width:12px;height:12px;padding:0;border-radius:6px;background:#fff;margin-right:-6px}
+.bar .dot{width:12px;height:12px;padding:0;border-radius:6px;background:#fff;margin-right:14px}
+.bar .ring{margin-right:14px}
 .cap2{position:absolute;right:52px;bottom:24px;color:#e8ebf2;font-size:24px;z-index:41;background:rgba(17,18,21,.85);
  padding:4px 12px;border-radius:8px}
 .tabs{position:absolute;left:52px;top:104px;display:flex;gap:8px;font-size:28px}
@@ -187,12 +188,13 @@ function bar(signal = 'dot') {
 }
 
 // focus: tab name focused, or null (then the open tab is underlined)
-function tabs(open, focus) {
+function tabs(open, focus, scan = 'Scan library') {
   const T = [['This Device', I.device], ['Connections', I.conn], ['Library Care', I.care, 5], ['Your Library', I.lib]];
   return `<div class="tabs">${T.map(([n, ic, badge]) => {
     const cls = n === focus ? 'f' : (n === open && !focus ? 'open' : '');
     return `<span class="${cls}">${svg(ic, 26)}${n}${badge ? `<i>${badge}</i>` : ''}</span>`;
-  }).join('')}</div><div class="scanb">${svg(I.scan, 26)}Scan library</div><div class="tline"></div>`;
+  }).join('')}</div><div class="scanb"><span style="font-variant-numeric:tabular-nums">${scan}</span>${svg(I.scan, 26)}</div>
+    <div class="tline"></div>`;
 }
 
 function row(o) {
@@ -225,8 +227,9 @@ function f01() {
 }
 
 // ---------- browsing ----------
-const FOLDERS = [['4K', 'Folder · 86 videos', 'In library'], ['Classics', 'Folder · 31 videos', 'In library'],
-  ['New arrivals', 'Folder · 12 videos', 'Not added'], ['Home videos', 'Folder · no videos', 'Not added']];
+const FOLDERS = [['4K', 'Folder · 86 videos · 1.1 TB', 'In library'], ['Classics', 'Folder · 31 videos · 48.6 GB', 'In library'],
+  ['New arrivals', 'Folder · 12 videos · 96.3 GB', 'Not added'], ['Tidelands (2024)', 'Folder · TV show · 16 episodes · 35.2 GB',
+  'In library']];
 const FILES = [['The Last Crossing (2025).mkv', '2025 · 18.7 GB', 'In library'],
   ['Northern Lights · Directors Cut · Remastered (2021) [2160p HDR10 DV].mkv', '2021 · 62.4 GB', 'In library'],
   ['Paper Harbour (2024).mkv', '2024 · 9.8 GB', 'In library'],
@@ -264,8 +267,8 @@ function f03() {
     + `<div class="list" style="top:270px">${listRows('')}</div>`
     + `<div class="menu" style="left:1290px;top:262px">
       <div class="it f">${svg(I.name, 26)}Name<span class="tk">${svg(I.tick, 24)}</span></div>
-      <div class="it">${svg(I.date, 26)}Date modified</div>
-      <div class="it">${svg(I.size, 26)}Size</div></div>`
+      <div class="it">${svg(I.date, 26)}Date modified<span class="tk" style="visibility:hidden">${svg(I.tick, 24)}</span></div>
+      <div class="it">${svg(I.size, 26)}Size<span class="tk" style="visibility:hidden">${svg(I.tick, 24)}</span></div></div>`
     + arrows() + '<div class="cap2">3 · Sort drops down under its button</div>';
 }
 
@@ -284,12 +287,14 @@ function card(o, k) {
     pic = `<div class="mos">${[0, 1, 2, 3].map(j => `<div style="background:${art(k + j)}"></div>`).join('')}</div>`;
   } else if (o.kind === 'folder') {
     pic = `<div class="plain">${svg(I.folder, 64)}</div>`;
+  } else if (o.kind === 'folderart') {
+    pic = `<div class="art" style="background:${art(k + 5)}"></div>`;
   } else if (o.kind === 'other') {
     pic = `<div class="plain">${svg(I.film, 64)}</div>`;
   } else {
     pic = `<div class="art" style="background:${art(k + 3)}"></div>`;
   }
-  const icon = o.kind === 'folder' ? svg(I.folder, 26) : '';
+  const icon = o.kind.startsWith('folder') ? svg(I.folder, 26) : '';
   return `<div class="card${o.focus ? ' focus' : ''}">${pic}<div class="fade"></div><span class="cpill">${o.pill}</span>
     <div class="ct">${icon}<div><div class="c1">${o.name}</div><div class="c2">${o.line}</div></div></div>
     <div class="e"></div></div>`;
@@ -297,21 +302,22 @@ function card(o, k) {
 
 function f04() {
   const cards = [
-    { kind: 'folder', mosaic: true, name: '4K', line: '86 videos', pill: 'In library' },
-    { kind: 'folder', mosaic: true, name: 'Classics', line: '31 videos', pill: 'In library' },
-    { kind: 'folder', name: 'New arrivals', line: '12 videos', pill: 'Not added', focus: true },
-    { kind: 'folder', name: 'Home videos', line: 'No videos', pill: 'Not added' },
+    { kind: 'folder', mosaic: true, name: '4K', line: '86 videos · 1.1 TB', pill: 'In library' },
+    { kind: 'folder', mosaic: true, name: 'Classics', line: '31 videos · 48.6 GB', pill: 'In library' },
+    { kind: 'folder', name: 'New arrivals', line: '12 videos · 96.3 GB', pill: 'Not added' },
+    { kind: 'folderart', name: 'Tidelands (2024)', line: 'TV show · 16 episodes', pill: 'In library', focus: true },
     { kind: 'lib', name: 'The Last Crossing', line: '2025 · 18.7 GB', pill: 'In library' },
     { kind: 'lib', name: 'Northern Lights · Directors Cut · Remastered', line: '2021 · 62.4 GB', pill: 'In library' },
     { kind: 'lib', name: 'Paper Harbour', line: '2024 · 9.8 GB', pill: 'In library' },
     { kind: 'other', name: 'family-holiday-2019.mp4', line: '3.1 GB', pill: 'Not added' },
   ];
-  const menu = `<div class="menu" style="left:1356px;top:290px">
-    <div class="it f">${svg(I.open, 26)}Open</div><div class="it">${svg(I.add, 26)}Add to library</div>
-    <div class="it">${svg(I.scan, 26)}Scan this folder</div><div class="it">${svg(I.exclude, 26)}Exclude</div></div>`;
+  const menu = `<div class="menu" style="right:72px;top:530px">
+    <div class="it f">${svg(I.open, 26)}Open</div>
+    <div class="it">${svg(I.scan, 26)}Scan this folder</div><div class="it">${svg(I.fix, 26)}Fix match</div>
+    <div class="it">${svg(I.exclude, 26)}Exclude</div></div>`;
   return bar() + tabs('This Device', null) + crumb('Movies', 'grid')
     + `<div class="grid">${cards.map(card).join('')}</div>` + menu
-    + arrows(286) + '<div class="cap2">4 · Grid, and the menu on a folder</div>';
+    + arrows(286) + '<div class="cap2">4 · Grid, and the menu on a one-title folder (Fix match offered)</div>';
 }
 
 function f05() {
@@ -340,9 +346,9 @@ function f06() {
 }
 
 function f07() {
-  return bar('ring') + tabs('This Device', null) + crumb('Movies', 'list')
+  return bar('ring') + tabs('This Device', null, 'Scanning New arrivals · 40%') + crumb('Movies', 'list')
     + `<div class="list" style="top:270px">${listRows('New arrivals', { 'New arrivals': { pill: `${ring(24)}&nbsp;Adding · 40%`,
-      line: 'Folder · 12 videos · 5 added so far' } })}</div>`
+      line: 'Folder · 12 videos · 96.3 GB · 5 added so far' } })}</div>`
     + arrows() + '<div class="cap2">7 · Add to library (or Scan this folder): progress in the row</div>';
 }
 

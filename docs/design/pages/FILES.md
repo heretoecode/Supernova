@@ -109,9 +109,12 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
 - **Menus reserve the tick column** on every row (Sort: "Date modified" must fit its tick); drawing fix.
 - **Folder size on folder rows (owner):** "Folder · 31 videos · 48.6 GB"; from the library at once for folders in it;
   for folders not yet added (network) it fills in quietly when counted.
-- Proposed, waiting: (a) the signal dot beside Files stays **outside** its box, with a clear gap, centred on the word
-  (Claude); (b) **Fix match on a folder** only when the folder holds one title (a TV show's or a film's folder: re-matches
-  everything inside); not on mixed folders (Claude).
+- **Signal dot (owner, 26 Nov):** stays **outside** the Files box, with a clear gap, centred on the word (RULES §2: the
+  slot never shifts anything).
+- **Fix match on a folder (owner, 26 Nov):** only when the folder holds one title (a TV show's or a film's folder);
+  it re-matches everything inside in one go. Not offered on mixed folders. Folder menu then: Open · (Add to library ·
+  Scan this folder) · Fix match · Exclude.
+- **"Show all files"** carries its file icon, black on the white focus (drawing fix).
 
 ## To fix (approved idea, owner 20 Nov; draw at the Files review)
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
