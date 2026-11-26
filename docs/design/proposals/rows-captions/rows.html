@@ -1,0 +1,82 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2c31;font-family:Roboto,Inter,Arial,sans-serif;width:2000px;padding:40px}
+.cap{color:#e8ebf2;font-size:30px;font-weight:500;margin:0 0 14px 4px}
+.frame{width:1920px;height:1080px;position:relative;overflow:hidden;border:2px solid #c9ccd3;margin-bottom:50px;background:#111215}
+canvas.speck{position:absolute;inset:0}
+.bar{position:absolute;top:0;left:0;right:0;height:84px;display:flex;align-items:center;padding:0 52px;color:#fff;font-size:30px;z-index:3}
+.bar span{padding:9px 22px;border-radius:20px;margin-right:6px}
+.bar .open{background:rgba(255,255,255,.15);color:rgba(255,255,255,.72)}
+.bar .sp{flex:1}
+.fade{position:absolute;top:0;left:0;right:0;height:220px;background:linear-gradient(#111215 0%,rgba(17,18,21,.6) 50%,transparent);z-index:2}
+.art{position:absolute;inset:0}
+.edge{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 18px rgba(0,0,0,.45)}
+.ring{box-shadow:0 0 0 6px #fff}
+.logo{position:absolute;color:#f4f6fa;font-weight:900;letter-spacing:2px;line-height:.95;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.heading{position:absolute;color:#fff;font-size:30px;font-weight:500;display:flex;gap:14px;align-items:center}
+.t1{color:#fff;font-size:24px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t2{color:#c9d3e6;font-size:19px;overflow:hidden;text-overflow:ellipsis;margin-top:4px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.t3{color:#c9d3e6;font-size:19px;overflow:hidden;text-overflow:ellipsis;margin-top:3px;white-space:nowrap}
+.mini{display:inline-block;width:56px;height:5px;border-radius:3px;background:rgba(255,255,255,.25);position:relative;flex:0 0 56px}
+.mini b{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#fff}
+.card{position:absolute;border-radius:14px;overflow:hidden}
+.poster{position:absolute;border-radius:12px;overflow:hidden;background:#1c1e23}
+.ov{position:absolute;left:0;right:0;bottom:0;padding:44px 18px 14px;background:linear-gradient(transparent,rgba(6,7,9,.92))}
+.edgebar{position:absolute;left:14px;right:14px;bottom:8px;height:5px;border-radius:3px;background:rgba(255,255,255,.25)}
+.edgebar b{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#fff}
+.under{position:absolute;height:5px;border-radius:3px;background:rgba(255,255,255,.22)}
+.under b{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:#fff}
+.badge2{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:18px;background:rgba(10,11,14,.82);box-shadow:0 0 0 1.5px rgba(255,255,255,.6)}
+.badge2 svg{position:absolute;left:0;top:0}
+</style></head><body>
+<script>
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const P=[["#7a3b2e","#26120d","THE HARBOUR"],["#2f5c4a","#0e1d17","GREENWOOD"],["#5a4a7a","#1a1426","NIGHT SHIFT"],["#8a6a2a","#2a1f0a","GOLDEN MILE"],["#2e4f78","#0d1726","DEEP WATER"],["#6d2f52","#1f0c18","VELVET"],["#3f6b72","#0f1e21","THE ISLE"],["#7d5a3a","#21160c","DUSTLAND"],["#4a5a2a","#141a0a","FIELDWORK"]];
+function art(i,big){const p=P[i%P.length];return `<div class="art" style="background:radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.18),transparent 60%),linear-gradient(155deg,${p[0]},${p[1]})"></div>`}
+function bar(cls){return `<div class="bar"><span class="${cls=='home'?'open':''}">Home</span><span class="${cls=='tv'?'open':''}">Movies</span><span class="${cls=='tvs'?'open':''}">TV Shows</span><span>Documentaries</span><span class="sp"></span><span style="font-size:26px">◌</span><span>Files</span><span>Search</span><span>Settings</span><span style="padding-right:0">18:40</span></div>`}
+function frame(cap,inner,tab){return `<div class="cap">${cap}</div><div class="frame"><canvas class="speck" width="1920" height="1080"></canvas>${inner}${bar(tab)}</div>`}
+const rowA=[["The Harbour","S2 E3 · 31 min left",.55],["Greenwood","42 min left",.3],["Night Shift","S1 E6 · 12 min left",.8],["Golden Mile","1 h 4 min left",.2],["Deep Water","S3 E1 · 50 min left",.1]];
+const rowB=[["Velvet","2025 · 1 h 48 min"],["The Isle","3 seasons · 24 episodes"],["Dustland","2024 · 2 h 6 min"],["Fieldwork","1 season · 8 episodes"],["The Harbour","2 seasons · 16 episodes"]];
+// ---------- 1 posters
+let g='';const W=236,H=354,gap=27,L=52,cols=7;const items=[
+["The Harbour","2 seasons · 16 episodes","Added 16 Nov 2026",0],["Greenwood","1 season · 8 episodes","Added 16 Nov 2026",.4,"S1 E4 · 5 left"],
+["Night Shift","3 seasons · 30 episodes","Added 14 Nov 2026",0],["Golden Mile","1 season · 6 episodes","Added 12 Nov 2026",.8,"S1 E6 · 1 left"],
+["Deep Water","4 episodes","Added 10 Nov 2026",0],["Velvet","2 seasons · 20 episodes","Added 9 Nov 2026",.15,"S1 E3 · 18 left"],["The Isle","6 episodes","Added 2 Nov 2026",0]];
+const CH=108;for(let r=0;r<2;r++)for(let c=0;c<cols;c++){const it=items[(c+r*3)%7],i=c+r*3,x=L+c*(W+gap),y=170+r*(H+CH+44);const f=(r==0&&c==1);
+ const line2=it[3]>0?`<span class="mini"><b style="width:${it[3]*100}%"></b></span>${it[4]}`:it[1];
+ g+=`<div class="poster ${f?'ring':''}" style="left:${x}px;top:${y}px;width:${W}px;height:${H+CH}px;${f?'transform:scale(1.08);z-index:1':''}"><div style="position:absolute;left:0;right:0;top:0;height:${H}px;border-radius:12px 12px 0 0;overflow:hidden">${art(i)}<div class="logo" style="left:8px;right:8px;bottom:40px;text-align:center;font-size:25px">${it[0].toUpperCase()}</div><div class="edge"></div></div>
+ <div style="position:absolute;left:16px;right:12px;top:${H+13}px"><div class="t1">${it[0]}</div><div class="t2">${line2}</div><div class="t3">${it[2]}</div></div></div>`}
+
+function ring(p){const r=11,c=2*Math.PI*r;return `<div class="badge2"><svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="${r}" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="4"/><circle cx="18" cy="18" r="${r}" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="${c*p} ${c}" transform="rotate(-90 18 18)"/></svg></div>`}
+function tick(){return `<div class="badge2"><svg viewBox="0 0 36 36" width="36" height="36"><path d="M11 18.5l5 5 9-11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`}
+let g2='';const items2=[["The Harbour","2 seasons · 16 episodes","Added 16 Nov 2026",0],["Greenwood","S1 E4 · 5 of 8 left","Added 16 Nov 2026",.4],["Night Shift","3 seasons · 30 episodes","Added 14 Nov 2026",1],["Golden Mile","S1 E6 · 1 of 6 left","Added 12 Nov 2026",.83],["Deep Water","4 episodes","Added 10 Nov 2026",0],["Velvet","S1 E3 · 18 of 20 left","Added 9 Nov 2026",.1],["The Isle","6 episodes","Added 2 Nov 2026",1]];
+for(let r=0;r<2;r++)for(let c=0;c<cols;c++){const it=items2[(c+r*3)%7],i=c+r*3,x=L+c*(W+gap),y=170+r*(H+CH+44);const f=(r==0&&c==1);
+ const b=it[3]>=1?tick():it[3]>0?ring(it[3]):'';
+ g2+=`<div class="poster ${f?'ring':''}" style="left:${x}px;top:${y}px;width:${W}px;height:${H+CH}px;${f?'transform:scale(1.08);z-index:1':''}"><div style="position:absolute;left:0;right:0;top:0;height:${H}px;border-radius:12px 12px 0 0;overflow:hidden">${art(i)}<div class="logo" style="left:8px;right:8px;bottom:40px;text-align:center;font-size:25px">${it[0].toUpperCase()}</div><div class="edge"></div>${b}</div>
+ <div style="position:absolute;left:16px;right:12px;top:${H+13}px"><div class="t1">${it[0]}</div><div class="t2">${it[1]}</div><div class="t3">${it[2]}</div></div></div>`}
+let html=frame("1 · Library posters: three lines for every title; a started title's bar sits inside its second line",g,'tvs')+frame("1b · Your idea: the corner badge fills as a ring with progress; when complete it becomes the tick",g2,'tvs');
+// ---------- rows helpers
+function rowCards(y,rows,mode,focusIdx,started){let h='';let x=72;rows.forEach((it,i)=>{const f=i==focusIdx,w=f?440:400,hh=f?248:225,yy=f?y-11:y,xx=f?x-20:x;
+ let inner=art(i+(started?0:5));
+ if(mode=='A'){inner+=`<div class="ov"><div class="t1">${it[0]}</div><div class="t2">${it[1]}</div></div>`+(started?`<div class="edgebar"><b style="width:${it[2]*100}%"></b></div>`:'')}
+ else inner+=`<div class="logo" style="left:22px;bottom:22px;font-size:${f?36:32}px">${it[0].toUpperCase()}</div>`;
+ h+=`<div class="card ${f?'ring':''}" style="left:${xx}px;top:${yy}px;width:${w}px;height:${hh}px">${inner}<div class="edge"></div></div>`;
+ if(mode=='B'){if(started)h+=`<div class="under" style="left:${xx+14}px;top:${yy+hh+12}px;width:${w-28}px"><b style="width:${it[2]*100}%"></b></div>`;
+  if(f)h+=`<div style="position:absolute;left:${xx}px;top:${yy+hh+(started?28:16)}px;width:${w}px"><div class="t1">${it[0]}</div><div class="t2">${it[1]}</div></div>`}
+ x+=424});return h}
+function head(y,t,ic){return `<div class="heading" style="left:72px;top:${y}px"><span>${ic}</span>${t}</div>`}
+// A
+let a=head(150,"Continue Watching","▶")+rowCards(206,rowA,'A',0,true)+head(520,"Recently Added","✚")+rowCards(576,rowB,'A',-1,false)+head(890,"Because You Watched The Harbour","✦")+rowCards(946,rowB.slice().reverse(),'A',-1,false);
+html+=frame("2 · Rows A: text over the bottom of the artwork (as the player's Chapters row); a started item's bar on the artwork's foot",a,'home');
+let b=head(150,"Continue Watching","▶")+rowCards(206,rowA,'B',0,true)+head(560,"Recently Added","✚")+rowCards(616,rowB,'B',-1,false)+head(930,"Because You Watched The Harbour","✦")+rowCards(986,rowB.slice().reverse(),'B',-1,false);
+html+=frame("3 · Rows B: clean 16:9 pictures; a thin bar under started items; title and line only under the focused card",b,'home');
+// C posters in rows
+let c='';function prow(y,rows,started,focus){let h='',x=72;const w=236,hh=354,ch=84;rows.concat(rows.slice(0,3)).forEach((it,i)=>{const f=i==focus;
+ const line2=started&&it[2]?`<span class="mini" style="width:34px;flex-basis:34px"><b style="width:${it[2]*100}%"></b></span>${it[1].replace(' left','')}`:it[1];
+ h+=`<div class="poster ${f?'ring':''}" style="left:${x}px;top:${y}px;width:${w}px;height:${hh+ch}px;${f?'transform:scale(1.08);z-index:1':''}"><div style="position:absolute;left:0;right:0;top:0;height:${hh}px;overflow:hidden;border-radius:12px 12px 0 0">${art(i+(started?0:5))}<div class="logo" style="left:8px;right:8px;bottom:36px;text-align:center;font-size:25px">${it[0].toUpperCase()}</div><div class="edge"></div></div><div style="position:absolute;left:12px;right:8px;top:${hh+12}px;font-size:0"><div class="t1" style="font-size:22px">${it[0]}</div><div class="t2">${line2}</div></div></div>`;x+=w+26});return h}
+c=head(150,"Continue Watching","▶")+prow(214,rowA,true,0)+head(730,"Recently Added","✚")+prow(786,rowB,false,-1);
+html+=frame("4 · Rows C: posters in Home rows (two lines under each; a started item's bar inside its second line)",c,'home');
+document.body.innerHTML=html;
+document.querySelectorAll('canvas.speck').forEach(cv=>{const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;g.fillStyle=`rgba(255,255,255,${a})`;g.fillRect(x,y,1,1)}});
+</script></body></html>

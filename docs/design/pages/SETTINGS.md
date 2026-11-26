@@ -22,7 +22,7 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   while the app stays open).
 - Side margin on the top bar's edges (RULES §1). Section headings with icons, 26 px below / 64 px above (RULES §5).
   Every row: icon, name, one plain second line, the control on the right, everything on the row's centre line.
-- Controls (RULES §8): **switch** for on/off; **chips** inline for up to five choices (chosen one in its chip); **›**
+- Controls (RULES §8): **switch** for on/off; **chips** inline for two choices; **more than two: one value stepped with Left / Right** (RULES §8, owner 21 Nov; replaces chips for up to five); **›**
   only on rows that open a list, panel or page, with the current value before it; **actions** show their verb as
   plain text (Clear, Send, Fetch, Save, Back up now), progress and "Done · …" appear in the row itself, with Stop
   while running; a warning only where something is lost (Supernova's own delete warning).
@@ -68,6 +68,8 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   stays on: the last one can't be turned off) · Change every (8 s · 12 s · 20 s); titles you've started leave the hero.
 - **Viewing History:** Keep viewing history (switch) · Clear viewing history (action, Clear: a warning with
   Supernova / Trakt switches; library and files kept).
+  **Search history (owner, 25 Nov):** Keep search history (switch, on; off records nothing, hides Search's Recent
+  searches and clears it) · Clear search history (Clear; "Done · cleared").
 
 ## Services (`15-b3-services`)
 - **Where To Watch:** Show where to watch (switch; off removes every streaming feature, RULES §18) · Country (› list
@@ -87,8 +89,7 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   Backups folder (› Change: folder picker) · Back up now (action, progress and Stop in the row) · Restore (› "3
   backups": the list → In This Backup → Restore this backup, asks first → progress in the Restore row → **Restart
   now** when done, `18` right, `23`).
-- **Diagnostics:** Diagnostic logging (switch) · Keep diagnostics for (1 · 2 · 4 weeks; default 2) · Reports folder
-  (› Change) · Save a diagnostic report (Save; "Done · saved at 23:51 · never includes passwords") · Clear diagnostics
+- **Diagnostics:** Diagnostic logging (switch) · Keep diagnostics for (1 · 2 · 4 weeks; default 2) · Save a diagnostic report (Save; "Done · saved at 23:51 · never includes passwords") · Clear diagnostics
   (Clear, asks first).
 - **Advanced:** Projector mode · Force software decoding (switches) · Video decoder (Automatic · Hardware · Software)
   · Parser synchronisation (Automatic · Strict · Relaxed) · Stream buffer (Small · Medium · Large) · Max I-frame size
@@ -106,6 +107,8 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   code on screen at a time, RULES §20).
 
 ## Newer than the pictures (apply these)
+- **Reports always go to Download › Supernova** (no Reports folder row); **Backups folder** uses Supernova's folder
+  picker with Android's grant once behind it (owner, 19 Nov).
 - Skipping has **four** choices (owner, 13 Nov round 2), not the three drawn in `04`.
 - Open videos in another player stays in **Playback › General** and opens Supernova's own Play With list.
 - Network share options (SMB, discovery, SFTP; `26` right) live on **Files › Connections › Advanced**, not Settings.
@@ -136,5 +139,5 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
 
 ## Never opens from Settings
 The old Settings tiles and side panels (`SettingsLayout`'s grid), Android's preference screens, Android's folder
-picker, Android's "Open with" chooser, Android's keyboard except through the Phone key, the Issues Digest, NOVA's
+picker, Android's "Open with" chooser, Android's on-screen keyboard, the Issues Digest, NOVA's
 old About and licence screens. Add them to the no-old-screens test.

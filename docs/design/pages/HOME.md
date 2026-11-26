@@ -15,8 +15,15 @@ underline, this sheet wins.
 
 ## Hero
 - **Same design as Details** (1776×820 at 1080p): logo artwork (or the name), metadata row (Age rating · Year · Length ·
-  Genres), two-line description, no tagline, buttons fixed at the bottom left ("Play" / "Resume S1 E5 · 16 min left",
-  then More), artwork edge, the first row peeking below. **Carousel dots** under the hero.
+  Genres, four at most), two-line description, no tagline, one button fixed at the bottom left, **More** (owner, 19 Nov: replaces "Play / Resume, then More";
+  its menu: Details, Play / Resume, Library, Files & Media), artwork edge, the first row peeking below (at least its heading, any amount of its cards; never only the hero; owner, 19 Nov). **Carousel dots** under the hero.
+- **TV shows on the hero (owner, 19 Nov):** a new episode appears **as that episode** ("Next Episode · S2 E5")
+  only when you are watching the show and have watched up to the episode before it (built this way: every earlier
+  episode of the season watched, the new one added after your last watch). A new episode of a show you haven't
+  started never appears as that episode. Trending and Popular on Trakt are separate and may show any show.
+  Decided (owner, 19 Nov): (1) a recently added show you haven't started stays a candidate **as the show** (from
+  Recently added); (2) **a new season counts**: finish season 2 and S3 E1 is the next episode, "Next Episode · S3
+  E1"; (3) **no time limit** on "watching": a show you followed long ago still gets its next-episode hero.
 - **Changing hero (§11):** the frame, edge and buttons stay still; the next and previous artwork are loaded first, so
   there's never an empty frame; the picture cross-fades (about 450 ms) with a slight drift; text fades out and back in
   just after; focus stays on the same button; dots glide; presses during a change finish it at once; automatic changes
@@ -25,9 +32,10 @@ underline, this sheet wins.
 
 ## Rows
 - One card size: 16:9, 400×225 (focused 440×248), 24 px gap, a sliver of the next card at the edge.
-- **Caption box under each card** (approved 13 Nov): title (bright), one soft line, inset progress bar; nothing printed
-  over the artwork; no play icon on library items.
-- Row heading with its icon. **Move and Hide** appear beside the heading as plain buttons (no filled circles; Hide a
+- **Row design A (owner, 19 Nov; RULES §14c; replaces the caption box under each card):** title and one soft line
+  over the bottom of the artwork on a dark fade; progress as the corner badge, never a bar; no play icon on library
+  items.
+- **Replaced 21 Nov (RULES §14d): headings are not focusable; no Move or Hide on Home; ordering lives in Customise Home; cards 40 px apart, focus grows 8%, no overlap.** Old: Row heading with its icon. **Move and Hide** appear beside the heading as plain buttons (no filled circles; Hide a
   minus circle) when focus reaches the heading. Down from a card lands on Move; Down again on the next row's first card;
   Right from Move to Hide.
 - Rows a left arrow appears beside: the whole row moves right to make room (never just the first card) (RULES §16).
@@ -44,7 +52,8 @@ Floating side panel on the right; changes apply live; Back closes.
 - **Add a row / a row's settings** (`05`, `06`), opening on top of Customise Home (panel behind darkened): Row name (one
   keyboard), Icon (opens the icon picker), Includes, Genres (+ Match), Years, Minimum rating, Sort by, Order, Maximum
   items (10 · 15 · 20 · 25 · 30), Add new titles automatically; Delete row at the foot apart by a plain line.
-- **Icon picker** (`07`): a grid of icons with names, tick on the current one, no box on tiles at rest. Automatic icon:
+- **Icon picker** (`07`; redrawn `home-v3/tv/18`, owner 21 Nov): opens under the Icon row, the panel's width,
+  never covering the Icon row; a grid of icons with names, tick on the current one, no box on tiles at rest. Automatic icon:
   the first genre chosen gives its icon; no genre, a plain list icon.
 
 ## Actions and where they lead
@@ -54,8 +63,7 @@ Floating side panel on the right; changes apply live; Back closes.
 | Focus lands on Home in the top bar | Home opens (no OK) |
 | Down from the top bar | The hero's first button |
 | Left / Right on the hero | Previous / next hero (as above); focus stays on the same button |
-| Play / Resume (hero) | Preparing playback, then the player; Back returns to Home, same button |
-| More (hero) | The Details More menu beside the button (same items as Details) |
+| More (hero, the one button) | Its menu beside the button: Details, Play / Resume, then the Details More items; Play / Resume → Preparing playback, Back returns to the button |
 | OK on the hero artwork / Down then Up | Details for that title (card stays in place) |
 | OK on a row card | That title's Details; Back returns with focus on the same card |
 | OK on a streaming-only card | The title in its service's app (no Supernova page) |
@@ -75,3 +83,10 @@ Settings in 0.159.
 ## Never opens from Home
 NOVA's old browse screens, the old Edit row / Home settings dialogs, filled-circle row buttons, the old long-press dialog,
 Android's keyboard.
+
+
+## Latest (owner, 21 Nov): see BRIEF_0158_B › Home review and RULES §14d
+One hero and one row; no Move / Hide; trimmed More menu with Exclude from hero (list in Files › Library Care,
+approved in principle, settle at the Files walkthrough); filling carousel dot; Customise Home with Move · Hide · Edit
+on the focused row; row settings on today's rules. Mock-ups `home-v3/tv/01`–`18`. Where older lines above differ,
+this wins.

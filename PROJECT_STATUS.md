@@ -1,9 +1,13 @@
 # Supernova — project status
 
-Updated 19 November 2026 (0.158 part B: 0.158.1 signed overnight). Keep this page short and current: update it at the
+Updated 26 November 2026 (discussion: Search done; Files review rounds 1–2 agreed, paused at round 3). Keep this page short and current: update it at the
 end of every session.
 
-## Next: the rest of 0.158 part B
+## Next: 0.158 part C (owner go-ahead 26 Nov)
+
+Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`. First signing 0.158.8.
+
+## Before that: the rest of 0.158 part B
 
 Report, "not built" list and run links: `docs/0.158/REPORT_0158_B.md`; judgement calls:
 `docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Still to do from `docs/0.158/BRIEF_0158_B.md`: the look sweep on the speckle,
@@ -11,6 +15,18 @@ the rest of Details (DT1, DT3–DT6, DT8, R3–R5, episodes), titles (group 6), 
 (group 8), Settings' remaining sheet items (in-row backup flow, OpenSubtitles and Trakt panels), PL8, X4. Work branch
 for part B: `claude/build-0158-part-b-wsupv2`, then `claude/0158-part-b-continued-d5u9w1` (the working branch is fast-forwarded to it only when a build is due). Waiting for the owner: install the last
 signed APK; send a diagnostics report from it.
+
+## Discussion (19–26 Nov): polish phase
+Reviewed and written up: library pages, Home, Details, Player, Search (page sheets in `docs/design/pages/`; decisions
+in `docs/0.158/BRIEF_0158_B.md`). Files in review (rounds 1–2 agreed, resume at round 3); then Settings. NOVA fully
+audited 25 Nov (eleven items in the brief). Installed on the Shield: 0.158.7. Handover:
+`docs/DISCUSSION_HANDOVER.md` (start at "25 Nov — START HERE").
+
+## Discussion (19–20 Nov): polish phase
+The owner is reviewing page by page (library pages first), improving what exists; no new features (CLAUDE.md).
+Every decision is in RULES.md, the page sheets and `docs/0.158/BRIEF_0158_B.md` for the next build (which adds the
+diagnostics upgrade). 0.159 is the NOVA clean-out. Handover: `docs/DISCUSSION_HANDOVER.md` (start at "19–20 Nov
+evening").
 
 ## Released
 

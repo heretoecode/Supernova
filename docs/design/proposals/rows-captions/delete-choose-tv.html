@@ -1,0 +1,120 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111215;font-family:Roboto,Inter,Arial,sans-serif;width:1920px}
+.screen{position:relative;width:1920px;height:1080px;overflow:hidden}
+.screen>canvas{position:absolute;left:0;top:0}
+.border{position:absolute;inset:0;border:2px solid #c9ccd3;z-index:20}
+.bar{position:absolute;top:0;left:0;right:0;height:84px;display:flex;align-items:center;padding:0 52px;color:#fff;font-size:30px}
+.bar span{padding:9px 22px;border-radius:20px;margin-right:6px}
+.bar .open{background:rgba(255,255,255,.15);color:rgba(255,255,255,.72)}
+.bar .sp{flex:1}
+.tb{position:absolute;left:52px;top:102px;height:52px;display:flex;gap:8px;color:#fff;font-size:24px}
+.tb span{height:52px;padding:0 22px;border-radius:20px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.poster{position:absolute;width:236px;border-radius:12px;background:#141619}
+.poster.focus{transform:scale(1.08);z-index:3}
+.poster.focus .pedge{box-shadow:0 0 0 4px #fff}
+.art{position:relative;height:354px;border-radius:12px 12px 0 0;overflow:hidden}
+.logo{position:absolute;left:8px;right:8px;bottom:40px;text-align:center;font-size:24px;color:#f4f6fa;font-weight:900;letter-spacing:2px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.cap{height:100px;padding:9px 8px 0 14px}
+.t1{color:#fff;font-size:24px;font-weight:500;line-height:28px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t2,.t3{color:#c9d3e6;font-size:18px;line-height:22px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pedge{position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 0 1px #fff;pointer-events:none;z-index:2}
+.badge{position:absolute;top:8px;right:8px;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.45);overflow:hidden}
+.badge svg{position:absolute;left:0;top:0}
+.menu{position:absolute;border-radius:16px;background:rgba(22,24,28,.99);padding:12px 0;z-index:8;
+ box-shadow:0 0 0 1.5px rgba(255,255,255,.7),0 18px 48px 12px rgba(0,0,0,.85)}
+.menu .h{display:flex;align-items:center;gap:14px;color:#fff;font-size:22px;padding:10px 22px 8px}
+.menu .h:before,.menu .h:after{content:"";flex:1;height:1px;background:rgba(255,255,255,.25)}
+.menu .i{height:58px;display:flex;align-items:center;gap:16px;padding:0 22px;color:#fff;font-size:26px;white-space:nowrap}
+.menu .i.on{background:#fff;color:#000;margin:0 10px;border-radius:12px;padding:0 12px}
+.menu .ic{width:28px;text-align:center;font-size:24px}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:9}
+.dialog{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:760px;border-radius:20px;background:rgba(22,24,28,.99);z-index:10;padding:40px 44px 36px;
+ box-shadow:0 0 0 1.5px rgba(255,255,255,.7),0 18px 48px 12px rgba(0,0,0,.85)}
+.dialog .ti{color:#fff;font-size:34px;font-weight:500;display:flex;gap:16px;align-items:center}
+.dialog .bd{color:#c9d3e6;font-size:24px;line-height:34px;margin-top:18px}
+.dialog .bd b{color:#fff;font-weight:500}
+.dialog .bt{display:flex;gap:16px;margin-top:32px}
+.dialog .bt span{height:52px;padding:0 26px;border-radius:20px;display:flex;align-items:center;font-size:24px;color:#fff}
+.dialog .bt .f{background:#fff;color:#000}
+.cap2{position:absolute;left:52px;bottom:24px;color:#e8ebf2;font-size:24px;z-index:21;background:rgba(17,18,21,.85);padding:4px 12px;border-radius:8px}
+.dialog.tall{width:900px;top:52%}
+.dl{margin-top:20px;border-radius:12px;position:relative}
+.dl .sel{display:flex;align-items:center;gap:16px;height:50px;padding:0 14px;color:#fff;font-size:22px}
+.dl .gh{color:#c9d3e6;font-size:20px;padding:14px 14px 6px;display:flex;gap:10px;align-items:center}
+.dl .r{display:flex;align-items:center;gap:16px;min-height:62px;padding:6px 14px;border-top:1px solid rgba(255,255,255,.12)}
+.dl .r.on{background:#fff;border-radius:12px;border-top-color:transparent}
+.dl .r.on *{color:#000!important}
+.tk{width:26px;height:26px;border-radius:7px;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 26px;color:#000;background:#fff}
+.tk.off{background:transparent}
+.r.on .tk{border-color:#000;background:#000;color:#fff!important}
+.r .nm{color:#fff;font-size:22px}
+.r .sb{color:#c9d3e6;font-size:18px;margin-top:2px}
+.r .rt{margin-left:auto;color:#fff;font-size:20px;white-space:nowrap}
+.pill{border:1.5px solid rgba(255,255,255,.7);border-radius:20px;padding:1px 10px;font-size:16px;color:#fff;margin-left:8px}
+.sw{display:flex;align-items:center;gap:16px;height:56px;color:#fff;font-size:22px;border-top:1px solid rgba(255,255,255,.12);margin-top:8px}
+.sw i{margin-left:auto;width:52px;height:30px;border-radius:15px;background:#3a3d44;position:relative}
+.sw i:after{content:"";position:absolute;left:4px;top:4px;width:22px;height:22px;border-radius:11px;background:#c9d3e6}
+.tot{color:#c9d3e6;font-size:21px;margin-top:16px}
+.tot b{color:#fff;font-weight:500}
+.arrow{position:absolute;right:-30px;bottom:18px;color:#fff;font-size:24px}
+.r .rt{margin-left:auto;color:#fff;font-size:20px;white-space:nowrap}
+.r .body{flex:1;min-width:0}
+.r .row1{display:flex;align-items:center}
+.r .row1 .pmid{flex:1;display:flex;justify-content:center}
+.tr{width:30px;flex:0 0 30px;text-align:right;font-size:26px;color:#fff}
+.r.on .tr{color:#000}
+.sel2{display:flex;align-items:center;height:52px;padding:0 14px;color:#fff;font-size:22px}
+.sel2 .tr{margin-left:auto}
+.mark{width:28px;height:28px;flex:0 0 28px}
+.bd .warn{display:block;color:#fff;font-weight:500;margin-top:6px}
+.sw i.on{background:#fff}.sw i.on:after{left:26px;background:#111215}
+.sec{display:flex;align-items:center;gap:14px;color:#fff;font-size:21px;margin-top:22px}
+.sec:before,.sec:after{content:"";flex:1;height:1px;background:rgba(255,255,255,.25)}
+.selsw{display:flex;align-items:center;height:52px;padding:0 14px;color:#fff;font-size:22px;gap:14px}
+.selsw i{margin-left:auto;width:52px;height:30px;border-radius:15px;background:#fff;position:relative}
+.selsw i:after{content:"";position:absolute;left:26px;top:4px;width:22px;height:22px;border-radius:11px;background:#111215}
+.arr{position:absolute;right:-34px;color:#fff;font-size:24px}
+.arr.dim{color:rgba(255,255,255,.3)}
+.bt .warnb{color:#fff;font-weight:500;font-size:22px;align-self:center;margin-left:6px}
+</style></head><body>
+<div class="screen" id="e0"></div><div class="screen" id="e"></div><div class="screen" id="f"></div><div class="screen" id="g"></div>
+<script>
+const D=48,C=24;
+function pt(p,r){const a=2*Math.PI*p-Math.PI/2;return [C+r*Math.cos(a),C+r*Math.sin(a)]}
+function pie(p){const r=21,[x,y]=pt(p,r),l=p>.5?1:0;return `<path d="M${C} ${C} L${C} ${C-r} A${r} ${r} 0 ${l} 1 ${x} ${y} Z" fill="#000"/>`}
+function tick(){return `<path d="M15 24.5l6 6 12-13" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`}
+function taper(x0,x1,y,w,alpha){const n=120,pts=[],bot=[];for(let i=0;i<=n;i++){const t=i/n,x=x0+(x1-x0)*t;const e=Math.min(t,1-t);const k=e>=.22?1:.18+.82*Math.sin(Math.PI/2*e/.22);const h=w*k/2;pts.push([x,y-h]);bot.unshift([x,y+h])}
+ return `<polygon points="${pts.concat(bot).map(p=>p.join(',')).join(' ')}" fill="rgba(255,255,255,${alpha})"/>`}
+const ART=[["#7a3b2e","#26120d"],["#2f5c4a","#0e1d17"],["#5a4a7a","#1a1426"],["#8a6a2a","#2a1f0a"],["#2e4f78","#0d1726"],["#6d2f52","#1f0c18"],["#3f6b72","#0f1e21"]];
+function bar(open){return `<div class="bar">${["Home","Movies","TV Shows","Documentaries"].map(w=>`<span class="${w==open?'open':''}">${w}</span>`).join('')}<span class="sp"></span><span style="font-size:26px">◌</span><span>Files</span><span>Search</span><span>Settings</span><span style="padding-right:0">18:40</span></div>`}
+function page(open,items,focusIdx){let h=bar(open)+`<div class="tb"><span>⚲ Filters</span><span>⇅ Sort: Date added</span><span>↓ Newest first</span><span>☰ List view</span></div><svg style="position:absolute;left:0;top:0" width="1920" height="1080">${taper(52,1868,179,2,.35)}</svg>`;
+ for(let r=0;r<2;r++)for(let c=0;c<7;c++){const k=(c+r*3)%items.length,it=items[k],a=ART[(c+r*2)%7],x=52+c*263,y=204+r*498;const f=(r==0&&c==focusIdx);
+  const b=it[3]==null?'':`<div class="badge"><svg width="${D}" height="${D}" viewBox="0 0 ${D} ${D}">${it[3]==='w'?tick():pie(it[3])}</svg></div>`;
+  h+=`<div class="poster${f?' focus':''}" style="left:${x}px;top:${y}px"><div class="art" style="background:radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.18),transparent 60%),linear-gradient(155deg,${a[0]},${a[1]})"><div class="logo">${it[0].toUpperCase()}</div>${b}</div><div class="cap"><div class="t1">${it[0]}</div><div class="t2">${it[1]}</div><div class="t3">${it[2]}</div></div><div class="pedge"></div></div>`}
+ return h}
+function menu(x,y,groups){let h=`<div class="menu" style="left:${x}px;top:${y}px">`;groups.forEach(([g,rows])=>{h+=`<div class="h">${g}</div>`;rows.forEach(([ic,t,on])=>{h+=`<div class="i${on?' on':''}"><span class="ic">${ic}</span>${t}</div>`})});return h+`</div>`}
+const MOV=[["The Long Frost","2025 · 1 h 52 min","Added 16 Nov 2026",null],["Golden Mile","42 min left","Added 15 Nov 2026",.65],["Quiet Harbour","2024 · 1 h 38 min","Added 14 Nov 2026",'w'],["Paper Lanterns","2023 · 2 h 4 min","Added 12 Nov 2026",null],["North Road","2025 · 1 h 41 min","Added 10 Nov 2026",null],["Salt and Stone","2022 · 1 h 55 min","Added 9 Nov 2026",'w'],["Low Tide","2024 · 1 h 30 min","Added 2 Nov 2026",null]];
+const TV=[["The Harbour","2 seasons · 16 episodes","Added 16 Nov 2026",null],["Greenwood","S1 E4 · 5 of 8 left","Added 16 Nov 2026",.4],["Night Shift","3 seasons · 30 episodes","Added 14 Nov 2026",'w'],["Golden Mile","S1 E6 · 1 of 6 left","Added 12 Nov 2026",.83],["Deep Water","4 episodes","Added 10 Nov 2026",null],["Velvet","S1 E3 · 18 of 20 left","Added 9 Nov 2026",.1],["The Isle","6 episodes","Added 2 Nov 2026",'w']];
+const movMenu=[["Playback",[["▷","Resume · 42 min left",true],["↺","Play from the start"]]],["Library",[["◎","Mark as watched"],["⌕","Fix match"],["⊟","Remove from library"]]],["Files & Media",[["🗑","Delete file"]]]];
+const tvMenu=[["Playback",[["▷","Resume S1 E4",true],["↺","Play from the start"]]],["Library",[["◎","Mark show as watched"],["⌕","Fix match"],["⊟","Remove from library"]]],["Files & Media",[["🗑","Delete all episode files"]]]];
+
+const SW='<div class="sec">Clean Up</div><div class="sw" style="margin-top:6px;border-top:0"><svg class="mark" viewBox="0 0 100 100" overflow="visible"><path d="M82.77 72.94A40 40 0 1 1 78.28 21.72" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M33.03 66.97A24 24 0 1 1 63.77 69.66" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/></svg> Also clear viewing history in Supernova<i></i></div><div class="sw" style="margin-top:0"><svg class="mark" viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M8.5 14.5l4 4 7.5-9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Also remove it from your Trakt history<i></i></div><div class="sw" style="margin-top:0"><svg class="mark" viewBox="0 0 28 28"><path d="M3.5 8.5a2 2 0 0 1 2-2h5l2.5 2.5h9.5a2 2 0 0 1 2 2v9.5a2 2 0 0 1-2 2h-17a2 2 0 0 1-2-2z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/></svg> Delete the folder if it\'s left empty<i class="on"></i></div>';
+document.getElementById('e0').innerHTML=page("Movies",MOV,1)+`<div class="scrim"></div><div class="dialog" style="width:940px"><div class="ti">🗑 Delete Golden Mile?</div><div class="bd">Deletes <b>Golden Mile (2025).mkv</b> (2160p · 58.2 GB) from <b>Media server</b>.</div>${SW}<div class="bt"><span class="f">Keep file</span><span>Delete file</span></div></div><div class="cap2">5a · One file: as it opens, Keep file focused</div><div class="border"></div>`;
+document.getElementById('e').innerHTML=page("Movies",MOV,1)+`<div class="scrim"></div><div class="dialog" style="width:940px"><div class="ti">🗑 Delete Golden Mile?</div><div class="bd">Deletes <b>Golden Mile (2025).mkv</b> (2160p · 58.2 GB) from <b>Media server</b>.</div>${SW}<div class="bt"><span>Keep file</span><span class="f">Delete file</span><span class="warnb">This can't be undone.</span></div></div><div class="cap2">5b · Right to Delete file: only now "This can't be undone." appears beside it</div><div class="border"></div>`;
+document.getElementById('f').innerHTML=page("Movies",MOV,1)+`<div class="scrim"></div><div class="dialog tall"><div class="ti">🗑 Delete Golden Mile?</div><div class="bd">You have <b>2 versions</b>. Tick the ones to delete.</div>
+<div class="dl"><div class="selsw">Select all<i></i></div>
+<div class="r on"><div class="body"><div class="nm">2160p · HDR10 · Dolby Atmos</div><div class="sb">Golden Mile (2025) 2160p.mkv · Media server · 58.2 GB</div></div><span class="tr">✓</span></div>
+<div class="r"><div class="body"><div class="nm">1080p · 5.1 · HEVC</div><div class="sb">Golden Mile (2025) 1080p.mp4 · This device › Backup drive 1 · 14.1 GB</div></div><span class="tr">✓</span></div></div>
+${SW}<div class="tot">Deletes <b>2 files · 72.3 GB</b>.</div><div class="bt"><span>Keep files</span><span class="f">Delete 2 files</span><span class="warnb">This can't be undone.</span></div></div><div class="cap2">6 · Versions of a film (Delete focused)</div><div class="border"></div>`;
+let eps='';for(let i=1;i<=3;i++)eps+=`<div class="r${i==1?' on':''}"><div class="body"><div class="nm">S1 E${i} · Episode ${i}</div><div class="sb">1080p · 5.1 · HEVC · 2.${i} GB</div></div><span class="tr">✓</span></div>`;
+document.getElementById('g').innerHTML=page("TV Shows",TV,1)+`<div class="scrim"></div><div class="dialog tall" style="top:50%;padding-top:24px;padding-bottom:22px"><div class="ti">🗑 Delete Greenwood?</div><div class="bd">Tick the episodes to delete, including any not yet in your library.</div>
+<div class="dl"><div class="selsw">Select all<i></i></div><div class="gh">▤ Season 1</div>${eps}
+<div class="r"><div class="body" style="display:flex;align-items:center"><div><div class="nm">S1 E4 · Episode 4</div><div class="sb">1080p · 5.1 · HEVC · 2.4 GB</div></div><div style="flex:1;display:flex;justify-content:center"><span class="pill" style="margin:0">Not in library</span></div></div><span class="tr">✓</span></div>
+<div class="arr dim" style="top:60px">⌃</div><div class="arr" style="bottom:14px">⌄</div></div>
+${SW}<div class="tot">Deletes <b>8 files · 19.2 GB</b>.<br>An episode's own subtitle files go with it; anything else in the folders stays.</div><div class="bt"><span>Keep files</span><span class="f">Delete 8 files</span><span class="warnb">This can't be undone.</span></div></div><div class="cap2">7 · A show (Delete focused)</div><div class="border"></div>`;
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+document.querySelectorAll('.screen').forEach(sc=>{const cv=document.createElement('canvas');cv.width=1920;cv.height=1080;sc.prepend(cv);
+ const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;g.fillStyle='#111215';g.fillRect(0,0,1920,1080);for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;g.fillStyle=`rgba(255,255,255,${a})`;g.fillRect(x,y,1,1)}});
+</script></body></html>

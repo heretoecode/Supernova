@@ -9,16 +9,26 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### Ready (designed and approved)
 
+These wait until the polish phase is done (owner, 20 Nov): improving what exists comes first.
+**Before any of them is built (owner, 20 Nov):** redraw its mock-ups with the rules as they are by then (button size,
+background, menu outline and shadow, separators, captions, progress pie…), the owner checks them, and only then write
+its page sheet (none exists yet: Onboarding's design is in RULES §23 and the 0.157 notes, the Trakt row's in
+`docs/0.158/OWNER_NOTES.md` §4, Media Transfers' in `docs/0.158/MEDIA_TRANSFERS.md`). No redesign, just brought up to
+date, so nothing is built on an old look.
+
+- Onboarding (on Home, Start fresh / Restore, smart steps; designed 14 Nov): no version yet (owner, 20 Nov)
 - A Trakt list as a Home row: only what streams on your services, logo on every card, OK opens the app (mock-ups trakt-list-row/; needs Customise Home and Your services order, 0.158)
 - **Media Transfers, fully designed and approved (16 Nov):** copy, checks, resilience, keep free (percentage, 2% rule, Needs your OK), While you watch, full speed hours, Boost this / Boost all, Play warning during a boost, copies at once, one switch to remove the network copy, per-series "Bring new episodes" (`docs/0.158/MEDIA_TRANSFERS.md`, mock-ups `docs/design/proposals/transfers-settings/`)
 
 ### To discuss (owner, 16 Nov)
 
+- [Given a version, 20 Nov: 0.159] NOVA clean-out.
+
 - [Moved to 0.158 part B, 19 Nov] Episodes (answered 18 Nov): OK on an episode card plays it; long-press opens the same menu as More;
   deleting one offers the earlier episodes of the season: only this one · all · choose (with Select all)
 - Network statistics: split by source and protocol (WebDAV, SMB, SFTP), real library sizes; with Files › Your Library
 - Feature blueprint (research): pick ideas to take forward (`docs/research/FEATURE_BLUEPRINT.md`)
-- Diagnostics that catch problems before you notice them: a health snapshot (memory, threads, caches, database,
+- [Partly in the next build, 20 Nov: start-up and page-switch times, leftovers that run, the health summary] Diagnostics that catch problems before you notice them: a health snapshot (memory, threads, caches, database,
   free space, temperature), smoothness (dropped frames, slow remote response), speed (start-up, page and artwork times),
   playback quality, stability (crashes, freezes, leaks), and a Health summary at the top of each report flagging anything
   over its limit; later the build checks the same limits
@@ -69,7 +79,10 @@ Not given a version yet. **Ready** = fully discussed, mocked up and approved; it
 
 ### Old NOVA out
 
-- Hidden grid and hidden screens
+- Hidden grid and hidden screens — **not done** (checked 20 Nov): Codex's report found nothing provably safe to
+  remove in one go (49 files still check NOVA's `try_new_ui` switch; classic grids, anime grids, collection routes
+  UNSURE). Only Issues Digest, picture in picture and the old file-access screens went. `NoOldScreensTest` stops
+  redesigned pages opening old screens. To schedule: a clean-out done batch by batch (see To discuss).
 - Picture in picture, Issue digest
 - All files access once (no Android screens)
 
@@ -117,6 +130,12 @@ Bug fixes only (owner, 17 Nov): as many as possible before 0.158. Findings in `d
 
 ## 0.158
 
+**Part C (owner go-ahead, 26 Nov; `docs/0.158/BRIEF_0158_C.md`):** fixes from the 0.158.7 diagnostics (two crashes,
+the hidden grid stealing focus, scans failing at the lock, the Put.io delete, TV posters, TMDB TV where-to-watch,
+freezes), the Settings Backup bug, the refined library pages, Home, Details (with the next-episode label), Player and
+Search, the app-wide pieces, NOVA's eleven catch-up items (+ one since), the diagnostics upgrade. Files and Settings
+designs wait for their reviews.
+
 All the planned redesigns except Settings, then a bug-fixing phase on a settled design (owner, 18 Nov). Each page
 gets its page sheet before coding (CLAUDE.md, Definition of done).
 
@@ -126,6 +145,7 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
   the stats row goes)
 - Home (hero, caption-box rows, Customise Home; the Home-to-Details glide)
 - Search (library first, On your services, recent searches)
+- Next episode on the hero and Details' Status (owner, 25 Nov; with Details, before its coding; label above the logo)
 - Connections grouped by server: one connection per server and login, its folders inside; one scan button per server
 - **One side margin (owner, 18 Nov):** every page except Home lines up with the top bar's own edges: the clock's right
   edge on the right, the first word's box on the left. Library pages, Files, Search and Settings use it for their
@@ -148,6 +168,11 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 ### Also in 0.158
 - Player review (the full one, skipped on 17 Nov) and its fixes; leftovers from 0.157.2's "not built" list
 
+### Next build (owner, 20 Nov): part B's remaining items, tonight's decisions and the diagnostics upgrade
+- Everything in `docs/0.158/BRIEF_0158_B.md` not yet built, the owner's notes on 0.158.3–0.158.7 and the library
+  review decisions; plus the **diagnostics upgrade**: start-up time, page-switch times inside the top bar, a record of
+  every NOVA leftover that runs, and a health summary at the top of each report.
+
 ### 0.158 part B (owner, 18 Nov)
 - **First, the new look, so everything after it is checked on it:** the speckled background app-wide (density 20,
   `background-speckle/tv3-2`, no pane) and one shape for every small box (buttons, pills, chips, tab and top-bar
@@ -168,10 +193,23 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - **Episodes** (OK plays; long-press = the More menu; deleting offers earlier episodes) and **the Settings redesign**
   (moved from 0.159 by the owner, 19 Nov: the last major redesign). Brief: `docs/0.158/BRIEF_0158_B.md`.
 
-## 0.159
+### Paused from part B (owner, 19 Nov), for the next version once the discussion is done
+- Backup and Restore in the rows, with the Backups folder picker (reports stay in Download › Supernova)
+- "Also translate other languages" (engine feature, judged on the Shield); Trakt sign-in as a side panel
+- The owner's notes on 0.158.3/0.158.4 (`docs/0.158/REVIEW_0158.md`): the delete bug first, About, Home hero one
+  button, Settings tab size and scroll arrows; the NOVA app-side catch-up; release notes for every APK
 
-- [Moved to 0.158 part B, 19 Nov] Settings (seven tabs, Backup and Restore, Diagnostics, About)
-- Onboarding (on Home, Start fresh / Restore, smart steps): it points into Settings and is seen once
+## 0.159 — NOVA clean-out (owner, 20 Nov)
+
+- Remove NOVA's leftover screens and code batch by batch: pin the `try_new_ui` switch to Supernova's path, list every
+  NOVA screen and what reaches it, rewrite the few live pieces Supernova still borrows, delete in batches, each with a
+  full build, tests and a Shield check. The playback engine and network-share code stay (engine catch-up is separate).
+- Lock it: the no-old-screens test covers the whole app; a test fails if a NOVA overlay or layout appears on a
+  Supernova page.
+- Measured: diagnostics baseline before (from the next build's upgraded reports), compared after each batch (memory,
+  start-up, page switches, stutters, freezes, focus anomalies, which leftovers ran).
+- Walkthroughs on the Shield of the pages not yet reviewed wait until after this; design reviews carry on meanwhile.
+- [Moved to 0.158 part B, 19 Nov] Settings. [Onboarding moved to Undecided › Ready, 20 Nov]
 
 ## Parked
 
@@ -180,10 +218,13 @@ Ideas kept for later (details in `docs/REVISIT_LATER.md`). "Park that" adds here
 ### To discuss
 
 - Release notes: proper notes for every version (0.156 has two vague lines)
+- Request titles not in the library through Seerr, from Search (owner, 25 Nov; joins Discovery in Search)
+- Finer settings, compared with Plozz (owner, 25 Nov; candidates listed, chosen at the Settings review)
 
 ### Planned
 
-- Newer NOVA engine stack, as its own version
+- Newer NOVA engine stack, as its own version (checked 19 Nov: our engine is NOVA's of 4 Nov, 29 changes behind:
+  Dolby Vision profile 7 → 8.1 and profile 5, picture-subtitle position and size, HDR metadata)
 - Make the repository private; private Releases page
 - “Going public” checklist (history, titles, privacy, diagnostics cut back)
 - Supernova’s own TMDB key

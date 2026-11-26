@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#111215;font-family:Roboto,Inter,Arial,sans-serif;width:1920px}
+.screen{position:relative;width:1920px;height:1080px;overflow:hidden;background:#111215}
+.screen>canvas{position:absolute;left:0;top:0}
+.screen>.border{position:absolute;inset:0;border:2px solid #c9ccd3;pointer-events:none;z-index:5}
+.grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(2,auto);justify-content:center;align-content:center;column-gap:140px;row-gap:26px}
+.row4{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;gap:90px}
+.group{display:flex;flex-direction:column;align-items:center}
+.lbl{color:#e8ebf2;font-size:24px;margin-bottom:12px;white-space:nowrap}
+.pair{display:flex;gap:26px}
+.poster{position:relative;width:236px;border-radius:12px;background:#1c1e23}
+.art{position:relative;height:354px;border-radius:12px 12px 0 0;overflow:hidden}
+.edge{position:absolute;inset:0;border-radius:12px;pointer-events:none}
+.logo{position:absolute;left:8px;right:8px;bottom:40px;text-align:center;font-size:25px;font-weight:900;letter-spacing:2px}
+.cap{height:100px;padding:9px 8px 0 14px}
+.t1{color:#fff;font-size:24px;font-weight:500;line-height:28px}
+.t2,.t3{color:#c9d3e6;font-size:18px;line-height:22px;margin-top:6px}
+</style></head><body>
+<div class="screen" id="s1"><div class="grid" id="g1"></div><div class="border"></div></div>
+<div class="screen" id="s2"><div class="row4" id="g2"></div><div class="border"></div></div>
+<script>
+const LIGHT="radial-gradient(ellipse 70% 60% at 60% 30%,rgba(255,255,255,.55),transparent 65%),linear-gradient(155deg,#d9cfb8,#9c8f74)";
+const DARK="radial-gradient(ellipse 70% 60% at 70% 30%,rgba(255,255,255,.12),transparent 60%),linear-gradient(155deg,#1d2a3a,#07090d)";
+function poster(art,name,ink,edgeCss,scale){
+ return `<div class="poster" style="${scale?'transform:scale(1.08)':''}"><div class="art" style="background:${art}"><div class="logo" style="color:${ink}">${name.toUpperCase()}</div></div>
+ <div class="cap"><div class="t1">${name}</div><div class="t2">2 seasons · 16 episodes</div><div class="t3">Added 16 Nov 2026</div></div>
+ <div class="edge" style="${edgeCss}"></div></div>`}
+function rest(w,a){return `box-shadow:inset 0 0 0 ${w}px rgba(255,255,255,${a}),inset 0 0 0 ${w+6}px rgba(0,0,0,.25)`}
+const rests=[["1 · Today: 1.5 px at 60%",1.5,.6],["2 · Solid white, 1 px",1,1],["3 · Solid white, 1.5 px",1.5,1],["4 · Solid white, 2 px",2,1]];
+const rings=[["1 · Today: 6 px",6],["2 · 4 px",4],["3 · 3 px",3],["4 · 2 px",2]];
+document.getElementById('g1').innerHTML=rests.map(([l,w,a])=>`<div class="group"><div class="lbl">${l}</div><div class="pair">${poster(LIGHT,"Harbour","#2a2418",rest(w,a))}${poster(DARK,"Nightfall","#f4f6fa",rest(w,a))}</div></div>`).join('');
+document.getElementById('g2').innerHTML=rings.map(([l,w])=>`<div class="group"><div class="lbl" style="margin-bottom:34px">${l}</div>${poster(DARK,"Nightfall","#f4f6fa",`box-shadow:0 0 0 ${w}px #fff`,true)}</div>`).join('');
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+document.querySelectorAll('.screen').forEach(sc=>{const cv=document.createElement('canvas');cv.width=1920;cv.height=1080;sc.prepend(cv);
+ const g=cv.getContext('2d'),r=rng(20261118),n=1920*1080*20/1000;for(let i=0;i<n;i++){const x=r()*1920|0,y=r()*1080|0,a=r()<1/7?.45:.07+r()*.15;g.fillStyle=`rgba(255,255,255,${a})`;g.fillRect(x,y,1,1)}});
+</script></body></html>

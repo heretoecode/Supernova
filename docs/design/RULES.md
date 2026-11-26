@@ -54,6 +54,11 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   word = the open page while focus is elsewhere. No underlines in the top bar. **Every item is a word, tools
   included (Files · Search · Settings, no icons); one font, weight and size for every word and the clock; words
   centred on their letters** (owner, 18 Nov; `files-review-0157-1/09` A). Tabs elsewhere keep §3/§4 for now.
+- **Behind the top bar, every page (owner, 21 Nov):** content scrolled up runs behind the bar blurred and dimmed,
+  fading out at the bar's foot; never a solid band or a hard line (Home, library pages, Details).
+- **Grey box follows focus at once (owner, 21 Nov):** when focus moves to another media page in the bar, the old
+  page loses its grey box immediately, not when the new page has loaded. Resting on a tool (needs OK) leaves the
+  open page's grey box where it is.
 
 ## 3. Focus and "where am I" (the most important rule)
 One brightness scale that follows your path, everywhere, top bar and tabs included (§25; mock-ups
@@ -126,11 +131,19 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
     from <person>" (§26). Never "similar" in Search.
   - Empty states say what is going on: "Everything looks fine", "Nothing in your library matches …".
 - Typed letters show in bold inside matching results (Search).
+- **Long lists in one value (owner, 21 Nov):** a value that can list many things (studios, countries, languages,
+  audio languages, subtitles, video formats across files, genres beyond the limit) shows **at most two, then "and N
+  more"**, and never fills its line: if two don't fit, one and "and N more". Mixed technical values across a show's
+  files show the most common, then "· 6 files differ" (e.g. "1080p H.264 · 6 files differ").
+- **No lone word on a line (owner, 21 Nov):** a sentence is never allowed to wrap so that one word sits alone on the
+  next line; split facts onto their own lines instead (e.g. the file name on one line, its facts under it).
 
 ## 7. Rows
 - One row style everywhere: icon (or thumbnail), name, plain second line; long names end in "…".
 - **Status pills** sit in a fixed column between the names and the buttons: plain text in a thin outline, no colour,
-  all the same width, and they stay put when the row is focused (Files v4). A pill may carry an icon (Search §26:
+  all the same width, and they stay put when the row is focused (Files v4). **Changing text never moves anything (owner, 26 Nov):** a pill or button
+  whose words change while it works (progress, Scan library) keeps its icon pinned (left inset in a pill; the right end,
+  on the margin, for Scan library), uses fixed-width digits and caps long names with "…". A pill may carry an icon (Search §26:
   ▶ Resume, ✓ Watched, ○ Unwatched; the open-in-app icon for a service).
 - **Experimental label** (owner, 13 Nov): a large new feature still being proven gets a small outlined "Experimental"
   label right after its name (Seek previews); removed once it has proven itself.
@@ -148,6 +161,22 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   folder for Movies"), one breadcrumb shows the location; "Current" marks the folder in use; the focused folder offers
   Use this folder · Open; New folder at the bottom (§28).
 - **Warnings:** left-aligned (heading, name, text, options, buttons); the safe choice has focus first ("Keep file").
+  **Delete warnings (owner, 20 Nov; LIBRARY.md › Delete warnings):** "This can't be undone." shows only while the
+  Delete button is focused, beside it, with a full stop; options sit under a **Clean Up** heading (history in
+  Supernova, Trakt history, delete the folder if it's left empty: on); with more than one file, a ticked list (ticks
+  on the right, a **Select all** switch) and a running total; the Delete button names the count.
+  **Summary line on its own (owner, 20 Nov):** the summary of what an action does ("Deletes **8 files · 19.2 GB**.")
+  always has a line to itself; any further explanation goes on the line underneath, in the soft colour. Every warning
+  and menu that sums something up follows this.
+- **Undo notice (owner, 20 Nov; `rows-captions/tv/20`, `21`):** after an instant action that can be put back (Remove
+  from library, Hide a row, Clear history, Remove a connection): a box at the foot, centred, in the menu look (§11);
+  a monochrome icon for what it was (film, TV show, row …) left of "<Title> removed from your library"; two buttons
+  in the 52 px shape, **Understood** (focused; closes it, focus back to the next item) and **Undo** (owner, 20 Nov: an
+  accidental OK can never undo); Back or six seconds close it too, focus back to the page; a thin line along its foot runs down over 6 seconds, with clear room between it and the
+  button. Not for harmless toggles such as Mark as watched, which flip in their own menu instead.
+- **Technical facts line (owner, 20 Nov):** wherever files are told apart (delete, choose a version, Files), show the
+  first three a file has of **Edition · Resolution · HDR · Sound · Video codec**; a missing one lets the next move up.
+  Size goes on the line below with the file name and where it lives.
 - **Offer real options, not just yes/no** (owner, 12 Nov): e.g. Delete has switches for Supernova history and Trakt
   history, off by default.
 - **Badges and counts agree:** a tab's badge, its summary fact and its rows use the same number and words (§28).
@@ -159,8 +188,12 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ## 8. Choices and settings
 - **One setting is one row.** Up/Down moves between settings; Left/Right goes through its choices. Chips never wrap
   and a setting is never split across two rows (REVIEW_0156 ideas).
-- **Up to five choices → inline chips on the row.** The chosen one sits in a small rounded chip (light grey at rest;
-  black with white text on a focused row). No separators between chips (§6).
+- **Two choices → inline chips on the row.** The chosen one sits in a small rounded chip (light grey at rest; black
+  with white text on a focused row). No separators between chips (§6).
+- **More than two choices → one value stepped with Left / Right (owner, 21 Nov; `library-pages/tv/63`, `68`):** the row
+  shows only the current value; ‹ › appear beside it only while the row is focused; at rest the value keeps the
+  arrow's room so values line up down the panel. Applies app-wide from now on (Customise page, Playback Settings,
+  Settings …): any row still drawn with three or more chips changes when its page is next built.
 - **On/off → a switch.**
 - More than five → **reduce or reword** the options first (freedom to rethink, CLAUDE.md); only then the shared
   choice list (section 9).
@@ -221,9 +254,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 ## 11. Panels and pop-ups
 - Pop-ups, menus and side panels: `#16181C` at **99%** opacity (owner, 19 Nov, judged on the TV over the speckle,
   `background-speckle/tv4-F`; was 95%, 13 Nov; 90% before that),
-  no outline, soft shadow; one shared value (§4).
-  **Over a page** (flat charcoal) every menu and panel gets a faint edge so it separates; **over video** none
-  (Playback Settings) (Files v8; owner, 13 Nov).
+  one shared value (§4). **Edge (owner, 19 Nov, judged on the TV, `rows-captions/tv/05` no. 3):** a thin **white
+  outline at 70%** (about 1.5 px at 1080p) **plus a dark shadow spreading outwards** (black at about 85%, about 48 px
+  soft, offset 18 px down), so menus float above the page and keep a crisp edge over poster captions. Same for every
+  pop-up, menu and side panel. **Over video** (Playback Settings): the same outline and shadow (owner, 21 Nov).
 - Focused item: filled white, black text and icon (section 3).
 - **A list opened from a panel sits on top of it** (owner, 13 Nov; replaces "never stack", 0.156 P5): the panel behind
   is darkened and pushed back slightly (about 45% brightness, 96% size) with the row you came from still visible; the
@@ -246,15 +280,18 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Reception: icons only (IMDb, Rotten Tomatoes, Metacritic, TMDB, the awards trophy), no written names.
 
 ## 14. Artwork, cards and heroes
-- **Every piece of artwork has one thin white line on its edge (about 60%) with a soft inner shade** — heroes, row
-  cards, Details tab cards, the player strip, library posters, Search thumbnails (§18 v17).
+- **Every piece of artwork has one thin white line on its edge with a soft inner shade** — heroes, row cards,
+  Details tab cards, the player strip, library posters, Search thumbnails (§18 v17). **Sizes (owner, 19 Nov, judged
+  on the TV, `rows-captions/tv/01`, `02`):** the line at rest is **solid white, 1 px at 1080p** (was 1.5 px at 60%:
+  washed out); the soft shade inside it unchanged. **The focus ring is solid white, 4 px at 1080p** (was 6 px: too
+  thick).
 - Focused artwork grows and gets the solid thick white ring (section 3). **Library posters:** the poster and its two
   lines underneath are one card; the whole card grows and the ring goes round both (owner, 13 Nov).
 - **Cast and crew (owner, 14 Nov 2026; `details-background/21`):** portrait cards (2:3, like TMDB's photos) with
   rounded corners and the artwork edge, name and role underneath, initials when there is no photo; never circles.
 - **Library poster caption (owner, 14 Nov 2026):** line one the title (the only bright line); line two always keeps a
   TV show's size: not started "3 seasons · 30 episodes" (one season: "10 episodes"), started "S2 E3 · 18 of 30
-  left" (the inset bar shows how far into the episode; no "Resume", no minutes left for shows); films started:
+  left" (progress shows in the corner badge, §14c; no "Resume", no minutes left for shows); films started:
   "42 min left"; line three follows the sort.
 - **One row card size:** 16:9, 400×225 (focused 440×248), 24 px gap, a sliver of the next card at the edge (§9).
   Title and details inside the picture on a shade; no blue caption bars. Library posters keep one portrait size on
@@ -264,11 +301,62 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Hero text: **no tagline anywhere** (owner, 13 Nov); description **two lines** on Home and Details; More › Full description opens a pop-up sized to the
   text, mirroring the hero: title, title line (seasons/episodes), then the text; no icon.
 - **Hero buttons sit in a fixed place at the bottom left** of the hero, whatever the text length (owner, 12 Nov).
+  **Below the Home hero (owner, 19 Nov):** at rest Home always shows something below the hero, at least the first
+  row's heading; how much of its cards is free (5–20% is fine). Never only the hero.
+  **Home hero: one button, More** (owner, 19 Nov): its menu holds Details and Play / Resume, so Left / Right change
+  the hero at once. Details keeps Play / Resume then More.
 - **Artwork picker by place:** Hero and rows · Library page (one backdrop for hero and rows; posters for library
   pages); no title; a side panel sliding in from the right, the hero previewing the picture you are on.
-- **Home row cards: caption box under the 16:9 picture** (title, one line, inset progress bar), as library posters
-  (owner, 13 Nov); nothing printed over the artwork. The player strip keeps its text inside.
+- ~~Home row cards: caption box under the 16:9 picture~~ **Replaced 19 Nov: see §14c** (text over the artwork,
+  corner badge, every row alike).
 - Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
+
+## 14d. One hero, one row (owner, 21 Nov 2026: principle approved; measurements proposed, `home-v3/tv/01`–`05`)
+- **The hero is one shared component**, the same code and layout wherever it appears (Home, Details: movie, show,
+  season, episode). Only the buttons and what sits under it differ: Home has one button (More) and carousel dots;
+  Details has Play / Resume (or the streaming button) and More, with the tabs below.
+- Layout (1080p): **1816 × 820 at x 52** (owner, 21 Nov: edges on the top bar's edges; was 1776 at 72), y 112, 24 px corners, the 1 px white edge with inner shade; a dark
+  shade from the left (and a little from the foot); the text block **anchored to the bottom**, so the buttons never
+  move whatever the text: buttons 56 px above the foot, the two-line description 40 px above them, the facts line 16
+  px above that, an optional title line ("Season 2 · Episode 8 · Title") above it, the logo (inside 900 × 240) 24 px
+  above. Left edge of text and buttons 64 px in.
+- **The row is one shared component** wherever rows appear (Home, Details Episodes / Extras / More Like This, and any
+  row added later): heading with its icon (32 px, medium), 26 px to the cards; cards 400 × 225, 24 px apart, row
+  design A (title and one line over the artwork's foot), the corner badge; focus grows to 440 × 248 with the 4 px
+  ring. The player's rows are separate.
+- **Decided (owner, 21 Nov):** the description is two lines at most. **The first line under the hero lines up on
+  Home and Details:** Home's first row heading and Details' tab row sit at the same height (the heading moves up a
+  little, the tabs down a little, to meet; the text centred about 66 px below the hero's foot). **Row headings are
+  never focusable** and have no buttons: Move and Hide are removed from Home; rows are ordered and switched on and
+  off only in Customise Home (OK picks a row up, Up / Down moves it, as in Columns). **A focused card never overlaps
+  its neighbours** (as library posters): it grows 8% (432 × 243, was 10%) and cards sit 40 px apart (was 24), so
+  the grown card and its 4 px ring keep about 20 px clear. **Text block bottom-left** (owner, 21 Nov), anchored as above.
+- **Next episode label (owner, 25 Nov; `next-episode/tv/01`, `03`):** a running TV show whose next episode airs
+  within 7 days gets a small outlined label (52 px shape, calendar icon) on its own line 22 px above the logo:
+  "New episode today / tomorrow / Sunday", or "every Sunday" once the last three aired that weekday. Never moves the
+  facts line or buttons; not focusable; Home and Details alike.
+- **Pickers opened from a panel row** (icon picker, like the keyboard, §15) open under that row, the panel's width;
+  **the row that opened it is never covered**, it stays fully visible above the picker (owner, 21 Nov).
+- **Facts line (owner, 21 Nov):** Age rating badge · Year · Length · Genres, **up to four genres** (TMDB order; was
+  three). No dot after the age badge: its outline already separates it (dots separate plain facts, §6).
+
+## 14c. Progress badge and row cards (owner, 19 Nov 2026; replaces every progress bar on artwork)
+- **No progress bars on artwork or captions anywhere.** Progress is one **badge in the top-right corner** of the
+  artwork: library posters, Home rows, Details rows (Episodes, Extras, More Like This), the player's Chapters and
+  Episodes rows, Search results, and anything else that shows a title, film or episode.
+  **Search's small thumbnails (owner, 25 Nov, `search-v6/tv/08` A):** the same badge scaled to 30 px; Search's pills
+  only where they add words ("Resume S2 E3"), no Watched / Unwatched pills.
+- **The badge** (`rows-captions/06-pie-badge.png` B, `04-ring-sizes.png` medium): a white circle **48 px at 1080p**,
+  inset about 8 px from the corner, soft shadow. Inside, black fills like a clock **from 12 o'clock clockwise**
+  (a pie), inside a **white rim of 3 px** (owner, 19 Nov, judged on the TV, `rows-captions/tv/10`; the black pie is
+  42 px across) so it never vanishes on dark artwork. **Watched:** the same circle with a black
+  tick. **Not started:** no badge. A show's badge shows episodes watched out of all; a film or episode, time watched.
+- **Row cards (Home, Details, player): design A** (`rows-captions/02-rows-A-B-C.png` frame 2): 16:9, 400 × 225
+  (focused 440 × 248); title and one line **over the bottom of the artwork** on a dark fade; no caption box under the
+  card; the badge top right. Replaces "caption box under the 16:9 picture" (13 Nov).
+- **Library posters** (`rows-captions/01-poster-captions.png`, `03`): the caption under the poster keeps exactly
+  three lines (title, size or "S1 E4 · 5 of 8 left", the sort line), no bar, no empty strip; the badge top right.
+- Not affected: the player's own seek bar, and progress of a task in a row (scans, backups, downloads).
 
 ## 14b. Details pages (all four kinds)
 - **Tabs in one master order, shown or hidden, never moved:** Details · Episodes · Extras · More Like This (§29).
@@ -284,14 +372,17 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   subtitles search, everything. Any change or fix is made once, in it, and applies everywhere (owner, 12 Nov). No
   screen builds its own keyboard or its own keyboard focus handling.
 - Layout: number row always shown; lower-case QWERTY; `/` after L; `. @` after M; Shift; `#+=` opens the symbols
-  page (ABC returns); bottom row `#+=` · Voice · Space · Delete · Clear · Phone. Forms add Done · Cancel; Search does
-  not. **Phone** opens Android's keyboard on the same box so the phone app can type or paste (owner, 14 Nov; §36);
-  Back or Done returns to these keys. **Password boxes have a show/hide eye** beside the box (owner, 14 Nov).
+  page (ABC returns); bottom row `#+=` · Voice · Space · Delete · Clear. Forms add Done · Cancel; Search does
+  not. **No Phone key (owner, 25 Nov; replaces the key of 14 Nov):** typing or pasting from the phone app works as in
+  any other app, with no button: while our keyboard is open, the box keeps a real Android text session (Android's own
+  keyboard kept out of sight), so the phone app offers its typing box by itself and the text lands in the box. **Password boxes have a show/hide eye** beside the box (owner, 14 Nov).
 - **Focus starts on T** (the most common first letter of film and series titles).
 - **Focus stays on the key you pressed,** however fast you type. Results arriving or the page refreshing never take
   it away (Fix match bug, §27).
-- Shown on the page, not in a side panel. **Opened from a menu or side panel** (e.g. a choice list's search), it sits
-  beside that panel, never covering it, in a panel of its own with the same background (owner, 13 Nov). On Search the field and keyboard are on the left, results on the right; the
+- Shown on the page, not in a side panel. **Opened from a row in a menu or side panel** (Page name in Customise page,
+  a choice list's search): it floats **over that panel, its top straight under the row being typed into, the
+  panel's width, never covering the row**, so the text and the keys are in one place (owner, 21 Nov, `library-pages/tv/66`; replaces "beside
+  the panel, never covering it", 13 Nov). Done returns to the row. On Search the field and keyboard are on the left, results on the right; the
   keyboard stays visible.
 - Typing is forgiving wherever it searches: capitals, punctuation and a leading "The" ignored, one-letter typos,
   original titles, TMDB / IMDb / TVDB / Trakt numbers (Files v11).
@@ -311,6 +402,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **No scroll bars anywhere** (owner, 17 Nov; `files-review-0157-1/02` C): when a page or list runs off the screen, a
   small down arrow sits in the empty right-hand margin at the foot of the list, and an up arrow at the top once there
   is something above (faint when there isn't). No arrows when everything fits. A row half off the screen stays.
+  **In a menu or panel that scrolls, the arrows sit in its own right-hand margin** (top and foot), kept clear of the
+  rows' ticks (owner, 20 Nov, `library-pages/tv/44`, `45`: "a very clear indicator").
 - Rows a left arrow appears beside: move the whole row right to make room; never just the first card (§19).
 
 ## 17. Motion
@@ -342,6 +435,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **One loading ring for the player, in the centre of the screen** (the app's ring, as on Preparing playback and the
   Files scan) whenever playback waits (after a seek, slow network). The time box only ever shows the time over the
   chapter name; the seek preview picture uses exactly that layout inside it (owner, 12 Nov; replaces §14 A).
+- **Seek preview (owner, 21 Nov):** a setting Off · Chapter pictures · Video frames; Off shows no picture; never a grey
+  box: a picture not ready in time leaves the time box alone.
 
 ---
 
@@ -384,9 +479,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Progress through the steps is written, not drawn: "Step 2 of 3" in soft text above the heading. Dots are kept for
   the Home carousel only (owner, 14 Nov 2026).
 - **Empty library pages** (`library-pages/34`): no toolbar while there is nothing to filter or sort; one centred
-  message with an icon. Nothing added yet: "No films yet" / "No TV shows yet" and **Add your videos** (to Home's
-  Add your videos step while setting up, otherwise Files). First scan running and nothing found yet: the loading ring,
-  "Finding your TV shows", "The first ones appear here in a moment." No count: the moment the first title is found
+  message with an icon. Nothing added yet: "No movies yet" / "No TV shows yet" ("… and your movies will appear here")
+  and **Add your videos** (to Home's Add your videos step while setting up, otherwise Files). First scan running and
+  nothing found yet: the one spinning loading ring (animated, no circle behind it; owner, 19 Nov), "Finding your TV
+  shows", "The first ones will appear here in a moment." No count: the moment the first title is found
   the message goes and the posters show, filling in as the scan goes on (the ring beside Files says it is still
   running) (owner, 14 Nov).
 - **The third page before it is set up:** a **+** icon in the top bar (like Search and Settings, an icon); its page says
@@ -413,7 +509,34 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.
 - Settled 12–13 Nov: Details headings (icons, no underline) and Details lines (faint row lines, no column lines).
 
+
+**Library pages under the top bar (owner, 19 Nov; firm, raised several times):** on Movies, TV Shows and every
+own library page, scrolled content runs on **behind** the top bar and blends behind its words under the bar's soft
+fade (TopNavigation's fade, approved 4 Nov, `top-bar/01`–`04`). **Never a solid band** and never content clipped
+below the bar. Movies and TV Shows (0.158.4) are the reference.
+
+**Page tabs (owner, 19 Nov):** tabs on a full page (Files, Settings) use Files' look: the same box size as the top
+bar, a line under the tab row, the white focus box; never a plain row of words that reads as a second top bar.
+Panels (Playback Settings) keep their own. Details' tabs: decided at the full walk-through.
+**One tab behaviour everywhere (owner, 21 Nov; reference: the player's Chapters · Episodes tabs as built today):**
+focused tab = the white box in the one small-box shape (52 px, 20 px corners), sized to its word, with a clear gap
+above the line under the tab row: **the box never touches or overlaps that line**. When focus goes down into the
+tab's content, the open tab shows a **white underline** under its word (no grey box); the underline sits above the
+line, never on it. Moving along the tabs switches at once. Same on Details, Files, Settings and the player: copy
+the player's sizes and gaps (measure them in its code) rather than inventing new ones.
+
+**Information lines in sentence case (owner, 19 Nov):** captions, second lines, details and buttons' detail text
+capitalise only the first letter ("2 seasons · 16 episodes", "S1 E4 · 3 of 8 left", "Resume S1 E5 · 16 min left");
+Title Case is for headings and names only.
+
 ## Replaced rules (do not use)
+- The keyboard's Phone key (14 Nov) → no key; the phone app types into the box as in other apps (§15, 25 Nov).
+- Up to five choices as inline chips → two choices as chips, more than two stepped with Left / Right (§8, 21 Nov).
+- Keyboard beside a panel, never covering it → over the panel, straight under the row (§15, 21 Nov).
+- Panels with no outline (5 Nov) / a faint edge over a page (13 Nov) → white outline at 70% plus a dark shadow,
+  §11 (19 Nov).
+- Progress bars on cards, posters and captions; caption box under Home row cards → the corner badge and row
+  design A, §14c (19 Nov).
 - Panels at 95% (13 Nov) → 99% over the speckle (§11, 19 Nov).
 - Back from the middle of a long page first jumps to the top, then to the top bar → straight to the top bar; a page
   left for another page reopens at its top (§16, 18 Nov).
@@ -421,6 +544,7 @@ Latest decision only; the diary entry it came from is named so the reasoning can
 - Navy glass at 97% with a light outline for panels → 90% `#16181C`, no outline (5 Nov).
 - White outline as row focus; blue glow focus → filled white box (5 Nov).
 - Open tab as a grey chip; plain-underline tabs → the focus-and-path rule (12 Nov).
+- Artwork line 1.5 px at 60% → solid white 1 px; focus ring 6 px → 4 px (§14, 19 Nov).
 - Card edge 1.5 px at 28%; "focus = grows only" → 60% edge with inner shade; focus = grow + thick ring (7 and 12 Nov).
 - Space Black behind full pages → plain charcoal (7 Nov).
 - Blue values; blue open tab; dark-blue chosen value on focused rows → chips, plain white values (5 Nov).

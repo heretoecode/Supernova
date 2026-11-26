@@ -41,9 +41,60 @@ Items already built or scheduled are left out (see the bottom of this file).
 - ~~GitHub cleanup~~ — **done by Claude on 5 Nov 2026** at the owner's request: `CLAUDE.md`, `AGENTS.md`, new README
   and PROJECT_STATUS, `docs/archive/`, and GitHub Issues #31–#102 (source in `docs/issues/`).
 
+## When the next episode airs, on Details (owner, 25 Nov 2026) — moved to 0.158 (BRIEF_0158_B, DETAILS.md)
+- Seen in Plozz: the hero of a running show says "New episode every Sunday". The owner likes Details telling you
+  when the next episode airs. TMDB gives the next episode's air date (and the last one), so the weekday can be
+  worked out. Already there: Details tab › Status "Returning · 2 seasons".
+- Claude's suggestion: (1) the Status row gains the date: "Returning · S2 E4 on Sun 30 Nov"; (2) a small outlined
+  label in the hero, only when an episode airs within the next 7 days ("New episode Sunday"; "New episode today"),
+  same on Home's hero (one hero, RULES §14d); "every Sunday" only when the last three aired on that weekday; nothing
+  for ended shows or unknown dates. Never a tagline (RULES §14). Place to be drawn; at the Details walk-through or
+  when Details is next opened.
+
+## Finer settings, after another player app (owner, 25 Nov 2026) — to discuss
+- The owner uses **Plozz** (plozz.app; free, open-source player for Apple TV, iPhone, iPad; Plex, Jellyfin, Emby,
+  Silo and network shares) and likes how finely its settings can be tuned compared with Supernova's. Read its docs
+  (docs.plozz.app) on 25 Nov. Candidates for Supernova, to choose from at the Settings review (freedom to rethink):
+  - **Playback:** rewind on resume (0–60 s, default 5); skip "after N seconds" as well as button / instantly, and
+    skip rules per kind (movies / TV shows); hide controls: while playing / while playing or paused / never;
+    version choice: ask every time / choose automatically / server's first, remembered per series; Up Next card on
+    or off; which player tabs show (Chapters, Cast, Episodes, Continue Watching); default zoom (normal, crop black
+    bars, crop, stretch, custom %) remembered per movie or series; manual audio and subtitle delay.
+  - **Audio / subtitles:** preferred language Original / device / a language, optionally separate for movies and
+    TV shows; prefer lossless audio; **two subtitle languages at once**; subtitles at the foot of the screen or of the
+    picture, wrapped lines growing up / centre / down, move up out of the controls' way; ignore the file's
+    positions, colours, bold and italic, and override ASS/SSA styling; forced, prefer SDH, only SDH.
+  - **Home / pages:** **spoiler protection** (blur or replace unwatched episode pictures, hide their titles and
+    descriptions, hide ratings until watched); Continue Watching card style and what OK does (play or open
+    Details); hide watched titles in Recently Added and the hero; unwatched flag and episode count on posters; show
+    age badges on or off; trailers off / server only / server + YouTube, Home autoplay muted, Details background
+    (still / trailer / theme music with volume); rating sources and their order; **Circadian mode** (warms and dims
+    the app at night, by sunset or set times).
+  - **From the owner's screenshots (25 Nov):** Playback page groups Autoplay & Up Next (Autoplay next episode;
+    Show Up Next card; "Time before the end: 30 sec", only when credits can't be detected) · Intros, credits & more
+    (one switch, then Customize: Default behaviour, "Enable for" Movies / TV Shows switches, then Intros · Credits ·
+    Recaps · Previews · **Commercials** each with its own behaviour; Use community markers) · Resuming playback (Ask
+    to resume or start over; Rewind on resume 5 s, with the line "Media will resume 5 seconds earlier.").
+  - Claude's view: take the handful that add real control without turning Settings into a cockpit; the rest stay
+    here. Plozz's way of splitting settings into an "everyone" level and per-title memory matches our For This
+    Series.
+
 ## From this session (4 Nov 2026)
 - **Discovery in Search** — owner: "maybe in the future but not for now". Search stays library-only in 0.156
   (`docs/0.155/OWNER_NOTES.md` item 20).
+  **Added 25 Nov 2026 (owner's saved notes): request through Seerr.** Search shows titles not in the library too
+  (from TMDB), clearly apart from library titles; those get a **Request** button that sends the request to the
+  owner's own Seerr server, which passes it to Sonarr / Radarr; the title later appears in the library by itself. A
+  setting turns it on and off. Claude's view: a good fit, as a switch that is off by default (it deliberately bends
+  RULES §18 "the library is the key"); a third Search section after In your library and the Stream groups, its pill
+  showing Seerr's state (Request · Requested · Downloading · Available); Settings › Services gets a Seerr row
+  (address, API key typed with the one keyboard, Test). Seerr is the merged Overseerr / Jellyseerr; its API takes a
+  TMDB id. Could later reach More Like This and Details. Polish phase: design after the current page reviews.
+  **Plozz already does this** (docs.plozz.app/media-requests, /library, /discover; read 25 Nov): Search shows a "Not
+  in Your Library" section with Request; states Pending approval · Requested · Requested · Unreleased · Downloading
+  · Available; "Request Seasons" for missing seasons of a show in the library; a Discover page (Trending, Popular,
+  Upcoming) with an "Available now" filter; sign-in with a Seerr account or the media server's account, or an
+  admin API key with "Request as" a restricted user. A good model to follow.
 - **Rectangular QR codes** — not used because most phone cameras can't read them; square kept (item 32).
 
 ## Parked ideas from the older registers
@@ -317,6 +368,12 @@ is ever wanted back.
     Guest"); **Clear guest** resets it without deleting the user.
   - **"Watch without Alex?" stays** (round 7, `06-v6-01`): opening a Together title alone asks Wait for Alex · Watch
     now · We're both here.
+- **Claude, 25 Nov (rereading against today's rules; owner chose to finish the page reviews first):** three points
+  for next time, plus the Guest mock-up. (1) The top bar is words only since 18 Nov; keep the user menu as the one
+  icon exception (a person, fixed size), or show the user's name? Claude: the icon. (2) "Everything" was a view, but
+  progress is per user since 18 Nov: drop it from the menu (Guest sees everything; Filters Off and Search show the
+  rest)? Claude: drop it. (3) Watching as Together also ticks the episode watched for each person in it? Claude: yes.
+  Before building: redraw on today's look (the Ready rule).
 
 ## Panels whose rows change with a choice (owner, 16 Nov 2026)
 - Idea from the Trakt list row: a choice at the top of a panel ("Row from: Your library · Trakt list") swaps the rows
@@ -331,3 +388,9 @@ is ever wanted back.
 ## Transfers: daytime full-speed windows (owner, 16 Nov 2026)
 - Full speed hours offers only overnight five-hour windows for now. Later: daytime windows (nobody home, network free)
   and perhaps days of the week, as download tools often offer.
+
+## Streaming logo on library posters (owner, 20 Nov 2026)
+- Idea: a small streaming-service logo in the top-left corner of any library poster whose title is also on one of
+  Your services, even with no filter on (the progress pie keeps the top right). Left for now (polish phase).
+  Claude's notes: two badges per poster may crowd the artwork; availability changes weekly and by region, so an
+  always-on badge goes stale; a lighter version shows the logo only while a Streaming services filter is on.

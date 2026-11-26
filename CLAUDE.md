@@ -55,6 +55,10 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - **Signing: standing approval (owner, 17 Nov 2026).** Sign every version as soon as the conformance run of the exact
   same source is green, without asking; tell the owner it is signed and where the APK is. (Replaces "the owner approves
   every signing".) Publishing anywhere else still needs the owner.
+- **Release notes for every APK (owner, 19 Nov 2026).** Every signed APK, even a point release with one fix or
+  tweak, gets its own release notes: its own section in `docs/<version>/RELEASE_NOTES.md` (e.g. 0.158.1, 0.158.2 …)
+  and its own entry, with its date, in the app's About › What's New. **With every signing, also bring `main` forward
+  to the signed source and update the README's "Current version" line**, so the GitHub front page is never behind.
 - **This repository is public** (a GitHub fork of NOVA). Never put the owner's personal details in it: account
   names, email, location (country, city, time zone names), addresses, device names, real storage figures. Say "local
   time". Mock-ups and tests use made-up names (owner, 12 Nov 2026). The owner intends to make it private; it may go
@@ -70,6 +74,15 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   remind them to send the latest diagnostics report from the Shield, and read it for faults to fix in that version.
   **The read ends with what the owner did not see (owner, 16 Nov 2026):** faults, slowness, memory and anything else the
   report shows, each with a recommended fix, so the report catches what eyes on the screen miss.
+  **Also ask about NOVA (owner, 21 Nov 2026):** at the same moment, ask the owner whether to check NOVA Video Player
+  for new releases and unreleased code changes since our last catch-up (e.g. the new IntroDB API), and list anything
+  worth bringing in for that version.
+- **Polish phase (owner, 20 Nov 2026):** the current work is improving what exists, page by page, element by element
+  ("does that look right? should I tweak that?"), not adding features. New features wait until this phase is done:
+  the new onboarding, the Trakt list row and Media Transfers stay under Ready with no version. Required improvements
+  (the diagnostics upgrade, the NOVA clean-out, bug fixes) go ahead. When something new comes up, park it.
+  **Before any of those three is built:** (1) redraw its designs with the rules as they are then and get the owner's
+  check, (2) write its page sheet in `docs/design/pages/` (none exists yet). See ROADMAP › Ready.
 - **Freedom to rethink options (owner, 6 Nov 2026):** when redesigning, existing choices (from NOVA or earlier
   Supernova) are a starting point, not a constraint. Add, remove, merge or reword options and settings where it
   suits (e.g. Sleep timer becomes "Stop playing at" with clock times). Still propose; the owner approves.
@@ -90,16 +103,16 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - **Direction: every page becomes plain charcoal `#16181C`, content straight on it; Space Black is being retired**
     (owner, 7 Nov 2026). **Not a blanket switch:** each page changes only after it has been reviewed on charcoal and
     its elements adjusted (as done for Files and Details). Pages not yet reviewed keep Space Black until then.
-  - Pop-ups, menus and side panels are `#16181C` at 90% opacity with no outline, and the focused item is filled white with
-    black text and icon (built in 0.157).
+  - Pop-ups, menus and side panels are `#16181C` at 99% with a white outline at 70% and a dark shadow (owner, 19 Nov;
+    RULES §11), and the focused item is filled white with black text and icon.
   - Every menu: each item has its own icon (no two alike in one menu), the current choice is a tick on the right,
     and the menu is only as wide as its longest item plus the standard padding (owner, 6 Nov 2026; 0.157).
   - In choice rows the chosen option sits in a small chip; single values are plain white. No blue for values.
   - **Artwork edge (owner, 7 Nov 2026; replaces the 28% edge/white ring):** every piece of artwork — both heroes
     (Home and Details), every row card (Home, Details tabs: Seasons & Episodes, Extras, More Like This), the player's
-    Chapters/Episodes strip and library-page posters — has one thin white line exactly on its edge (about 60%) with a
+    Chapters/Episodes strip and library-page posters — has one thin white line exactly on its edge (solid white, 1 px at 1080p; 19 Nov) with a
     soft inner shade just inside it, so the edge shows on light and dark artwork alike. Every item has the edge all the
-    time. **Focused artwork grows and gets a solid, thick white ring** (owner, 12 Nov 2026), with space around it so
+    time. **Focused artwork grows and gets a solid white ring, 4 px at 1080p** (owner, 12 Nov 2026; 4 px from 19 Nov), with space around it so
     the grown card never crowds a line or heading. Hero cards show focus on their first button instead. Mock-ups
     `details-background/07-v17-top`, `tab-style/15-v3`. No blue caption bars.
   - **Focus and path (owner, 12 Nov 2026), everywhere incl. top bar and tabs:** white box with black text and icon =
@@ -139,6 +152,11 @@ done from still renders. From now on a redesigned page is done only when all of 
 
 When the owner sets Supernova Coding going (often overnight), the aim is a signed APK ready when they wake:
 - **Never sit idle while a GitHub build runs.** Start it, carry on with the next item, check the run when it ends.
+- **Never end a turn while work remains (owner, 26 Nov).** A finished turn stops the session: nothing wakes it when a
+  build ends, so it looks idle all night. Keep working the next item while runs go. If there is truly nothing left to do
+  but wait for a run, first book a wake-up with `send_later` (claude-code-remote; about the run's remaining time, e.g.
+  40 min, message "Check run <id> and carry on with BRIEF …"), then end the turn; on waking, check the run and carry on.
+  Before any turn ends, ask: is everything in the brief built, signed and reported? If not, book the wake-up first.
 - **Don't stop for questions.** Use best judgement, follow the rules and page sheets, and list every judgement call
   for the owner at the end (with the reason), so they can be changed later.
 - Push after each finished item, so nothing is lost if the session stops.

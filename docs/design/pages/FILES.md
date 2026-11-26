@@ -97,3 +97,50 @@ facts on the right of the tabs: read them as This Device, Files, underline tabs,
 ## Never opens from Files
 NOVA's Network Shares / Saved Locations / "Browse a network share" pages, the "Add Network Source" pop-up, Android's
 keyboard, the three-panel browser (Locations · list · Information), the old Library Health screens.
+
+## Review 25–26 Nov (owner; mock-ups `files-v2/tv/01`–`22`; rounds 1–4)
+**Round 1 (owner, 26 Nov): agreed with the notes below; redrawn `files-v2/tv/01`–`08` (Drive › Files round 1 › Revised 26 Nov).**
+- **Tabs (confirmed):** focused tab = the white box; inside the tab the open tab keeps a white underline, no box (RULES
+  one tab behaviour).
+- **Scan library narrates its work (owner):** "Scanning Backup #1 · 42%" → "Scanning Put.io · 3 of 6 sources" →
+  "Fetching details · 12 of 40" → "Done · 23 new" (a few seconds), then "Scan library"; OK while running stops it.
+  **Nothing jiggles (owner):** the ⟳ icon sits at the right end, pinned to the margin; the words grow leftwards into
+  the empty space; numbers use fixed-width digits; long source names end in "…" so the text has a ceiling.
+- **Menus reserve the tick column** on every row (Sort: "Date modified" must fit its tick); drawing fix.
+- **Folder size on folder rows (owner):** "Folder · 31 videos · 48.6 GB"; from the library at once for folders in it;
+  for folders not yet added (network) it fills in quietly when counted.
+- **Signal dot (owner, 26 Nov):** stays **outside** the Files box, with a clear gap, centred on the word (RULES §2: the
+  slot never shifts anything).
+- **Fix match on a folder (owner, 26 Nov):** only when the folder holds one title (a TV show's or a film's folder);
+  it re-matches everything inside in one go. Not offered on mixed folders. Folder menu then: Open · (Add to library ·
+  Scan this folder) · Fix match · Exclude.
+- **"Show all files"** carries its file icon, black on the white focus (drawing fix).
+- **Progress in a pill doesn't wobble (owner, 26 Nov):** pills keep their one fixed width; while working, the ring is
+  pinned at the pill's left inset with the words left-aligned after it and fixed-width digits ("Adding · 40%",
+  "Scanning · 100%" fit).
+
+**Round 2 (owner, 26 Nov): agreed with the notes below; redrawn `tv/09`, `12`, `12b`, `12c`, `13` (Drive › Files round 2 › Revised 26 Nov).**
+- Long names stop well short of the pill: a clear 40 px gap before the pill column ("…" earlier).
+- **Type is a short menu (owner, 26 Nov; an exception to RULES §8 because each kind needs a line of explanation):** OK on
+  Type (value and ›) opens the four kinds under the row, each with its second line, the current one ticked (`tv/12c`):
+  SMB "Shared folders on a Windows PC, Mac or NAS" · WebDAV "Cloud storage and web servers" · SFTP "A computer or server
+  you sign in to over SSH" · FTP "Older file servers; FTPS when encrypted". Back closes it.
+- **Encryption sits straight under Type, always (owner, 26 Nov):** a switch for WebDAV (HTTPS) and FTP (FTPS), on by
+  default; **greyed** for the others, saying why: "Always on with SFTP", "Set by the server" (SMB); focus skips it while
+  greyed (`tv/12b`, `tv/13`). Rows never jump when the type changes.
+- **Form rows get icons** (Claude, as every other row in the app): Type, Name, Address, Encryption, Port, Folder(s),
+  Username, Password, Remember password.
+- Form height follows the type (WebDAV nine rows, SMB seven: no encryption switch, standard port); the buttons sit
+  straight under the last field, never pinned to the foot.
+
+## To fix (approved idea, owner 20 Nov; draw at the Files review)
+A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
+match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on
+Files in the top bar shows while anything is waiting. **Mock-up and details at the Files review**, not before.
+
+## To settle at the Files review (owner, 20 Nov)
+- **Fix match shows the file:** the file name and its location on the Fix match page, so the owner can tell which
+  show or film the file really is before choosing a match. Place and look decided at the Files review.
+
+- **New, to walk through at the Files review (owner, 21 Nov):** Library Care › **Excluded from hero** (list of titles
+  kept off Home's hero; mock-up `home-v3/tv/17`, approved in principle only) and its row in Library Care.
