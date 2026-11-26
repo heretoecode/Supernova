@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback.files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -46,7 +47,7 @@ public class FilesPageTest
     }
 
     @Test
-    public void scanOneSourceShowsAButtonPerSourceOnlyWhenFocused()
+    public void scanOneSourceOpensAMenuOfEverySource()
     {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         FilesPage page = new FilesPage(activity);
@@ -57,13 +58,50 @@ public class FilesPageTest
             new FilesPage.Source("Media server", android.net.Uri.parse("smb://server/Films"), false));
         page.setSources(sources, scanned::add);
         findTabs(page).select(FilesPage.LIBRARY_CARE);
-        View device = findByDescription(page, "This device, Scan one source");
-        View server = findByDescription(page, "Media server, Scan one source");
-        assertNotNull(server);
-        // Nothing shown at rest (F48).
-        assertEquals(View.GONE, device.getVisibility());
-        server.performClick();
+        // FILES.md: one "Scan one source" row; OK opens a menu of every source (no buttons per source on the page).
+        assertNull(findByDescription(page, "Media server, Scan one source"));
+        View row = findByDescription(page, "Scan one source");
+        assertNotNull(row);
+        row.performClick();
+        android.app.Dialog menu = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertNotNull("Scan one source opens a menu", menu);
+        View server = findText(menu.getWindow().getDecorView(), "Media server");
+        assertNotNull("Every source is in the menu", server);
+        assertNotNull(findText(menu.getWindow().getDecorView(), "This device"));
+        clickable(server).performClick();
         assertEquals("Media server", scanned.get(0).label);
+    }
+
+    private static View findText(View view, String start)
+    {
+        if (view instanceof android.widget.TextView
+            && ((android.widget.TextView) view).getText().toString().startsWith(start))
+        {
+            return view;
+        }
+        if (view instanceof android.view.ViewGroup)
+        {
+            android.view.ViewGroup group = (android.view.ViewGroup) view;
+            for (int index = 0; index < group.getChildCount(); index++)
+            {
+                View found = findText(group.getChildAt(index), start);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static View clickable(View view)
+    {
+        View at = view;
+        while (at != null && !at.isClickable() && at.getParent() instanceof View)
+        {
+            at = (View) at.getParent();
+        }
+        return at;
     }
 
     @Test

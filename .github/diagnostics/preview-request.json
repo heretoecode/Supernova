@@ -1,14 +1,7 @@
 {
- "purpose": "0.158.11: Files C1\u2013C5",
+ "purpose": "0.158.11: Files scan-one-source menu test",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
-  "com.archos.mediacenter.video.leanback.files.FolderMenuTest",
-  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
-  "com.archos.mediacenter.video.leanback.files.LibraryCareListsTest",
-  "com.archos.mediacenter.video.scanning.ScanNarrationTest",
-  "com.archos.mediacenter.video.leanback.files.ConnectionRenameTest",
-  "com.archos.mediacenter.video.leanback.PreviewMatchPanelTest",
-  "com.archos.mediacenter.video.leanback.Review0158cDeleteWarningTest"
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest"
  ],
  "variants": {
   "normal": {}
