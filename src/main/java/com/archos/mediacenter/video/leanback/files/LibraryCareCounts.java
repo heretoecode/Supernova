@@ -13,6 +13,8 @@ public final class LibraryCareCounts
 {
     public final int missing;
     public final int notMatched;
+    /** M5: new titles still being looked up ("Matching N new titles"). */
+    public int pending;
 
     private LibraryCareCounts(int missing, int notMatched)
     {
@@ -27,6 +29,17 @@ public final class LibraryCareCounts
      */
     public static LibraryCareCounts count(List<Base> media, boolean importing, Predicate<Video> missingFile)
     {
+        return count(media, importing, missingFile, java.util.Collections.emptySet());
+    }
+
+    /**
+     * M5: a video whose look-up hasn't ended ({@code pending}) is not counted as Not matched; it is counted in
+     * {@link #pending} for the "Matching N new titles" line.
+     */
+    public static LibraryCareCounts count(List<Base> media, boolean importing, Predicate<Video> missingFile,
+                                          java.util.Set<Long> pending)
+    {
+        int waiting = 0;
         int missing = 0;
         int notMatched = 0;
         for (Base item : media)
@@ -41,12 +54,19 @@ public final class LibraryCareCounts
                 missing++;
             }
             boolean matched = video instanceof Movie || video instanceof Episode;
+            if (!matched && pending.contains(video.getId()))
+            {
+                waiting++;
+                continue;
+            }
             if (!importing && !matched)
             {
                 notMatched++;
             }
         }
-        return new LibraryCareCounts(missing, notMatched);
+        LibraryCareCounts counts = new LibraryCareCounts(missing, notMatched);
+        counts.pending = waiting;
+        return counts;
     }
 
     public int toCheck()

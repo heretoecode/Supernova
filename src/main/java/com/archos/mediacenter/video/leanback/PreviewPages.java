@@ -3618,7 +3618,8 @@ public final class PreviewPages extends FrameLayout {
             com.archos.mediacenter.video.leanback.files.LibraryCareCounts counts =
                 com.archos.mediacenter.video.leanback.files.LibraryCareCounts.count(
                     media, importing,
-                    video -> LibraryHealth.state(getContext(), video) != LibraryHealth.State.AVAILABLE);
+                    video -> LibraryHealth.state(getContext(), video) != LibraryHealth.State.AVAILABLE,
+                    com.archos.mediacenter.video.leanback.files.PendingLookups.ids(getContext()));
             long lastScan = PreferenceManager.getDefaultSharedPreferences(getContext())
                                 .getLong("preview_scan_result_time", 0);
             boolean scanning = PreviewLibraryScan.active();
