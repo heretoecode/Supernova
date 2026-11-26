@@ -6,7 +6,7 @@ the latest NOVA changes, and the Settings Backup bug"). Installed on the Shield:
 sign finished work as you go (standing approval), first signing **0.158.8** (code 1588), then .9 and so on.
 
 ## Part C continued (owner, 26 Nov, after 0.158.9)
-**Ready to start (owner, 26 Nov): the Files review is finished and FILES.md is final.** Order (Claude's,
+**Not started yet (owner, 26 Nov): the owner starts this run after the Files review (round 4, Your Library) is finished.** Order (Claude's,
 owner: "an order that makes sense"): (A) the refinements 0.158.9 missed (items 1–6), (B) diagnostics record why (item
 9: everything after benefits from reasons in the report), (C) the Files page (item 10: Library Care's Missing files
 lives there), (D) the MobLand bugs M2–M6 (item 8, built onto the new Library Care), then (E) the NOVA leftovers (item 7,
@@ -60,7 +60,7 @@ finished to its sheet (every action pressed and rendered) before the next:
    code and message). A test fails the build if any failure is recorded without one. Where the reason truly isn't
    known, the report says so and records what was attempted, how long it waited and the last thing that worked. The
    report's summary lists top reasons ("Delete failed ×6: server refused (403)").
-10. **The Files page (owner's review finished 26 Nov; build from `docs/design/pages/FILES.md`, final).** One page at a
+10. **The Files page (rounds 1–3 approved 26 Nov; round 4, Your Library, still to review; build from `docs/design/pages/FILES.md`).** One page at a
    time to the sheet, each finished (renders of every action, Definition of done) before the next: (a) the whole page:
    top bar signal slot, tabs, **Scan library narrating every step**; (b) This Device and browsing (sort menu, folder
    sizes, Fix match on one-title folders, empty folder, pills that never wobble); (c) Connections and the connection

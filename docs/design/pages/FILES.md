@@ -1,7 +1,7 @@
 # Page sheet: Files
 
-The one place to build Files from (CLAUDE.md "Definition of done"). **Final, 26 Nov 2026:** the owner's Files review
-(25–26 Nov, four rounds) is finished and everything below is approved. Mock-ups: `docs/design/proposals/files-v2/tv/`
+The one place to build Files from (CLAUDE.md "Definition of done"). **26 Nov 2026:** rounds 1–3 of the owner's Files
+review are approved and final below; **Your Library (round 4) is still to be reviewed**. Mock-ups: `docs/design/proposals/files-v2/tv/`
 `01`–`24` (Drive › Supernova › Media › From Claude › "2026-11-25 Files round 1–4"; where a frame was redrawn, the
 newest file there). This sheet wins over every older Files document (`NETWORK_FILES.md`, `network-files-tabs/`,
 `files-review-0157-1/`, `REVIEW_0157_1.md`); RULES.md wins over this sheet only where it is newer. The 25–26 Nov
@@ -164,7 +164,7 @@ and backup-nas.local found on the network; empty folders; long file and title na
     missing, each match and how it was made, updates, artwork, finished with the totals.
   - Kept for the last ten scans; the same record feeds the diagnostics report (BRIEF_0158_C item 9).
 
-## Your Library (`tv/22`)
+## Your Library (`tv/22`) — drawn, awaiting the owner's round 4 review
 Read-only, nothing focusable; Down / Up scroll; arrows as above. Faint row lines (a long read-only list of facts).
 - **Total Library:** All library pages ("520 titles · 1,808 videos", size) · Watched ("318 of 520 titles", %) · Time
   to watch everything (hours) · Picture (4K · 1080p · 720p · SD · HDR counts) · Added this month.
