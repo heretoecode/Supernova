@@ -79,3 +79,54 @@ Release notes: `RELEASE_NOTES.md`. Work branch: `claude/supernova-github-access-
 - Then please send a **diagnostics report** from it: it is the baseline for 0.159's clean-out, and the first with the
   health summary and the freeze traces.
 - Please check with the phone app that typing and pasting reach Search and a password box (no Phone key now).
+
+## Part C continued (26 Nov, after 0.158.9)
+
+### 0.158.10 (code 1590)
+Source: see the table below once signed. Built from `claude/supernova-part-c-build-a9mvtg`, fast-forwarded onto the
+working branch (J20).
+
+- **Search (item 1), to its sheet:** landing Genres and People cards; progress badge A on 16:9 thumbnails; Resume-only
+  pills; "Stream more from the world of / related to …" headings; the "Looking on your services" row that fades out;
+  the centred nothing-found panel; the library long-press menu on results (and the Menu key); Voice's "Listening…".
+  Renders `0158c-search-01`–`09`, test `Review0158cSearchTest`.
+- **Shared pieces:** the progress badge (RULES §14c) on Search, Home rows and library posters; one library long-press
+  menu; one delete warning (versions, episodes, Clean Up); one hero text block for Home and Details (RULES §14d); the
+  lifted-pen line; steppers for 3+ choices in side panels.
+- **Home (item 2, partly):** row design A with the badge, 40 px apart, 8 % focus; full-width hero, text anchored to
+  the foot; filling carousel dot; hero More with Playback first; Customise Home with Shown / Hidden and Move · Hide ·
+  Edit on the focused row; row settings (Sort list, inline delete with Undo); presses at a row's end stay put (D17).
+- **Details (item 3, partly):** the one tab behaviour (box on the focused tab, underline on the open one, the toolbar
+  line); "TMDB page QR code"; Remove from library's own icon; Delete file uses the new warning.
+- **Player (item 4, partly):** Playback Settings about 700 px; Seek preview Off · Chapter pictures · Video frames.
+- **Library pages (item 5, partly):** caption `#141619`, about 100 px, even spacing; the toolbar line; delete warnings
+  with versions; Movie long-press gains Play from the start when started.
+- **Item 9:** every failure records its reason (with "not_known", what was tried, the wait and the last thing that
+  worked when unknown); top reasons in the summary; player errors in words; D15 duplicates kept once.
+- **Bugs:** M2 (already-gone deletes), M6 (rename), M7 (By Library Page size); Your Library gains By Source and
+  Biggest Movies.
+
+### Not built (plain words)
+- **Home:** the row component is not yet literally shared with Details' rows (Episodes, Extras, More Like This still
+  use their own cards); Excluded from hero list in Library Care; the off-screen text label that sometimes takes focus
+  (D17) is not found yet.
+- **Details:** Episodes tab's season card, Extras player, More Like This "On Netflix" rows, the Subtitles side panel
+  (Built In · Subtitle Files · Online) and Find subtitles online, the Artwork panel's redesign, the hero's foot peeking
+  above the tabs, the four kinds' Details tab rows, the blur behind the top bar.
+- **Player:** the title block shared with Preparing playback; Chapters · Episodes tab look; the lists opened on top of
+  the panel; Spatial audio's switch (it shows greyed because the Shield's Android has no spatialiser; a render check
+  is still to do).
+- **Search:** "Stream more from <person>"; the genre heading icon is the funnel, not a tag.
+- **Library pages:** Filters / Sort / Order / Columns redraws; Customise page panel redraw; the Not in library pill on
+  show deletes; Trakt history removal on delete (the switch shows but does nothing).
+- **App-wide check (item 6):** the speckle, small boxes, focus and path, menus and panels were not re-checked page by
+  page; the artwork edge is still 0.75 dp at 60 % (RULES says solid 1 px) and the focus ring 3 dp (RULES 4 px).
+- **Files (item 10):** Scan library narration; browsing changes (sort menu, folder sizes, Fix match on one-title
+  folders, empty folder); Connections form (Type menu, Encryption greyed with reasons, Network options moved); Library
+  Care lists with their "this is fine" buttons, Not matched pending line (M5), To fix, Excluded from hero, the Fix
+  match page, Scan one source menu, focusable recent scans and Scan details.
+- **Bugs:** M3 (marking missing on a failed open), M4 (scans judging folder by folder; it lives in MediaLib's patched
+  scanner), M5 (pending look-ups counted as Not matched); D14 (scan only when there is something to find), D16 (TMDB
+  404 for a title), D18 (memory trims).
+- **NOVA (item 7):** the check of NOVA's commits since 25 Nov and the leftovers (N2's second half with trakt-java 6.22.0,
+  N3, N6, N7, N8, N10, `60df7be7`).
