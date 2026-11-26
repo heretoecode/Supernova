@@ -68,7 +68,11 @@ public class Preview41RowsTest {
             View root = editor.getWindow().getDecorView();
             View watched = root.findViewWithTag("home.customise.builtin:watchnext");
             assertNotNull(watched);
-            watched.requestFocus();
+            // A row only receives keys once it has a size and focus, as on the screen.
+            root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.AT_MOST),
+                         View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.AT_MOST));
+            root.layout(0, 0, root.getMeasuredWidth(), root.getMeasuredHeight());
+            assertTrue(watched.requestFocus());
             watched.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,
                                                                android.view.KeyEvent.KEYCODE_DPAD_RIGHT));
             watched.performClick();

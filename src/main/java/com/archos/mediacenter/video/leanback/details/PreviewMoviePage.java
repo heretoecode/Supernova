@@ -2824,10 +2824,12 @@ public final class PreviewMoviePage extends ScrollView {
                  artworkPanel != null ? artworkPanel : nativeDetails);
         moreItem(labels, icons, commands, "Full description", "synopsis", this::fullDescription);
         if (delete != null && movie != null) {
-            moreItem(labels, icons, commands, "Delete file", "delete", () -> PreviewDialog.confirmDelete(
-                getContext(), "Delete " + movie.getName() + "?",
-                "The file is deleted from its drive or server. This can't be undone.",
-                () -> action.accept(new Action(VideoActionAdapter.ACTION_CONFIRM_DELETE))));
+            // The approved delete warning (DETAILS.md tv/21; LIBRARY.md): versions, Clean Up, Keep file first.
+            moreItem(labels, icons, commands, "Delete file", "delete", () -> LibraryActions.confirmDelete(
+                getContext(), movie, movie.getName() == null ? "" : movie.getName(), () -> {
+                    if (getContext() instanceof Activity && !((Activity)getContext()).isFinishing())
+                        ((Activity)getContext()).finish();
+                }));
         }
         String tmdb = tmdbPage();
         if (tmdb != null) {

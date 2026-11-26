@@ -174,7 +174,7 @@ public class Delete {
         }
     }
 
-    static String serverName(Uri uri) {
+    public static String serverName(Uri uri) {
         String host = uri == null ? null : uri.getHost();
         if (host == null || host.isEmpty())
             return "This device";

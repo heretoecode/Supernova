@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 final class ConnectedDetailsPanel extends LinearLayout {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private View selected;
+    private final com.archos.mediacenter.video.leanback.LiftedPenLine pen =
+        new com.archos.mediacenter.video.leanback.LiftedPenLine();
 
     ConnectedDetailsPanel(Context context) {
         super(context);
@@ -46,11 +48,8 @@ final class ConnectedDetailsPanel extends LinearLayout {
         float line = row.getBottom();
         float thickness = Math.max(1, density);
         paint.setStyle(Paint.Style.FILL);
-        paint.setShader(new LinearGradient(0, 0, getWidth(), 0,
-                                           new int[] {0x00FFFFFF, 0x59FFFFFF, 0x59FFFFFF, 0x00FFFFFF},
-                                           new float[] {0f, .08f, .92f, 1f}, Shader.TileMode.CLAMP));
-        canvas.drawRect(0, line - thickness, getWidth(), line, paint);
-        paint.setShader(null);
+        pen.setBounds(0, Math.round(line - thickness), getWidth(), Math.round(line));
+        pen.draw(canvas);
         if (selected.isFocused())
             return;
         int[] at = new int[2];

@@ -127,21 +127,24 @@ final class PreviewFeaturedCard extends FrameLayout {
             View child = getChildAt(i);
             LayoutParams p = (LayoutParams) child.getLayoutParams();
             boolean active = "semantic:featured.active".equals(child.getTag());
-            p.width = Math.round(width * (active ? .86f : .86f));
+            // RULES §14d: the card is the whole hero, 1816 × 820 at x 52; the next and previous artwork wait just
+            // past its edges (loaded first, so a change never shows an empty frame).
+            p.width = width;
             p.height = -1;
             p.gravity = (active ? Gravity.CENTER : p.gravity | Gravity.CENTER_VERTICAL);
+            float gap = dp(12);
             if (!active)
                 child.setTranslationX(
-                    (p.gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT ? -width * .80f : width * .80f);
+                    (p.gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT ? -width - gap : width + gap);
         }
         View active = findViewWithTag("semantic:featured.active");
         if (active instanceof ViewGroup) {
             View copy = active.findViewWithTag("featured.copy");
-            copy.getLayoutParams().width = Math.round(width * .86f * .55f);
+            copy.getLayoutParams().width = Math.round(width * .55f);
             // The synopsis stays in the left half of the card, clear of the brightest part of most artwork.
             View synopsis = active.findViewWithTag("semantic:featured.synopsis");
             if (synopsis != null)
-                synopsis.getLayoutParams().width = Math.round(width * .86f * .50f) - copy.getPaddingLeft();
+                synopsis.getLayoutParams().width = Math.round(width * .50f) - copy.getPaddingLeft();
         }
         super.onMeasure(w, h);
     }

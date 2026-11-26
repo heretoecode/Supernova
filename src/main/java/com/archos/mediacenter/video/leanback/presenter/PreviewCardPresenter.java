@@ -57,9 +57,11 @@ public final class PreviewCardPresenter extends Presenter {
         /** Library posters: the whole card (artwork and caption) grows about 8% (page sheet LIBRARY.md). */
         public static final float POSTER_FOCUS_SCALE = 1.08f;
         /** The library poster's caption box: three lines under the artwork (`library-pages/27`). */
-        public static final int POSTER_CAPTION_DP = 56;
+        /** About 100 px at 1080p, the three lines spread evenly (owner, 19 Nov; caption-spacing After). */
+        public static final int POSTER_CAPTION_DP = 50;
         /** The caption box's charcoal grey (lighter than the page, darker than a focus box). */
-        public static final int POSTER_CAPTION_FILL = 0xFF23262C;
+        /** Solid #141619 (owner, 19 Nov, judged on the TV, rows-captions/tv/10 E; was #23262C). */
+        public static final int POSTER_CAPTION_FILL = 0xFF141619;
         /** One row card size everywhere: 400 × 225 px at 1080p (focused 440 × 248); caption box under it. */
         public static final int ROW_WIDTH_DP = 200;
         public static final int ROW_PICTURE_DP = 113;
@@ -158,11 +160,11 @@ public final class PreviewCardPresenter extends Presenter {
             if (style == Style.POSTER) {
                 // Poster and caption are one card (owner, 13 Nov; RULES §14): a charcoal-grey box under the
                 // artwork, the title the only bright line.
-                caption.setGravity(Gravity.TOP);
+                caption.setGravity(Gravity.CENTER_VERTICAL);
                 title.setLines(1);
                 title.setTextSize(11);
                 title.setIncludeFontPadding(false);
-                caption.setPadding(dp(7), dp(6), dp(7), dp(4));
+                caption.setPadding(dp(7), dp(3), dp(7), dp(3));
                 caption.setBackgroundColor(POSTER_CAPTION_FILL);
             }
             title.setEllipsize(TextUtils.TruncateAt.END);

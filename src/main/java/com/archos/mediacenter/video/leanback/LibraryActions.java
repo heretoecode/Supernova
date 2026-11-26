@@ -141,31 +141,145 @@ public final class LibraryActions
     }
 
     /**
-     * Delete file(s) from a long-press menu: the delete warning, "Keep file" focused first (RULES §7b); then the files
-     * go and {@code changed} runs so the page refreshes.
+     * Delete file(s) from a long-press menu or Details: the delete warning (LIBRARY.md, RULES §7b) with the film's
+     * versions or the show's episodes, Clean Up, "Keep" focused first; then the chosen files go and {@code changed}
+     * runs so the page refreshes.
      */
     public static void confirmDelete(Context context, Object media, String name, Runnable changed)
     {
         boolean show = media instanceof Tvshow;
-        PreviewDialog.warning(
-            context, show ? "Delete every episode of " + name + "?" : "Delete " + name + "?",
-            show ? "Every episode file is deleted from its drive or server. This can't be undone."
-                 : "The file is deleted from its drive or server. This can't be undone.",
-            show ? "Keep files" : "Keep file", show ? "Delete all episode files" : "Delete file",
-            () -> delete(context, files(context, media), changed));
+        List<DeleteWarning.File> files = warningFiles(context, media);
+        if (files.isEmpty())
+        {
+            for (Uri uri : files(context, media))
+            {
+                files.add(new DeleteWarning.File(uri, uri.getLastPathSegment(), "",
+                                                 com.archos.mediacenter.video.browser.Delete.serverName(uri), 0));
+            }
+        }
+        if (files.isEmpty())
+        {
+            return;
+        }
+        boolean trakt = com.archos.mediacenter.utils.trakt.Trakt.isTraktV2Enabled(
+            context, androidx.preference.PreferenceManager.getDefaultSharedPreferences(context));
+        DeleteWarning.show(context, name, show, files, trakt, (chosen, history, fromTrakt, emptyFolder) -> {
+            if (history)
+            {
+                markWatched(context, media, false);
+            }
+            delete(context, chosen, changed, emptyFolder);
+        });
     }
 
-    private static void delete(Context context, List<Uri> files, Runnable changed)
+    /** The files the warning lists: every version of a film (same TMDB title), or every episode file of a show. */
+    static List<DeleteWarning.File> warningFiles(Context context, Object media)
+    {
+        List<DeleteWarning.File> result = new ArrayList<>();
+        String selection;
+        String[] args;
+        if (media instanceof Movie)
+        {
+            long online = ((Movie) media).getOnlineId();
+            if (online <= 0)
+            {
+                result.add(file(context, (Movie) media));
+                return result;
+            }
+            selection = VideoStore.Video.VideoColumns.SCRAPER_M_ONLINE_ID + "=?";
+            args = new String[] {Long.toString(online)};
+        }
+        else if (media instanceof Tvshow)
+        {
+            selection = VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID + "=?";
+            args = new String[] {Long.toString(((Tvshow) media).getTvshowId())};
+        }
+        else if (media instanceof Video)
+        {
+            result.add(file(context, (Video) media));
+            return result;
+        }
+        else
+        {
+            return result;
+        }
+        com.archos.mediacenter.video.browser.loader.EpisodesLoader loader =
+            new com.archos.mediacenter.video.browser.loader.EpisodesLoader(context, 0, -1, false);
+        String sort = media instanceof Tvshow ? VideoStore.Video.VideoColumns.SCRAPER_E_SEASON + ", "
+                                                    + VideoStore.Video.VideoColumns.SCRAPER_E_EPISODE
+                                              : null;
+        try (Cursor cursor = context.getContentResolver().query(loader.getUri(), loader.getProjection(), selection,
+                                                                args, sort))
+        {
+            if (cursor == null)
+            {
+                return result;
+            }
+            com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper mapper =
+                new com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper();
+            mapper.bindColumns(cursor);
+            while (cursor.moveToNext())
+            {
+                Object item = mapper.bind(cursor);
+                if (item instanceof Video && ((Video) item).getFileUri() != null)
+                {
+                    result.add(file(context, (Video) item));
+                }
+            }
+        }
+        catch (RuntimeException unavailable)
+        {
+            return result;
+        }
+        return result;
+    }
+
+    private static DeleteWarning.File file(Context context, Video video)
+    {
+        Uri uri = video.getFileUri();
+        DeleteWarning.File file = new DeleteWarning.File(
+            uri, video.getFilenameNonCryptic(), PreviewVariants.fileBadge(context, video),
+            com.archos.mediacenter.video.browser.Delete.serverName(uri), video.getSize());
+        if (video instanceof com.archos.mediacenter.video.browser.adapters.object.Episode)
+        {
+            com.archos.mediacenter.video.browser.adapters.object.Episode e =
+                (com.archos.mediacenter.video.browser.adapters.object.Episode) video;
+            file.season = e.getSeasonNumber();
+            String name = e.getEpisodeName() == null || e.getEpisodeName().isEmpty() ? ""
+                                                                                    : " · " + e.getEpisodeName();
+            file.episode = "S" + e.getSeasonNumber() + " E" + e.getEpisodeNumber() + name;
+        }
+        return file;
+    }
+
+    /** A folder on this device with nothing at all left in it. Remote folders are left alone. */
+    static boolean emptyLocalFolder(Uri folder)
+    {
+        if (!"file".equals(folder.getScheme()) || folder.getPath() == null)
+        {
+            return false;
+        }
+        String[] left = new java.io.File(folder.getPath()).list();
+        return left != null && left.length == 0;
+    }
+
+    private static void delete(Context context, List<Uri> files, Runnable changed, boolean emptyFolder)
     {
         if (files.isEmpty() || !(context instanceof android.app.Activity))
         {
             return;
         }
+        com.archos.mediacenter.video.browser.Delete[] holder = {null};
         com.archos.mediacenter.video.browser.Delete delete = new com.archos.mediacenter.video.browser.Delete(
             new com.archos.mediacenter.video.browser.Delete.DeleteListener()
             {
                 public void onVideoFileRemoved(Uri videoFile, boolean askForFolderRemoval, Uri folderToDelete)
                 {
+                    // Clean Up › Delete the folder if it's left empty: only when nothing at all is left in it.
+                    if (emptyFolder && folderToDelete != null && emptyLocalFolder(folderToDelete))
+                    {
+                        holder[0].deleteFolder(folderToDelete);
+                    }
                     changed.run();
                 }
 
@@ -184,6 +298,7 @@ public final class LibraryActions
                     changed.run();
                 }
             }, context);
+        holder[0] = delete;
         if (files.size() == 1)
         {
             delete.startDeleteProcess(files.get(0));

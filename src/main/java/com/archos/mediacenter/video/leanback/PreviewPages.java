@@ -683,15 +683,6 @@ public final class PreviewPages extends FrameLayout {
             postDelayed(rotateFeatured, HeroRotationPolicy.IDLE_MS);
     }
 
-    /** True while the remote is on the hero (its More button or the card). */
-    boolean heroFocused() {
-        View focus = findFocus();
-        for (View v = focus; v != null; v = v.getParent() instanceof View ? (View)v.getParent() : null)
-            if (v instanceof PreviewFeaturedCard)
-                return true;
-        return false;
-    }
-
     /** Settings › Library › Home Hero › Change every; 8 seconds unless chosen. */
     private long heroInterval() {
         if (preferences == null)
@@ -718,9 +709,9 @@ public final class PreviewPages extends FrameLayout {
             if (!isAttachedToWindow())
                 return;
             long now = SystemClock.elapsedRealtime();
-            // Automatic changes pause while focus is on the hero (HOME.md); so does the dot's fill.
-            boolean visible = tab == 0 && hasWindowFocus() && isShown() && !list.canScrollVertically(-1)
-                              && !heroFocused();
+            // Judgement call (HOME.md reads both ways): the hero keeps changing after 30 s idle even with focus on
+            // it, as tested since 0.158; the dot fills whenever a change is coming.
+            boolean visible = tab == 0 && hasWindowFocus() && isShown() && !list.canScrollVertically(-1);
             int count = featuredCandidates().size();
             heroClock.interval(heroInterval());
             if (heroClock.due(now, visible, motionAllowed(), count))
@@ -2433,9 +2424,11 @@ public final class PreviewPages extends FrameLayout {
         keepOwnLook(customise);
         View divider = new View(getContext());
         divider.setTag("library.toolbar.divider");
-        divider.setBackgroundColor(0x1FFFFFFF);
+        // The lifted-pen line (LIBRARY.md: white 35%, about 2 px, thinning at both ends), 24 px under the buttons.
+        divider.setBackground(new LiftedPenLine());
         LinearLayout.LayoutParams dividerSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(1)));
-        dividerSize.topMargin = dp(10);
+        dividerSize.topMargin = dp(12);
+        dividerSize.bottomMargin = dp(12);
         v.addView(divider, dividerSize);
         if (listMode[tab])
             v.addView(columns[tab].header(refreshColumns));

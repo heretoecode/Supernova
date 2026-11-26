@@ -4,6 +4,43 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
+## 0.158.10 (code 15810) — 26 Nov 2026: Search to its sheet; first pass on Home, Details, player and library pages
+**Search**
+- Before you type: your last three searches, then **Genres in your library** (cards with a picture and a count) and
+  **People in your library** (the six with the most titles). OK on a card searches for it.
+- Results: a 16:9 picture with the progress badge; a pill only where it adds words ("Resume S2 E3"); the second line
+  starts with the year ("2025 · Movie · 1 h 52 min").
+- Long-press or Menu on a result opens the library menu (Resume, Play from the start, Mark as watched, Fix match,
+  Remove from library, Delete file).
+- While your services are checked, "Looking on your services" under the streaming heading; it fades away if nothing
+  turns up. Nothing in the library: a plain message in the middle.
+- The Voice key listens in the search box itself ("Listening…"), filling in your words as you speak.
+
+**Home**
+- Progress is the corner badge everywhere (a pie, or a tick when watched); no more bars on artwork.
+- Row cards: the title and one line over the picture; cards 40 px apart, focus grows 8 %.
+- The hero is the full width (1816 px) with its text anchored to the foot, the same layout as Details.
+- The current carousel dot fills up until the next title.
+- The hero's More starts with Play / Resume and Play from the start, then Details, then This Title.
+- Customise Home: Shown on Home and Hidden, with Move · Hide (and Edit on your own rows) on the row you are on; Sort
+  by opens its list; Delete this row asks in the row itself and offers Undo.
+- A press at the end of a row stays put.
+
+**Details**
+- Tabs: the focused tab is the white box; the open one keeps a white underline on a line that fades at both ends.
+- More reads "TMDB page QR code"; Remove from library has its own icon; Delete file uses the new delete warning.
+
+**Player**
+- Playback Settings about 700 px wide.
+- Settings › Playback › Seek preview: Off · Chapter pictures · Video frames (your old choice carries over).
+
+**Library pages and delete warnings**
+- Caption box `#141619`, a little shorter, its three lines evenly spaced; the toolbar line thins out at both ends.
+- Delete warnings name the file, its size and where it lives; several versions or a show's episodes come with ticks,
+  Select all and the total; Clean Up offers clearing viewing history, Trakt history (when connected) and removing an
+  empty folder. "This can't be undone." shows only beside a focused Delete.
+- Side panels: three or more choices step with Left / Right.
+
 ## 0.158.9 (code 1589) — signed 26 Nov 2026 (run 45774774374): Home, player, Search and library pages, plus everything listed under 0.158.8
 **Home**
 - The hero has one button, More: Details · Playback (Play or Resume, Play from the start) · This Title (Mark as

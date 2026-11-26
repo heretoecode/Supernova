@@ -230,10 +230,12 @@ public class FoundationHomeRegressionTest {
                      plot = card.findViewWithTag("semantic:featured.synopsis"),
                      info = card.findViewWithTag("hero:info");
                 assertEquals(86, title.getHeight());
+                // RULES §14d: the facts line 24 px under the logo, the description 16 px under the facts (at 1080p).
+                float density = card.getResources().getDisplayMetrics().density;
                 if (meta.getVisibility() == View.VISIBLE) {
-                    assertTrue(meta.getTop() - title.getBottom() >= 18);
+                    assertTrue(meta.getTop() - title.getBottom() >= Math.round(12 * density));
                     if (plot.getVisibility() == View.VISIBLE)
-                        assertTrue(plot.getTop() - meta.getBottom() >= 12);
+                        assertTrue(plot.getTop() - meta.getBottom() >= Math.round(8 * density));
                 }
                 assertTrue(info.getTop() >= 0);
                 if (meta.getVisibility() == View.VISIBLE) {
