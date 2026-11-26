@@ -123,7 +123,7 @@ public class Delete {
      * The lookup's answer means "no such file" (or there was no answer but no error either), never "couldn't reach
      * the server": a refused or lost connection keeps the file in the library.
      */
-    static boolean alreadyGone(Exception lookup) {
+    public static boolean alreadyGone(Exception lookup) {
         if (lookup == null || lookup instanceof java.io.FileNotFoundException)
             return true;
         if (lookup instanceof SftpException)

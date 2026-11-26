@@ -2369,6 +2369,9 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
                           "step", mCurrentState <= STATE_PREPARING ? "opening" : "playing",
                           "source_kind", mUri == null || mUri.getScheme() == null ? "unknown" : mUri.getScheme());
         log.warn("onError: Error: {},{}", errorCode, errorQualCode);
+        // M3: a file that can't be read may be gone; if its server says so, it shows in Missing files at once.
+        if (errorCode == 1001 && mUri != null)
+            com.archos.mediacenter.video.health.MissingNow.check(mContext, mUri);
         // The service's error callback runs after stopPlayback destroys native position.
         // Capture the live point first; the existing service error handler persists it.
         if (Player.sPlayer == this && PlayerService.sPlayerService != null)
