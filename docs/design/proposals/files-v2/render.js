@@ -154,7 +154,7 @@ body{background:#111215;font-family:R,sans-serif;width:1920px;overflow:hidden;co
  color:#8f98a8}
 .empty{position:absolute;left:52px;right:52px;top:400px;display:flex;flex-direction:column;align-items:center;
  text-align:center}
-.empty svg{color:#c9d3e6;margin-bottom:22px}
+.empty>svg{color:#c9d3e6;margin-bottom:22px}
 .empty .et{font-size:34px;font-weight:500}
 .empty .ed{font-size:26px;color:#c9d3e6;margin-top:12px}
 .empty .bt{margin-top:30px;height:52px;padding:0 24px;border-radius:20px;display:flex;align-items:center;gap:10px;
