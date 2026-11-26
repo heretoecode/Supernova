@@ -108,6 +108,21 @@ public class Review01572DetailsTest
             Review01572FilesTest.settle(nav);
             Review01572FilesTest.saveWithMenu(nav, "01572-details-04-artwork-panel");
             ShadowDialog.getLatestDialog().dismiss();
+
+            // More › Subtitles (DETAILS.md tv/08): the side panel, Built In · Subtitle Files · Online.
+            List<String> opened = new ArrayList<>();
+            page.setSubtitleActions(() -> opened.add("files"), () -> opened.add("online"));
+            more.performClick();
+            Review01572FilesTest.settle(nav);
+            menu = ShadowDialog.getLatestDialog();
+            press(menu, labels(menu).indexOf("Subtitles"));
+            Review01572FilesTest.settle(nav);
+            Review01572FilesTest.saveWithMenu(nav, "01572-details-05-subtitles-panel");
+            View online = ShadowDialog.getLatestDialog().getWindow().getDecorView()
+                .findViewWithTag("subtitles.online");
+            assertNotNull("Find subtitles online in the panel", online);
+            online.performClick();
+            assertTrue("Find subtitles online opens the search", opened.contains("online"));
         }
         finally
         {

@@ -1,11 +1,11 @@
 {
- "purpose": "0.158.12: library pages A3 (Sort tv/48, Columns, Customise page, Filters icons)",
+ "purpose": "0.158.12: Details A1 (season card, hero foot, top bar fade, Artwork, Subtitles panel, Extras line)",
  "tests": [
+  "com.archos.mediacenter.video.leanback.Review01572DetailsTest",
+  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+  "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
   "com.archos.mediacenter.video.leanback.Review0158LibraryTest",
-  "com.archos.mediacenter.video.leanback.PreviewPagesTest",
-  "com.archos.mediacenter.video.leanback.PreviewNextTest",
-  "com.archos.mediacenter.video.leanback.CustomLibraryPageYearTest",
-  "com.archos.mediacenter.video.leanback.NoOldScreensTest"
+  "com.archos.mediacenter.video.leanback.TopNavigationTest"
  ],
  "variants": {
   "normal": {}

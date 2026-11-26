@@ -1302,6 +1302,7 @@ public final class PreviewMoviePage extends ScrollView {
                         subtitles.add(SharedMetadata.languageName(track.language));
                 }
                 fact(technical, "Subtitles", TextUtils.join(", ", subtitles));
+                builtInSubtitles = new ArrayList<>(subtitles);
             }
         } else if (show != null) {
             Snapshot library = snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache();
@@ -2150,6 +2151,44 @@ public final class PreviewMoviePage extends ScrollView {
                           null);
     }
 
+    /** The subtitle tracks inside the file, by language, from its media information. */
+    private List<String> builtInSubtitles = new ArrayList<>();
+    private Runnable subtitleFiles, subtitlesOnline;
+
+    /** What Subtitle Files and Find subtitles online open (the hosting fragment's choosers). */
+    public void setSubtitleActions(Runnable files, Runnable online) {
+        subtitleFiles = files;
+        subtitlesOnline = online;
+    }
+
+    /**
+     * More › Subtitles (DETAILS.md, `tv/08`): the side panel with Built In (the file's own tracks; chosen in the
+     * player) · Subtitle Files (the files beside the video) · Online (Find subtitles online opens on top).
+     */
+    private void subtitlesPanel() {
+        com.archos.mediacenter.video.leanback.FloatingPanel panel =
+            new com.archos.mediacenter.video.leanback.FloatingPanel(getContext(), "Subtitles");
+        panel.heading("Built In");
+        if (builtInSubtitles.isEmpty())
+            panel.opener("subtitles.builtin.none", "sub", "None in the file", "", () -> {
+            });
+        for (String language : builtInSubtitles)
+            panel.opener("subtitles.builtin:" + language, "language", language, "In the file", () -> {
+            });
+        panel.heading("Subtitle Files");
+        panel.opener("subtitles.files", "file", "Subtitle files", "Beside the video", () -> {
+            panel.dismiss();
+            subtitleFiles.run();
+        });
+        panel.heading("Online");
+        panel.opener("subtitles.online", "search", "Find subtitles online", "", () -> {
+            panel.dismiss();
+            if (subtitlesOnline != null)
+                subtitlesOnline.run();
+        });
+        panel.show(null);
+    }
+
     /** RULES §14d (one row everywhere): Home's row card, 400 × 225 at 1080p, 40 px apart. */
     private int extraCardWidth() {
         return dp(PreviewCardPresenter.Card.ROW_WIDTH_DP);
@@ -2850,7 +2889,8 @@ public final class PreviewMoviePage extends ScrollView {
         }
         moreItem(labels, icons, commands, "— Files & Media", null, null);
         if (movie != null)
-            moreItem(labels, icons, commands, "Subtitles", "sub", nativeDetails);
+            moreItem(labels, icons, commands, "Subtitles", "sub",
+                     subtitleFiles != null ? this::subtitlesPanel : nativeDetails);
         moreItem(labels, icons, commands, "Artwork", "appearance",
                  artworkPanel != null ? artworkPanel : nativeDetails);
         moreItem(labels, icons, commands, "Full description", "synopsis", this::fullDescription);

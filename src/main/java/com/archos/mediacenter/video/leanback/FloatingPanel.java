@@ -29,7 +29,7 @@ import java.util.function.IntConsumer;
  * moves the choice, live; the chosen chip light grey at rest, black with white text on the focused row). A row that
  * opens a list shows its value and ›. The focused row is the white box with black text and icon.
  */
-final class FloatingPanel
+public final class FloatingPanel
 {
     /** Panel width as a share of the screen (mock-up `library-pages/32`). */
     static final float WIDTH_SHARE = 0.45f;
@@ -43,7 +43,7 @@ final class FloatingPanel
     private Runnable closed = () -> {
     };
 
-    FloatingPanel(Context context, String name)
+    public FloatingPanel(Context context, String name)
     {
         this.context = context;
         dialog = PreviewDialog.create(context, "panel");
@@ -78,7 +78,7 @@ final class FloatingPanel
     }
 
     /** A group heading centred on a thin line, in Title Case (RULES §10). */
-    void heading(String title)
+    public void heading(String title)
     {
         View heading = SupernovaStyle.groupHeading(context, title, 12);
         LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-1, dp(28));
@@ -87,7 +87,7 @@ final class FloatingPanel
     }
 
     /** The plain line that sets the foot action apart, no heading (RULES §10). */
-    void line()
+    public void line()
     {
         View line = new View(context);
         line.setBackgroundColor(SupernovaStyle.HEADING_LINE);
@@ -340,7 +340,7 @@ final class FloatingPanel
     }
 
     /** A row that opens a list or keyboard: "value ›" on the right (RULES §8). Returns the value view. */
-    TextView opener(String tag, String icon, String label, String value, Runnable open)
+    public TextView opener(String tag, String icon, String label, String value, Runnable open)
     {
         LinearLayout row = row(tag, icon, label);
         TextView shown = new TextView(context);
@@ -649,7 +649,7 @@ final class FloatingPanel
     }
 
     /** A plain action row (e.g. Delete page at the foot). */
-    View action(String tag, String icon, String label, Runnable run)
+    public View action(String tag, String icon, String label, Runnable run)
     {
         LinearLayout row = row(tag, icon, label);
         row.setOnFocusChangeListener((v, has) -> paint(row, has, -1));
@@ -659,7 +659,7 @@ final class FloatingPanel
     }
 
     /** Shows the panel floating on the right; the page behind stays in view, not dimmed (RULES §10). */
-    void show(View focus)
+    public void show(View focus)
     {
         dialog.show();
         Window window = dialog.getWindow();
@@ -699,7 +699,7 @@ final class FloatingPanel
         return body;
     }
 
-    void dismiss()
+    public void dismiss()
     {
         dialog.dismiss();
     }

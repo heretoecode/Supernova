@@ -250,6 +250,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                     mPreviewNavigation.setArtwork(uri);
             });
         mPreviewMovie.setArtworkPanel(this::showArtworkPanel);
+        // DETAILS.md › Subtitles: the side panel's Subtitle Files and Find subtitles online.
+        mPreviewMovie.setSubtitleActions(this::performSubtitleChoose, this::performSubtitleDownload);
         container.addView(mPreviewMovie, new FrameLayout.LayoutParams(-1, -1));
         mPreviewNavigation =
             new TopNavigation(requireContext(), container, tab -> {
