@@ -225,11 +225,22 @@ public class Review01572FilesTest
             settle(nav);
             assertInFiles(nav, page, "Opening the connection form");
             save(nav, "01572-files-14c-connection-form");
-            View sftp = page.findViewWithTag("files.form.type:SFTP");
-            assertNotNull(sftp);
-            sftp.requestFocus();
-            sftp.performClick();
+            // Type first: OK opens a menu with the four kinds (FILES.md tv/12c); SFTP chosen from it.
+            View type = page.findViewWithTag("files.form.type");
+            assertNotNull(type);
+            type.requestFocus();
+            type.performClick();
             settle(nav);
+            saveWithMenu(nav, "01572-files-14c2-connection-type-menu");
+            dismissMenu(nav);
+            com.archos.mediacenter.video.leanback.files.ConnectionFormPage form =
+                findForm(page);
+            assertNotNull(form);
+            form.chooseType(2);
+            settle(nav);
+            View encryption = page.findViewWithTag("files.form.switch:Encryption");
+            assertNotNull("Encryption greyed with its reason", encryption);
+            org.junit.Assert.assertFalse("Focus skips the greyed row", encryption.isFocusable());
             save(nav, "01572-files-14d-connection-form-sftp");
             View address = page.findViewWithTag("files.form.field:Address");
             address.requestFocus();
@@ -508,5 +519,26 @@ public class Review01572FilesTest
         {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
         }
+    }
+
+    private static com.archos.mediacenter.video.leanback.files.ConnectionFormPage findForm(View view)
+    {
+        if (view instanceof com.archos.mediacenter.video.leanback.files.ConnectionFormPage)
+        {
+            return (com.archos.mediacenter.video.leanback.files.ConnectionFormPage) view;
+        }
+        if (view instanceof android.view.ViewGroup)
+        {
+            android.view.ViewGroup group = (android.view.ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++)
+            {
+                com.archos.mediacenter.video.leanback.files.ConnectionFormPage found = findForm(group.getChildAt(i));
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 }

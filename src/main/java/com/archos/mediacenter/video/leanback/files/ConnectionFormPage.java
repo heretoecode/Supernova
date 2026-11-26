@@ -261,17 +261,9 @@ public final class ConnectionFormPage extends LinearLayout
     {
         fields.removeAllViews();
         help.setText(helpLine(type));
-        LinearLayout chips = new LinearLayout(getContext());
-        chips.setGravity(Gravity.CENTER_VERTICAL);
-        chips.setPadding(dp(14), 0, dp(14), 0);
-        chips.addView(text("Type", 16, SupernovaStyle.TEXT_SECONDARY), new LayoutParams(dp(LABEL_DP), -2));
-        for (int index = 0; index < TYPES.length; index++)
-        {
-            chips.addView(chip(index), chipSize());
-        }
-        fields.addView(chips, new LayoutParams(-1, dp(ROW_DP)));
-        field(NAME);
-        field(ADDRESS);
+        typeRow();
+        // Encryption straight under Type, always (FILES.md, tv/12): a switch for WebDAV and FTP; greyed for the
+        // others, saying why, and focus skips it. Rows never jump when the type changes.
         String switchLabel = encryptionLabel(type);
         if (switchLabel != null)
         {
@@ -280,6 +272,12 @@ public final class ConnectionFormPage extends LinearLayout
                 refreshValues();
             });
         }
+        else
+        {
+            greyedEncryption();
+        }
+        field(NAME);
+        field(ADDRESS);
         field(PORT);
         field(FOLDER);
         field(USER);
@@ -297,46 +295,69 @@ public final class ConnectionFormPage extends LinearLayout
         refreshValues();
     }
 
-    private LayoutParams chipSize()
+    /** The four kinds with their lines (FILES.md, tv/12c). */
+    static final String[] TYPE_LINES = {
+        "Shared folders on a Windows PC, Mac or NAS", "Cloud storage and web servers",
+        "A computer or server you sign in to over SSH", "Older file servers; FTPS when encrypted"};
+
+    /** Type first: its value and ›; OK opens a short menu under the row with the four kinds, the current ticked. */
+    private void typeRow()
     {
-        LayoutParams size = new LayoutParams(-2, dp(30));
-        size.rightMargin = dp(4);
-        return size;
+        LinearLayout row = formRow("Type");
+        row.setTag("files.form.type");
+        TextView value = text(TYPES[type], 17, Color.WHITE);
+        row.addView(value, new LayoutParams(0, -2, 1));
+        TextView chevron = text("›", 18, Color.WHITE);
+        row.addView(chevron, new LayoutParams(-2, -2));
+        row.setContentDescription("Type, " + TYPES[type]);
+        row.setOnClickListener(view -> {
+            String[] labels = new String[TYPES.length];
+            for (int index = 0; index < TYPES.length; index++)
+            {
+                labels[index] = TYPES[index] + " · " + TYPE_LINES[index];
+            }
+            PreviewDialog.menu(getContext(), row, "Type", labels,
+                               new String[] {"network", "cloud", "settings.nodes", "folder"}, type, this::chooseType);
+        });
+        styleRow(row);
+        fields.addView(row, new LayoutParams(-1, dp(ROW_DP)));
     }
 
-    private TextView chip(int index)
+    /** A kind chosen in the Type menu: the form follows it, focus back on Type. */
+    public void chooseType(int index)
     {
-        TextView chip = text(TYPES[index], 15, Color.WHITE);
-        chip.setGravity(Gravity.CENTER);
-        chip.setPadding(dp(11), 0, dp(11), 0);
-        chip.setFocusable(true);
-        chip.setFocusableInTouchMode(true);
-        chip.setTag("files.form.type:" + TYPES[index]);
-        chip.setContentDescription("Type " + TYPES[index] + (index == type ? ", chosen" : ""));
-        Runnable restyle = () -> {
-            boolean focused = chip.isFocused();
-            boolean chosen = index == type;
-            chip.setTextColor(focused || !chosen ? (focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE) : Color.BLACK);
-            chip.setBackground(focused ? box(SupernovaStyle.FOCUS_FILL, 15)
-                : chosen ? box(0xFFE8ECF3, 15) : null);
-        };
-        chip.setOnFocusChangeListener((view, focused) -> restyle.run());
-        chip.setOnClickListener(view -> {
-            if (type == index)
-            {
-                return;
-            }
-            type = index;
-            encryption = true;
-            build();
-            View again = fields.findViewWithTag("files.form.type:" + TYPES[index]);
-            if (again != null)
-            {
-                again.requestFocus();
-            }
-        });
-        restyle.run();
-        return chip;
+        if (index < 0 || index >= TYPES.length || index == type)
+        {
+            return;
+        }
+        type = index;
+        encryption = true;
+        build();
+        View again = fields.findViewWithTag("files.form.type");
+        if (again != null)
+        {
+            again.requestFocus();
+        }
+    }
+
+    /** "Always on with SFTP" / "Set by the server" (SMB), greyed, not focusable. */
+    static String encryptionReason(int type)
+    {
+        return type == 2 ? "Always on with SFTP" : "Set by the server";
+    }
+
+    private void greyedEncryption()
+    {
+        LinearLayout row = formRow("Encryption");
+        row.setTag("files.form.switch:Encryption");
+        row.setFocusable(false);
+        row.setFocusableInTouchMode(false);
+        TextView reason = text(encryptionReason(type), 15, SupernovaStyle.TEXT_SECONDARY);
+        row.addView(reason, new LayoutParams(0, -2, 1));
+        row.setAlpha(.5f);
+        row.setContentDescription("Encryption, " + encryptionReason(type));
+        line();
+        fields.addView(row, new LayoutParams(-1, dp(ROW_DP)));
     }
 
     private void field(int which)
@@ -410,8 +431,39 @@ public final class ConnectionFormPage extends LinearLayout
         row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         row.setContentDescription(label);
         TextView name = text(label, 16, SupernovaStyle.TEXT_SECONDARY);
+        // Every row has an icon (FILES.md).
+        PreviewIcon.apply(name, rowIcon(label), 14);
         row.addView(name, new LayoutParams(dp(LABEL_DP), -2));
         return row;
+    }
+
+    static String rowIcon(String label)
+    {
+        if (label.startsWith("Encryption"))
+        {
+            return "settings.radio";
+        }
+        switch (label)
+        {
+            case "Type":
+                return "network";
+            case "Name":
+                return "rename";
+            case "Address":
+                return "source";
+            case "Port":
+                return "settings.nodes";
+            case "Folder":
+                return "folder";
+            case "Username":
+                return "people";
+            case "Password":
+                return "eye";
+            case "Remember password":
+                return "save";
+            default:
+                return "info";
+        }
     }
 
     private void styleRow(LinearLayout row)
