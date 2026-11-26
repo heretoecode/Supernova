@@ -993,10 +993,12 @@ public class PlayerActivity extends AppCompatActivity
             {
                 mSubtitleManager.onControlBarVisibilityChanged();
             }
-            if (!visible && isTVMode && mSkipButtonContainer != null &&
-                mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed())
+            // NOVA 60df7be7 (25 Nov): the control bar reports itself hidden before the other bars are, so the OSD
+            // still counts as showing here; wait until hide() has finished, requestSkipButtonFocus() checks again.
+            if (!visible && isTVMode && mSkipButton != null && mSkipButtonContainer != null &&
+                mSkipButtonContainer.getVisibility() == View.VISIBLE)
             {
-                requestSkipButtonFocus();
+                mSkipButton.post(this::requestSkipButtonFocus);
             }
         });
         mSubtitleInfoController = new TrackInfoController(mContext, getLayoutInflater(), menuAnchor, actionBar);
