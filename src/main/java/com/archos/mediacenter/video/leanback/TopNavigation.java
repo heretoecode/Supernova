@@ -544,6 +544,10 @@ public final class TopNavigation extends LinearLayout {
         if (index < 0 || index >= 7)
             return;
         boolean moveNavigationFocus = bar.hasFocus() && selectedIndex != index;
+        // D18: leaving Home or a library page for Files or Settings releases the artwork held in memory.
+        boolean artworkPage = selectedIndex <= 2 || selectedIndex == 6;
+        if (artworkPage && selectedIndex != index && (index == 3 || index == 5))
+            com.archos.mediacenter.video.CustomApplication.releaseArtwork();
         selectedIndex = index;
         artwork.setPage(index);
         artwork.setFoundationHome(BuildConfig.FOUNDATION && index == 0);

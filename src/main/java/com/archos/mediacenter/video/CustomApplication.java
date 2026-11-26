@@ -865,6 +865,14 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         trimArtwork(level);
     }
 
+    /**
+     * D18 (0.158.9 report: Files up to 433 MB, 23 trim requests in 80 minutes): pages left behind give their artwork
+     * back. Called when the remote moves from an artwork page to Files or Settings, which show almost none.
+     */
+    public static void releaseArtwork() {
+        ARTWORK_CACHE.clear();
+    }
+
     static void trimArtwork(int level) {
         // Picasso's cache can only be emptied: done once the app is out of sight or memory runs low.
         if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN
