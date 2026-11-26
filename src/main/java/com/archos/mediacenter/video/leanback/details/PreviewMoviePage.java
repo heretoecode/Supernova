@@ -552,9 +552,22 @@ public final class PreviewMoviePage extends ScrollView {
         sectionFrame.invalidate();
     }
 
+    /**
+     * On a tab the page scrolls so the hero's foot (about 56 px at 1080p) peeks out under the top bar (112 px) above
+     * the tabs (DETAILS.md › Whole page); nothing of the title or logo is repeated.
+     */
     private int expandedScrollTarget() {
-        return Math.max(0, sectionFrame.getTop() + getPaddingTop() - Math.round(getHeight() / 6f));
+        if (heroPage == null || heroPage.getHeight() <= 0)
+            return Math.max(0, sectionFrame.getTop() + getPaddingTop() - Math.round(getHeight() / 6f));
+        Rect hero = new Rect(0, 0, heroPage.getWidth(), heroPage.getHeight());
+        offsetDescendantRectToMyCoords(heroPage, hero);
+        int barAndFoot = Math.round((TOP_BAR_PX_1080P + HERO_FOOT_PX_1080P) * getHeight() / 1080f);
+        return Math.max(0, hero.bottom - barAndFoot);
     }
+
+    /** The top bar's height and the hero foot left showing on a tab, at 1080p. */
+    static final int TOP_BAR_PX_1080P = 112;
+    static final int HERO_FOOT_PX_1080P = 56;
 
     /** Each tab's reading position and last focused item, so going back returns there (focus audit F4, F5). */
     private final java.util.Map<String, Integer> readingBySection = new java.util.HashMap<>();
