@@ -119,9 +119,6 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
   pinned at the pill's left inset with the words left-aligned after it and fixed-width digits ("Adding · 40%",
   "Scanning · 100%" fit).
 
-**Round 2 (owner, 26 Nov): agreed as drawn** (`files-v2/tv/09`–`15`): Advanced › Network options on Connections, Test's
-answer in the row, Remove with Undo, Type as a stepper, the sign-in for a found device.
-
 ## To fix (approved idea, owner 20 Nov; draw at the Files review)
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
 match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on
