@@ -91,7 +91,8 @@ final class LibraryCustomisePanel
         int sort = indexOf(SORTS, host.sort());
         // Sort by is a row that opens the Sort list on top (library-pages/tv/61); Order follows it.
         TextView[] sortValue = {null};
-        sortValue[0] = panel.opener("customise.sort", "sort", "Sort by", sortLabels[Math.max(0, sort)], () -> {
+        String shown = sort >= 0 ? sortLabels[sort] : sortLabel(host.sort(), sortLabels[0]);
+        sortValue[0] = panel.opener("customise.sort", "sort", "Sort by", shown, () -> {
             int now = Math.max(0, indexOf(SORTS, host.sort()));
             PreviewDialog.menuBelow(context, null, "Sort by", sortLabels, new String[] {"title", "year", "added"},
                                     java.util.Collections.singleton(now), now, true, n -> {
@@ -103,7 +104,7 @@ final class LibraryCustomisePanel
                                         order.choose(0, false);
                                     });
         });
-        String key = sort < 0 ? LibraryPageModel.TITLE : host.sort();
+        String key = host.sort() == null ? LibraryPageModel.TITLE : host.sort();
         order = panel.chips("customise.order", LibraryPageModel.orderIcon(host.ascending()), "Order",
                             orderWords(key), host.ascending() == LibraryPageModel.startsAscending(key) ? 0 : 1,
                             n -> host.setAscending(n == 0 ? LibraryPageModel.startsAscending(host.sort())
@@ -120,6 +121,22 @@ final class LibraryCustomisePanel
             panel.buttons("customise.delete", "delete", "Delete this page", "Your videos stay in your library.",
                           new String[] {"Delete page"}, n -> host.deletePage());
         }
+    }
+
+    /** The name of a sort chosen from the toolbar's Sort menu ("Size", "Running time"), so the row tells the truth. */
+    static String sortLabel(String key, String fallback)
+    {
+        for (boolean tvOnly : new boolean[] {false, true})
+        {
+            for (LibraryPageModel.SortItem item : LibraryPageModel.sortItems(true, true, tvOnly))
+            {
+                if (item.key.equals(key))
+                {
+                    return item.label;
+                }
+            }
+        }
+        return fallback;
     }
 
     /** "Newest" · "Oldest" for dates, "A → Z" · "Z → A" for titles (the first is where the sort starts). */
