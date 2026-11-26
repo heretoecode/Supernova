@@ -19,6 +19,29 @@ import org.json.JSONObject;
 final class PreviewEpisodeRow extends PreviewFocusRecycler {
     private final List<PreviewEpisodeChoice> episodes;
     private int remembered;
+    /** The season card first in the row (DETAILS.md › Episodes tab); null when the row has none. */
+    private String seasonName;
+    private String seasonLine = "";
+    private Uri seasonPoster;
+    private Runnable seasonOpen;
+    private java.util.function.Consumer<View> seasonMenu;
+    private static final int SEASON_CARD = 1;
+
+    /** Puts the season card first: OK opens the season's page, long-press its menu. */
+    void setSeasonCard(String name, String line, Uri poster, Runnable open, java.util.function.Consumer<View> menu) {
+        seasonName = name;
+        seasonLine = line == null ? "" : line;
+        seasonPoster = poster;
+        seasonOpen = open;
+        seasonMenu = menu;
+        if (getAdapter() != null)
+            getAdapter().notifyDataSetChanged();
+    }
+
+    /** 1 while the season card leads the row. */
+    private int lead() {
+        return seasonName == null ? 0 : 1;
+    }
 
     PreviewEpisodeRow(Activity activity, List<PreviewEpisodeChoice> values, long showId,
         StreamingRepository.Availability availability) {
@@ -33,7 +56,11 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
         setAdapter(new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             @Override
             public int getItemCount() {
-                return episodes.size();
+                return episodes.size() + lead();
+            }
+            @Override
+            public int getItemViewType(int position) {
+                return position < lead() ? SEASON_CARD : 0;
             }
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
                 PreviewLandscapeCard card = new PreviewLandscapeCard(activity);
@@ -44,7 +71,19 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
                 };
             }
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                PreviewEpisodeChoice choice = episodes.get(position);
+                if (position < lead()) {
+                    PreviewLandscapeCard season = (PreviewLandscapeCard) holder.itemView;
+                    season.bindSeason(seasonPoster, seasonName, seasonLine);
+                    season.setTag("season-card");
+                    season.setOnClickListener(v -> seasonOpen.run());
+                    season.setOnLongClickListener(v -> {
+                        if (seasonMenu != null)
+                            seasonMenu.accept(v);
+                        return seasonMenu != null;
+                    });
+                    return;
+                }
+                PreviewEpisodeChoice choice = episodes.get(position - lead());
                 Episode ep = choice.local;
                 PreviewLandscapeCard card = (PreviewLandscapeCard) holder.itemView;
                 card.progress.setVisibility(View.GONE);
@@ -146,7 +185,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
         for (int i = 0; i < episodes.size(); i++) {
             PreviewEpisodeChoice choice = episodes.get(i);
             if (key.equals("remote-episode:" + choice.season + ":" + choice.number)) {
-                remembered = i;
+                remembered = i + lead();
                 focusRemembered();
                 return true;
             }
@@ -173,7 +212,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
     boolean focusEpisode(long id) {
         for (int i = 0; i < episodes.size(); i++)
             if (episodes.get(i).local != null && episodes.get(i).local.getId() == id) {
-                remembered = i;
+                remembered = i + lead();
                 focusRemembered();
                 return true;
             }

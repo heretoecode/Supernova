@@ -1931,34 +1931,16 @@ public final class PreviewMoviePage extends ScrollView {
         for (Map.Entry<Integer, List<PreviewEpisodeChoice>> season : indexedSeasons.entrySet()) {
             if (seasonNumber >= 0 && season.getKey() != seasonNumber)
                 continue;
-            if (seasonNumber < 0 && show != null && realSeasons > 1) {
-                TextView seasonInfo =
-                    button(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(),
-                           ()
-                               -> getContext().startActivity(
-                                   new android.content.Intent(getContext(), PreviewSeasonActivity.class)
-                                       .putExtra("show", show.getTvshowId())
-                                       .putExtra("season", season.getKey())));
-                seasonInfo.setTag("season:" + season.getKey());
-                seasonInfo.setTextSize(16 * TvLayout.scale(getContext()));
-                seasonInfo.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-                seasonInfo.setPadding(dp(10), dp(5), dp(10), dp(5));
-                // Focused: the white box with black text (D5); at rest the heading sits plain on the page.
-                seasonInfo.setBackground(SupernovaStyle.focusFill(getContext(), SupernovaStyle.SMALL_BOX_RADIUS_DP));
-                // DT4 (owner, 18 Nov 2026): the gap from a season's row to the next season's heading halved.
-                LinearLayout.LayoutParams headingSize = new LinearLayout.LayoutParams(-2, dp(44));
-                headingSize.topMargin = episodeRows.isEmpty() ? dp(8) : -dp(10);
-                headingSize.bottomMargin = dp(6);
-                episodes.addView(seasonInfo, headingSize);
-            } else {
-                TextView heading = text(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(), 18);
-                PreviewIcon.apply(heading, "tv", 16);
-                episodes.addView(heading);
-            }
+            // DETAILS.md › Episodes tab: one row per season under a plain heading (not focusable).
+            TextView heading = text(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(), 18);
+            PreviewIcon.apply(heading, "tv", 16);
+            episodes.addView(heading);
             PreviewEpisodeRow row =
                 new PreviewEpisodeRow((Activity)getContext(), season.getValue(), id,
                                       enrichment == null ? null : enrichment.seasonAvailability.get(season.getKey()));
             episodeRows.add(row);
+            if (seasonNumber < 0 && show != null && realSeasons > 1)
+                seasonCard(row, season.getKey(), season.getValue());
             // DT3 (D6): the row runs off the page's edges; its padding keeps the first card where it was.
             int side = Math.round(getResources().getDisplayMetrics().widthPixels * .04f) + dp(8);
             LinearLayout.LayoutParams rowSize = new LinearLayout.LayoutParams(-1, dp(156));
@@ -2125,6 +2107,35 @@ public final class PreviewMoviePage extends ScrollView {
         addRecommendation(card, null);
     }
 
+    /**
+     * The season card first in each row (DETAILS.md, `tv/26`): the season's poster, "Season 1", "10 episodes · 2
+     * watched" ("not started" / "all watched"), "Open season ›"; OK opens the season page. Not on single-season shows
+     * or a season page's own Episodes tab (the caller decides).
+     */
+    private void seasonCard(PreviewEpisodeRow row, int number, List<PreviewEpisodeChoice> choices) {
+        int watched = 0;
+        Uri poster = null;
+        for (PreviewEpisodeChoice choice : choices) {
+            if (choice.local == null)
+                continue;
+            if (PreviewSeriesJourney.completed(choice.local))
+                watched++;
+            if (poster == null)
+                poster = choice.local.getPosterUri();
+        }
+        if (poster == null && show != null)
+            poster = show.getPosterUri();
+        int total = choices.size();
+        String state = watched == 0 ? "not started" : watched >= total ? "all watched" : watched + " watched";
+        String line = total + (total == 1 ? " episode · " : " episodes · ") + state;
+        row.setSeasonCard(number == 0 ? "Specials" : "Season " + number, line, poster,
+                          () -> getContext().startActivity(
+                              new android.content.Intent(getContext(), PreviewSeasonActivity.class)
+                                  .putExtra("show", show.getTvshowId())
+                                  .putExtra("season", number)),
+                          null);
+    }
+
     /** RULES §14d (one row everywhere): Home's row card, 400 × 225 at 1080p, 40 px apart. */
     private int extraCardWidth() {
         return dp(PreviewCardPresenter.Card.ROW_WIDTH_DP);
@@ -2168,7 +2179,7 @@ public final class PreviewMoviePage extends ScrollView {
                 logoSize.rightMargin = dp(8);
                 heading.addView(logo, logoSize);
             }
-            TextView words = text(group.equals(IN_LIBRARY) ? "In your library" : "On " + group, 18);
+            TextView words = text(group.equals(IN_LIBRARY) ? "In Your Library" : "On " + group, 18);
             if (provider == null)
                 PreviewIcon.apply(words, "library", 16);
             heading.addView(words);

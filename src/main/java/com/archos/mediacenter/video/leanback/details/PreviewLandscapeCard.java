@@ -81,6 +81,50 @@ final class PreviewLandscapeCard extends LinearLayout {
         setContentDescription(name + (detail == null ? "" : " · " + detail));
     }
 
+    /**
+     * The season card (DETAILS.md › Episodes tab, `tv/26`): the same size as an episode card; the season's own 2:3
+     * poster whole on the left; "Season 1", "10 episodes · 2 watched" and "Open season ›" beside it.
+     */
+    void bindSeason(Uri poster, String name, String line) {
+        title.setText("");
+        metadata.setText("");
+        metadata.setVisibility(GONE);
+        availability.setVisibility(INVISIBLE);
+        ArtworkRequest.cancel(image);
+        image.setImageDrawable(new android.graphics.drawable.ColorDrawable(0xFF1E2126));
+        FrameLayout body = (FrameLayout) visual.getChildAt(0);
+        View old = body.findViewWithTag("season.overlay");
+        if (old != null)
+            body.removeView(old);
+        LinearLayout overlay = new LinearLayout(getContext());
+        overlay.setTag("season.overlay");
+        overlay.setGravity(Gravity.CENTER_VERTICAL);
+        ImageView picture = new ImageView(getContext());
+        picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        int height = Math.round(PreviewCardPresenter.Card.ROW_WIDTH_DP * 9f / 16);
+        overlay.addView(picture, new LinearLayout.LayoutParams(dp(height * 2 / 3), -1));
+        LinearLayout words = new LinearLayout(getContext());
+        words.setOrientation(VERTICAL);
+        words.setPadding(dp(12), 0, dp(8), 0);
+        TextView heading = text(16);
+        heading.setTextColor(0xFFFFFFFF);
+        heading.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        heading.setText(name);
+        words.addView(heading);
+        TextView second = text(12);
+        second.setText(line);
+        words.addView(second);
+        TextView open = text(12);
+        open.setText("Open season ›");
+        open.setPadding(0, dp(8), 0, 0);
+        words.addView(open);
+        overlay.addView(words, new LinearLayout.LayoutParams(0, -2, 1));
+        body.addView(overlay, new FrameLayout.LayoutParams(-1, -1));
+        if (poster != null)
+            Picasso.get().load(poster).resize(dp(height * 2 / 3), dp(height)).centerCrop().noFade().into(picture);
+        setContentDescription(name + " · " + line + " · Open season");
+    }
+
     void release() {
         ArtworkRequest.cancel(image);
         ArtworkRequest.cancel(availability);
