@@ -106,6 +106,11 @@ later dated decision differ, the decision wins (listed under "Newer than the pic
   components, name and licence type, search row; OK opens a pop-up with a 170 px QR code to that licence's text; one QR
   code on screen at a time, RULES §20).
 
+- **Look for new videos (owner, 26 Nov; to draw at the Settings review):** a row under Your Library: Every 3 hours ·
+  6 hours (default) · 12 hours · Daily · Only when I ask (five choices: stepper, RULES §8). Sets the background scan
+  and the "opened after longer than this" check in BRIEF_0158_C D14; plugging in a drive and the Scan buttons always
+  scan, whatever the choice.
+
 ## Newer than the pictures (apply these)
 - **Reports always go to Download › Supernova** (no Reports folder row); **Backups folder** uses Supernova's folder
   picker with Android's grant once behind it (owner, 19 Nov).

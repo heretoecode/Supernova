@@ -85,11 +85,20 @@ finished to its sheet (every action pressed and rendered) before the next:
    diagnostics); (e) Your Library with By Source and Biggest Movies (M7). Mock-ups `files-v2/tv/01`–`24`. Sign as a point release when done.
 11. **Fixes from the 0.158.9 report (`docs/0.158/DIAGNOSTICS_0158_9.md`, read 26 Nov).** Fit them in where they belong:
    D15 with item 9, D14 and D16 with item 8, D17 and D18 with the pages (A).
-   - **D14. Scan only when there is something to find.** The local import ran on every return to the app (20 times in
-     80 minutes, 4–6 minutes each, 97,041 rows checked, nothing new); SFTP was scanned 8 times in 80 minutes, twice at
-     once. Local: only when storage changes, a drive is plugged in, or the last full check is over a set age (6 hours);
-     an incremental check must cost seconds, not minutes. Network: one scheduler, one trigger at a time, no rescan of a
-     source finished in the last 30 minutes unless the owner asks. Diagnostics record why each scan started.
+   - **D14. Scan only when there is something to find (owner approved the rule, 26 Nov).** The local import ran on every
+     return to the app (20 times in 80 minutes, 4–6 minutes each, 97,041 rows checked, nothing new); SFTP was scanned 8
+     times in 80 minutes, twice at once. The rule:
+     | What happens | Scan? |
+     | --- | --- |
+     | Back in Supernova within 30 minutes | No |
+     | Opened after longer | Only sources not scanned in the last 6 hours |
+     | A USB drive plugged in, or Android reports files changed on the device | That drive or folder only, at once |
+     | Background | One scheduled scan every 6 hours; never during playback; never two at once (one scheduler) |
+     | Scan library / Scan one source pressed | Always, at once |
+     An incremental local check must cost seconds, not minutes. Every scan records what started it ("you came back after
+     7 hours", "scheduled", "drive plugged in"), shown at the top of Scan details (FILES.md). The 6 hours is fixed for
+     now; Settings › Library › Look for new videos (SETTINGS.md, to be drawn at the Settings review) will set it later.
+     Tests: leaving and returning within 30 minutes starts no scan; two triggers at once run one scan.
    - **D15. Record each event once.** About 770 duplicates in 80 minutes (focus moves, scanner state, scan results).
      Find the double recorder (two processes or two listeners) and test that one action writes one event.
    - **D16. A title TMDB no longer has.** A 404 for the title itself (not its extras) stops the retries, records "TMDB
