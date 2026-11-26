@@ -84,29 +84,41 @@ final class LibraryCustomisePanel
         {
             whatToShow(page);
         }
+        // How To Show It (owner, 21 Nov): Sort by · Order · View · Show, so Sort by and its Order sit together.
         panel.heading("How To Show It");
-        panel.chips("customise.show", "eye", "Show", SHOW, host.show(), host::setShow);
-        panel.chips("customise.view", "grid", "View", new String[] {"Grid", "List"}, host.list() ? 1 : 0,
-                    n -> host.setList(n == 1));
         String[] sortLabels = {"Title", page == null || "movies".equals(page.type) ? "Release date"
                                    : "tv".equals(page.type) ? "Air date" : "Release date", "Date added"};
         int sort = indexOf(SORTS, host.sort());
-        panel.chips("customise.sort", "sort", "Sort by", sortLabels, Math.max(0, sort), n -> {
-            String key = SORTS[n];
-            host.setSort(key);
-            host.setAscending(LibraryPageModel.startsAscending(key));
-            order.setOptions(orderWords(key));
-            order.choose(host.ascending() == LibraryPageModel.startsAscending(key) ? 0 : 1, false);
+        // Sort by is a row that opens the Sort list on top (library-pages/tv/61); Order follows it.
+        TextView[] sortValue = {null};
+        sortValue[0] = panel.opener("customise.sort", "sort", "Sort by", sortLabels[Math.max(0, sort)], () -> {
+            int now = Math.max(0, indexOf(SORTS, host.sort()));
+            PreviewDialog.menuBelow(context, null, "Sort by", sortLabels, new String[] {"title", "year", "added"},
+                                    java.util.Collections.singleton(now), now, true, n -> {
+                                        String key = SORTS[n];
+                                        host.setSort(key);
+                                        host.setAscending(LibraryPageModel.startsAscending(key));
+                                        sortValue[0].setText(sortLabels[n]);
+                                        order.setOptions(orderWords(key));
+                                        order.choose(0, false);
+                                    });
         });
         String key = sort < 0 ? LibraryPageModel.TITLE : host.sort();
         order = panel.chips("customise.order", LibraryPageModel.orderIcon(host.ascending()), "Order",
                             orderWords(key), host.ascending() == LibraryPageModel.startsAscending(key) ? 0 : 1,
                             n -> host.setAscending(n == 0 ? LibraryPageModel.startsAscending(host.sort())
                                                           : !LibraryPageModel.startsAscending(host.sort())));
+        panel.chips("customise.view", "grid", "View", new String[] {"Grid", "List"}, host.list() ? 1 : 0,
+                    n -> host.setList(n == 1));
+        // More than two choices step with Left / Right (RULES §8): the panel draws a stepper for them.
+        panel.chips("customise.show", "eye", "Show", SHOW, host.show(), host::setShow);
         if (page != null)
         {
             panel.line();
-            panel.action("customise.delete", "delete", "Delete page", host::deletePage);
+            // Delete this page (library-pages/tv/64–65): no pop-up; while focused the row says the videos stay;
+            // OK deletes at once with the Undo notice.
+            panel.buttons("customise.delete", "delete", "Delete this page", "Your videos stay in your library.",
+                          new String[] {"Delete page"}, n -> host.deletePage());
         }
     }
 
@@ -148,8 +160,8 @@ final class LibraryCustomisePanel
                 host.pageChanged();
             });
         });
-        String[] types = {"movies", "tv", "both"};
-        panel.chips("customise.includes", "tv", "Includes", new String[] {"Movies", "TV Shows", "Both"},
+        String[] types = {"both", "movies", "tv"};
+        panel.chips("customise.includes", "tv", "Includes", new String[] {"Movies and TV shows", "Movies", "TV shows"},
                     Math.max(0, indexOf(types, page.type)), n -> {
                         page.type = types[n];
                         host.pageChanged();
@@ -179,14 +191,10 @@ final class LibraryCustomisePanel
         return page.genres.isEmpty() ? "Any" : String.join(", ", page.genres);
     }
 
+    /** library-pages/tv/59: "From 1990", "Up to 2010", "1990 – 2010" (the page's own wording). */
     static String yearSummary(CustomLibraryPage page)
     {
-        if (page.year <= 0 && page.yearTo <= 0)
-        {
-            return "Any";
-        }
-        return (page.year > 0 ? String.valueOf(page.year) : "Any") + " – "
-            + (page.yearTo > 0 ? String.valueOf(page.yearTo) : "Any");
+        return page.yearSummary();
     }
 
     private static String languageName(String code)

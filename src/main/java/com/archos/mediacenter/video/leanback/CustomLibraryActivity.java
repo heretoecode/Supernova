@@ -192,21 +192,32 @@ public final class CustomLibraryActivity extends LeanbackActivity {
             navigation.updateCustomPage();
         }
 
-        /** Delete page: the delete warning ("Keep page" first); the page goes back to "Make this page your own". */
+        /**
+         * Delete page (LIBRARY.md, library-pages/tv/64–65): no pop-up; OK deletes at once and the shared Undo notice
+         * ("Documentaries page deleted" · Understood · Undo) brings it back. The top bar shows + and "Make this page
+         * your own".
+         */
         void delete() {
-            PreviewDialog.warning(
-                getContext(), "Delete this page?",
-                "Removes this page only. Your videos, watched state and progress are never deleted.", "Keep page",
-                "Delete page", () -> {
-                    if (CustomLibraryPage.delete(getContext())) {
-                        closePanel();
-                        draft = fresh();
-                        sharedLibrary.configureCustomLibrary(draft, this::customise);
-                        sharedLibrary.setCustomUnset(true);
-                        navigation.updateCustomPage();
-                    } else
-                        PreviewDialog.read(getContext(), "Page not deleted", "Try again from the page.");
-                });
+            CustomLibraryPage kept = CustomLibraryPage.load(getContext());
+            if (!CustomLibraryPage.delete(getContext())) {
+                PreviewDialog.read(getContext(), "Page not deleted", "Try again from the page.");
+                return;
+            }
+            closePanel();
+            draft = fresh();
+            sharedLibrary.configureCustomLibrary(draft, this::customise);
+            sharedLibrary.setCustomUnset(true);
+            navigation.updateCustomPage();
+            if (kept == null)
+                return;
+            UndoNotice.show(getContext(), kept.name + " page deleted", () -> {
+                if (!kept.save(getContext()))
+                    return;
+                draft = kept;
+                sharedLibrary.setCustomUnset(false);
+                sharedLibrary.configureCustomLibrary(draft, this::customise);
+                navigation.updateCustomPage();
+            });
         }
 
         void library() {
