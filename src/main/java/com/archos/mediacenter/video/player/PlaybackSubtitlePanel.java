@@ -1296,13 +1296,26 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return;
         String tag = (key.equals("skip") ? "playback" : "audio") + ".row." + key;
         LinearLayout row = row(tag, iconKind, label);
+        // PLAYER.md: Spatial audio keeps its switch; where the device can't do it, the switch stays visible and a
+        // short note says so, rather than the whole row fading away.
+        TextView note = new TextView(owner);
+        note.setText("Not on this device");
+        note.setTextSize(TypedValue.COMPLEX_UNIT_PX, m(22));
+        note.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        note.setVisibility(GONE);
+        LayoutParams noteSize = new LayoutParams(-2, -2);
+        noteSize.rightMargin = s(8);
+        row.addView(note, noteSize);
         ImageView value = switchView(row);
         bindings.add(() -> {
             Boolean on = backend.option(key);
             boolean checked = on != null && on;
+            boolean enabled = on != null && backend.optionEnabled(key);
             value.setImageDrawable(StandardSwitchDrawable.snapshot(owner, checked, onFocusedRow(value)));
-            row.setContentDescription(label + ", " + (checked ? "On" : "Off"));
-            dim(row, on != null && backend.optionEnabled(key));
+            row.setContentDescription(label + ", " + (checked ? "On" : "Off") + (enabled ? "" : ", not on this device"));
+            row.setEnabled(enabled);
+            row.setAlpha(enabled ? 1f : .72f);
+            note.setVisibility(enabled ? GONE : VISIBLE);
         });
         row.setOnKeyListener((v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> {
             Boolean on = backend.option(key);
