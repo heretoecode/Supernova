@@ -1550,18 +1550,21 @@ public final class FilesPage extends LinearLayout
         // Add a connection: the row itself opens the form (F39).
         row(column, "plus", "Add a connection", "SMB, WebDAV, SFTP or FTP", null, () -> openForm(null, null),
             column.findViewWithTag("files.row.first") == null);
-        if (found.isEmpty())
+        if (!found.isEmpty())
         {
-            return;
+            heading(column, "Found On Your Network", "search", true);
+            for (Found device : found)
+            {
+                List<Action> actions = new java.util.ArrayList<>();
+                actions.add(new Action("Open", "folder", () -> openConnection(device.uri, device.name)));
+                actions.add(new Action("Add", "plus", () -> openFoundForm(device.uri)));
+                actionRow(column, "tv", device.name, device.line, "New", actions, true);
+            }
         }
-        heading(column, "Found On Your Network", "search", true);
-        for (Found device : found)
-        {
-            List<Action> actions = new java.util.ArrayList<>();
-            actions.add(new Action("Open", "folder", () -> openConnection(device.uri, device.name)));
-            actions.add(new Action("Add", "plus", () -> openFoundForm(device.uri)));
-            actionRow(column, "tv", device.name, device.line, "New", actions, true);
-        }
+        // Advanced › Network options, moved here from Settings (FILES.md, tv/15): the last section.
+        heading(column, "Advanced", "advanced", true);
+        row(column, "network", "Network options", "SMB, finding devices and SFTP", null,
+            () -> com.archos.mediacenter.video.leanback.NetworkOptionsPanel.show(getContext(), () -> { }), false);
     }
 
     private String notice;
@@ -1666,7 +1669,8 @@ public final class FilesPage extends LinearLayout
         outcomes.put(key, "Testing…");
         show(CONNECTIONS);
         ConnectionCheck.check(getContext(), java.util.Collections.singletonList(root), (checked, answered) -> post(() -> {
-            outcomes.put(key, answered ? "Connected" : "Not reachable: no answer within 15 seconds");
+            // FILES.md (tv/10): the answer in the row's second line, plainly.
+            outcomes.put(key, answered ? "Connected" : "Can't reach it · check it's switched on and on this network");
             show(CONNECTIONS);
         }));
     }
