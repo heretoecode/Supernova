@@ -1,17 +1,11 @@
 {
- "purpose": "0.158.11 candidate: D14, M3, M5, D16, item 9, Files narration, artwork edge",
+ "purpose": "0.158.11: Files C1 browsing, C2 connection form and Network options",
  "tests": [
-  "com.archos.mediacenter.video.scanning.ScanNarrationTest",
-  "com.archos.mediacenter.video.diagnostics.DiagnosticReasonTest",
-  "com.archos.mediacenter.video.leanback.files.LibraryCareCountsTest",
-  "com.archos.mediacenter.video.leanback.files.ConnectionRenameTest",
-  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
-  "com.archos.mediacenter.video.browser.DeleteFailureMessageTest",
   "com.archos.mediacenter.video.leanback.Review01572FilesTest",
-  "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
-  "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
-  "com.archos.mediacenter.video.leanback.Review0158cSearchTest",
-  "com.archos.mediacenter.video.leanback.Review0158HomeTest"
+  "com.archos.mediacenter.video.leanback.files.FolderMenuTest",
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
+  "com.archos.mediacenter.video.scanning.ScanNarrationTest",
+  "com.archos.mediacenter.video.leanback.files.ConnectionRenameTest"
  ],
  "variants": {
   "normal": {}
