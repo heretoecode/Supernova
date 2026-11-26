@@ -486,8 +486,25 @@ public final class FolderBrowser extends LinearLayout
         items.removeAllViews();
         if (shown.isEmpty())
         {
-            items.addView(text(allFiles ? "This folder is empty" : "No videos or folders here", 15,
+            // FILES.md (tv/08): a folder with no videos says so, with Show all files.
+            items.addView(text(allFiles ? "This folder is empty" : "No videos in this folder", 15,
                                SupernovaStyle.TEXT_SECONDARY));
+            if (!allFiles)
+            {
+                TextView showAll = button("filter", "Show all files", () -> {
+                    allFiles = true;
+                    preferences.edit().putBoolean(PREFS + "all", true).apply();
+                    labels();
+                    render();
+                });
+                showAll.setTag("files.empty.show-all");
+                items.addView(showAll);
+                if (hadFocus)
+                {
+                    showAll.requestFocus();
+                    return;
+                }
+            }
             if (hadFocus)
             {
                 unpark(true);
@@ -659,6 +676,35 @@ public final class FolderBrowser extends LinearLayout
         return size == null || size.isEmpty() ? "Video" : size;
     }
 
+    /** A folder holding one title: every video in it is the same film or episodes of the same show. */
+    static boolean oneTitle(List<Base> held)
+    {
+        java.util.Set<String> titles = new java.util.HashSet<>();
+        for (Base item : held)
+        {
+            if (item instanceof com.archos.mediacenter.video.browser.adapters.object.Episode)
+            {
+                titles.add("show:" + ((com.archos.mediacenter.video.browser.adapters.object.Episode) item).getShowName());
+            }
+            else if (item instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)
+            {
+                titles.add("movie:" + ((com.archos.mediacenter.video.browser.adapters.object.Movie) item).getOnlineId());
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return titles.size() == 1;
+    }
+
+    /** "Folder · 31 videos · 48.6 GB" (FILES.md); the size from the library at once for folders in it. */
+    static String folderLine(int videos, String size)
+    {
+        String line = folderLine(videos);
+        return videos > 0 && size != null && !size.isEmpty() ? line + " · " + size : line;
+    }
+
     /** A folder's second line (F23): "Folder · 86 videos"; just "Folder" while counting or when there are none. */
     static String folderLine(int videos)
     {
@@ -673,7 +719,14 @@ public final class FolderBrowser extends LinearLayout
     {
         if (file.isDirectory())
         {
-            return folderLine(inside(file).size());
+            List<Base> held = inside(file);
+            long bytes = 0;
+            for (Base item : held)
+            {
+                bytes += Math.max(0, ((Video) item).getSize());
+            }
+            String size = bytes > 0 ? android.text.format.Formatter.formatShortFileSize(getContext(), bytes) : "";
+            return folderLine(held.size(), size);
         }
         long bytes = file.length();
         String size = bytes > 0 ? android.text.format.Formatter.formatShortFileSize(getContext(), bytes) : "";
@@ -822,12 +875,25 @@ public final class FolderBrowser extends LinearLayout
      */
     static List<String> menuItems(boolean folder, boolean inLibrary, boolean watched)
     {
+        return menuItems(folder, inLibrary, watched, false);
+    }
+
+    /**
+     * FILES.md (final, 26 Nov): a folder's menu is Open · Add to library · Scan this folder · Fix match · Exclude, with
+     * Add only when the folder is not in the library yet, Scan only when it is, and Fix match only on a folder holding
+     * one title (a film's or a show's folder), which re-matches everything inside in one go.
+     */
+    static List<String> menuItems(boolean folder, boolean inLibrary, boolean watched, boolean oneTitle)
+    {
         List<String> labels = new ArrayList<>();
         if (folder)
         {
             labels.add("Open");
-            labels.add("Add to library");
-            labels.add("Scan this folder");
+            labels.add(inLibrary ? "Scan this folder" : "Add to library");
+            if (oneTitle)
+            {
+                labels.add("Fix match");
+            }
             labels.add("Exclude");
             return labels;
         }
@@ -874,7 +940,15 @@ public final class FolderBrowser extends LinearLayout
     private void openMenu(View anchor, MetaFile2 file, Base inLibrary)
     {
         boolean watched = inLibrary instanceof Video && ((Video) inLibrary).isWatched();
-        List<String> labels = menuItems(file.isDirectory(), inLibrary != null, watched);
+        List<Base> held = file.isDirectory() ? inside(file) : new ArrayList<>();
+        List<String> labels = file.isDirectory()
+            ? menuItems(true, !held.isEmpty(), false, oneTitle(held))
+            : menuItems(false, inLibrary != null, watched);
+        if (file.isDirectory() && oneTitle(held))
+        {
+            inLibrary = held.get(0);
+        }
+        Base target = inLibrary;
         String[] icons = new String[labels.size()];
         for (int index = 0; index < icons.length; index++)
         {
@@ -882,7 +956,7 @@ public final class FolderBrowser extends LinearLayout
         }
         focusName = file.getName();
         PreviewDialog.menu(getContext(), anchor, file.getName(), labels.toArray(new String[0]), icons, -1,
-                           choice -> act(labels.get(choice), file, inLibrary));
+                           choice -> act(labels.get(choice), file, target));
     }
 
     private void act(String label, MetaFile2 file, Base inLibrary)
