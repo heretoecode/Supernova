@@ -10,7 +10,7 @@ redesigned player.
 
 ## Current version
 
-**0.158.4** (code 1584), signed 19 November 2026. What each APK brought:
+**0.158.9** (code 1589), signed 26 November 2026. What each APK brought:
 [`docs/0.158/RELEASE_NOTES.md`](docs/0.158/RELEASE_NOTES.md) (one section per version).
 
 **0.158** is the redesign version, built in two parts:
@@ -19,6 +19,8 @@ redesigned player.
 - **Part B (0.158.1 onwards, in progress):** a speckled background and one shape for every button and chip,
   Playback Settings redone, the Settings redesign (seven tabs), the player's title block, Details fixes and the
   episodes feature, titles in one style, then Files.
+- **Part C (0.158.8–0.158.9):** fixes from the 26 Nov diagnostics report, the Settings Backup bug, the next-episode
+  label, Home's one-button hero, search history settings, NOVA fixes and the diagnostics upgrade.
 
 Progress and what is still to come: [`PROJECT_STATUS.md`](PROJECT_STATUS.md) and
 [`docs/ROADMAP.md`](docs/ROADMAP.md).

@@ -4,7 +4,7 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
-## 0.158.9 (code 1589) — Home, player, Search and library pages
+## 0.158.9 (code 1589) — signed 26 Nov 2026 (run 45774774374): Home, player, Search and library pages, plus everything listed under 0.158.8
 **Home**
 - The hero has one button, More: Details · Playback (Play or Resume, Play from the start) · This Title (Mark as
   watched, Exclude from hero).

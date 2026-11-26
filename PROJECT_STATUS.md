@@ -8,7 +8,7 @@ end of every session.
 Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`; judgement calls
 `docs/0.158/JUDGEMENT_CALLS_0158_C.md`. Built: every diagnostics fix (D1–D13), B1, the next-episode label, Home's
 one-button hero, search history settings, no Phone key, five NOVA items, the diagnostics upgrade and a set of player,
-Search and library fixes. 0.158.8 and 0.158.9: see the report's table for signing runs. The "not built" list is in the
+Search and library fixes. **0.158.9 signed 26 Nov** (run 45774774374, from green conformance run 45764555253 on `a4bf56e`); artifact `supernova-0157-signed-qa` (`Supernova_0.158.9.apk`), the one to install. 0.158.8 was never signed (its contents are in 0.158.9). The "not built" list is in the
 report. Waiting for the owner: install the newest signed APK, send a diagnostics report from it (0.159's baseline),
 check the phone app types into the box (no Phone key), the Reports / Backups folder decision.
 
