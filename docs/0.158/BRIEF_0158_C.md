@@ -47,6 +47,14 @@ finished to its sheet (every action pressed and rendered) before the next:
      in full mark their missing files; only folders that failed hold back, and Library Care says so ("Couldn't check 1
      folder on Home server"). Diagnostics record per scan how many were marked missing and why any were held back (the
      0.159 "record why" rule, early). Tests: a scan with one failing subfolder still marks a missing file in a good one.
+   - **M5. Titles still being matched are listed as Not matched (owner, 26 Nov).** New files whose TMDB look-up hasn't
+     run yet show in Library Care › Not matched (and its count) as if they had failed. Only titles whose look-up has
+     finished without a match go there; while look-ups are pending, the Not matched page says "Matching N new titles:
+     they're not listed while Supernova is still looking them up." Test: a freshly scanned file is not counted as Not
+     matched until its look-up has ended.
+   - **M6. Renaming a connection doesn't save (owner, 26 Nov).** A connection renamed in its edit form keeps its old
+     name in Connections and Library Care. Save the new name and show it everywhere the connection is named
+     (Connections, Library Care, scans, Missing files) at once. Test: rename, leave Files, come back: the new name shows.
 9. **Diagnostics record why, not just what (owner, 26 Nov; moved here from 0.159):** every failure event carries its
    reason: the error, the step (connecting, listing, deleting…), the kind of source, and the server's answer (status
    code and message). A test fails the build if any failure is recorded without one. Where the reason truly isn't

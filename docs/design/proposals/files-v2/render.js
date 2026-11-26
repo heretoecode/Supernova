@@ -708,11 +708,10 @@ function careRows(focus) {
 }
 
 function scanPart(focusScan) {
-  const btns = rbtns(focusScan ? [['This device', I.device], ['Backup #1', I.usb, true], ['Put.io', I.cloud],
-    ['Home server', I.server], ['Living-room NAS', I.nas]] : null, true);
+  const btns = '';
   const scan = `<div class="r std${focusScan ? ' on' : ''} last"><span class="ic">${svg(I.scan, 34)}</span><span class="t">
-    <b>Scan one source</b><small>${focusScan ? 'Put.io: Scanning · 42% · Backup #1: Waiting' : 'Look for new videos in one place only'}</small>
-    </span>${btns}<span class="ch"></span><i class="ln"></i></div>`;
+    <b>Scan one source</b><small>${focusScan ? 'Seedbox: Scanning · 42% · 1 waiting' : 'One drive, server or folder only'}</small>
+    </span>${btns}<span class="ch">${svg(I.chev, 28)}</span><i class="ln"></i></div>`;
   const rec = [
     { icon: I.cloud, name: 'Put.io', line: 'Today 18:28 · 3 new, 1 updated', pill: 'Finished' },
     { icon: I.nas, name: 'Living-room NAS', line: 'Today 17:28 · could not connect', pill: 'Failed', bad: true },
@@ -751,26 +750,25 @@ function f18() {
   const kb = `<div class="kb2">${keys.map((r, ri) => `<div class="krow">${r.map(k => `<span class="key${ri === 4
     ? (k === 'Space' ? ' sp' : ' w') : ''}">${KIC[k] ? svg(KIC[k], 26) : k}</span>`).join('')}</div>`).join('')}</div>`;
   const file = `<div class="fbox">${hd(I.film, 'This file', true)}
-    <div class="fn">Harbour.Wives.S01E02.Dinner.Party.1080p.mkv</div>
+    <div class="fn" style="font-size:28px">Harbour.Wives.S01E02.Dinner.Party.1080p.mkv</div>
     <div class="fl">Backup #2 › TV Shows › Harbour Wives › Season 1 · 1.4 GB</div>
     <div class="fl">Matched now as <b>Dine Out (2023)</b> · TV show · 1 episode</div></div>`;
   const m = [
-    { name: 'Harbour Wives', line: '2020 · TV show · 3 seasons · <b style="font-weight:500;color:inherit">Best match</b>', on: true,
+    { name: 'Harbour Wives', line: '<b style="font-weight:500;color:inherit">Best match</b> · 2020 · 3 seasons', on: true,
       btns: [['Match and return', I.back, true], ['Match and stay', I.ok]] },
     { name: 'Harbour Wives: Reunion', line: '2023 · TV show · 1 season' },
     { name: 'Dine Out', line: '2023 · TV show · 1 season', last: true },
   ];
-  const mrows = m.map((o, k) => `<div class="r mt${o.on ? ' on' : ''}${o.last ? ' last' : ''}"${o.on
-    ? ' style="height:172px;align-items:flex-start;padding-top:16px"' : ''}><span class="thumb"
-    style="background:${art(k)}"></span><span class="t"><b>${o.name}</b><small>${o.line}</small>${o.btns
-    ? rbtns(o.btns).replace('class="rb"', 'class="rb" style="width:auto;justify-content:flex-start;margin-top:14px"')
-    : ''}</span><i class="ln"></i></div>`)
+  const mrows = m.map((o, k) => `<div class="r mt${o.on ? ' on' : ''}${o.last ? ' last' : ''}"><span class="thumb"
+    style="background:${art(k)}"></span><span class="t" style="padding-right:16px"><b>${o.name}</b>
+    <small style="overflow:hidden;text-overflow:ellipsis">${o.line}</small></span>${o.btns
+    ? rbtns(o.btns).replace('class="rb"', 'class="rb" style="width:auto"') : ''}<i class="ln"></i></div>`)
     .join('');
   return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>')
     + `<div class="crumb">Fix match<em style="font-size:24px;margin-left:6px">from Dine Out · Details</em></div>`
-    + `<div class="fm">${file}<div class="sfield">${svg(I.search, 30)}harbour wives<i class="caret"></i></div>${kb}</div>
-    <div class="mres">${hd(I.question, 'Matches', true)}${mrows}</div>`
-    + '<div class="cap2">18 · Fix match shows the file, where it is and what it\'s matched as now</div>';
+    + `<div class="fm" style="width:720px">${file}<div class="sfield">${svg(I.search, 30)}harbour wives<i class="caret"></i></div>${kb}</div>
+    <div class="mres" style="left:820px;right:52px">${hd(I.question, 'Matches', true)}${mrows}</div>`
+    + '<div class="cap2">18 · Fix match: Match and return · Match and stay on the focused match\'s line</div>';
 }
 
 function f19() {
@@ -801,16 +799,40 @@ function f20() {
     + '<div class="cap2">20 · Missing files (Couldn\'t be read and Not matched work the same way)</div>';
 }
 
+function f20b() {
+  const rows = [
+    { icon: I.film, name: 'Blue.Planet.III.S01E02.2160p.mkv', line: 'Looks like Blue Planet III · S1 E2 · from the file name',
+      on: true, btns: [['Fix match', I.fix, true], ['It\'s right', I.ok]] },
+    { icon: I.film, name: 'holiday-2019-final-cut.mp4', line: 'No guess yet · Backup #1 › Home videos' },
+    { icon: I.film, name: 'Kingdom.of.Glass.Part.2.mkv', line: 'Looks like Kingdom of Glass and Long Shadows (2024)', last: true },
+  ];
+  return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>') + subCrumb('Not matched', '3 videos')
+    + `<div class="list" style="top:270px">${rows.map(crow).join('')}<div style="margin-top:30px;padding-left:24px;
+    font-size:24px;color:#c9d3e6;display:flex;align-items:center;gap:12px">${ring(24)}Matching 2 new titles: they're not
+    listed while Supernova is still looking them up.</div></div>`
+    + '<div class="cap2">20b · Not matched: the best guess, with Fix match · It\'s right</div>';
+}
+
 function f21() {
+  const st = (t, bad) => `<span style="margin-left:auto;padding-left:40px;font-size:22px;color:${bad ? '#ffb4a8' : '#c9d3e6'}">${t}</span>`;
+  const it = (ic, n, t, f) => `<div class="it${f ? ' f' : ''}">${svg(ic, 26)}${n}${f ? st(t).replace('#c9d3e6', '#3a4256') : st(t)}</div>`;
+  const menu = `<div class="menu" style="right:72px;top:540px;width:800px;padding-right:56px">
+    <div style="position:absolute;right:14px;top:18px;color:#fff;opacity:.3">${svg(I.up, 30)}</div>
+    <div style="position:absolute;right:14px;bottom:18px;color:#fff">${svg(I.down, 30)}</div>
+    ${it(I.device, 'This device', 'Today 18:02')}${it(I.usb, 'Backup #1', 'Waiting')}${it(I.usb, 'Backup #2', 'Today 16:02')}
+    <div class="g">Seedbox · SFTP</div>${it(I.server, 'All of Seedbox', 'Scanning · 42%')}${it(I.folder, 'Movies', 'Today 17:40', true)}
+    ${it(I.folder, 'TV', 'Today 17:40')}
+    <div class="g">Living-room NAS · SMB</div>${it(I.nas, 'All of Living-room NAS', 'Couldn\'t connect · 17:28')}
+    ${it(I.folder, 'Movies', 'Today 17:28')}${it(I.folder, 'TV Shows', 'Today 17:28')}${it(I.folder, 'Documentaries', 'Today 17:28')}</div>`;
   return bar('ring') + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>')
-    + `<div class="list" style="top:212px">${careRows('')}${scanPart(true)}</div>`
-    + '<div class="cap2">21 · Scan one source: one button per source; pressed ones wait their turn</div>';
+    + `<div class="list" style="top:212px">${careRows('')}${scanPart(true)}</div>` + menu
+    + '<div class="cap2">21 · Scan one source ›: every source and its folders, with where each stands</div>';
 }
 
 const ROUND23 = [['09-connections', f09, 1380], ['10-test-failed', f10], ['11-remove-undo', f11],
   ['12-new-connection', f12], ['12c-type-menu', f12c], ['12b-sftp-encryption-greyed', f12b], ['13-edit-connection', f13], ['14-sign-in-found', f14], ['15-network-options', f15, 1380],
   ['16-library-care', f16, 1900], ['17-to-fix', f17], ['18-fix-match-file', f18], ['19-excluded-from-hero', f19],
-  ['20-missing-files', f20], ['21-scan-one-source', f21, 1900]];
+  ['20-missing-files', f20], ['20b-not-matched', f20b], ['21-scan-one-source', f21, 1900]];
 
 
 // ---------- Round 4: Your Library (read-only, nothing focusable) ----------
