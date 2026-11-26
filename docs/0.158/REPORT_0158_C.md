@@ -83,7 +83,7 @@ Release notes: `RELEASE_NOTES.md`. Work branch: `claude/supernova-github-access-
 ## Part C continued (26 Nov, after 0.158.9)
 
 ### 0.158.10 (code 1590)
-**Signed 26 Nov 2026**: signing run 45879328975, from green conformance run 45872415548 on `2f55102`; artifact `supernova-0157-signed-qa` (`Supernova_0.158.10.apk`). Built from `claude/supernova-part-c-build-a9mvtg`, fast-forwarded onto the
+**Signed 26 Nov 2026**: signing run 45879328975, from green conformance run 45872415548 on `2f55102`; artifact `supernova-0157-signed-qa` (`Supernova_0.158.10.apk`), kept until 10 Dec 2026: https://github.com/heretoecode/Supernova/actions/runs/45879328975/artifacts/15146537628 **Install this one.** Built from `claude/supernova-part-c-build-a9mvtg`, fast-forwarded onto the
 working branch (J20).
 
 - **Search (item 1), to its sheet:** landing Genres and People cards; progress badge A on 16:9 thumbnails; Resume-only
