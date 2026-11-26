@@ -149,7 +149,7 @@ public class SettingsWorkspaceTest {
         key(KeyEvent.KEYCODE_DPAD_UP);
         assertTrue("Up from the first row returns to the open tab", first.hasFocus());
         // PL7: Seek previews sit in Playback › General.
-        assertNotNull(tagged("settings.preference.seek_thumbnails_enabled"));
+        assertNotNull(tagged("settings.preference.seek_preview_mode"));
         ViewGroup hide = (ViewGroup)tagged("settings.preference.hide_controls_on_pause");
         View toggle = hide.findViewWithTag("settings.switch");
         // Everything in a row sits on the row's centre line (RULES; 0.157 Shield review #2).

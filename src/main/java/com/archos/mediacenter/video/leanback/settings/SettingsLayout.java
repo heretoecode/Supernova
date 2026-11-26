@@ -64,7 +64,7 @@ final class SettingsLayout {
 
     static {
         page(0,
-             "General", new String[] {"hide_controls_on_pause", "seek_thumbnails_enabled", "allow_3rd_party_player"},
+             "General", new String[] {"hide_controls_on_pause", "seek_preview_mode", "allow_3rd_party_player"},
              // "display_resume_box" is NOVA's resume button on its old main screen, which Supernova's Home doesn't
              // have, so it is not shown; "When a video was started" is Supernova's own Ask · Resume · Start over.
              "Resume", new String[] {"supernova_resume_choice", "supernova_save_resume"},
@@ -178,8 +178,8 @@ final class SettingsLayout {
              "Deletes watched history Supernova sent. Your library is not affected.");
         copy("export_diagnostic_report", "Save a diagnostic report",
              "A ZIP of everything Supernova has recorded, for finding and fixing problems. Never includes passwords.");
-        copy("seek_thumbnails_enabled", "Seek previews · Experimental",
-             "Shows a small picture above the seek bar while you skip through a video.");
+        copy("seek_preview_mode", "Seek preview",
+             "Off, the chapter's picture, or the nearest frame, above the seek bar while you skip.");
         copy("supernova_diagnostic_logging", "Diagnostic logging", "Records everything the app does in full detail.");
         // 0.158 page sheet wording (SETTINGS.md).
         copy("supernova_segment_enabled", "Look up skip times online",

@@ -496,7 +496,7 @@ public final class PreviewSettings {
             PreferenceCategory advanced = categories.get("Advanced");
             String[][] compatibility = {
                 {
-                    "Video Compatibility", "seek_thumbnails_enabled", "force_software_decoding", "dec_choice",
+                    "Video Compatibility", "seek_preview_mode", "force_software_decoding", "dec_choice",
                     "parser_sync_mode",
                     "enable_cutout_mode_short_edges", "enable_cutout_both_sidesx", "stream_max_iframe_size"
                 },

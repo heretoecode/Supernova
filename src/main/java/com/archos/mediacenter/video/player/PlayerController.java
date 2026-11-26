@@ -1890,8 +1890,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         SeekThumbnails engine = service == null ? null : service.seekThumbnails();
         listenForSeekPictures(engine);
         boolean seeking = mNextSeek >= 0 || mPreviewKeySeeking;
-        android.graphics.Bitmap frame = seeking && engine != null && SeekThumbnailPreferences.enabled(mContext)
-                                            ? engine.nearest(position)
+        // Seek preview: Off · Chapter pictures · Video frames (PLAYER.md).
+        String mode = SeekThumbnailPreferences.mode(mContext);
+        VideoMetadata playing = Player.sPlayer == null ? null : Player.sPlayer.getVideoMetadata();
+        long at = SeekThumbnailPreferences.pictureAt(mode, position,
+                                                     playing == null ? null : playing.getChapters());
+        android.graphics.Bitmap frame = seeking && engine != null && !SeekThumbnailPreferences.OFF.equals(mode)
+                                            ? engine.nearest(at)
                                             : null;
         if (bubble.getVisibility() != View.VISIBLE || frame == null) {
             // Owner, 21 Nov (PLAYER.md): never a grey box. With the setting off, or before a picture is ready, the

@@ -154,7 +154,7 @@ public final class SeekThumbnails implements PartPictures.FrameSource, AutoClose
         policy = new SeekThumbnailPolicy(source.network);
         preferenceListener = (prefs, key) ->
         {
-            if (SeekThumbnailPreferences.KEY.equals(key))
+            if (SeekThumbnailPreferences.affects(key))
                 state(buffering, seeking, foreground, pip, playing);
         };
         PreferenceManager.getDefaultSharedPreferences(this.context)

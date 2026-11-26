@@ -98,8 +98,8 @@ public class Playback141RenderTest {
                 decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 int height = decor.getHeight();
-                // One size for every tab: 820 px at 1080p (round two, player/33-v15), so 410 on this 960px screen.
-                assertEquals(410, width);
+                // One size for every tab: 700 px at 1080p (PLAYER.md, player-v16), so 350 on this 960px screen.
+                assertEquals(350, width);
                 assertTrue("Fitted inside the 20px margins: " + height, height <= 540 - 40);
                 assertNull("No fourth tab", decor.findViewWithTag("playback.tab:3"));
                 Bitmap bitmap = Bitmap.createBitmap(960, 540, Bitmap.Config.ARGB_8888);

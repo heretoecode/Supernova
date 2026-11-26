@@ -29,12 +29,14 @@
             android:summary="@string/preferences_force_software_decoding_summary"
             android:title="@string/preferences_force_software_decoding"
             app:iconSpaceReserved="false"/>
-        <SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="seek_thumbnails_enabled"
+        <ListPreference
+            android:defaultValue="frames"
+            android:entries="@array/seek_preview_entries"
+            android:entryValues="@array/seek_preview_values"
+            android:key="seek_preview_mode"
             android:persistent="true"
-            android:summary="Shows a small picture above the seek bar while you skip through a video. Experimental."
-            android:title="Seek previews (experimental)"
+            android:summary="What shows above the seek bar while you skip through a video."
+            android:title="Seek preview"
             app:iconSpaceReserved="false"/>
         <ListPreference
             android:defaultValue="0"

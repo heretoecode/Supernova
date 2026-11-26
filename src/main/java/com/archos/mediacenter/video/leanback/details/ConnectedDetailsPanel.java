@@ -24,10 +24,17 @@ final class ConnectedDetailsPanel extends LinearLayout {
         invalidate();
     }
 
+    private boolean focusInContent;
+
+    /** Whether the remote is in the open tab's content (bright underline) or not (dull underline). */
+    void focusInContent(boolean value) {
+        focusInContent = value;
+    }
+
     /**
-     * The shared tab row's lines (RULES §3; details-background/21): a faint line across under the tabs and the open
-     * tab underlined on it, bright while the remote is below the row, dull while it is on the row. No box, no fill:
-     * the tab content sits straight on the charcoal page.
+     * The tab row's line is the library toolbar line (owner, 21 Nov; DETAILS.md): white 35%, about 2 px, fading out at
+     * both ends. The open tab keeps a white underline on it, bright while the remote is in its content, dull while the
+     * remote is on the row (RULES §3); none under the focused tab's own box.
      */
     @Override
     protected void dispatchDraw(Canvas canvas) {
@@ -37,15 +44,22 @@ final class ConnectedDetailsPanel extends LinearLayout {
         View row = (View) selected.getParent();
         float density = getResources().getDisplayMetrics().density;
         float line = row.getBottom();
+        float thickness = Math.max(1, density);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(0x24FFFFFF);
-        canvas.drawRect(0, line - Math.max(1, density), getWidth(), line, paint);
+        paint.setShader(new LinearGradient(0, 0, getWidth(), 0,
+                                           new int[] {0x00FFFFFF, 0x59FFFFFF, 0x59FFFFFF, 0x00FFFFFF},
+                                           new float[] {0f, .08f, .92f, 1f}, Shader.TileMode.CLAMP));
+        canvas.drawRect(0, line - thickness, getWidth(), line, paint);
+        paint.setShader(null);
+        if (selected.isFocused())
+            return;
         int[] at = new int[2];
         int[] mine = new int[2];
         selected.getLocationInWindow(at);
         getLocationInWindow(mine);
-        float left = at[0] - mine[0];
-        // DT2 (owner, 18 Nov 2026): the top bar's focus. The open tab shows as a soft grey box (painted on the tab
-        // itself), so there is no underline any more.
+        float left = at[0] - mine[0] + selected.getPaddingLeft();
+        float right = at[0] - mine[0] + selected.getWidth() - selected.getPaddingRight();
+        paint.setColor(focusInContent ? 0xFFFFFFFF : 0x59FFFFFF);
+        canvas.drawRect(left, line - 2 * thickness, right, line, paint);
     }
 }

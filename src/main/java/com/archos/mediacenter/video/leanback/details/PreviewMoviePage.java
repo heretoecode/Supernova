@@ -531,27 +531,22 @@ public final class PreviewMoviePage extends ScrollView {
     }
 
     /**
-     * DT2 (owner, 18 Nov 2026), the 0.158 top bar's look: the white box with black text where the remote is; once
-     * focus goes down, the open tab keeps a soft grey box with a faded word; no underlines.
+     * The player's tab behaviour (DETAILS.md › Tabs; RULES "One tab behaviour everywhere", replaces DT2's grey box):
+     * the white box with black text where the remote is, sized to the word and clear of the line; the open tab keeps
+     * a white underline on the row's line (drawn by the frame below), never a grey box.
      */
     private void paintSectionTabs() {
-        boolean inRow = tabBar.hasFocus();
         for (TextView tab : sectionTabs) {
             boolean focused = tab.isFocused();
-            boolean open = ("section:" + activeSection).equals(tab.getTag()) && !inRow;
             if (focused)
                 tab.setBackground(SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL,
                                                          SupernovaStyle.SMALL_BOX_RADIUS_DP));
-            else if (open)
-                tab.setBackground(SupernovaStyle.rounded(getContext(), 0x26FFFFFF,
-                                                         SupernovaStyle.SMALL_BOX_RADIUS_DP));
             else
                 tab.setBackground(null);
-            if (!focused)
-                tab.setTextColor(open ? 0xB8FFFFFF : Color.WHITE);
-            else
-                tab.setTextColor(SupernovaStyle.buttonContent());
+            tab.setTextColor(focused ? SupernovaStyle.buttonContent() : Color.WHITE);
         }
+        sectionFrame.focusInContent(!tabBar.hasFocus() && hasFocus());
+        sectionFrame.invalidate();
     }
 
     private int expandedScrollTarget() {
@@ -2818,7 +2813,8 @@ public final class PreviewMoviePage extends ScrollView {
             }
             if (unindex != null) {
                 Action remove = unindex;
-                moreItem(labels, icons, commands, "Remove from library", "remove", () -> action.accept(remove));
+                moreItem(labels, icons, commands, "Remove from library", "remove library",
+                         () -> action.accept(remove));
             }
         }
         moreItem(labels, icons, commands, "— Files & Media", null, null);
@@ -2836,7 +2832,7 @@ public final class PreviewMoviePage extends ScrollView {
         String tmdb = tmdbPage();
         if (tmdb != null) {
             moreItem(labels, icons, commands, "— ", null, null);
-            moreItem(labels, icons, commands, "TMDB page", "external",
+            moreItem(labels, icons, commands, "TMDB page QR code", "external",
                      () -> PreviewTmdbCode.show(getContext(), tmdb));
         }
         Dialog dialog = PreviewDialog.menu(getContext(), moreButton, "More", labels.toArray(new String[0]),

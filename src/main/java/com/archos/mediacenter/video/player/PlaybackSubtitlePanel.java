@@ -427,8 +427,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         return Math.round(PANEL_WIDTH_1080P * screen);
     }
 
-    /** Round two (owner, 19 Nov 2026; player/33-v15): 820 px at 1080p. */
-    static final int PANEL_WIDTH_1080P = 820;
+    /** PLAYER.md (owner, 21–22 Nov 2026; player-v16/tv/04–06): about 700 px at 1080p (was 820). */
+    static final int PANEL_WIDTH_1080P = 700;
 
     private Window placed;
 

@@ -262,4 +262,15 @@
     </string-array>
     <string-array name="supernova_pcm_speed_engines"><item>FFmpeg atempo</item><item>Sonic</item></string-array>
     <string-array name="supernova_pcm_speed_engine_values" translatable="false"><item>2</item><item>3</item></string-array>
+    <!-- Settings › Playback › Seek preview (PLAYER.md, owner 21 Nov 2026). -->
+    <string-array name="seek_preview_entries" translatable="false">
+        <item>Off</item>
+        <item>Chapter pictures</item>
+        <item>Video frames</item>
+    </string-array>
+    <string-array name="seek_preview_values" translatable="false">
+        <item>off</item>
+        <item>chapters</item>
+        <item>frames</item>
+    </string-array>
 </resources>

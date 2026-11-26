@@ -219,6 +219,24 @@ public final class PreviewPages extends FrameLayout {
                 return focused;
             return next;
         }
+
+        /**
+         * D17 (0.158.9 report): a press at a row's end stays put and counts as handled, never as a press that did
+         * nothing (rows do not wrap, RULES §16).
+         */
+        @Override
+        public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+            if (super.dispatchKeyEvent(event))
+                return true;
+            if (!horizontal || event.getAction() != android.view.KeyEvent.ACTION_DOWN)
+                return false;
+            int key = event.getKeyCode();
+            if (key != android.view.KeyEvent.KEYCODE_DPAD_LEFT && key != android.view.KeyEvent.KEYCODE_DPAD_RIGHT)
+                return false;
+            View focused = findFocus();
+            int direction = key == android.view.KeyEvent.KEYCODE_DPAD_LEFT ? FOCUS_LEFT : FOCUS_RIGHT;
+            return focused != null && focusSearch(focused, direction) == focused;
+        }
     }
 
     private void rememberFocus() {

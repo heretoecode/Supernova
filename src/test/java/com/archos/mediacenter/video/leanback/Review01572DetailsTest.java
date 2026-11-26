@@ -80,7 +80,8 @@ public class Review01572DetailsTest
             List<String> labels = labels(menu);
             // The sheet's items, in its wording (D2): no "Add to Row", no Title Case items.
             for (String item : new String[] {"Restart movie", "Mark as watched", "Fix match", "Remove from library",
-                                             "Subtitles", "Artwork", "Full description", "Delete file", "TMDB page"})
+                                             "Subtitles", "Artwork", "Full description", "Delete file",
+                                             "TMDB page QR code"})
             {
                 assertTrue(item + " in " + labels, labels.contains(item));
             }
@@ -92,7 +93,7 @@ public class Review01572DetailsTest
             more.performClick();
             Review01572FilesTest.settle(nav);
             menu = ShadowDialog.getLatestDialog();
-            press(menu, labels(menu).indexOf("TMDB page"));
+            press(menu, labels(menu).indexOf("TMDB page QR code"));
             Review01572FilesTest.settle(nav);
             Review01572FilesTest.saveWithMenu(nav, "01572-details-03-tmdb-page");
             ShadowDialog.getLatestDialog().dismiss();
