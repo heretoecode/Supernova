@@ -119,6 +119,15 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
   pinned at the pill's left inset with the words left-aligned after it and fixed-width digits ("Adding · 40%",
   "Scanning · 100%" fit).
 
+**Round 2 notes (owner, 26 Nov; redrawn `tv/09`, `12`, `12b`, `13`):**
+- Long names stop well short of the pill: a clear 40 px gap before the pill column ("…" earlier).
+- **Type is a stepper, no menu** (RULES §8, four choices): Left / Right on the Type row step SMB · WebDAV · SFTP · FTP; the
+  fields below change at once; ‹ › show only while the row is focused (`tv/12b`).
+- **Form rows get icons** (Claude, as every other row in the app): Type, Name, Address, Encryption, Port, Folder(s),
+  Username, Password, Remember password.
+- Form height follows the type (WebDAV nine rows, SMB seven: no encryption switch, standard port); the buttons sit
+  straight under the last field, never pinned to the foot.
+
 ## To fix (approved idea, owner 20 Nov; draw at the Files review)
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
 match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on

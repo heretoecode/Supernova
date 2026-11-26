@@ -94,7 +94,7 @@ body{background:#111215;font-family:R,sans-serif;width:1920px;overflow:hidden;co
 .r.on{background:#f4f6fb;color:#0b0d12}
 .r .ic{display:flex;color:#c9d3e6;flex:none}
 .r.on .ic{color:#0b0d12}
-.r .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.r .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;padding-right:40px}
 .r .t b{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .r .t small{color:#c9d3e6;white-space:nowrap}
 .r.on .t small{color:#3a4256}
@@ -408,7 +408,9 @@ const css2 = `
 .r.on .t small.bad{color:#8a1d10}
 .form{position:absolute;left:52px;top:270px;width:900px}
 .fr2{position:relative;display:flex;align-items:center;height:74px;padding:0 24px;border-radius:14px;font-size:29px}
-.fr2 .lb{width:300px;color:#c9d3e6;flex:none}
+.fr2 .lb{width:290px;color:#c9d3e6;flex:none}
+.fr2 .fic{display:flex;color:#c9d3e6;width:28px;margin-right:20px;flex:none}
+.fr2.on .fic{color:#0b0d12}
 .fr2 .vl{flex:1;min-width:0;display:flex;align-items:center;gap:12px;white-space:nowrap;overflow:hidden}
 .fr2 .vl.ph{color:#8a93a3}
 .fr2.typing{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
@@ -550,6 +552,14 @@ function keyboard(focus, help) {
   }).join('')}</div>`).join('')}<div class="help">${help}</div></div>`;
 }
 
+const FI = {
+  Type: I.conn, Name: I.name,
+  Address: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>', 'Encryption (HTTPS)': '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  Port: '<path d="M7 7h10v5a5 5 0 0 1-10 0zM10 3v4M14 3v4M12 17v4"/>', Folder: I.folder, Folders: I.folder,
+  Username: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', Password: I.key,
+  'Remember password': '<path d="M6 3h12v18l-6-4-6 4z"/>',
+};
+
 // field: [label, value, kind] kind: 'typing' | 'on' | 'ph' | 'sw' | 'swoff' | 'step' | 'pw'
 function field([lb, vl, kind, on]) {
   const cls = ['fr2'];
@@ -569,7 +579,8 @@ function field([lb, vl, kind, on]) {
   } else if (kind === 'pw') {
     v = `<span style="flex:1">${vl}</span>${svg(I.eye, 30)}`;
   }
-  return `<div class="${cls.join(' ')}"><span class="lb">${lb}</span><span class="vl${kind === 'ph' ? ' ph' : ''}">${v}</span>
+  const fic = FI[lb] ? `<span class="fic">${svg(FI[lb], 28)}</span>` : '';
+  return `<div class="${cls.join(' ')}">${fic}<span class="lb">${lb}</span><span class="vl${kind === 'ph' ? ' ph' : ''}">${v}</span>
     <i class="ln"></i></div>`;
 }
 
@@ -588,6 +599,18 @@ function f12() {
     + keyboard('o', '<b>WebDAV:</b> cloud storage and web servers (Put.io, Nextcloud).<br>Name fills in from the address; '
       + 'change it any time.<br>Back leaves without saving.')
     + '<div class="cap2">12 · New connection: the form and the one keyboard</div>';
+}
+
+function f12b() {
+  const fields = [['Type', 'SFTP', 'step', true], ['Name', 'Home server', ''], ['Address', 'home.example.net', ''],
+    ['Port', '22 · the usual port for SFTP', ''], ['Folder', '/ (everything)', 'ph'], ['Username', 'alex', ''],
+    ['Password', '••••••••', 'pw'], ['Remember password', 'On', 'sw']];
+  return bar() + tabs('Connections', null) + formCrumb('New connection')
+    + `<div class="form">${fields.map(field).join('')}<div class="fbtns"><span>${svg(I.test, 22)}Test connection</span>
+    <span>${svg(I.ok, 22)}Save and browse</span></div></div>`
+    + keyboard('', '<b>SFTP:</b> folders on a computer or server you can sign in to over SSH.<br>Left / Right on Type: '
+      + 'SMB · WebDAV · SFTP · FTP; the fields change to suit.')
+    + '<div class="cap2">12b · Type focused: Left / Right step SMB · WebDAV · SFTP · FTP</div>';
 }
 
 function f13() {
@@ -758,7 +781,7 @@ function f21() {
 }
 
 const ROUND23 = [['09-connections', f09, 1380], ['10-test-failed', f10], ['11-remove-undo', f11],
-  ['12-new-connection', f12], ['13-edit-connection', f13], ['14-sign-in-found', f14], ['15-network-options', f15, 1380],
+  ['12-new-connection', f12], ['12b-type-stepper', f12b], ['13-edit-connection', f13], ['14-sign-in-found', f14], ['15-network-options', f15, 1380],
   ['16-library-care', f16, 1900], ['17-to-fix', f17], ['18-fix-match-file', f18], ['19-excluded-from-hero', f19],
   ['20-missing-files', f20], ['21-scan-one-source', f21, 1900]];
 
