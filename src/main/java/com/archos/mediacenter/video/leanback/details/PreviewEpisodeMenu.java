@@ -56,7 +56,7 @@ final class PreviewEpisodeMenu {
             });
             refresh(activity);
         });
-        add(labels, icons, commands, "Fix match", "search",
+        add(labels, icons, commands, "Fix match", "edit",
             () -> activity.startActivity(new android.content.Intent(activity, ManualVideoScrappingActivity.class)
                                              .putExtra(ManualVideoScrappingActivity.EXTRA_VIDEO, episode)));
         add(labels, icons, commands, "— Files & Media", null, null);

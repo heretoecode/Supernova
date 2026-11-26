@@ -2812,7 +2812,7 @@ public final class PreviewMoviePage extends ScrollView {
                          () -> action.accept(toggle));
             }
             if (movie != null) {
-                moreItem(labels, icons, commands, "Fix match", "search",
+                moreItem(labels, icons, commands, "Fix match", "edit",
                          () -> getContext().startActivity(new android.content.Intent(
                              getContext(), com.archos.mediacenter.video.leanback.scrapping
                                                .ManualVideoScrappingActivity.class)
@@ -2822,7 +2822,7 @@ public final class PreviewMoviePage extends ScrollView {
             if (movie == null && fixShow != null) {
                 // DT8 (D2): Fix match in More for a TV show too, through the show's own match action.
                 Action fix = fixShow;
-                moreItem(labels, icons, commands, "Fix match", "search", () -> action.accept(fix));
+                moreItem(labels, icons, commands, "Fix match", "edit", () -> action.accept(fix));
             }
             if (unindex != null) {
                 Action remove = unindex;

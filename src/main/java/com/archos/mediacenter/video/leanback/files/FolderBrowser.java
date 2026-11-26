@@ -865,7 +865,7 @@ public final class FolderBrowser extends LinearLayout
             case "Mark as unwatched":
                 return "check";
             case "Fix match":
-                return "search";
+                return "edit";
             default:
                 return "more";
         }

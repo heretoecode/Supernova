@@ -2825,8 +2825,8 @@ public final class PreviewPages extends FrameLayout {
                           : firstEpisode(e) != null ? (Video)firstEpisode(e).media
                                                     : null;
         if (matchable != null) {
-            labels.add("Fix match");
-            icons.add("search");
+            labels.add("Fix match"); // a pencil putting it right (owner, 21 Nov; home-v3/tv/10 B)
+            icons.add("edit");
             commands.add(() -> adapter.openFixMatch(matchable));
         }
         labels.add("Remove from library");

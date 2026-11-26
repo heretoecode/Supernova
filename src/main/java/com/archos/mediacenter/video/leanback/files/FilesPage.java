@@ -1062,7 +1062,7 @@ public final class FilesPage extends LinearLayout
         for (com.archos.mediacenter.video.browser.adapters.object.Video video : videos)
         {
             List<Action> actions = new java.util.ArrayList<>();
-            actions.add(new Action("Fix match", "search", () -> {
+            actions.add(new Action("Fix match", "edit", () -> {
                 if (folderActions != null)
                 {
                     folderActions.fixMatch(video);
@@ -1760,7 +1760,7 @@ public final class FilesPage extends LinearLayout
                 changes.remove(change);
                 refreshMatches();
             }));
-            actions.add(new Action("Fix match", "search", () -> {
+            actions.add(new Action("Fix match", "edit", () -> {
                 if (folderActions != null)
                 {
                     folderActions.fixMatch(change.movie);
