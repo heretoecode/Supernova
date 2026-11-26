@@ -4,6 +4,28 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
+## 0.158.9 (code 1589) — Home, player, Search and library pages
+**Home**
+- The hero has one button, More: Details · Playback (Play or Resume, Play from the start) · This Title (Mark as
+  watched, Exclude from hero).
+- Exclude from hero takes the title off the hero at once, with an Undo notice.
+- Row headings no longer stop the remote, and there is no Move or Hide on Home: Customise Home does that.
+
+**Player**
+- Seek previews never show a grey box: when there is no picture (or Seek previews is off), the time shows on its own.
+- Track languages in words ("Chinese", not "chi").
+- Audio boost always steps Off · Low · Medium · High.
+
+**Search**
+- What you can search stays under the keyboard at all times; the landing shows your last three searches.
+
+**Library pages**
+- Six posters a row, 32 px apart.
+- Mark as watched happens at once, with no notice; the menu then offers Mark as unwatched.
+
+**Everywhere**
+- The top bar: the page you leave loses its grey box as soon as the remote lands on the next page.
+
 ## 0.158.8 (code 1588) — fixes from the 26 Nov diagnostics report
 **Fewer sudden closes**
 - Supernova no longer closes by itself while titles are being matched (six times, 20 and 22 Nov) or while it looks
