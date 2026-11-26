@@ -121,6 +121,11 @@ public final class PreviewIcon extends Drawable {
         } else if (kind.equals("caps lock")) {
             line(c, 4, 13, 12, 4, 20, 13, 16, 13, 16, 17, 8, 17, 8, 13, 4, 13);
             c.drawRect(8, 20, 16, 22, p);
+        } else if (kind.equals("tray")) {
+            // Date added (LIBRARY.md › Sort): an in-tray with an arrow dropping into it.
+            line(c, 3, 13, 8, 13, 9.5f, 16, 14.5f, 16, 16, 13, 21, 13, 21, 20, 3, 20, 3, 13);
+            line(c, 12, 3, 12, 11);
+            line(c, 9, 8, 12, 11, 15, 8);
         } else if (kind.equals("badge.ring")) {
             // The poster badge's unwatched mark (RULES §14c): an empty ring.
             c.drawCircle(12, 12, 8, p);

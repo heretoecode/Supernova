@@ -59,7 +59,7 @@ final class LibraryPageModel
     static List<SortItem> sortItems(boolean trakt, boolean series, boolean tvOnly)
     {
         List<SortItem> items = new ArrayList<>();
-        items.add(new SortItem(ADDED, "Date added", "added", "General", 0, null));
+        items.add(new SortItem(ADDED, "Date added", "tray", "General", 0, null));
         items.add(new SortItem(TITLE, "Title", "title", "General", 1, null));
         items.add(new SortItem(RELEASE, tvOnly ? "Air date" : "Release date", "year", "General", 2, null));
         if (trakt)
