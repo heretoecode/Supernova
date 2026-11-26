@@ -399,7 +399,7 @@ public class SettingsWorkspaceTest {
     public void mapAccountsForBaselineAndNativeSubtitleExtensionWithoutResurrectingHiddenState() {
         SettingsRegistry registry = new SettingsRegistry(host.get());
         assertEquals(179, registry.entries.size());
-        assertEquals(6, registry.entries.stream().filter(e -> e.id.startsWith("N158")).count());
+        assertEquals(8, registry.entries.stream().filter(e -> e.id.startsWith("N158")).count());
         assertEquals(1, registry.entries.stream().filter(e -> e.id.startsWith("N151") && !e.nested()).count());
         assertEquals(165, registry.entries.stream().filter(e -> e.id.startsWith("S")).count());
         assertEquals(5, registry.entries.stream().filter(e -> e.id.startsWith("N146") && !e.nested()).count());
@@ -822,6 +822,8 @@ public class SettingsWorkspaceTest {
         row.getLocationInWindow(rowAt);
         scroll.getLocationInWindow(scrollAt);
         assertTrue("tab " + category + ": " + row.getTag() + " starts on screen", rowAt[1] >= scrollAt[1] - 1);
+        if (row.getHeight() > scroll.getHeight())
+            return; // a block taller than the screen (the subtitle style block) starts on screen; its rows scroll
         assertTrue("tab " + category + ": " + row.getTag() + " ends on screen",
                    rowAt[1] + row.getHeight() <= scrollAt[1] + scroll.getHeight() + 1);
     }

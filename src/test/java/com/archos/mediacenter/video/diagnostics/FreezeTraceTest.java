@@ -4,8 +4,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 /** D11 (0.158.8): a freeze report names the app's own methods and the call each one was waiting in. */
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = 30)
 public class FreezeTraceTest
 {
     @Test public void aFreezeTraceKeepsAppFramesAndTheCallTheyWaitIn()
