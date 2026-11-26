@@ -2,10 +2,15 @@ package com.archos.mediacenter.video.scanning;
 
 import com.archos.mediacenter.video.leanback.files.FilesPage;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 
 /** Scan library narrates every step, never a bare "Scanning" (FILES.md, `files-v2/tv/23`). */
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = 28)
 public class ScanNarrationTest
 {
     private static ScanProgress p(long checked, long total, long added, long removed, boolean running,
