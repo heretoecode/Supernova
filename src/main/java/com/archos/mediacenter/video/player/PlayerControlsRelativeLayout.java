@@ -80,6 +80,12 @@ public class PlayerControlsRelativeLayout extends RelativeLayout {
                 if (metadata > 0)
                     episode.layout(episode.getLeft(), title.getBottom() + gap, episode.getRight(),
                         title.getBottom() + gap + episode.getHeight());
+                // The facts line (PLAYER.md title block) stays under whatever is above it.
+                View facts = findViewById(R.id.preview_playback_facts);
+                View above = metadata > 0 ? episode : title;
+                if (facts != null && facts.getVisibility() == VISIBLE)
+                    facts.layout(facts.getLeft(), above.getBottom() + gap / 2, facts.getRight(),
+                        above.getBottom() + gap / 2 + facts.getHeight());
             }
         }
         if (mState == 1)

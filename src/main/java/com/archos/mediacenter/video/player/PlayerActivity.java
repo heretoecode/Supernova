@@ -4479,6 +4479,14 @@ public class PlayerActivity extends AppCompatActivity
         return ageOverlay == null ? "" : ageOverlay.classification();
     }
 
+    /** The title block's facts line without the badge: year · length · up to four genres (PLAYER.md). */
+    public String previewFacts()
+    {
+        long id = mVideoInfo != null && mVideoInfo.id > 0 ? mVideoInfo.id : mVideoId;
+        long length = mVideoInfo != null && mVideoInfo.duration > 0 ? mVideoInfo.duration : 0;
+        return TitleBlockLine.factsFor(id, length);
+    }
+
     public String previewEpisode()
     {
         return mVideoInfo != null && mVideoInfo.isShow

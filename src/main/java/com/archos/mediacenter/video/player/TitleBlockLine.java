@@ -36,6 +36,80 @@ public final class TitleBlockLine
         return out;
     }
 
+    /**
+     * The title block's facts line without the badge (PLAYER.md): year · length · up to four genres
+     * ("2019 · 2 h 51 min · Drama · Crime · Thriller · Mystery"). Empty parts are left out.
+     */
+    public static String facts(int year, long durationMs, java.util.Collection<String> genres)
+    {
+        java.util.List<String> parts = new java.util.ArrayList<>();
+        if (year > 0)
+            parts.add(String.valueOf(year));
+        long minutes = durationMs / 60000;
+        if (minutes > 0)
+            parts.add(minutes >= 60 ? minutes / 60 + " h " + minutes % 60 + " min" : minutes + " min");
+        int shown = 0;
+        for (String genre : genres == null ? java.util.Collections.<String>emptyList() : genres)
+        {
+            if (genre == null || genre.trim().isEmpty() || shown == 4)
+                continue;
+            parts.add(genre.trim());
+            shown++;
+        }
+        return android.text.TextUtils.join(SEPARATOR, parts);
+    }
+
+    /**
+     * The facts for a video from the library in memory: a film's year, length and genres; an episode's length with
+     * its show's year and genres. "" while the library has not been read.
+     */
+    public static String factsFor(long videoId, long durationMs)
+    {
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library =
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        if (library == null || videoId <= 0)
+            return "";
+        for (java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> list
+             : java.util.Arrays.asList(library.movies, library.episodes))
+        {
+            for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : list)
+            {
+                if (!(entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video)
+                    || ((com.archos.mediacenter.video.browser.adapters.object.Video) entry.media).getId() != videoId)
+                    continue;
+                long length = durationMs > 0 ? durationMs : entry.runtime;
+                return facts(year(entry, library), length,
+                             com.archos.mediacenter.video.leanback.PreviewGenres.parse(entry.genres));
+            }
+        }
+        return "";
+    }
+
+    private static int year(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry,
+                            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library)
+    {
+        if (entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)
+            return ((com.archos.mediacenter.video.browser.adapters.object.Movie) entry.media).getYear();
+        for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry show : library.shows)
+        {
+            if (show.show == entry.show && show.releaseDate.length() >= 4)
+                return parseYear(show.releaseDate.substring(0, 4));
+        }
+        return entry.releaseDate.length() >= 4 ? parseYear(entry.releaseDate.substring(0, 4)) : 0;
+    }
+
+    private static int parseYear(String text)
+    {
+        try
+        {
+            return Integer.parseInt(text);
+        }
+        catch (NumberFormatException notAYear)
+        {
+            return 0;
+        }
+    }
+
     /** The age rating in a thin outlined box, sized to the line's own text (outline = information, RULES §3). */
     static final class Badge extends ReplacementSpan
     {

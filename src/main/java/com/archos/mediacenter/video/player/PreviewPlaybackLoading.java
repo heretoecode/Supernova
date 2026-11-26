@@ -69,10 +69,18 @@ final class PreviewPlaybackLoading extends FrameLayout {
         episode.setTextColor(0xFFCCDFEA);
         episode.setMaxLines(1);
         episode.setEllipsize(TextUtils.TruncateAt.END);
-        episode.setPadding(0, dp(4), 0, dp(10));
+        episode.setPadding(0, dp(4), 0, dp(2));
         // PP1: the line keeps its height from the start, so the badge arriving never moves anything.
         episode.setMinLines(1);
         labels.addView(episode);
+        // PLAYER.md title block: the facts line under the episode line, the same as the player's.
+        facts = text("", 13);
+        facts.setTextColor(0xFFCCDFEA);
+        facts.setMaxLines(1);
+        facts.setEllipsize(TextUtils.TruncateAt.END);
+        facts.setPadding(0, 0, 0, dp(10));
+        facts.setMinLines(1);
+        labels.addView(facts);
         // The age rating in its outlined badge on its own line (owner, 12 Nov 2026; player title block).
         age = text("", 14);
         age.setPadding(dp(7), dp(2), dp(7), dp(2));
@@ -121,19 +129,24 @@ final class PreviewPlaybackLoading extends FrameLayout {
                         break;
                     }
             Episode selected = video instanceof Episode ? (Episode) video : null;
-            if (selected != null)
-                details = episodeLine(selected.getSeasonNumber(), selected.getEpisodeNumber(),
-                                      selected.getEpisodeName());
-            else if (video instanceof Movie && ((Movie) video).getYear() > 0)
+            // The episode's title line; films have none (PLAYER.md title block).
+            String line = selected == null ? ""
+                : episodeLine(selected.getSeasonNumber(), selected.getEpisodeNumber(), selected.getEpisodeName());
+            episode.setText(line);
+            episode.setVisibility(line.isEmpty() ? GONE : VISIBLE);
+            details = TitleBlockLine.factsFor(video.getId(), video.getDurationMs());
+            if (details.isEmpty() && video instanceof Movie && ((Movie) video).getYear() > 0)
                 details = String.valueOf(((Movie) video).getYear());
-            episode.setText(details);
+            facts.setText(details);
             loadAge(selected != null, selected != null ? showOnlineId(library, video) : online);
         }
-        episode.setVisibility(VISIBLE);
+        else
+            episode.setVisibility(VISIBLE);
     }
 
     private TextView age;
-    /** The details line without the badge ("Season 2 · Episode 3 · Title", or a film's year). */
+    private TextView facts;
+    /** The facts line without the badge ("2019 · 2 h 51 min · Drama · Crime"). */
     private String details = "";
 
     /** "Season 2 · Episode 8 · We Don't Talk Anymore", the same as Details and the player. */
@@ -165,7 +178,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
             post(() -> {
                 boolean known = PlaybackAgeOverlay.valid(rating);
                 age.setText(known ? rating : "");
-                episode.setText(TitleBlockLine.line(getContext(), known ? rating : "", details));
+                facts.setText(TitleBlockLine.line(getContext(), known ? rating : "", details));
             });
         });
     }

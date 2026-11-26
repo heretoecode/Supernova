@@ -1745,11 +1745,19 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             title.setText(a.previewTitle());
             a.bindPreviewTitleArtwork(title);
         }
+        TextView facts = mControllerViewLeft.findViewById(R.id.preview_playback_facts);
         if (episode != null) {
-            // PL1 / PP2: the same details line as Preparing playback, the age badge first.
-            CharSequence line = TitleBlockLine.line(mContext, a.previewAge(), a.previewEpisode());
+            // PLAYER.md title block: the episode's title line ("Season 1 · Episode 5 · Wind River"); films have none.
+            String line = a.previewEpisode();
             episode.setText(line);
-            episode.setVisibility(mControlBarShowing && line.length() > 0 ? View.VISIBLE : View.GONE);
+            episode.setVisibility(mControlBarShowing && !line.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+        if (facts != null) {
+            // The facts line: the age badge first, then year · length · up to four genres (the same as Preparing
+            // playback).
+            CharSequence line = TitleBlockLine.line(mContext, a.previewAge(), a.previewFacts());
+            facts.setText(line);
+            facts.setVisibility(mControlBarShowing && line.length() > 0 ? View.VISIBLE : View.GONE);
         }
     }
 
