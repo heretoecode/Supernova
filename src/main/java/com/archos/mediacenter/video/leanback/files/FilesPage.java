@@ -834,7 +834,8 @@ public final class FilesPage extends LinearLayout
         ScanProgress progress = currentProgress();
         String words = progress != null && (scanning || progress.running
                                                 || System.currentTimeMillis() - finishedAt(progress) < DONE_SHOWS_MS)
-            ? narrate(progress) : scanLabel(scanning, scanPercent());
+            ? narrate(progress) + (waiting.isEmpty() ? "" : " · " + waiting.size() + " more waiting")
+            : scanLabel(scanning, scanPercent());
         TextView control = text(words, 18, Color.WHITE);
         // Fixed-width digits, so the words never jiggle as numbers change (FILES.md).
         control.setFontFeatureSettings("tnum");
@@ -1109,6 +1110,13 @@ public final class FilesPage extends LinearLayout
                 title = titles[index + 1];
             }
         }
+        if (carePage.startsWith("scan:"))
+        {
+            List<ScanProgress> recent = LibraryScanController.recentScans();
+            int at = Integer.parseInt(carePage.substring(5));
+            title = "Recent scans" + (at < recent.size() && recent.get(at).sourceLabel != null
+                ? "  ›  " + recent.get(at).sourceLabel : "");
+        }
         // The path is a signpost, not focusable; Back returns to Library Care.
         TextView crumb = text("Library Care  ›  " + title, 15, SECOND_LINE);
         LayoutParams crumbSize = new LayoutParams(-2, -2);
@@ -1135,6 +1143,11 @@ public final class FilesPage extends LinearLayout
                 heroPage(column);
                 break;
             default:
+                if (carePage.startsWith("scan:"))
+                {
+                    scanDetails(column, Integer.parseInt(carePage.substring(5)));
+                    break;
+                }
                 allScans(column);
                 break;
         }
@@ -1512,15 +1525,53 @@ public final class FilesPage extends LinearLayout
         {
             return;
         }
-        List<Action> actions = new java.util.ArrayList<>();
-        for (Source source : sources)
-        {
-            String label = waiting.contains(source.label) ? source.label + " · Waiting" : source.label;
-            actions.add(new Action(label, source.local ? "tv" : "integration", () -> scanSource(source)));
-        }
-        String second = waiting.isEmpty() ? "Look for new videos in one place only"
+        // Scan one source › (FILES.md, tv/21): OK opens a menu of every source with where it stands on the right;
+        // OK queues it; several can wait their turn. While scanning, the row says what the tab bar says.
+        ScanProgress now = currentProgress();
+        String second = scanning && now != null ? narrate(now)
+            + (waiting.isEmpty() ? "" : " · " + waiting.size() + " waiting")
+            : waiting.isEmpty() ? "One drive, server or folder only"
             : TextUtils.join(", ", waiting) + (waiting.size() == 1 ? " is" : " are") + " waiting for its turn";
-        actionRow(column, "integration", "Scan one source", second, null, actions, false);
+        row(column, "integration", "Scan one source", second, null, this::scanOneSourceMenu, false);
+    }
+
+    /** The menu of sources, each "Seedbox · Waiting" / "· Scanning · 42%" / "· 17:28" (its last scan). */
+    private void scanOneSourceMenu()
+    {
+        List<ScanProgress> recent = LibraryScanController.recentScans();
+        ScanProgress now = currentProgress();
+        String[] labels = new String[sources.size()];
+        String[] icons = new String[labels.length];
+        java.text.DateFormat clock = new java.text.SimpleDateFormat("d MMM HH:mm", java.util.Locale.UK);
+        for (int i = 0; i < labels.length; i++)
+        {
+            Source source = sources.get(i);
+            String state = "";
+            if (waiting.contains(source.label))
+            {
+                state = "Waiting";
+            }
+            else if (now != null && now.running && source.label.equals(now.sourceLabel))
+            {
+                state = now.total > 0 ? "Scanning · " + Math.min(100, now.checked * 100 / now.total) + "%" : "Scanning";
+            }
+            else
+            {
+                for (ScanProgress scan : recent)
+                {
+                    if (source.label.equals(scan.sourceLabel))
+                    {
+                        state = scan.outcome() == ScanProgress.Outcome.FAILED ? "Couldn't connect"
+                            : clock.format(new java.util.Date(scan.startedUtcMs));
+                        break;
+                    }
+                }
+            }
+            labels[i] = state.isEmpty() ? source.label : source.label + " · " + state;
+            icons[i] = source.local ? (i == 0 ? "tv" : "usbdrive") : (i % 2 == 0 ? "integration" : "network");
+        }
+        com.archos.mediacenter.video.leanback.PreviewDialog.menu(getContext(), findFocus(), "Scan one source", labels,
+            icons, -1, n -> scanSource(sources.get(n)));
     }
 
     private void scanSource(Source source)
@@ -1566,7 +1617,7 @@ public final class FilesPage extends LinearLayout
         long now = System.currentTimeMillis();
         for (int index = 0; index < Math.min(3, scans.size()); index++)
         {
-            scanLine(column, scans.get(index), now);
+            scanRow(column, scans.get(index), now, index);
         }
         if (scans.size() > 3)
         {
@@ -1580,18 +1631,8 @@ public final class FilesPage extends LinearLayout
         long now = System.currentTimeMillis();
         for (int index = 0; index < Math.min(10, scans.size()); index++)
         {
-            scanLine(column, scans.get(index), now);
-            // FL10 (owner, 18 Nov 2026): focus stays on the page and moves through the scans, so the list scrolls;
-            // nothing to press, so a soft box (not the white one) shows where the remote is.
-            View line = column.getChildAt(column.getChildCount() - 1);
-            line.setFocusable(true);
-            line.setFocusableInTouchMode(true);
-            line.setOnFocusChangeListener((view, focused) -> view.setBackground(focused
-                ? SupernovaStyle.rounded(getContext(), 0x26FFFFFF, SupernovaStyle.SMALL_BOX_RADIUS_DP) : null));
-            if (index == 0)
-            {
-                line.setTag("files.row.first");
-            }
+            // Each scan is focusable with › and opens its Scan details (FILES.md, tv/23, tv/24).
+            scanRow(column, scans.get(index), now, index);
         }
         if (scans.isEmpty())
         {
@@ -1600,6 +1641,61 @@ public final class FilesPage extends LinearLayout
     }
 
     /** One scan as plain information: no focus, no pill, no line (RULES §5). */
+    /** A recent scan as a row with › (FILES.md, tv/23): source, "Today 18:28 · 3 new · 1 missing", its pill. */
+    private void scanRow(LinearLayout column, ScanProgress scan, long now, int index)
+    {
+        String name = scan.sourceLabel == null || scan.sourceLabel.isEmpty() ? "Library" : scan.sourceLabel;
+        String second = RecentScanLine.second(scan.outcome(), scan.failureReason(), scan.startedUtcMs, now,
+                                              scan.checked, scan.added, scan.removed);
+        row(column, scan.outcome() == ScanProgress.Outcome.FAILED ? "cancel" : "scan", name, second,
+            RecentScanLine.pill(scan.outcome()), () -> openCare("scan:" + index), false);
+    }
+
+    /**
+     * Scan details (FILES.md, tv/24): "Library Care › Recent scans › Seedbox  Today 18:28". Summary: When, Files
+     * listed, Result; then why it failed, if it did.
+     */
+    private void scanDetails(LinearLayout column, int index)
+    {
+        List<ScanProgress> scans = LibraryScanController.recentScans();
+        if (index < 0 || index >= scans.size())
+        {
+            column.addView(text("This scan is no longer kept", 16, Color.WHITE));
+            return;
+        }
+        ScanProgress scan = scans.get(index);
+        java.text.DateFormat clock = new java.text.SimpleDateFormat("d MMM yyyy HH:mm", java.util.Locale.UK);
+        heading(column, "Summary", "info", false);
+        long seconds = Math.max(0, scan.durationMs / 1000);
+        String length = seconds >= 60 ? seconds / 60 + " min " + seconds % 60 + " s" : seconds + " s";
+        fact(column, "When", clock.format(new java.util.Date(scan.startedUtcMs)) + " · " + length);
+        fact(column, "Files listed", scan.checked >= 0 ? String.format(java.util.Locale.UK, "%,d", scan.checked)
+            : "Unknown");
+        List<String> result = new java.util.ArrayList<>();
+        result.add(Math.max(0, scan.added) + " new");
+        if (scan.updated > 0)
+        {
+            result.add(scan.updated + " updated");
+        }
+        result.add(Math.max(0, scan.removed) + " missing");
+        fact(column, "Result", TextUtils.join(" · ", result));
+        fact(column, "Outcome", RecentScanLine.pill(scan.outcome())
+            + (scan.outcome() == ScanProgress.Outcome.FAILED ? " · " + scan.failureReason() : ""));
+    }
+
+    /** A read-only label and value (soft label, white value; RULES text on the page). */
+    private void fact(LinearLayout column, String label, String value)
+    {
+        LinearLayout line = new LinearLayout(getContext());
+        line.setPadding(SupernovaStyle.dp(getContext(), 20), SupernovaStyle.dp(getContext(), 6), 0,
+                        SupernovaStyle.dp(getContext(), 6));
+        line.addView(text(label, 15, SECOND_LINE), new LayoutParams(SupernovaStyle.dp(getContext(), 160), -2));
+        TextView shown = text(value, 15, Color.WHITE);
+        shown.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+        line.addView(shown, new LayoutParams(0, -2, 1));
+        column.addView(line, new LayoutParams(-1, -2));
+    }
+
     private void scanLine(LinearLayout column, ScanProgress scan, long now)
     {
         LinearLayout line = new LinearLayout(getContext());
