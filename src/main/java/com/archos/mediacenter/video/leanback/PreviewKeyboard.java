@@ -102,12 +102,7 @@ public final class PreviewKeyboard extends LinearLayout {
         bottom.add(space);
         bottom.add(delete);
         bottom.add(action(last, "Clear", "Clear", 1.6f, () -> input.setText("")));
-        if (input instanceof KeyboardInput) {
-            // Lets the phone app type or paste into this box (0.157 notes §36).
-            TextView phone = action(last, "Phone", "Phone", 1.6f, this::openPhoneKeyboard);
-            phone.setContentDescription("Phone keyboard: type or paste from the phone app");
-            bottom.add(phone);
-        }
+        // No Phone key (owner, 25 Nov 2026; RULES §15): every key offers the box's input connection instead.
         doneLine = line();
         doneRow.add(action(doneLine, "Done", "Done", 1f, () -> {
             if (confirm != null)
@@ -124,12 +119,6 @@ public final class PreviewKeyboard extends LinearLayout {
     }
 
     // ---- host API -------------------------------------------------------------------------------------------
-
-    private void openPhoneKeyboard() {
-        if (input instanceof KeyboardInput) {
-            ((KeyboardInput) input).startSystemSession(this::focusLastKey);
-        }
-    }
 
     public void setActions(Runnable select, Runnable dismiss) {
         confirm = select;
@@ -277,7 +266,7 @@ public final class PreviewKeyboard extends LinearLayout {
     }
 
     private TextView key(String tag, String label, float weight, Runnable run) {
-        TextView key = new TextView(getContext());
+        TextView key = new KeyboardKey(getContext(), input);
         key.setText(label);
         key.setTag("semantic:keyboard:" + tag);
         key.setTextColor(Color.WHITE);
@@ -291,8 +280,10 @@ public final class PreviewKeyboard extends LinearLayout {
         SupernovaStyle.applyButton(key, SupernovaStyle.Surface.PANEL);
         key.setOnClickListener(v -> run.run());
         key.setOnFocusChangeListener((v, focused) -> {
-            if (focused)
+            if (focused) {
                 lastKey = (TextView)v;
+                offerTextSession(v);
+            }
         });
         key.setOnKeyListener((v, code, event) -> move((TextView)v, code, event));
         LayoutParams size = new LayoutParams(0, -1, weight);
@@ -300,6 +291,22 @@ public final class PreviewKeyboard extends LinearLayout {
         size.rightMargin = dp(2);
         key.setLayoutParams(size);
         return key;
+    }
+
+    /**
+     * The phone app sees a live text session on the box while a key is focused (no Phone key, RULES §15); Android's
+     * own keyboard is kept hidden so only Supernova's keys show.
+     */
+    private void offerTextSession(View key) {
+        android.view.inputmethod.InputMethodManager keyboards =
+            getContext().getSystemService(android.view.inputmethod.InputMethodManager.class);
+        if (keyboards == null)
+            return;
+        if (getContext() instanceof android.app.Activity)
+            ((android.app.Activity) getContext()).getWindow().setSoftInputMode(
+                android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        keyboards.restartInput(key);
+        keyboards.hideSoftInputFromWindow(key.getWindowToken(), 0);
     }
 
     private boolean move(TextView key, int code, KeyEvent event) {
