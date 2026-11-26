@@ -30,6 +30,17 @@ finished to its sheet (every action pressed and rendered) before the next:
      Details, thumbnail or subtitle work), mark it missing at once: it appears in Files › Library Care › Missing files
      with Find it again · Remove, the badge and the dot beside Files update. Test that a failed open of a gone file
      lands it there.
+   - **M4. A scan that saw new files didn't flag a removed one (owner, 26 Nov).** The SFTP scan that added Blue Planet 3
+     left the hand-deleted MobLand episode in the library, not in Missing files. Leads (MediaLib
+     `NetworkScannerServiceVideo.FileVisitListener.onStop` and `SupernovaLibraryPolicy.availability`): (1) missing
+     files are marked only when the **whole** traversal had no listing error (`mHadListingError`), so one unreadable or
+     interrupted folder anywhere (the 0.158.7 report shows SFTP listings interrupted) stops every missing mark for that
+     source; (2) the prescan loop stops filling when the app leaves the foreground (`while (prescan.moveToNext() &&
+     isForeground)`), so a partial list is compared; (3) check that Files › Library Care › Missing files reads the same
+     `HEALTH` keys the scanner writes (`media:<id + SCANNED_ID_OFFSET>`). Fix: judge **folder by folder**: folders read
+     in full mark their missing files; only folders that failed hold back, and Library Care says so ("Couldn't check 1
+     folder on Home server"). Diagnostics record per scan how many were marked missing and why any were held back (the
+     0.159 "record why" rule, early). Tests: a scan with one failing subfolder still marks a missing file in a good one.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
