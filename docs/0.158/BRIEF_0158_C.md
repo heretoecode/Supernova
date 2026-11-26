@@ -47,6 +47,11 @@ finished to its sheet (every action pressed and rendered) before the next:
      in full mark their missing files; only folders that failed hold back, and Library Care says so ("Couldn't check 1
      folder on Home server"). Diagnostics record per scan how many were marked missing and why any were held back (the
      0.159 "record why" rule, early). Tests: a scan with one failing subfolder still marks a missing file in a good one.
+     **Evidence from 0.158.9 (`DIAGNOSTICS_0158_9.md` › 2):** the same two SFTP sources report every file as new on one
+     scan and none on the next, never report a missing count, and "sources total" flips 1 / 2 / unknown: known files
+     are not being recognised reliably. Fix that first; each scan records new, known, missing and held back.
+   - **M2 and M3 confirmed on 0.158.9 (26 Nov, 11:24):** MobLand S2 E9 failed to open over SFTP with no reason recorded,
+     then two deletes failed "not found"; it is still in the library and not in Missing files.
    - **M5. Titles still being matched are listed as Not matched (owner, 26 Nov).** New files whose TMDB look-up hasn't
      run yet show in Library Care › Not matched (and its count) as if they had failed. Only titles whose look-up has
      finished without a match go there; while look-ups are pending, the Not matched page says "Matching N new titles:
@@ -73,6 +78,22 @@ finished to its sheet (every action pressed and rendered) before the next:
    (M5), To fix, Excluded from hero, Fix match page with inline buttons, **Scan one source menu**, **focusable recent
    scans and the Scan details page** (the scan record kept for the last ten scans and shared with item 9's
    diagnostics); (e) Your Library with By Source and Biggest Movies (M7). Mock-ups `files-v2/tv/01`–`24`. Sign as a point release when done.
+11. **Fixes from the 0.158.9 report (`docs/0.158/DIAGNOSTICS_0158_9.md`, read 26 Nov).** Fit them in where they belong:
+   D15 with item 9, D14 and D16 with item 8, D17 and D18 with the pages (A).
+   - **D14. Scan only when there is something to find.** The local import ran on every return to the app (20 times in
+     80 minutes, 4–6 minutes each, 97,041 rows checked, nothing new); SFTP was scanned 8 times in 80 minutes, twice at
+     once. Local: only when storage changes, a drive is plugged in, or the last full check is over a set age (6 hours);
+     an incremental check must cost seconds, not minutes. Network: one scheduler, one trigger at a time, no rescan of a
+     source finished in the last 30 minutes unless the owner asks. Diagnostics record why each scan started.
+   - **D15. Record each event once.** About 770 duplicates in 80 minutes (focus moves, scanner state, scan results).
+     Find the double recorder (two processes or two listeners) and test that one action writes one event.
+   - **D16. A title TMDB no longer has.** A 404 for the title itself (not its extras) stops the retries, records "TMDB
+     no longer has this title", and puts it in Library Care › To fix ("TMDB no longer knows this show: Fix match").
+     Never record a 404 as "Availability service unavailable".
+   - **D17. Focus slips left on Home:** an off-screen text label taking focus, and presses at a row's end that do
+     nothing (should stay put without a warning, or wrap where the rules say). Settings: 3 off-screen rows.
+   - **D18. Memory trims:** Android asked 23 times in 80 minutes; Files up to 433 MB. Release artwork and lists on pages
+     left behind; record memory per page (D13); a custom library page had 2.4 % slow frames.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
