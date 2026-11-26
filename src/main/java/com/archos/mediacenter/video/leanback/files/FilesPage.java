@@ -563,7 +563,9 @@ public final class FilesPage extends LinearLayout
         statRow(column, "time", "Time to watch everything", "Every unwatched title and episode",
                 String.format(java.util.Locale.UK, "%,d hours", s.hoursToWatch), false);
         // Every quality (F21): 4K, 1080p, 720p, SD and HDR; counts of videos, then their share.
-        statRow(column, "hdr", "Picture", s.pictureCounts() + " videos", s.picturePercents(), false);
+        // FILES.md: values stay stacked, a quality label over its number; every quality's share on the line.
+        statRow(column, "hdr", "Picture", s.picturePercents(), s.topPicture().isEmpty() ? "Unknown" : s.topPicture(),
+                s.topPictureShare(), false);
         java.text.DateFormat month = new java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale.UK);
         statRow(column, "folder", "Added this month", "Since " + month.format(monthStart()),
                 count(s.addedThisMonth, "title"), false);

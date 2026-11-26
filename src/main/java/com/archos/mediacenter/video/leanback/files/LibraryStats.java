@@ -211,6 +211,29 @@ public final class LibraryStats
         return String.join(" · ", parts);
     }
 
+    /** The most common picture size ("4K", "1080p", "720p", "SD"), or "" when none is known. */
+    public String topPicture()
+    {
+        int best = -1;
+        for (int index = 0; index < 4; index++)
+        {
+            if (pictures[index] > 0 && (best < 0 || pictures[index] > pictures[best]))
+                best = index;
+        }
+        return best < 0 ? "" : PICTURES[best];
+    }
+
+    /** The share of the most common picture size, "70% of videos" (Your Library's stacked value). */
+    public String topPictureShare()
+    {
+        int known = pictures[0] + pictures[1] + pictures[2] + pictures[3];
+        String top = topPicture();
+        if (known == 0 || top.isEmpty())
+            return "";
+        int index = java.util.Arrays.asList(PICTURES).indexOf(top);
+        return Math.round(100f * pictures[index] / known) + "% of videos";
+    }
+
     /** Whole percent of the library's titles, 0 when there are none. */
     public int percent(int count)
     {
