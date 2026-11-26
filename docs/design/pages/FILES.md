@@ -147,6 +147,21 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
   scan time · Couldn't connect). Several can be queued. The menu scrolls, with the up and down arrows in its own
   right-hand margin (RULES §11). The row's second line says what is running ("Seedbox: Scanning · 42% · 1 waiting").
 - Renaming a connection must save and show everywhere at once (bug M6, BRIEF_0158_C item 8).
+- **Scan library narrates every step (owner, 26 Nov; replaces the round 1 list above):** never a bare "Scanning".
+  Connecting to Seedbox… → Looking in Seedbox › TV · 42% → Found 3 new videos → Matching 2 of 3 · Blue Planet III →
+  Fetching artwork · 5 of 12 → Checking for missing files · Seedbox → Done · 3 new · 1 missing · 1 not matched (a few
+  seconds, then "Scan library"). "· 2 more waiting" when sources queue; a failure says so in place ("Couldn't connect
+  to Living-room NAS") and the scan moves on. About 45 characters, long titles end "…", the icon never moves; steps
+  shorter than a second are skipped. The same words show on Scan one source's second line.
+- **Recent scans are focusable (owner, 26 Nov; proposed `tv/23`, awaiting the owner's look):** the three latest scans
+  and Show all scans, each with ›; OK on a scan opens **Scan details**, as does OK on a scan in Show all scans.
+- **Scan details (owner, 26 Nov; proposed `tv/24`, awaiting the owner's look):** a whole page, "Library Care › Recent
+  scans › <source>  <time>". **Summary** (read-only): when and who started it, how long; folders looked in and held
+  back; files listed; result. **What changed** (focusable, ›): each title new, updated, missing or not matched, with a
+  pill; OK opens where it went (Details, Missing files, Not matched). **Step by step** (read-only, Down / Up scroll):
+  the full transcript with times to the second: connecting, each folder listed (files, new, time taken), every
+  failure with its reason and retries (soft red), folders held back, missing checks, each match and how it was made,
+  artwork, finished. Kept for the last ten scans. The same record feeds the diagnostics report (BRIEF_0158_C item 9).
 
 ## To fix (approved idea, owner 20 Nov; draw at the Files review)
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix

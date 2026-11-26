@@ -902,6 +902,88 @@ function f22() {
 }
 ROUND23.push(['22-your-library', f22, 2460]);
 
+
+// ---------- Round 3b: recent scans focusable, scan details ----------
+Object.assign(I, {
+  history: I.history || '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+});
+
+function f23() {
+  const rec = [
+    { icon: I.server, name: 'Seedbox', line: 'Today 18:28 · 3 new · 1 missing · 1 folder held back', pill: 'Finished',
+      chev: true, on: true },
+    { icon: I.nas, name: 'Living-room NAS', line: 'Today 17:28 · couldn\'t connect: no answer from the server',
+      pill: 'Failed', bad: true, chev: true },
+    { icon: I.usb, name: 'Backup #1', line: 'Today 16:02 · the drive was removed', pill: 'Stopped', chev: true },
+    { icon: I.history, name: 'Show all scans', line: 'The last ten', chev: true, last: true },
+  ];
+  const scan = `<div class="r std last"><span class="ic">${svg(I.scan, 34)}</span><span class="t">
+    <b>Scan one source</b><small>Put.io: Matching 2 of 3 · Blue Planet III</small></span><span class="ch">${svg(I.chev, 28)}
+    </span><i class="ln"></i></div>`;
+  return bar('ring') + tabs('Library Care', null, 'Put.io: Matching 2 of 3 · Blue Planet III').replace('<i>5</i>', '<i>9</i>')
+    + `<div class="list" style="top:212px">${hd(I.scan, 'Scanning', true)}${scan}${hd(I.history, 'Recent scans')}
+    ${rec.map(crow).join('')}</div>`
+    + '<div class="cap2">23 · Recent scans: each one focusable; OK opens its details. The tab bar narrates the scan</div>';
+}
+
+function f24() {
+  const sum = `${stat(I.clock, 'When', 'You pressed Scan library', 'Today 18:24 – 18:28', '4 min 8 s')}
+    ${stat(I.folder, 'Folders looked in', 'Movies · TV · Documentaries', '2 of 3', '1 held back')}
+    ${stat(I.file, 'Files listed', 'Every video file Supernova saw', '1,216')}
+    ${stat(I.total, 'Result', 'What the scan found', '3 new · 1 updated', '1 missing · 1 not matched', true)}`;
+  const ch = [
+    { icon: I.film, name: 'Blue Planet III · S1 E2 and E3', line: 'New · matched from the file name · TV › Blue Planet III',
+      pill: 'New', chev: true, on: true },
+    { icon: I.film, name: 'Harbour Wives · S1 E3', line: 'Updated · a subtitle file was added beside it', pill: 'Updated',
+      chev: true },
+    { icon: I.missing, name: 'MobLand · S1 E3', line: 'Not found in TV › MobLand › Season 1 · now in Missing files',
+      pill: 'Missing', chev: true },
+    { icon: I.question, name: 'holiday-2019-final-cut.mp4', line: 'New · no match found · now in Not matched',
+      pill: 'Not matched', chev: true, last: true },
+  ];
+  const T = [
+    ['18:24:02', 'Started', 'You pressed Scan library in Files'],
+    ['18:24:02', 'Connecting to Seedbox', 'SFTP · port 22'],
+    ['18:24:03', 'Connected', 'in 0.6 s'],
+    ['18:24:03', 'Looking in Movies', ''],
+    ['18:24:19', 'Movies listed', '642 files · nothing new · 16 s'],
+    ['18:24:19', 'Looking in TV', ''],
+    ['18:25:02', 'TV listed', '574 files · 3 new · 1 changed · 43 s'],
+    ['18:25:02', 'Looking in Documentaries', ''],
+    ['18:25:40', 'Couldn\'t list Documentaries › Nature › Archive', 'The server closed the connection · tried 3 times', 1],
+    ['18:25:41', 'Documentaries held back', 'Missing files not checked there this time', 1],
+    ['18:25:41', 'Checking for missing files', 'Movies and TV'],
+    ['18:25:44', 'MobLand · S1 E3 not found', 'Was in TV › MobLand › Season 1 · moved to Missing files'],
+    ['18:25:44', 'Matching 3 new videos', 'TMDB'],
+    ['18:25:46', 'Blue Planet III · S1 E2 matched', 'From the file name · Blue Planet III (2023)'],
+    ['18:25:47', 'Blue Planet III · S1 E3 matched', 'From the file name'],
+    ['18:25:49', 'holiday-2019-final-cut.mp4 not matched', 'TMDB found nothing for "holiday final cut" · now in Not matched'],
+    ['18:25:49', 'Harbour Wives · S1 E3 updated', 'Subtitle file added: English'],
+    ['18:25:50', 'Fetching artwork', '5 of 5 · 2.1 s'],
+    ['18:28:10', 'Finished', '3 new · 1 updated · 1 missing · 1 not matched · 1 folder held back'],
+  ];
+  const tr = T.map(([t, a, b, bad], k) => `<div class="tr${k === T.length - 1 ? ' last' : ''}"><span class="tm">${t}</span>
+    <span class="tx"><b${bad ? ' class="bad"' : ''}>${a}</b>${b ? `<small>${b}</small>` : ''}</span><i class="ln"></i></div>`).join('');
+  const st = `<style>${css4}
+.tr{position:relative;display:flex;align-items:baseline;gap:32px;padding:16px 24px}
+.tr .tm{font-size:24px;color:#c9d3e6;font-variant-numeric:tabular-nums;width:110px;flex:none}
+.tr .tx{display:flex;flex-direction:column;gap:4px}
+.tr .tx b{font-size:28px;font-weight:500}
+.tr .tx b.bad{color:#ffb4a8}
+.tr .tx small{font-size:23px;color:#c9d3e6}
+.tr .ln{position:absolute;left:24px;right:24px;bottom:0;height:1px;background:rgba(255,255,255,.07)}
+.tr.last .ln{display:none}
+.r .pill{width:auto;min-width:150px}
+</style>`;
+  return bar() + tabs('Library Care', null).replace('<i>5</i>', '<i>9</i>')
+    + `<div class="crumb"><em>Library Care › Recent scans ›</em>Seedbox<em style="font-size:24px;margin-left:6px">Today 18:28</em></div>`
+    + st + `<div class="list" style="top:270px">${hd(I.total, 'Summary', true)}${sum}${hd(I.list, 'What changed')}
+    ${ch.map(crow).join('')}${hd(I.history, 'Step by step')}${tr}</div>`
+    + `<div class="arrow faint" style="top:290px">${svg(I.up, 32)}</div>`
+    + '<div class="cap2">24 · Scan details (whole page): summary, what changed (each opens where it went), every step</div>';
+}
+ROUND23.push(['23-recent-scans', f23, 1080], ['24-scan-details', f24, 3200]);
+
 const FRAMES = [['01-this-device', f01], ['02-drive-list', f02], ['03-sort-menu', f03], ['04-grid-folder-menu', f04],
   ['05-file-menu', f05], ['06-exclude-undo', f06], ['07-add-progress', f07], ['08-no-videos', f08]].concat(ROUND23);
 
