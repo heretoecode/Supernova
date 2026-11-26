@@ -676,6 +676,8 @@ public final class Diagnostics
     }
 
     private static int unhandledNavigation;
+    /** How long a focus scroll may take before an item out of sight counts as an off-screen slip (D17). */
+    static final long OFFSCREEN_SETTLE_MS = 450;
 
     public static void navigation(View previous, View next, int key, boolean consumed)
     {
@@ -688,10 +690,18 @@ public final class Diagnostics
             event("focus_anomaly_suspected", "kind", "missing_focus", "screen", uiScreen, "input", key);
             return;
         }
-        Rect bounds = new Rect();
-        boolean visible = next.getGlobalVisibleRect(bounds);
-        if (!visible || bounds.width() <= 0 || bounds.height() <= 0)
-            event("focus_anomaly_suspected", "kind", "offscreen_focus", "screen", uiScreen, "target", viewId(next));
+        // D17 (0.158.9 report): a list scrolls its newly focused item into view just after the key press (Home's
+        // hero button from the first row, Settings' rows), so judge "off screen" once that scroll has settled; only
+        // an item still out of sight then, and still focused, is a real slip.
+        String screen = uiScreen;
+        next.postDelayed(() -> {
+            if (!enabled || !next.isFocused())
+                return;
+            Rect bounds = new Rect();
+            boolean visible = next.getGlobalVisibleRect(bounds);
+            if (!visible || bounds.width() <= 0 || bounds.height() <= 0)
+                event("focus_anomaly_suspected", "kind", "offscreen_focus", "screen", screen, "target", viewId(next));
+        }, OFFSCREEN_SETTLE_MS);
         if (previous == next && !consumed && key != KeyEvent.KEYCODE_DPAD_CENTER)
         {
             if (++unhandledNavigation == 4)
