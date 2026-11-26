@@ -543,7 +543,10 @@ public final class PreviewMoviePage extends ScrollView {
                                                          SupernovaStyle.SMALL_BOX_RADIUS_DP));
             else
                 tab.setBackground(null);
-            tab.setTextColor(focused ? SupernovaStyle.buttonContent() : Color.WHITE);
+            if (focused)
+                tab.setTextColor(SupernovaStyle.buttonContent());
+            else
+                tab.setTextColor(Color.WHITE);
         }
         sectionFrame.focusInContent(!tabBar.hasFocus() && hasFocus());
         sectionFrame.invalidate();
