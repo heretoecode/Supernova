@@ -91,12 +91,10 @@ public final class PreviewArtworkPanel
         panel.setPadding(pad, dp(16), pad, dp(16));
         panel.setBackground(SupernovaStyle.glass(context));
         panel.setClipChildren(false);
-        TextView title = text("Artwork", 22, Color.WHITE);
-        PreviewIcon.apply(title, "appearance", 18);
-        panel.addView(title);
+        // DETAILS.md › Artwork (`tv/09`): no title or footer; "For" fixed at the top, the pictures scroll beneath it.
         LinearLayout choose = new LinearLayout(context);
         choose.setGravity(Gravity.CENTER_VERTICAL);
-        choose.addView(text("Choose for", 16, SupernovaStyle.TEXT_SECONDARY));
+        choose.addView(text("For", 16, SupernovaStyle.TEXT_SECONDARY));
         for (int index = 0; index < CHOICES.length; index++)
         {
             TextView chip = chip(index);
@@ -106,7 +104,7 @@ public final class PreviewArtworkPanel
             chips.add(chip);
         }
         LinearLayout.LayoutParams chooseSize = new LinearLayout.LayoutParams(-1, -2);
-        chooseSize.topMargin = dp(10);
+        chooseSize.topMargin = 0;
         chooseSize.bottomMargin = dp(12);
         panel.addView(choose, chooseSize);
         ScrollView scroll = new ScrollView(context);
@@ -118,9 +116,7 @@ public final class PreviewArtworkPanel
         panel.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
         hint.setTextSize(14);
         hint.setTextColor(SupernovaStyle.TEXT_SECONDARY);
-        LinearLayout.LayoutParams hintSize = new LinearLayout.LayoutParams(-1, -2);
-        hintSize.topMargin = dp(10);
-        panel.addView(hint, hintSize);
+        // The hint is kept for "Keeping this picture…" but not shown as a footer (tv/09).
         dialog.setContentView(panel);
         dialog.setOnDismissListener(gone -> preview.accept(null));
         dialog.show();
@@ -269,6 +265,22 @@ public final class PreviewArtworkPanel
         FrameLayout.LayoutParams tickAt = new FrameLayout.LayoutParams(dp(26), dp(26), Gravity.TOP | Gravity.END);
         tickAt.setMargins(0, dp(8), dp(8), 0);
         card.addView(tick, tickAt);
+        if (index == 0)
+        {
+            // TMDB's first picture is its own pick: the Suggested badge (tv/09).
+            TextView suggested = text("Suggested", 12, Color.WHITE);
+            suggested.setTag("artwork.suggested");
+            suggested.setPadding(dp(8), dp(2), dp(8), dp(2));
+            GradientDrawable pill = new GradientDrawable();
+            pill.setColor(0xCC16181C);
+            pill.setStroke(Math.max(1, dp(1)), 0xB3FFFFFF);
+            pill.setCornerRadius(dp(10));
+            suggested.setBackground(pill);
+            FrameLayout.LayoutParams suggestedAt =
+                new FrameLayout.LayoutParams(-2, -2, Gravity.TOP | Gravity.START);
+            suggestedAt.setMargins(dp(8), dp(8), 0, 0);
+            card.addView(suggested, suggestedAt);
+        }
         TextView label = text(name, 14, Color.WHITE);
         card.setOnFocusChangeListener((view, focused) -> {
             view.animate().scaleX(focused ? 1.05f : 1f).scaleY(focused ? 1.05f : 1f).setDuration(120).start();
