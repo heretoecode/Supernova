@@ -27,6 +27,11 @@ finished to its sheet (every action pressed and rendered) before the next:
    delete warnings with versions.
 6. **App-wide check** (group 4): every rule checked on every page above.
 7. **NOVA leftovers:** N2's second half with trakt-java 6.22.0, N3, N6, N7, N8, N10, `60df7be7`.
+   **Check NOVA again first (owner, 26 Nov):** list every commit on NOVA's main branch (and its MediaLib, FileCore
+   and other dependency repos) since the 25 Nov audit, and any new release. **How we take NOVA's work (owner, 26 Nov):**
+   keep taking unreleased commits, but only fixes we also suffer, security fixes and changes forced by outside services
+   (TMDB, Trakt, OpenSubtitles, IntroDB); only commits merged to NOVA's main, at least a few days old and not reverted;
+   features wait for our own design review (park them). Record each taken or skipped commit, with why, in the report.
 8. **Bugs found on 0.158.9 (owner, 26 Nov), fixed alongside the pages:**
    - **M2. Deleting a file that's already gone "fails".** The owner deleted a MobLand episode by hand on the SFTP server,
      then deleted it in Supernova: "can't be found" error. A delete whose file is already missing is a success: remove
