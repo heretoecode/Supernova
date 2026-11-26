@@ -321,7 +321,23 @@ public final class PreviewSearch extends LinearLayout {
         return heading;
     }
 
+    /** Settings › Library › Viewing History › Keep search history (owner, 25 Nov; SETTINGS.md, SEARCH.md). */
+    public static final String KEEP_HISTORY = "supernova_keep_search_history";
+    public static final String CLEAR_HISTORY = "supernova_clear_search_history";
+
+    public static boolean keepsHistory(Context context) {
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(KEEP_HISTORY, true);
+    }
+
+    /** Settings' Clear search history, and turning Keep search history off. */
+    public static void clearHistory(Context context) {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().remove(RECENT_KEY).apply();
+    }
+
     static List<String> recent(Context context) {
+        if (!keepsHistory(context))
+            return new ArrayList<>();
         String saved = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
                            .getString(RECENT_KEY, "");
         List<String> values = new ArrayList<>();
@@ -334,7 +350,7 @@ public final class PreviewSearch extends LinearLayout {
     /** Remembers a search that led somewhere (a result was opened), newest first, eight at most. */
     static void remember(Context context, String value) {
         String clean = value == null ? "" : value.trim().replace('\n', ' ');
-        if (clean.isEmpty())
+        if (clean.isEmpty() || !keepsHistory(context))
             return;
         List<String> values = recent(context);
         values.removeIf(old -> old.equalsIgnoreCase(clean));

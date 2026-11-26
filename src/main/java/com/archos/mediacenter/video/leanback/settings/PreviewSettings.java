@@ -430,6 +430,26 @@ public final class PreviewSettings {
             return true;
         });
         categories.get("Library").addPreference(clearHistory);
+        // Search history (owner, 25 Nov 2026; SETTINGS.md › Library › Viewing History).
+        SwitchPreferenceCompat keepSearch = new SwitchPreferenceCompat(fragment.requireContext());
+        keepSearch.setKey(com.archos.mediacenter.video.leanback.search.PreviewSearch.KEEP_HISTORY);
+        keepSearch.setTitle("Keep search history");
+        keepSearch.setDefaultValue(true);
+        keepSearch.setOnPreferenceChangeListener((p, value) -> {
+            if (Boolean.FALSE.equals(value))
+                com.archos.mediacenter.video.leanback.search.PreviewSearch.clearHistory(fragment.requireContext());
+            return true;
+        });
+        categories.get("Library").addPreference(keepSearch);
+        Preference clearSearch = new Preference(fragment.requireContext());
+        clearSearch.setKey(com.archos.mediacenter.video.leanback.search.PreviewSearch.CLEAR_HISTORY);
+        clearSearch.setTitle("Clear search history");
+        clearSearch.setOnPreferenceClickListener(p -> {
+            com.archos.mediacenter.video.leanback.search.PreviewSearch.clearHistory(fragment.requireContext());
+            Toast.makeText(fragment.requireContext(), "Done · cleared", Toast.LENGTH_SHORT).show();
+            return true;
+        });
+        categories.get("Library").addPreference(clearSearch);
         consolidate(fragment, root, categories);
         auditPresentation(root);
         style(root);

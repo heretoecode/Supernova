@@ -398,7 +398,7 @@ public class SettingsWorkspaceTest {
     @Test
     public void mapAccountsForBaselineAndNativeSubtitleExtensionWithoutResurrectingHiddenState() {
         SettingsRegistry registry = new SettingsRegistry(host.get());
-        assertEquals(177, registry.entries.size());
+        assertEquals(179, registry.entries.size());
         assertEquals(6, registry.entries.stream().filter(e -> e.id.startsWith("N158")).count());
         assertEquals(1, registry.entries.stream().filter(e -> e.id.startsWith("N151") && !e.nested()).count());
         assertEquals(165, registry.entries.stream().filter(e -> e.id.startsWith("S")).count());

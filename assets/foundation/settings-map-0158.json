@@ -1,48 +1,62 @@
 {
-  "schema": 1,
-  "baseline": "Additive 0.158 extension; the earlier definitions remain unchanged",
-  "rows": [
-    {
-      "id": "N15801",
-      "key": "seek_thumbnails_enabled",
-      "destination": "Playback & Video",
-      "subsection": "General",
-      "disposition": "Owner, 18 Nov 2026 (PL7): Seek previews, Experimental, in Playback \u203a General; it had no definition, so Settings never showed it"
-    },
-    {
-      "id": "N15802",
-      "key": "supernova_diagnostic_clear",
-      "destination": "System & Maintenance",
-      "subsection": "Diagnostics",
-      "disposition": "Page sheet SETTINGS.md: Clear diagnostics (Clear, asks first) in System \u203a Diagnostics"
-    },
-    {
-      "id": "N15803",
-      "key": "preview_featured_because",
-      "destination": "Library & Home",
-      "subsection": "Home",
-      "disposition": "Page sheet SETTINGS.md: Home Hero \u203a Because you watched (switch; at least one source stays on)"
-    },
-    {
-      "id": "N15804",
-      "key": "preview_featured_interval",
-      "destination": "Library & Home",
-      "subsection": "Home",
-      "disposition": "Page sheet SETTINGS.md: Home Hero \u203a Change every (8 s \u00b7 12 s \u00b7 20 s)"
-    },
-    {
-      "id": "N15805",
-      "key": "supernova_diagnostic_keep_weeks",
-      "destination": "System & Maintenance",
-      "subsection": "Diagnostics",
-      "disposition": "Page sheet SETTINGS.md: Keep diagnostics for (1 \u00b7 2 \u00b7 4 weeks) in System \u203a Diagnostics"
-    },
-    {
-      "id": "N15806",
-      "key": "supernova_resume_choice",
-      "destination": "Playback & Video",
-      "subsection": "Resume & Progress",
-      "disposition": "Page sheet SETTINGS.md: When a video was started (Ask \u00b7 Resume \u00b7 Start over) in Playback \u203a Resume"
-    }
-  ]
+ "schema": 1,
+ "baseline": "Additive 0.158 extension; the earlier definitions remain unchanged",
+ "rows": [
+  {
+   "id": "N15801",
+   "key": "seek_thumbnails_enabled",
+   "destination": "Playback & Video",
+   "subsection": "General",
+   "disposition": "Owner, 18 Nov 2026 (PL7): Seek previews, Experimental, in Playback › General; it had no definition, so Settings never showed it"
+  },
+  {
+   "id": "N15802",
+   "key": "supernova_diagnostic_clear",
+   "destination": "System & Maintenance",
+   "subsection": "Diagnostics",
+   "disposition": "Page sheet SETTINGS.md: Clear diagnostics (Clear, asks first) in System › Diagnostics"
+  },
+  {
+   "id": "N15803",
+   "key": "preview_featured_because",
+   "destination": "Library & Home",
+   "subsection": "Home",
+   "disposition": "Page sheet SETTINGS.md: Home Hero › Because you watched (switch; at least one source stays on)"
+  },
+  {
+   "id": "N15804",
+   "key": "preview_featured_interval",
+   "destination": "Library & Home",
+   "subsection": "Home",
+   "disposition": "Page sheet SETTINGS.md: Home Hero › Change every (8 s · 12 s · 20 s)"
+  },
+  {
+   "id": "N15805",
+   "key": "supernova_diagnostic_keep_weeks",
+   "destination": "System & Maintenance",
+   "subsection": "Diagnostics",
+   "disposition": "Page sheet SETTINGS.md: Keep diagnostics for (1 · 2 · 4 weeks) in System › Diagnostics"
+  },
+  {
+   "id": "N15806",
+   "key": "supernova_resume_choice",
+   "destination": "Playback & Video",
+   "subsection": "Resume & Progress",
+   "disposition": "Page sheet SETTINGS.md: When a video was started (Ask · Resume · Start over) in Playback › Resume"
+  },
+  {
+   "id": "N15807",
+   "key": "supernova_keep_search_history",
+   "destination": "Library & Home",
+   "subsection": "Viewing History",
+   "disposition": "Owner, 25 Nov 2026 (Search review): Keep search history (switch, on by default; off clears it) in Library › Viewing History"
+  },
+  {
+   "id": "N15808",
+   "key": "supernova_clear_search_history",
+   "destination": "Library & Home",
+   "subsection": "Viewing History",
+   "disposition": "Owner, 25 Nov 2026 (Search review): Clear search history (Clear; \"Done · cleared\") in Library › Viewing History"
+  }
+ ]
 }

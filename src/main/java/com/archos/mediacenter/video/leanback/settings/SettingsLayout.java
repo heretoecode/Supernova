@@ -90,7 +90,8 @@ final class SettingsLayout {
              "Home Hero", new String[] {"preview_featured_recent", "preview_featured_trending",
                                         "preview_featured_popular", "preview_featured_because",
                                         "preview_featured_interval"},
-             "Viewing History", new String[] {"supernova_track_viewing_history", "supernova_clear_history"});
+             "Viewing History", new String[] {"supernova_track_viewing_history", "supernova_clear_history",
+                                              "supernova_keep_search_history", "supernova_clear_search_history"});
         page(4,
              "Where To Watch", new String[] {"streaming_enabled", "streaming_country",
                                              "streaming_providers_{country}"},
@@ -159,6 +160,10 @@ final class SettingsLayout {
              "Used for Continue Watching, Recently Watched and suggestions.");
         copy("supernova_clear_history", "Clear viewing history",
              "Removes what you watched and when. Your library and files are kept.");
+        copy("supernova_keep_search_history", "Keep search history",
+             "Shows your recent searches in Search. Off: nothing is kept and the list is cleared.");
+        copy("supernova_clear_search_history", "Clear search history",
+             "Removes your recent searches. Your library is kept.");
         copy("streaming_enabled", "Show where to watch",
              "On a title’s Details page, shows which of your services carry it.");
         copy("streaming_country", "Country", "Services and availability differ by country.");
@@ -228,6 +233,7 @@ final class SettingsLayout {
         VERBS.put("export_diagnostic_report", "Save");
         VERBS.put("supernova_diagnostic_clear", "Clear");
         VERBS.put("supernova_clear_history", "Clear");
+        VERBS.put("supernova_clear_search_history", "Clear");
         VERBS.put("trakt_force_push", "Send");
         VERBS.put("trakt_force_pull", "Fetch");
         VERBS.put("trakt_wipe", "Remove");
