@@ -569,7 +569,8 @@ public final class PreviewPages extends FrameLayout {
 
     private boolean eligibleFeatured(Entry entry) {
         if (!(entry.media instanceof Movie || entry.media instanceof Tvshow) || entry.heroSequential ||
-            !entry.heroEligible || HeroPlaybackEligibility.consumed(entry))
+            !entry.heroEligible || HeroPlaybackEligibility.consumed(entry) ||
+            HeroExclusions.excluded(getContext(), entry))
             return false;
         if (entry.media instanceof Video) {
             Video video = (Video)entry.media;
@@ -1142,7 +1143,6 @@ public final class PreviewPages extends FrameLayout {
         });
         list.setLayoutManager(layout);
         list.setAdapter(adapter);
-        rowMover().watchFirstCards(() -> tab == 0);
         list.setItemAnimator(null);
         Diagnostics.uiRebuild(list, "library.adapter", "adapter_created", 0,
                                                                        adapter.getItemCount(), true);
@@ -1647,8 +1647,8 @@ public final class PreviewPages extends FrameLayout {
             String tag = focused == null ? "" : String.valueOf(focused.getTag());
             // Play then More (page sheet HOME.md): Right from Play reaches More; Left on Play shows the previous hero
             // and Right on More the next, focus staying on the same button.
-            boolean between = "hero:play".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT
-                              || "hero:info".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_LEFT;
+            // 0.158.8 (owner, 19 Nov): Home's hero has one button, More; Left / Right change the hero.
+            boolean between = "hero:play".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT;
             if (between && !heroOwnsHorizontal) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     View other = findViewWithTag("hero:play".equals(tag) ? "hero:info" : "hero:play");
@@ -2905,9 +2905,64 @@ public final class PreviewPages extends FrameLayout {
      * Files & Media items.
      */
     private void heroMenu(Entry e, View anchor) {
-        heroDetails = () -> open(e, anchor);
-        libraryMenu(e, anchor);
-        heroDetails = null;
+        // Home's hero More, trimmed (owner, 21 Nov; home-v3/tv/09, 14): Details · Playback · This Title. No library
+        // management on Home.
+        List<String> labels = new ArrayList<>();
+        List<String> icons = new ArrayList<>();
+        List<Runnable> commands = new ArrayList<>();
+        boolean show = e.media instanceof Tvshow;
+        boolean watched = LibraryPageModel.watched(e);
+        labels.add("Details");
+        icons.add("details");
+        commands.add(() -> open(e, anchor));
+        labels.add("— Playback");
+        icons.add(null);
+        commands.add(null);
+        Entry next = show ? nextEpisodes.get(((Tvshow)e.media).getTvshowId()) : null;
+        if (next != null && next.media instanceof Episode) {
+            Episode episode = (Episode)next.media;
+            labels.add("Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber());
+            icons.add("resume");
+            commands.add(() -> play(next, anchor));
+        } else {
+            boolean resume = e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !watched;
+            labels.add(resume ? "Resume" : "Play");
+            icons.add(resume ? "resume" : "play");
+            commands.add(() -> play(e, anchor));
+        }
+        Entry first = show ? firstEpisode(e) : e;
+        if (first != null && (show ? next != null : e.media instanceof Video && ((Video)e.media).getResumeMs() > 0)) {
+            labels.add("Play from the start");
+            icons.add("history");
+            commands.add(() -> playFromStart(first));
+        }
+        labels.add("— This Title");
+        icons.add(null);
+        commands.add(null);
+        labels.add(watched ? (show ? "Mark show as unwatched" : "Mark as unwatched")
+                           : (show ? "Mark show as watched" : "Mark as watched"));
+        icons.add("check");
+        commands.add(() -> markWatched(e, !watched));
+        labels.add("Exclude from hero");
+        icons.add("remove");
+        commands.add(() -> excludeFromHero(e));
+        PreviewDialog.menu(getContext(), anchor, displayName(e), labels.toArray(new String[0]),
+                           icons.toArray(new String[0]), -1, n -> {
+                               if (commands.get(n) != null)
+                                   commands.get(n).run();
+                           });
+    }
+
+    /** Exclude from hero: the title leaves the carousel at once, with an Undo notice (owner, 21 Nov). */
+    private void excludeFromHero(Entry e) {
+        HeroExclusions.exclude(getContext(), e);
+        heroPoolSnapshot = null;
+        render("hero_exclusion");
+        UndoNotice.show(getContext(), displayName(e) + " excluded from hero", () -> {
+            HeroExclusions.include(getContext(), e);
+            heroPoolSnapshot = null;
+            render("hero_exclusion_undone");
+        });
     }
 
     /** Set only while the hero's More builds its menu: adds Details at the top. */
@@ -3400,8 +3455,8 @@ public final class PreviewPages extends FrameLayout {
                     if (tab == 0 && !c.headingIcon.isEmpty())
                         MenuFoundation.icon(title, c.headingIcon);
                     v.addView(title);
-                    if (tab == 0 && !c.homeRowId.isEmpty())
-                        addRowControls(v, c.homeRowId);
+                    // RULES §14d (owner, 21 Nov): Home's row headings are never focusable and have no Move or Hide;
+                    // ordering and hiding live in Customise Home.
                 }
             } else if (c.type == RAIL) {
                 v.setPadding(0, 0, 0, dp(10));

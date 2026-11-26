@@ -19,6 +19,7 @@ import org.robolectric.shadows.ShadowDialog;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -74,16 +75,10 @@ public class Review0158HomeTest
             assertNotNull("Caption under the card: S2 E3 · … left",
                           Review0158Fixture.anyText(pages, "S2 E3 · "));
             Review0158Fixture.save(nav, "0158-home-02-card-focused");
-            View move = pages.findViewWithTag("home.row.move");
-            assertNotNull("Move beside the heading", move);
-            move.requestFocus();
-            Review0158Fixture.settle(nav);
-            Review0158Fixture.save(nav, "0158-home-03-heading-move-hide");
-            move.performClick();
-            Review0158Fixture.settle(nav);
+            // RULES §14d (0.158.8): no Move or Hide on Home; Up from the card never stops on the heading.
+            assertNull("No Move beside the heading", pages.findViewWithTag("home.row.move"));
+            assertNull("No Hide beside the heading", pages.findViewWithTag("home.row.hide"));
             Review0158Fixture.press(host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
-            Review0158Fixture.save(nav, "0158-home-04-moving");
-            Review0158Fixture.press(host, KeyEvent.KEYCODE_DPAD_CENTER, nav);
             View focus = nav.findFocus();
             assertFalse("Focus stays on the row, never the top bar", focus != null
                 && focus.getTag() instanceof String && ((String) focus.getTag()).startsWith("semantic:topnav"));

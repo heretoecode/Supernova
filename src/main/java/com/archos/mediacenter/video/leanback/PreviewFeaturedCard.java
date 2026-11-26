@@ -122,18 +122,13 @@ final class PreviewFeaturedCard extends FrameLayout {
         LinearLayout actions = new LinearLayout(c);
         actions.setClipChildren(false);
         copy.addView(actions, new LinearLayout.LayoutParams(-1, dp(44)));
-        TextView start = action(entry == null ? "Play" : playLabel.apply(entry), play);
-        PreviewIcon.apply(start, "play", 18);
-        start.setTag("hero:play");
-        actions.addView(start, new LinearLayout.LayoutParams(-2, -1));
+        // One button, More (owner, 19 Nov; HOME.md): its menu holds Details, Playback and This Title.
         TextView[] holder = {null};
         holder[0] = action("More", () -> more.accept(holder[0]));
         PreviewIcon.apply(holder[0], "more", 18);
-        // Kept as the hero's second focus target for Down-then-Up and the Details glide (tag shared with 0.157).
+        // The tag shared since 0.157 (Down-then-Up and the Details glide).
         holder[0].setTag("hero:info");
-        LinearLayout.LayoutParams moreSize = new LinearLayout.LayoutParams(-2, -1);
-        moreSize.leftMargin = dp(10);
-        actions.addView(holder[0], moreSize);
+        actions.addView(holder[0], new LinearLayout.LayoutParams(-2, -1));
     }
 
     @Override

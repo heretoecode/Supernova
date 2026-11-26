@@ -1,5 +1,5 @@
 {
- "purpose": "0.158 part C: run 4 (diagnostics upgrade, NOVA items, test fixes)",
+ "purpose": "0.158 part C: run 5 (Home one-button hero, no Move/Hide, exclude from hero)",
  "tests": [
   "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
   "com.archos.mediacenter.video.leanback.HiddenNovaContentTest",
@@ -20,7 +20,16 @@
   "com.archos.mediacenter.video.leanback.PreviewNextTest",
   "com.archos.mediacenter.video.leanback.NextQaReliabilityTest",
   "com.archos.mediacenter.video.leanback.PreviewMatchPanelTest",
-  "com.archos.mediacenter.video.diagnostics.DiagnosticHealthSummaryTest"
+  "com.archos.mediacenter.video.diagnostics.DiagnosticHealthSummaryTest",
+  "com.archos.mediacenter.video.leanback.HeroExclusionsTest",
+  "com.archos.mediacenter.video.leanback.Review0158HomeTest",
+  "com.archos.mediacenter.video.leanback.HomeRowControlsTest",
+  "com.archos.mediacenter.video.leanback.Supernova141UiTest",
+  "com.archos.mediacenter.video.leanback.Supernova154UiTest",
+  "com.archos.mediacenter.video.leanback.NextQaUiTest",
+  "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
+  "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+  "com.archos.mediacenter.video.leanback.PreviewPagesTest"
  ],
  "variants": {
   "normal": {}
