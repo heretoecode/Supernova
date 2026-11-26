@@ -164,7 +164,9 @@ public final class LibraryActions
         boolean trakt = com.archos.mediacenter.utils.trakt.Trakt.isTraktV2Enabled(
             context, androidx.preference.PreferenceManager.getDefaultSharedPreferences(context));
         DeleteWarning.show(context, name, show, files, trakt, (chosen, history, fromTrakt, emptyFolder) -> {
-            if (history)
+            // Clean Up: clearing the viewing history marks the title unwatched; when Trakt is connected that change
+            // also leaves Trakt's history (the app's usual sync), so the Trakt switch does the same here.
+            if (history || fromTrakt)
             {
                 markWatched(context, media, false);
             }
