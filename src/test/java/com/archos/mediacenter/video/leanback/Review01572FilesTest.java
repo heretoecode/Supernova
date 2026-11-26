@@ -291,6 +291,10 @@ public class Review01572FilesTest
             tabs.tab(FilesPage.YOUR_LIBRARY).requestFocus();
             settle(nav);
             save(nav, "01572-files-17-your-library");
+            // FILES.md › Your Library: read-only; Down scrolls while the remote stays on the tab.
+            press(host, KeyEvent.KEYCODE_DPAD_DOWN, nav);
+            assertTrue("The remote stays on the tab", tabs.tab(FilesPage.YOUR_LIBRARY).isFocused());
+            save(nav, "01572-files-17b-your-library-scrolled");
             assertEquals("No other screen opened from Files", null,
                          Shadows.shadowOf(host.get()).getNextStartedActivity());
         }

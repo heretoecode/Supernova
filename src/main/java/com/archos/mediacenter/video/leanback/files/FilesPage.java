@@ -556,11 +556,10 @@ public final class FilesPage extends LinearLayout
     {
         LibraryStats s = stats == null ? LibraryStats.of(new java.util.ArrayList<>(), 0) : stats;
         heading(column, "Total Library", "chart", false);
-        statRow(column, "list", s.all.name,
-                joinDot(count(s.all.titles, "title"), count(s.all.videos, "video"), size(s.all.bytes())),
-                places(s.all), true);
-        statRow(column, "check", "Watched", s.watchedTitles + " of " + count(s.all.titles, "title"),
-                s.percent(s.watchedTitles) + "%", false);
+        statRow(column, "list", s.all.name, places(s.all), size(s.all.bytes()),
+                joinDot(count(s.all.titles, "title"), count(s.all.videos, "video")), true);
+        statRow(column, "check", "Watched", "Titles you have finished", s.percent(s.watchedTitles) + "%",
+                s.watchedTitles + " of " + count(s.all.titles, "title"), false);
         statRow(column, "time", "Time to watch everything", "Every unwatched title and episode",
                 String.format(java.util.Locale.UK, "%,d hours", s.hoursToWatch), false);
         // Every quality (F21): 4K, 1080p, 720p, SD and HDR; counts of videos, then their share.
@@ -571,10 +570,11 @@ public final class FilesPage extends LinearLayout
         heading(column, "By Library Page", "film", true);
         for (LibraryStats.Page page : new LibraryStats.Page[] {s.movies, s.shows})
         {
-            String line = page == s.shows
-                ? joinDot(count(page.titles, "title"), count(page.videos, "episode"), size(page.bytes()))
-                : joinDot(count(page.titles, "title"), size(page.bytes()));
-            statRow(column, page == s.shows ? "tv" : "film", page.name, line, places(page), false);
+            String under = page == s.shows
+                ? joinDot(count(page.titles, "title"), count(page.videos, "episode"))
+                : count(page.titles, "title");
+            statRow(column, page == s.shows ? "tv" : "film", page.name, places(page), size(page.bytes()), under,
+                    false);
         }
         ownPage(column);
         bySource(column);
@@ -586,7 +586,7 @@ public final class FilesPage extends LinearLayout
             {
                 statRow(column, "tv", heavy.show,
                         joinDot(count(heavy.episodes, "episode"), size(heavy.bytes)),
-                        size(heavy.perEpisode()) + " per episode", false);
+                        size(heavy.perEpisode()), "per episode", false);
             }
         }
     }
@@ -622,7 +622,7 @@ public final class FilesPage extends LinearLayout
             }
         }
         // M7 (owner, 26 Nov): every library page, built-in or your own, has its size on the right.
-        statRow(column, "library", page.name, count(titles, "title"), size(bytes), false);
+        statRow(column, "library", page.name, "Your own library page", size(bytes), count(titles, "title"), false);
     }
 
     /** Your Library › By Source (FILES.md): the videos on each drive or connection, then by connection type. */
@@ -666,8 +666,8 @@ public final class FilesPage extends LinearLayout
                 "Not the space left on it", "", false);
         for (java.util.Map.Entry<String, long[]> source : sources.entrySet())
         {
-            statRow(column, "source", source.getKey(), count(source.getValue()[0], "video"),
-                    size(source.getValue()[1]), false);
+            statRow(column, "source", source.getKey(), "Videos in your library here", size(source.getValue()[1]),
+                    count(source.getValue()[0], "video"), false);
         }
         List<String> parts = new java.util.ArrayList<>();
         for (java.util.Map.Entry<String, long[]> kind : kinds.entrySet())
@@ -782,45 +782,58 @@ public final class FilesPage extends LinearLayout
     /** A row of figures: name and second line on the left, the figures in white on the right. */
     private void statRow(LinearLayout column, String icon, String name, String line, String value, boolean first)
     {
+        statRow(column, icon, name, line, value, "", first);
+    }
+
+    /**
+     * One read-only fact row of Your Library (FILES.md, tv/22 v2): nothing focusable (Down / Up scroll the tab); the
+     * value on the right is stacked over a quieter one ("1.4 TB" over "212 videos"), so sizes line up in one column.
+     */
+    private void statRow(LinearLayout column, String icon, String name, String line, String value, String under,
+                         boolean first)
+    {
         Context context = getContext();
         LinearLayout row = new LinearLayout(context);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setFocusable(true);
-        row.setFocusableInTouchMode(true);
+        row.setFocusable(false);
         row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         int pad = SupernovaStyle.dp(context, 20);
         row.setPadding(pad, 0, pad, 0);
-        row.setContentDescription(name + ", " + value);
+        row.setContentDescription(under.isEmpty() ? name + ", " + value : name + ", " + value + ", " + under);
         TextView mark = new TextView(context);
         PreviewIcon.apply(mark, icon, 16);
         row.addView(mark, new LayoutParams(SupernovaStyle.dp(context, 36), -2));
         LinearLayout words = new LinearLayout(context);
         words.setOrientation(VERTICAL);
-        TextView title = text(name, 18, Color.WHITE);
-        TextView second = text(line, 13.5f, SECOND_LINE);
-        words.addView(title);
-        words.addView(second);
+        words.addView(text(name, 18, Color.WHITE));
+        words.addView(text(line, 13.5f, SECOND_LINE));
         row.addView(words, new LayoutParams(0, -2, 1));
+        LinearLayout figures = new LinearLayout(context);
+        figures.setOrientation(VERTICAL);
+        figures.setGravity(Gravity.END);
         TextView figure = text(value, 15, Color.WHITE);
+        figure.setGravity(Gravity.END);
+        figure.setFontFeatureSettings("tnum");
         figure.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
-        row.addView(figure, new LayoutParams(-2, -2));
-        row.setOnFocusChangeListener((view, focused) -> {
-            int ink = focused ? SupernovaStyle.FOCUS_TEXT : Color.WHITE;
-            title.setTextColor(ink);
-            second.setTextColor(focused ? SupernovaStyle.FOCUS_TEXT : SECOND_LINE);
-            figure.setTextColor(ink);
-            mark.setTextColor(ink);
-            SupernovaStyle.inkIcons(mark, ink);
-            row.setBackground(focused ? box(SupernovaStyle.FOCUS_FILL) : null);
-        });
+        figures.addView(figure);
+        if (!under.isEmpty())
+        {
+            TextView quiet = text(under, 13.5f, SECOND_LINE);
+            quiet.setGravity(Gravity.END);
+            quiet.setFontFeatureSettings("tnum");
+            figures.addView(quiet);
+        }
+        row.addView(figures, new LayoutParams(-2, -2));
         Object previous = column.getChildCount() == 0 ? null : column.getChildAt(column.getChildCount() - 1).getTag();
         if (previous instanceof String && ((String) previous).startsWith(ROW))
         {
+            // Faint row lines: a long read-only list of facts (FILES.md).
             View divider = new View(context);
             divider.setBackgroundColor(LINE);
+            divider.setAlpha(0.5f);
             column.addView(divider, new LayoutParams(-1, Math.max(1, SupernovaStyle.dp(context, 1))));
         }
-        row.setTag(first ? "files.row.first" : ROW);
+        row.setTag(first ? "files.stat.first" : ROW);
         column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
     }
 
@@ -2315,6 +2328,11 @@ public final class FilesPage extends LinearLayout
                 return true;
             }
         }
+        if (event.getAction() == android.view.KeyEvent.ACTION_DOWN && tabs.openTab() == YOUR_LIBRARY
+            && browser == null && (focus == null || isInside(tabs, focus)) && scrollYourLibrary(event.getKeyCode()))
+        {
+            return true;
+        }
         boolean inside = browser != null || form != null && tabs.openTab() == CONNECTIONS
             || carePage != null && tabs.openTab() == LIBRARY_CARE;
         if (inside && event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK)
@@ -2326,6 +2344,47 @@ public final class FilesPage extends LinearLayout
             return true;
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    /**
+     * Your Library is read-only (FILES.md): Down scrolls it a step while the remote stays on the tab; Up scrolls back
+     * and, at the top, goes on to the top bar as usual.
+     */
+    private boolean scrollYourLibrary(int key)
+    {
+        if (key != android.view.KeyEvent.KEYCODE_DPAD_DOWN && key != android.view.KeyEvent.KEYCODE_DPAD_UP)
+        {
+            return false;
+        }
+        ScrollView scroll = null;
+        for (int i = 0; i < body.getChildCount(); i++)
+        {
+            if (body.getChildAt(i) instanceof ScrollView)
+            {
+                scroll = (ScrollView) body.getChildAt(i);
+            }
+        }
+        if (scroll == null)
+        {
+            return false;
+        }
+        int step = SupernovaStyle.dp(getContext(), ROW_HEIGHT_DP) * 3;
+        if (key == android.view.KeyEvent.KEYCODE_DPAD_UP)
+        {
+            if (scroll.getScrollY() <= 0)
+            {
+                return false;
+            }
+            scroll.smoothScrollBy(0, -step);
+            return true;
+        }
+        scroll.smoothScrollBy(0, step);
+        View tab = tabs.tab(YOUR_LIBRARY);
+        if (!tab.isFocused())
+        {
+            tab.requestFocus();
+        }
+        return true;
     }
 
     /** Files Supernova could not open (MediaLib's read evidence); -1 while it is being counted. */
