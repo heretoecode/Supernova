@@ -376,7 +376,7 @@ public final class Diagnostics
                                       Context.MODE_PRIVATE);
     }
 
-    private static String currentProcessName(Context c)
+    public static String currentProcessName(Context c)
     {
         if (Build.VERSION.SDK_INT >= 28)
         {
