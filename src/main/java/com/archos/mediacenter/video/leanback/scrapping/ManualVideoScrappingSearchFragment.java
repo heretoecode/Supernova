@@ -397,7 +397,8 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                     }
             } catch (Exception failed) {
                 Diagnostics.event(
-                    "match_save_failed", "category", "metadata_save");
+                    "match_save_failed", "category", "metadata_save", "reason",
+                    failed.getClass().getSimpleName());
             } finally {
                 worker.shutdown();
             }

@@ -935,7 +935,8 @@ public abstract class ListingFragment
     @Override
     public void onListingFatalError(Exception e, ListingEngine.ErrorEnum errorCode) {
         Diagnostics.event(
-            "browser_listing_failed", "code", String.valueOf(errorCode));
+            "browser_listing_failed", "code", String.valueOf(errorCode), "reason",
+            e == null ? "listing_error_" + errorCode : e.getClass().getSimpleName(), "step", "listing");
         if (e != null)
             Diagnostics.error("browser_listing_exception", e);
         if (previewSurface != null) {

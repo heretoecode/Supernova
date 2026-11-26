@@ -307,7 +307,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         long idle = networkRecovery.idleMs(now);
         if (!networkRecovery.begin(now, cause.equals("read_failure") || cause.equals("backend_read_error")))
         {
-            Diagnostics.event("stream_reconnect_failed", "cause", cause, "result", "retry_budget_exhausted");
+            Diagnostics.event("stream_reconnect_failed", "cause", cause, "result", "retry_budget_exhausted",
+                              "reason", "gave_up_after_retries: " + cause, "step", "reconnecting");
             return false;
         }
         int position;
@@ -2354,15 +2355,19 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         else if (NetworkRecoveryPolicy.readError(errorCode, errorQualCode) && networkSource())
         {
             Diagnostics.event("stream_backend_read_error", "code", errorCode, "qualifier", errorQualCode, "message",
-                              msg, "source_kind", Diagnostics.sourceType(mUri));
+                              msg, "source_kind", Diagnostics.sourceType(mUri), "step", "reading",
+                              "reason", PlayerErrorReason.of(errorCode, errorQualCode));
             if (reconnectNetwork("backend_read_error"))
                 return true;
         }
         if (playbackDiagnostics != null)
             playbackDiagnostics.failed(mp);
         // Diagnostic strings pass through credential and location redaction.
+        // Item 9: the reason, the step and the kind of source, never only the code (0.158.9: "1001, no reason").
         Diagnostics.event("player_error", "code", errorCode, "qualifier", errorQualCode, "state", mCurrentState,
-                          "message", msg);
+                          "message", msg, "reason", PlayerErrorReason.of(errorCode, errorQualCode),
+                          "step", mCurrentState <= STATE_PREPARING ? "opening" : "playing",
+                          "source_kind", mUri == null || mUri.getScheme() == null ? "unknown" : mUri.getScheme());
         log.warn("onError: Error: {},{}", errorCode, errorQualCode);
         // The service's error callback runs after stopPlayback destroys native position.
         // Capture the live point first; the existing service error handler persists it.

@@ -1499,7 +1499,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     /** Sample before native teardown without allowing unavailable/zero state to erase progress. */
     void checkpointBeforePlayerError()
     {
-        Diagnostics.event("error_checkpoint_attempt", "last_known_ms", mPlaybackSession.lastKnownPositionMs);
+        Diagnostics.event("error_checkpoint_attempt", "last_known_ms", mPlaybackSession.lastKnownPositionMs,
+                          "reason", "saving_position_after_player_error");
         int previous = mPlaybackSession.lastKnownPositionMs;
         try
         {

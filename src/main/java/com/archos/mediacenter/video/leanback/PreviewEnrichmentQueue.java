@@ -284,7 +284,9 @@ public final class PreviewEnrichmentQueue {
                     System.currentTimeMillis() + 30 * 60 * 1000, key
                 });
             Diagnostics.event("metadata_package_failed", "operation_id", operation, "media_id", id, "section",
-                SECTIONS[stage], "failure_category", failure.getClass().getSimpleName());
+                SECTIONS[stage], "failure_category", failure.getClass().getSimpleName(),
+                "reason", failure.getClass().getSimpleName() + (failure.getMessage() == null ? ""
+                                                                 : ": " + failure.getMessage()));
         } finally {
             Diagnostics.finishOperation(operation, "metadata_package", started);
             WORK.schedule(() -> drain(app), 250, TimeUnit.MILLISECONDS);

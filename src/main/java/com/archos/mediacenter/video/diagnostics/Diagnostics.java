@@ -1003,10 +1003,22 @@ public final class Diagnostics
             return;
         try
         {
+            long now = SystemClock.elapsedRealtime();
+            // D15 (0.158.9 report): one action writes one event. The same event with the same fields again within
+            // a quarter of a second is the same action heard twice (two listeners), so it is kept once.
+            String signature = event + "|" + java.util.Arrays.deepToString(fields);
+            if (signature.equals(lastSignature) && now - lastSignatureAt < DUPLICATE_WINDOW_MS)
+            {
+                DUPLICATES.incrementAndGet();
+                return;
+            }
+            lastSignature = signature;
+            lastSignatureAt = now;
             String line = record(event, fields), session = playback;
             if (line.isEmpty())
                 return;
-            long now = SystemClock.elapsedRealtime();
+            if ("INFO".equals(severity(event)))
+                lastWorked = safe(event);
             FLIGHT.add(now, line);
             if (COVERAGE.size() < 256)
                 COVERAGE.add(event);
@@ -1072,6 +1084,38 @@ public final class Diagnostics
             event.equals("seek_callback_unattributed") || event.equals("stream_reconnect") ||
             event.equals("scan_started") || event.equals("scan_complete") || event.equals("scan_partial") ||
             event.equals("incident_capture");
+    }
+
+    /** D15: repeats of the same event within this window are one action heard twice. */
+    static final long DUPLICATE_WINDOW_MS = 250;
+    static final java.util.concurrent.atomic.AtomicInteger DUPLICATES = new java.util.concurrent.atomic.AtomicInteger();
+    private static String lastSignature = "";
+    private static long lastSignatureAt;
+    /** The last thing that worked, for a failure whose reason isn't known (item 9). */
+    private static volatile String lastWorked = "";
+
+    /**
+     * Item 9 (owner, 26 Nov: "record why, not just what"): every failure carries its reason. When a failure was
+     * recorded without one, the reason says it isn't known and the record keeps what was attempted, how long it
+     * waited (when known) and the last thing that worked.
+     */
+    static void reason(JSONObject json, String event) throws org.json.JSONException
+    {
+        if (json.has("reason") && !json.optString("reason").trim().isEmpty())
+            return;
+        String failure = json.optString("failure_class", "not_supplied");
+        String message = json.optString("message", "");
+        if (!"not_supplied".equals(failure) && !failure.isEmpty())
+        {
+            String kind = failure.substring(failure.lastIndexOf('.') + 1);
+            json.put("reason", message.isEmpty() || message.equals(event) ? kind : kind + ": " + message);
+            return;
+        }
+        json.put("reason", "not_known");
+        json.put("attempted", event);
+        if (json.has("duration_ms"))
+            json.put("waited_ms", json.opt("duration_ms"));
+        json.put("last_worked", lastWorked);
     }
 
     static String severity(String event)
@@ -1689,6 +1733,7 @@ public final class Diagnostics
                     json.put("trace", trace(new IllegalStateException("Failure reported at " + event)));
                     json.put("trace_origin", "reporting_call_site");
                 }
+                reason(json, event);
             }
             if ("heartbeat".equals(event))
                 json.put("dropped_by_event_type", droppedTypes());

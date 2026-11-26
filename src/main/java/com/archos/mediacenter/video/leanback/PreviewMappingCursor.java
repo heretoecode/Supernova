@@ -39,7 +39,8 @@ final class PreviewMappingCursor extends CursorWrapper {
                 "window_start",windowStart,"window_rows",windowRows,
                 "row", getPosition(), "record_id", id, "column_index", column,
                 "column", column >= 0 && column < getColumnCount() ? getColumnName(column) : "missing",
-                "storage_type", type, "exception", failure.getClass().getSimpleName());
+                "storage_type", type, "exception", failure.getClass().getSimpleName(),
+                "reason", "unreadable_column_" + type);
         Diagnostics.error("indexed_library_record_trace", failure);
     }
 }

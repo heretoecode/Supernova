@@ -45,9 +45,13 @@ final class DiagnosticHealthSummary
         long freezeWorst = 0;
         long focusSlips = 0;
         TreeSet<String> legacy = new TreeSet<>();
+        Map<String, Integer> reasons = new java.util.HashMap<>();
         for (JSONObject r : records)
         {
             String event = r.optString("event");
+            String severity = r.optString("severity");
+            if ("ERROR".equals(severity) || "FATAL".equals(severity))
+                reasons.merge(reasonLine(r), 1, Integer::sum);
             switch (event)
             {
                 case "performance_trend":
@@ -130,11 +134,38 @@ final class DiagnosticHealthSummary
         line(!legacy.isEmpty(), over, within, "NOVA pieces that ran: " +
             (legacy.isEmpty() ? "none" : legacy.size() + ": " + android.text.TextUtils.join(", ", legacy)) + " (limit none)");
         StringBuilder text = new StringBuilder("Health summary (over the limit first)\n");
+        List<Map.Entry<String, Integer>> top = new ArrayList<>(reasons.entrySet());
+        top.sort((a, b) -> b.getValue() - a.getValue() != 0 ? b.getValue() - a.getValue()
+                                                             : a.getKey().compareTo(b.getKey()));
+        if (!top.isEmpty())
+        {
+            text.append("Top reasons for failures\n");
+            for (int i = 0; i < Math.min(TOP_REASONS, top.size()); i++)
+                text.append("  ").append(top.get(i).getKey().replace(" ×", " ×" + top.get(i).getValue()))
+                    .append('\n');
+        }
         for (String l : over)
             text.append("OVER  ").append(l).append('\n');
         for (String l : within)
             text.append("ok    ").append(l).append('\n');
         return text.append('\n').toString();
+    }
+
+    static final int TOP_REASONS = 8;
+
+    /**
+     * Item 9: "Delete failed ×: server refused (403)". The event in words, then its reason and the server's status
+     * when there is one; the count is filled in by the caller.
+     */
+    static String reasonLine(JSONObject r)
+    {
+        String event = r.optString("event").replace('_', ' ');
+        String words = event.isEmpty() ? "Failure" : Character.toUpperCase(event.charAt(0)) + event.substring(1);
+        String reason = r.optString("reason", "not_known").replace('_', ' ');
+        long status = r.optLong("http_status", -1);
+        if (status <= 0)
+            status = r.optLong("status", -1);
+        return words + " ×: " + reason + (status > 0 ? " (" + status + ")" : "");
     }
 
     private static void line(boolean isOver, List<String> over, List<String> within, String text)
