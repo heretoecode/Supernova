@@ -62,4 +62,19 @@ public class DeleteFailureMessageTest
     {
         assertEquals("Couldn't delete the file.", Delete.failureMessage(Uri.parse("smb://other.example/x.mkv")));
     }
+
+    /** M2 (owner, 26 Nov 2026): "no such file" means already gone; a lost connection never does. */
+    @org.junit.Test
+    public void alreadyGoneOnlyWhenTheServerSaysNoSuchFile()
+    {
+        org.junit.Assert.assertTrue(Delete.alreadyGone(null));
+        org.junit.Assert.assertTrue(Delete.alreadyGone(new java.io.FileNotFoundException("/tv/MobLand/S02E09.mkv")));
+        org.junit.Assert.assertTrue(Delete.alreadyGone(new com.jcraft.jsch.SftpException(2, "No such file")));
+        org.junit.Assert.assertTrue(Delete.alreadyGone(new java.io.IOException("STATUS_OBJECT_NAME_NOT_FOUND")));
+        org.junit.Assert.assertFalse(Delete.alreadyGone(new java.net.ConnectException("Connection refused")));
+        org.junit.Assert.assertFalse(Delete.alreadyGone(new com.jcraft.jsch.SftpException(3, "Permission denied")));
+        org.junit.Assert.assertEquals(
+            "This file was already gone from seedbox.example, so it's been removed from your library.",
+            Delete.describe(android.net.Uri.parse("sftp://seedbox.example/tv/a.mkv"), Delete.REASON_MISSING, -1));
+    }
 }

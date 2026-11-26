@@ -280,6 +280,13 @@ public final class LibraryActions
                     {
                         holder[0].deleteFolder(folderToDelete);
                     }
+                    if (com.archos.mediacenter.video.browser.Delete.wasAlreadyGone(videoFile))
+                    {
+                        // M2: the delete warning's wording (RULES §7b).
+                        PreviewNotice.show(context, "This file was already gone from "
+                                           + com.archos.mediacenter.video.browser.Delete.serverName(videoFile)
+                                           + ", so it's been removed from your library.", false);
+                    }
                     changed.run();
                 }
 

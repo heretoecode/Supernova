@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.scanning.LibraryScanController;
 import com.archos.mediacenter.video.scanning.ScanProgress;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The redesigned Files page (owner, 6–12 Nov 2026; mock-ups network-files-tabs/33–44; RULES): plain charcoal, tabs
@@ -576,6 +577,8 @@ public final class FilesPage extends LinearLayout
             statRow(column, page == s.shows ? "tv" : "film", page.name, line, places(page), false);
         }
         ownPage(column);
+        bySource(column);
+        biggestMovies(column);
         if (!s.heaviest.isEmpty())
         {
             heading(column, "Most Space Per Episode", "sort", true);
@@ -618,7 +621,130 @@ public final class FilesPage extends LinearLayout
                 }
             }
         }
-        statRow(column, "library", page.name, joinDot(count(titles, "title"), size(bytes)), "", false);
+        // M7 (owner, 26 Nov): every library page, built-in or your own, has its size on the right.
+        statRow(column, "library", page.name, count(titles, "title"), size(bytes), false);
+    }
+
+    /** Your Library › By Source (FILES.md): the videos on each drive or connection, then by connection type. */
+    private void bySource(LinearLayout column)
+    {
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        if (snapshot == null)
+        {
+            return;
+        }
+        java.util.Map<String, long[]> sources = new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        java.util.Map<String, long[]> kinds = new java.util.TreeMap<>();
+        java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> all =
+            new java.util.ArrayList<>(snapshot.movies);
+        all.addAll(snapshot.episodes);
+        for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : all)
+        {
+            if (!(entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video))
+            {
+                continue;
+            }
+            com.archos.mediacenter.video.browser.adapters.object.Video video =
+                (com.archos.mediacenter.video.browser.adapters.object.Video) entry.media;
+            android.net.Uri uri = video.getFileUri();
+            String kind = sourceKind(uri);
+            String name = com.archos.mediacenter.video.browser.Delete.serverName(uri) + " · " + kind;
+            long[] source = sources.computeIfAbsent(name, k -> new long[2]);
+            source[0]++;
+            source[1] += Math.max(0, video.getSize());
+            long[] byKind = kinds.computeIfAbsent(kind, k -> new long[2]);
+            byKind[0]++;
+            byKind[1] += Math.max(0, video.getSize());
+        }
+        if (sources.isEmpty())
+        {
+            return;
+        }
+        heading(column, "By Source", "storage", true);
+        statRow(column, "info", "The videos in your library on each source",
+                "Not the space left on it", "", false);
+        for (java.util.Map.Entry<String, long[]> source : sources.entrySet())
+        {
+            statRow(column, "source", source.getKey(), count(source.getValue()[0], "video"),
+                    size(source.getValue()[1]), false);
+        }
+        List<String> parts = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, long[]> kind : kinds.entrySet())
+        {
+            parts.add(kind.getKey() + " " + size(kind.getValue()[1]));
+        }
+        statRow(column, "network", "By connection type", TextUtils.join(" · ", parts), "", false);
+    }
+
+    /** "USB", "SMB", "WebDAV", "SFTP", "FTP" or "This device". */
+    static String sourceKind(android.net.Uri uri)
+    {
+        String scheme = uri == null || uri.getScheme() == null ? "file" : uri.getScheme().toLowerCase(Locale.ROOT);
+        switch (scheme)
+        {
+        case "smb":
+            return "SMB";
+        case "webdav":
+        case "webdavs":
+        case "https":
+        case "http":
+            return "WebDAV";
+        case "sftp":
+            return "SFTP";
+        case "ftp":
+        case "ftps":
+            return "FTP";
+        default:
+            String path = uri == null ? "" : String.valueOf(uri.getPath());
+            return path.startsWith("/storage/") && !path.startsWith("/storage/emulated") ? "USB" : "This device";
+        }
+    }
+
+    /** Your Library › Biggest Movies (owner, 26 Nov): the three largest films, size on the right. */
+    private void biggestMovies(LinearLayout column)
+    {
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        if (snapshot == null || snapshot.movies.isEmpty())
+        {
+            return;
+        }
+        java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> films =
+            new java.util.ArrayList<>(snapshot.movies);
+        films.sort((a, b) -> Long.compare(bytes(b), bytes(a)));
+        heading(column, "Biggest Movies", "film", true);
+        for (int i = 0; i < Math.min(3, films.size()); i++)
+        {
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry film = films.get(i);
+            com.archos.mediacenter.video.browser.adapters.object.Video video =
+                (com.archos.mediacenter.video.browser.adapters.object.Video) film.media;
+            int year = video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
+                ? ((com.archos.mediacenter.video.browser.adapters.object.Movie) video).getYear() : 0;
+            String quality = com.archos.mediacenter.video.leanback.PreviewVariants.fileBadge(getContext(), video);
+            long ms = video.getDurationMs() > 0 ? video.getDurationMs() : film.runtime;
+            List<String> facts = new java.util.ArrayList<>();
+            if (year > 0)
+            {
+                facts.add(String.valueOf(year));
+            }
+            if (!quality.isEmpty())
+            {
+                facts.add(quality);
+            }
+            if (ms > 0)
+            {
+                long minutes = ms / 60000;
+                facts.add(minutes >= 60 ? minutes / 60 + " h " + minutes % 60 + " min" : minutes + " min");
+            }
+            statRow(column, "film", video.getName(), TextUtils.join(" · ", facts), size(bytes(film)), false);
+        }
+    }
+
+    private static long bytes(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry)
+    {
+        return entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video
+            ? ((com.archos.mediacenter.video.browser.adapters.object.Video) entry.media).getSize() : 0;
     }
 
     private static String joinDot(String... parts)

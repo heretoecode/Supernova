@@ -63,8 +63,33 @@ public final class FilesPageData
     /** The name given on the connection form (F52: suggested from the address, changeable with Edit). */
     public static void rename(android.content.Context context, Uri root, String name)
     {
+        // M6 (owner, 26 Nov): the name belongs to the server, whatever folder the form saved, so every place that
+        // names the connection (Connections, Library Care, scans, Missing files) finds the new name at once.
         context.getSharedPreferences(NAMES, android.content.Context.MODE_PRIVATE).edit()
-            .putString(nameKey(root), name).apply();
+            .putString(serverNameKey(root), name).putString(nameKey(root), name).commit();
+    }
+
+    /** The name given to the server a file or folder lives on, or null when none was given. */
+    public static String givenName(android.content.Context context, Uri anywhere)
+    {
+        if (anywhere == null)
+        {
+            return null;
+        }
+        android.content.SharedPreferences names =
+            context.getSharedPreferences(NAMES, android.content.Context.MODE_PRIVATE);
+        String name = names.getString(serverNameKey(anywhere), null);
+        return name != null ? name : names.getString(nameKey(anywhere), null);
+    }
+
+    /** One key per server: the kind of connection (smbj and smb alike), host and port; never a login. */
+    static String serverNameKey(Uri uri)
+    {
+        String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase(java.util.Locale.ROOT);
+        String family = scheme.startsWith("smb") ? "smb" : scheme.equals("sshj") ? "sftp"
+            : scheme.startsWith("webdav") ? "webdav" : scheme.startsWith("ftp") ? "ftp" : scheme;
+        String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase(java.util.Locale.ROOT);
+        return "server:" + Integer.toHexString((family + "://" + host + ":" + uri.getPort()).hashCode());
     }
 
     /** No address (which may carry a login) is stored as a key: only a short hash of it. */
@@ -87,7 +112,8 @@ public final class FilesPageData
             String account = "";
             if (connection.root != null)
             {
-                name = names.getString(nameKey(connection.root), name);
+                String given = givenName(context, connection.root);
+                name = given != null ? given : name;
                 account = account(connection.root);
             }
             named.add(new FilesPage.Connection(name, connection.root, connection.reachable, connection.videos,

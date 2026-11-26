@@ -111,6 +111,44 @@ public class Delete {
     static final String REASON_MISSING = "not_found";
     static final String REASON_UNKNOWN = "unknown";
 
+    /** Files found already gone in this run (M2), so the page can say so instead of "deleted". */
+    static final java.util.Set<String> ALREADY_GONE = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+
+    /** True when this file was found already gone from its source and removed from the library (M2). */
+    public static boolean wasAlreadyGone(Uri uri) {
+        return uri != null && ALREADY_GONE.contains(uri.toString());
+    }
+
+    /**
+     * The lookup's answer means "no such file" (or there was no answer but no error either), never "couldn't reach
+     * the server": a refused or lost connection keeps the file in the library.
+     */
+    static boolean alreadyGone(Exception lookup) {
+        if (lookup == null || lookup instanceof java.io.FileNotFoundException)
+            return true;
+        if (lookup instanceof SftpException)
+            return ((SftpException) lookup).id == 2; // SSH_FX_NO_SUCH_FILE
+        if (httpStatus(lookup) == 404 || httpStatus(lookup) == 410)
+            return true;
+        String message = String.valueOf(lookup.getMessage()).toLowerCase(Locale.ROOT);
+        return message.contains("no such file") || message.contains("not found")
+            || message.contains("object_name_not_found") || message.contains("object_path_not_found");
+    }
+
+    /** Takes a file that is no longer on its source out of the library (the file is already gone). */
+    static void forget(Context context, Uri uri) {
+        try {
+            if (isLocal(uri)) {
+                new LocalStorageFileEditor(uri, context).deleteFromDatabase(uri);
+                return;
+            }
+            context.getContentResolver().delete(com.archos.mediaprovider.video.VideoStoreInternal.FILES_SCANNED,
+                                                "_data=?", new String[] {uri.toString()});
+        } catch (RuntimeException failed) {
+            Diagnostics.error("delete_forget_failed", failed, "reason", "library_record_kept");
+        }
+    }
+
     static void recordFailure(Uri uri, String reason, int httpStatus, Throwable failure) {
         if (uri == null)
             return;
@@ -168,7 +206,7 @@ public class Delete {
             case REASON_NETWORK:
                 return "Couldn't reach " + server + " to delete this file. Check the connection and try again.";
             case REASON_MISSING:
-                return "This file couldn't be found on " + server + ".";
+                return "This file was already gone from " + server + ", so it's been removed from your library.";
             default:
                 return "Couldn't delete the file.";
         }
@@ -396,12 +434,25 @@ public class Delete {
                 currentVideoFileToDeleteSize = 0;
                 //retieve video size
                 MetaFile2 currentVideoFileToDelete = null;
+                Exception lookup = null;
                 try {
                     currentVideoFileToDelete = MetaFileFactoryWithUpnp.getMetaFileForUrl(fileUri);
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    lookup = e;
+                }
                 boolean webdav="webdav".equalsIgnoreCase(fileUri.getScheme())||"webdavs".equalsIgnoreCase(fileUri.getScheme());
                 if (currentVideoFileToDelete==null&&!webdav) {
-                    recordFailure(fileUri, REASON_MISSING, -1, null);
+                    // M2 (owner, 26 Nov): a file already gone from its source is a delete that succeeded: it
+                    // leaves the library and the warning says so. An unreachable server is still a failure.
+                    if (alreadyGone(lookup)) {
+                        forget(mContext, fileUri);
+                        ALREADY_GONE.add(fileUri.toString());
+                        Diagnostics.event("delete_already_gone", "scheme", fileUri.getScheme(), "reason",
+                                          lookup == null ? "no_such_file" : lookup.getClass().getSimpleName());
+                        deleteOK(fileUri);
+                        return;
+                    }
+                    recordFailure(fileUri, lookup);
                     deleteNOK(fileUri);
                     return;
                 }
