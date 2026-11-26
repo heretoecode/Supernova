@@ -79,6 +79,57 @@ index 0000000..9576534
 +        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getStringSet(KEY, new HashSet<>()).size();
 +    }
 +}
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+index 205b0bc..503113b 100644
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -457,10 +457,21 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+         if (log.isDebugEnabled())
+             log.debug("onStop: lifecycle foreground");
+         isForeground = true;
++        // D10 (0.158.8): the timer only runs while the app is open (scans never run in the background), so it is
++        // set again here, and a rescan that fell due while the app was away runs now instead.
++        boolean due = NetworkScannerUtil.rescanDue(mApplication);
++        NetworkScannerUtil.scheduleJob(mApplication);
+         if (autoRescanAtStart(mApplication))
+         {
+             forceRescan(mApplication);
+         }
++        else if (due && SupernovaLibraryPolicy.configured(mApplication))
++        {
++            Intent intent = new Intent(mApplication, NetworkAutoRefresh.class);
++            intent.setAction(ACTION_RESCAN_INDEXED_FOLDERS);
++            intent.setPackage(mApplication.getPackageName());
++            mApplication.sendBroadcast(intent);
++        }
+     }
+ 
+     @Override public void onStop(@NonNull LifecycleOwner owner)
+@@ -468,5 +479,8 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+         isForeground = false;
+         if (log.isDebugEnabled())
+             log.debug("onStop: lifecycle background");
++        // D10 (0.158.8): no hourly wake-ups while the app is away; the app started on the hour 31 times in a week
++        // only to find it could not scan.
++        NetworkScannerUtil.pauseJob(mApplication);
+     }
+ }
+diff --git a/src/com/archos/mediaprovider/video/NetworkRefreshJob.java b/src/com/archos/mediaprovider/video/NetworkRefreshJob.java
+index 8fa278a..9347574 100644
+--- a/src/com/archos/mediaprovider/video/NetworkRefreshJob.java
++++ b/src/com/archos/mediaprovider/video/NetworkRefreshJob.java
+@@ -32,6 +32,11 @@ public class NetworkRefreshJob extends JobService {
+     public boolean onStartJob(JobParameters params) {
+         if (log.isDebugEnabled()) log.debug("onStartJob");
+         Context context = getApplicationContext();
++        // D10 (0.158.8): scans only run while the app is open. Woken in the background, do nothing and set no next
++        // timer: the app sets it again, and runs a rescan that fell due, when it is next in front.
++        if (!androidx.lifecycle.ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(
++                androidx.lifecycle.Lifecycle.State.STARTED))
++            return false;
+         Intent intent = new Intent(context, NetworkAutoRefresh.class);
+         intent.setAction(NetworkAutoRefresh.ACTION_RESCAN_INDEXED_FOLDERS);
+         intent.setPackage(context.getPackageName());
 diff --git a/src/com/archos/mediaprovider/video/NetworkScanLedger.java b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
 index cabfb4d..92a636c 100644
 --- a/src/com/archos/mediaprovider/video/NetworkScanLedger.java
@@ -221,6 +272,50 @@ index 0e38597..253426b 100644
 +        }
      }
  }
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerUtil.java b/src/com/archos/mediaprovider/video/NetworkScannerUtil.java
+index cf1b879..4d1e069 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerUtil.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerUtil.java
+@@ -45,6 +45,23 @@ public class NetworkScannerUtil {
+         }
+     }
+ 
++    static final String NEXT_RESCAN_AT = "supernova_next_rescan_at";
++
++    /** D10 (0.158.8): a scheduled rescan time passed while the app was away. */
++    static boolean rescanDue(Context context) {
++        long next = PreferenceManager.getDefaultSharedPreferences(context).getLong(NEXT_RESCAN_AT, 0);
++        return next > 0 && System.currentTimeMillis() >= next;
++    }
++
++    /** D10 (0.158.8): the app left the screen; the timer waits for it to come back (the due time is kept). */
++    static void pauseJob(Context context) {
++        if (context == null)
++            return;
++        JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
++        if (jobScheduler != null)
++            jobScheduler.cancel(JOBID_NETSCANNER);
++    }
++
+     public static void scheduleNewRescan(Context context, int startingTimeOfDay, int periode, boolean setPreference){
+         if (log.isDebugEnabled()) log.debug("scheduleNewRescan: resetting alarm starting at {}h, period: {}h", String.valueOf(startingTimeOfDay / 1000 / 60 / 60), String.valueOf(periode / 1000 / 60 / 60));
+ 
+@@ -83,6 +100,7 @@ public class NetworkScannerUtil {
+             if (log.isDebugEnabled()) log.debug("scheduleNewRescan: launching at {}", S);
+             if (log.isDebugEnabled()) log.debug("scheduleNewRescan: launching in {} minutes", (nextStart - now) / 1000 / 60);
+ 
++            PreferenceManager.getDefaultSharedPreferences(context).edit().putLong(NEXT_RESCAN_AT, nextStart).apply();
+             long delay = Math.max(1L, nextStart - System.currentTimeMillis());
+             // A deadline is only the latest run time. Without minimum latency an otherwise
+             // unconstrained job is eligible immediately, which made this job reschedule itself
+@@ -100,6 +118,7 @@ public class NetworkScannerUtil {
+             if (log.isDebugEnabled()) log.debug("scheduleNewRescan: job scheduled");
+         } else {
+             jobScheduler.cancel(JOBID_NETSCANNER);
++            PreferenceManager.getDefaultSharedPreferences(context).edit().remove(NEXT_RESCAN_AT).apply();
+             if (log.isDebugEnabled()) log.debug("scheduleNewRescan: job canceled");
+         }
+     }
 diff --git a/src/com/archos/mediaprovider/video/PersonalVideoActions.java b/src/com/archos/mediaprovider/video/PersonalVideoActions.java
 index 7e6b68d..178f08c 100644
 --- a/src/com/archos/mediaprovider/video/PersonalVideoActions.java
@@ -349,6 +444,43 @@ index f415e6b..2089c66 100644
                                          if (savedId == -2)
                                          {
                                              notScraped = false;
+diff --git a/test/java/com/archos/mediaprovider/video/BackgroundWakeTest.java b/test/java/com/archos/mediaprovider/video/BackgroundWakeTest.java
+new file mode 100644
+index 0000000..852c44b
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/BackgroundWakeTest.java
+@@ -0,0 +1,31 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import android.app.Application;
++import android.content.Context;
++import androidx.preference.PreferenceManager;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++/** D10 (0.158.8): the rescan timer waits while the app is away; a time that passed runs when it is back. */
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class BackgroundWakeTest
++{
++    @Test public void aRescanTimeThatPassedWhileAwayIsDueAndAFutureOneIsNot()
++    {
++        Context context = RuntimeEnvironment.getApplication();
++        PreferenceManager.getDefaultSharedPreferences(context).edit()
++            .putLong(NetworkScannerUtil.NEXT_RESCAN_AT, System.currentTimeMillis() - 60_000L).commit();
++        assertTrue(NetworkScannerUtil.rescanDue(context));
++        PreferenceManager.getDefaultSharedPreferences(context).edit()
++            .putLong(NetworkScannerUtil.NEXT_RESCAN_AT, System.currentTimeMillis() + 3_600_000L).commit();
++        assertFalse(NetworkScannerUtil.rescanDue(context));
++        NetworkScannerUtil.pauseJob(context);
++    }
++}
 diff --git a/test/java/com/archos/mediaprovider/video/ScanLockDeferralTest.java b/test/java/com/archos/mediaprovider/video/ScanLockDeferralTest.java
 new file mode 100644
 index 0000000..00fc5c0
