@@ -1890,12 +1890,19 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         SeekThumbnails engine = service == null ? null : service.seekThumbnails();
         listenForSeekPictures(engine);
         boolean seeking = mNextSeek >= 0 || mPreviewKeySeeking;
-        android.graphics.Bitmap frame = seeking && engine != null ? engine.nearest(position) : null;
-        if (bubble.getVisibility() != View.VISIBLE) {
+        android.graphics.Bitmap frame = seeking && engine != null && SeekThumbnailPreferences.enabled(mContext)
+                                            ? engine.nearest(position)
+                                            : null;
+        if (bubble.getVisibility() != View.VISIBLE || frame == null) {
+            // Owner, 21 Nov (PLAYER.md): never a grey box. With the setting off, or before a picture is ready, the
+            // time box (time over the chapter name) shows alone, in its own small box.
             if (picture != null)
                 picture.setVisibility(View.GONE);
+            bubble.setBackground(timeBoxAlone(density));
+            bubble.setGravity(Gravity.CENTER);
             return;
         }
+        bubble.setBackground(null);
         int width = Math.round(SEEK_PICTURE_WIDTH_DP * density);
         int height = Math.round(SEEK_PICTURE_HEIGHT_DP * density);
         if (picture == null) {
@@ -1918,11 +1925,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 shade, new com.archos.mediacenter.video.leanback.ArtworkEdge(mContext, 8, false)}));
             parent.addView(picture, new FrameLayout.LayoutParams(width, height, Gravity.TOP | Gravity.START));
         }
-        // The time box is always the card (RULES: time over the chapter name); plain charcoal until a picture exists.
-        if (frame != null)
-            picture.setImageBitmap(frame);
-        else
-            picture.setImageDrawable(new android.graphics.drawable.ColorDrawable(SEEK_CARD_EMPTY));
+        picture.setImageBitmap(frame);
         picture.setVisibility(View.VISIBLE);
         float left = PreviewHudTiming.pillLeft(centre - width / 2f, mProgress.getWidth(), width);
         picture.setTranslationX(left);
@@ -1936,8 +1939,17 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         bubble.bringToFront();
     }
 
-    /** The card behind the time while no seek picture exists yet. */
+    /** The card behind the time while no seek picture exists yet (kept for older renders; no longer drawn). */
     static final int SEEK_CARD_EMPTY = 0xFF22252B;
+
+    /** The time box on its own: the panel charcoal at 99% in the small-box shape (RULES §3, §11). */
+    private static android.graphics.drawable.Drawable timeBoxAlone(float density) {
+        android.graphics.drawable.GradientDrawable box = new android.graphics.drawable.GradientDrawable();
+        box.setColor(0xFC16181C);
+        box.setCornerRadius(SupernovaStyle.SMALL_BOX_RADIUS_DP * density);
+        box.setStroke(Math.max(1, Math.round(density)), 0xB3FFFFFF);
+        return box;
+    }
 
     /**
      * The time card rises above the seek bar, outside the bar's own row; no parent may cut it off (0.157 Shield
