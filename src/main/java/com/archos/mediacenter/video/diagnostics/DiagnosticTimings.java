@@ -34,7 +34,8 @@ public final class DiagnosticTimings
     {
         long now = SystemClock.uptimeMillis();
         boolean cold = !startupReported;
-        long started = cold ? android.os.Process.getStartUptimeMillis() : warmStartAt;
+        long processStart = android.os.Build.VERSION.SDK_INT >= 24 ? android.os.Process.getStartUptimeMillis() : 0;
+        long started = cold ? processStart : warmStartAt;
         startupReported = true;
         if (started <= 0)
             return;

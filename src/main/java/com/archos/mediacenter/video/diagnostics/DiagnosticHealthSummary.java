@@ -128,7 +128,7 @@ final class DiagnosticHealthSummary
         line(focusSlips > FOCUS_SLIP_LIMIT, over, within, String.format(Locale.ROOT,
             "Focus slips: %d (limit %d)", focusSlips, FOCUS_SLIP_LIMIT));
         line(!legacy.isEmpty(), over, within, "NOVA pieces that ran: " +
-            (legacy.isEmpty() ? "none" : legacy.size() + ": " + String.join(", ", legacy)) + " (limit none)");
+            (legacy.isEmpty() ? "none" : legacy.size() + ": " + android.text.TextUtils.join(", ", legacy)) + " (limit none)");
         StringBuilder text = new StringBuilder("Health summary (over the limit first)\n");
         for (String l : over)
             text.append("OVER  ").append(l).append('\n');
