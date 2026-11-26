@@ -1,16 +1,22 @@
-# Discussion handover (updated 25 Nov 2026)
+# Discussion handover (updated 26 Nov 2026)
 
-## 25 Nov — START HERE (new discussion chat)
+## 26 Nov — START HERE (paused by the owner mid-Files review)
 **Phase:** polish, page by page; designs and planning only, no coding (CLAUDE.md "Polish phase").
-**Done and written up:** library pages (LIBRARY.md), Home (HOME.md + RULES §14d), Details (DETAILS.md, rewritten
-21 Nov), Player and Playback Settings (PLAYER.md, written 25 Nov), Search (SEARCH.md, 25 Nov). Every decision is also in `docs/0.158/BRIEF_0158_B.md`
-(sections "Library toolbar review" … "Player page sheet"), which Supernova Coding merges before each item.
-**Still to review:** Files (FILES.md), Settings (SETTINGS.md). Owner picks the order. (Search done 25 Nov.)
-**Waiting at those reviews:**
-- Files: Library Care › **Excluded from hero** (new, approved in principle only, mock-up `home-v3/tv/17`); **Fix match
-  shows the file name and location**; the approved **To fix** row; bug M1 (wrong TV matches, REVIEW_0158).
-- Settings: the stepper rule (RULES §8: more than two choices step with Left / Right) applies to every row with 3+
-  chips; the Seek preview setting (Off · Chapter pictures · Video frames).
+**Done and written up:** library pages (LIBRARY.md), Home (HOME.md + RULES §14d), Details (DETAILS.md), Player and
+Playback Settings (PLAYER.md), **Search (SEARCH.md, 25 Nov)**, **Next episode on the hero** (DETAILS.md, RULES §14d,
+brief). Every decision is also in `docs/0.158/BRIEF_0158_B.md`, which Supernova Coding merges before each item.
+**In progress: Files** (`files-v2/tv/01`–`22`; FILES.md › "Review 25–26 Nov" holds every note so far):
+- Round 1 (This Device, browsing) **agreed** and redrawn; round 2 (Connections, forms) **agreed** and redrawn.
+- **Resume at round 3, Library Care (`tv/16`–`21`)**: To fix, "Kept by you" › Excluded from hero, Fix match showing
+  the file, Missing files sample, Scan one source. Send the pictures again and ask for notes. Then round 4, Your
+  Library (`tv/22`, with By Source). Then rewrite FILES.md from the review (as Search and Details were), put the final
+  set on Drive, and record decisions in the brief.
+**Then Settings** (SETTINGS.md): steppers on 3+ choice rows, Seek preview setting, search history rows (added 25 Nov),
+What's New / release notes leftovers, Plozz-inspired settings (REVISIT_LATER), Network options now on Files.
+**Parked this session:** Seerr requests from Search (Plozz does it), finer settings after Plozz, users-and-tags three
+open points (REVISIT_LATER, 25 Nov). **NOVA audited 25 Nov:** eleven items in the brief's NOVA catch-up.
+**Rules added 25–26 Nov:** no Phone key on the keyboard (§15); Search badge 30 px, pills only for Resume (§14c); next
+episode label above the logo (§14d); changing text never moves its icon (§7).
 **How we work (owner):** mock-ups for the TV at 1920 × 1080 on the speckle go to Google Drive › Supernova › Media ›
 From Claude › a dated folder; renderers live next to them in `docs/design/proposals/<topic>/render*.js` (fonts:
 `npm pack @fontsource/roboto@5.0.13`, FONT_DIR = its `files`). Look at every render before uploading (check the

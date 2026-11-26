@@ -1,6 +1,6 @@
 # Supernova — project status
 
-Updated 25 November 2026 (discussion: polish review of library pages, Home, Details and Player done). Keep this page short and current: update it at the
+Updated 26 November 2026 (discussion: Search done; Files review rounds 1–2 agreed, paused at round 3). Keep this page short and current: update it at the
 end of every session.
 
 ## Next: the rest of 0.158 part B
@@ -12,9 +12,10 @@ the rest of Details (DT1, DT3–DT6, DT8, R3–R5, episodes), titles (group 6), 
 for part B: `claude/build-0158-part-b-wsupv2`, merged onto the working branch. Waiting for the owner: install the last
 signed APK; send a diagnostics report from it.
 
-## Discussion (19–25 Nov): polish phase
-Reviewed and written up: library pages, Home, Details, Player (page sheets in `docs/design/pages/`; decisions in
-`docs/0.158/BRIEF_0158_B.md`). Next: Search, Files, Settings. Installed on the Shield: 0.158.7. Handover:
+## Discussion (19–26 Nov): polish phase
+Reviewed and written up: library pages, Home, Details, Player, Search (page sheets in `docs/design/pages/`; decisions
+in `docs/0.158/BRIEF_0158_B.md`). Files in review (rounds 1–2 agreed, resume at round 3); then Settings. NOVA fully
+audited 25 Nov (eleven items in the brief). Installed on the Shield: 0.158.7. Handover:
 `docs/DISCUSSION_HANDOVER.md` (start at "25 Nov — START HERE").
 
 ## Discussion (19–20 Nov): polish phase
