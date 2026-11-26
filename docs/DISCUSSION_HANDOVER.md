@@ -1,22 +1,16 @@
 # Discussion handover (updated 26 Nov 2026)
 
-## 26 Nov — START HERE (paused by the owner mid-Files review)
-**Coding go-ahead (26 Nov):** 0.158 part C, `docs/0.158/BRIEF_0158_C.md` (refined pages, app-wide pieces, NOVA, the
-Settings Backup bug, fixes from the 0.158.7 diagnostics in `docs/0.158/DIAGNOSTICS_0158_7.md`). Supernova Coding runs it;
-the discussion carries on with Files round 3 meanwhile.
-**Next coding run (owner, 26 Nov): not started until the Files review is done.** BRIEF_0158_C › Part C continued, in this
-order: missed refinements, diagnostics record why, the Files page, MobLand bugs M2–M4, NOVA leftovers. Fill in
-item 10 (Files) when FILES.md is rewritten, then give the owner the starting prompt.
+## 26 Nov — START HERE (Files review finished; next coding run ready)
+**Files review finished (owner, 26 Nov):** all four rounds approved; `docs/design/pages/FILES.md` rewritten as the final
+sheet (mock-ups `files-v2/tv/01`–`24`, Drive "2026-11-25 Files round 1–4"). Late additions: Scan library narrates every
+step; Scan one source is a menu of sources and folders; recent scans focusable, opening a Scan details page with the
+full step-by-step record. Bugs M5 (pending matches listed as Not matched) and M6 (connection rename doesn't save) are in
+BRIEF_0158_C item 8; item 10 (Files) is filled in.
+**Next coding run (owner, 26 Nov):** BRIEF_0158_C › Part C continued, in order: missed refinements, diagnostics record
+why, the Files page (item 10), MobLand bugs M2–M6, NOVA leftovers. The owner has the starting prompt.
 **Phase:** polish, page by page; designs and planning only, no coding (CLAUDE.md "Polish phase").
 **Done and written up:** library pages (LIBRARY.md), Home (HOME.md + RULES §14d), Details (DETAILS.md), Player and
-Playback Settings (PLAYER.md), **Search (SEARCH.md, 25 Nov)**, **Next episode on the hero** (DETAILS.md, RULES §14d,
-brief). Every decision is also in `docs/0.158/BRIEF_0158_B.md`, which Supernova Coding merges before each item.
-**In progress: Files** (`files-v2/tv/01`–`22`; FILES.md › "Review 25–26 Nov" holds every note so far):
-- Round 1 (This Device, browsing) **agreed** and redrawn; round 2 (Connections, forms) **agreed** and redrawn.
-- **Resume at round 3, Library Care (`tv/16`–`21`)**: To fix, "Kept by you" › Excluded from hero, Fix match showing
-  the file, Missing files sample, Scan one source. Send the pictures again and ask for notes. Then round 4, Your
-  Library (`tv/22`, with By Source). Then rewrite FILES.md from the review (as Search and Details were), put the final
-  set on Drive, and record decisions in the brief.
+Playback Settings (PLAYER.md), Search (SEARCH.md), next episode on the hero (DETAILS.md), **Files (FILES.md, 26 Nov)**.
 **Then Settings** (SETTINGS.md): steppers on 3+ choice rows, Seek preview setting, search history rows (added 25 Nov),
 What's New / release notes leftovers, Plozz-inspired settings (REVISIT_LATER), Network options now on Files.
 **Parked this session:** Seerr requests from Search (Plozz does it), finer settings after Plozz, users-and-tags three

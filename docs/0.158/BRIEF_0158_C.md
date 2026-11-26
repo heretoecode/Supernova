@@ -6,10 +6,10 @@ the latest NOVA changes, and the Settings Backup bug"). Installed on the Shield:
 sign finished work as you go (standing approval), first signing **0.158.8** (code 1588), then .9 and so on.
 
 ## Part C continued (owner, 26 Nov, after 0.158.9)
-**Not started yet (owner, 26 Nov): the owner starts this run after the Files review is finished.** Order (Claude's,
+**Ready to start (owner, 26 Nov): the Files review is finished and FILES.md is final.** Order (Claude's,
 owner: "an order that makes sense"): (A) the refinements 0.158.9 missed (items 1–6), (B) diagnostics record why (item
 9: everything after benefits from reasons in the report), (C) the Files page (item 10: Library Care's Missing files
-lives there), (D) the MobLand bugs M2–M4 (item 8, built onto the new Library Care), then (E) the NOVA leftovers (item 7,
+lives there), (D) the MobLand bugs M2–M6 (item 8, built onto the new Library Care), then (E) the NOVA leftovers (item 7,
 the riskiest ports, last).
 0.158.9 built group 1, B1 and a slice of the pages, then stopped. **The rest of this brief is the job now, and the
 redesigned pages come first.** Work through `REPORT_0158_C.md` › "Not built", line by line, in this order, each page
