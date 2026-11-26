@@ -107,7 +107,7 @@ working branch (J20).
   Biggest Movies.
 
 ### Not built (plain words; rewritten 26 Nov after 0.158.10, exactly what remains)
-Worked through in this order; each line is struck off here as it is built. Built and struck: C1–C5 (0.158.11), C6 (Your Library read-only, values stacked),
+Worked through in this order; each line is struck off here as it is built. Built and struck: C1–C5 (0.158.11), C6 (Your Library read-only, values stacked), A5 ("Stream more from <person>"),
 Spatial audio's switch, the Chapters · Episodes line, Trakt history removal on delete, Excluded from hero list, the
 genre heading's tag icon, D18's artwork release, NOVA `60df7be7` (skip-button focus) and `220f573` (same-title shows).
 
@@ -122,7 +122,6 @@ genre heading's tag icon, D18's artwork release, NOVA `60df7be7` (skip-button fo
 - A3 Library pages: Filters / Sort / Columns redraws; Customise page panel redraw; Not in library pill on show
   deletes.
 - A4 Home: Details' rows sharing Home's row card.
-- A5 Search: "Stream more from <person>".
 - A6 App-wide check: speckle, small boxes, focus and path, menus and panels, page by page.
 
 **Item 11**

@@ -32,6 +32,8 @@ final class SearchStreaming
         final String service;
         final String poster;
         final String link;
+        /** "Movie" or "TV show", for the second line ("2022 · TV show · director"). */
+        String kind = "Movie";
 
         Title(long id, String name, int year, String relation, String service, String poster, String link)
         {
@@ -121,6 +123,105 @@ final class SearchStreaming
     static String heading(String libraryTitle, boolean nonFiction)
     {
         return (nonFiction ? "Stream more related to " : "Stream more from the world of ") + libraryTitle;
+    }
+
+    /**
+     * People results (SEARCH.md): "Stream more from Mara Ellison": the person's other films and shows (TMDB's combined
+     * credits; found through a library film's credits, so only people the library knows), not in the library and on
+     * your services. Cast first, then crew, each once; the second line gives their job ("director", "writer").
+     */
+    static Group fromPerson(Context context, long movieId, String person, Set<Long> owned, BooleanSupplier cancelled)
+    {
+        if (movieId <= 0 || person == null || person.trim().isEmpty() || !StreamingRepository.enabled(context))
+        {
+            return null;
+        }
+        try
+        {
+            okhttp3.OkHttpClient http = StreamingRepository.readOnlyNetworkClient();
+            JSONObject credits = StreamingRepository.libraryDiscovery(context, "movie/" + movieId + "/credits",
+                                                                      java.util.Map.of(), http);
+            long personId = personId(credits, person);
+            if (personId <= 0 || cancelled.getAsBoolean())
+            {
+                return null;
+            }
+            JSONObject work = StreamingRepository.libraryDiscovery(context, "person/" + personId + "/combined_credits",
+                                                                   java.util.Map.of(), http);
+            String country = StreamingRepository.country(context);
+            Set<String> selected = StreamingRepository.selected(context);
+            String preferred = StreamingRepository.preferred(context);
+            Set<Long> seen = new java.util.HashSet<>(owned);
+            seen.add(movieId);
+            List<Title> titles = new ArrayList<>();
+            for (String section : new String[] {"cast", "crew"})
+            {
+                JSONArray rows = work.optJSONArray(section);
+                for (int i = 0; rows != null && i < rows.length() && titles.size() < MOST; i++)
+                {
+                    if (cancelled.getAsBoolean())
+                    {
+                        return null;
+                    }
+                    Title title = personTitle(context, rows.optJSONObject(i), section, seen, country, selected,
+                                              preferred);
+                    if (title != null)
+                    {
+                        titles.add(title);
+                    }
+                }
+            }
+            return titles.isEmpty() ? null : new Group(personHeading(person.trim()), titles);
+        }
+        catch (Exception unavailable)
+        {
+            return null;
+        }
+    }
+
+    /** The TMDB id of the named person in a film's cast or crew; 0 when the name is not there. */
+    static long personId(JSONObject credits, String person)
+    {
+        String wanted = person.trim();
+        for (String section : new String[] {"cast", "crew"})
+        {
+            JSONArray rows = credits == null ? null : credits.optJSONArray(section);
+            for (int i = 0; rows != null && i < rows.length(); i++)
+            {
+                JSONObject row = rows.optJSONObject(i);
+                if (row != null && wanted.equalsIgnoreCase(row.optString("name").trim()))
+                {
+                    return row.optLong("id");
+                }
+            }
+        }
+        return 0;
+    }
+
+    private static Title personTitle(Context context, JSONObject row, String section, Set<Long> seen, String country,
+                                     Set<String> selected, String preferred) throws Exception
+    {
+        String kind = row == null ? "" : row.optString("media_type");
+        long id = row == null ? 0 : row.optLong("id");
+        if (id <= 0 || !("movie".equals(kind) || "tv".equals(kind)) || !seen.add(id))
+        {
+            return null;
+        }
+        StreamingRepository.Availability availability = StreamingRepository.load(context, kind, id, country);
+        List<StreamingRepository.Offer> offers = StreamingRepository.filter(availability, selected, preferred);
+        if (offers.isEmpty())
+        {
+            return null;
+        }
+        StreamingRepository.Offer top = offers.get(0);
+        boolean show = "tv".equals(kind);
+        String job = "crew".equals(section) ? row.optString("job").toLowerCase(java.util.Locale.UK) : "";
+        String link = StreamingRepository.titleLink(context, kind, id, country, availability, top.provider.id);
+        Title title = new Title(id, row.optString(show ? "name" : "title"),
+                                year(row.optString(show ? "first_air_date" : "release_date")), job,
+                                top.provider.name, row.optString("backdrop_path", row.optString("poster_path")), link);
+        title.kind = show ? "TV show" : "Movie";
+        return title;
     }
 
     /** People results: "Stream more from Mara Ellison". */

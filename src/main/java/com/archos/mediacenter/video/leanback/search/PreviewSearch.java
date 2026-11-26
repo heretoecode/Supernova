@@ -1485,7 +1485,7 @@ public final class PreviewSearch extends LinearLayout {
         ArtworkRequest.cancel(h.image);
         h.image.setImageDrawable(null);
         h.title.setText(title.name);
-        h.metadata.setText(secondLine(title.year, "Movie", title.relation));
+        h.metadata.setText(secondLine(title.year, title.kind, title.relation));
         android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
         shape.setCornerRadius(dp(12));
         shape.setColor(Color.TRANSPARENT);
@@ -1547,8 +1547,10 @@ public final class PreviewSearch extends LinearLayout {
                 if (source == null && !result.people)
                     source = (Movie)result.video;
             }
-        if (source == null)
+        if (source == null) {
+            loadPersonStreaming(found, owned, request);
             return;
+        }
         Movie film = source;
         boolean nonFiction = PreviewGenres.parse(genresOf(found, film)).stream()
                                  .anyMatch(genre -> genre.equalsIgnoreCase("Documentary"));
@@ -1559,6 +1561,46 @@ public final class PreviewSearch extends LinearLayout {
         worker.execute(() -> {
             SearchStreaming.Group group = SearchStreaming.worldOf(app, film.getOnlineId(), film.getName(),
                                                                   film.getYear(), owned, () -> request != generation);
+            main.post(() -> {
+                if (request != generation || !isAttachedToWindow())
+                    return;
+                if (group == null) {
+                    fadeOutLoading();
+                    return;
+                }
+                items.removeIf(item -> item.stream != null || item.loading);
+                for (SearchStreaming.Title title : group.titles)
+                    items.add(new Result(title, group.heading));
+                adapter.notifyDataSetChanged();
+            });
+        });
+    }
+
+    /**
+     * Only people matched (SEARCH.md): "Stream more from Mara Ellison", the person's other work on your services,
+     * found through the first matching library film's credits; the same loading row and fade as a film's group.
+     */
+    private void loadPersonStreaming(List<Result> found, java.util.Set<Long> owned, int request) {
+        Movie film = null;
+        String person = "";
+        for (Result result : found)
+            if (result.people && result.video instanceof Movie && ((Movie)result.video).getOnlineId() > 0
+                && !result.reason.isEmpty()) {
+                film = (Movie)result.video;
+                person = result.reason.split(" · ", 2)[0];
+                break;
+            }
+        if (film == null)
+            return;
+        Result waiting = new Result((SearchStreaming.Title)null, SearchStreaming.personHeading(person));
+        waiting.loading = true;
+        items.add(waiting);
+        Context app = activity.getApplicationContext();
+        long id = film.getOnlineId();
+        String name = person;
+        worker.execute(() -> {
+            SearchStreaming.Group group = SearchStreaming.fromPerson(app, id, name, owned,
+                                                                     () -> request != generation);
             main.post(() -> {
                 if (request != generation || !isAttachedToWindow())
                     return;
