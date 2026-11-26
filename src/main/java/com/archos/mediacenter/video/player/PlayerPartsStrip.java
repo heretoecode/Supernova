@@ -111,7 +111,8 @@ final class PlayerPartsStrip implements PlayerController.Strip
         root.addView(tabs, new LinearLayout.LayoutParams(-1, -2));
         // The shared tab row (RULES §3; player v8-v11): a faint line under the row, the open tab underlined on it.
         View rule = new View(context);
-        rule.setBackgroundColor(TAB_RULE);
+        // The line under the tabs is the library toolbar line (PLAYER.md): white 35%, fading at both ends.
+        rule.setBackground(new com.archos.mediacenter.video.leanback.LiftedPenLine());
         LinearLayout.LayoutParams ruleSize = new LinearLayout.LayoutParams(-1, Math.max(1, dp(1)));
         // The card row sits centred between the tab line and the screen's bottom edge (player v11, approved 13 Nov):
         // 24dp here + the cards' 8dp padding matches the 8dp padding + the control bar's 24dp bottom inset below.
