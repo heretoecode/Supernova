@@ -1,5 +1,5 @@
 {
- "purpose": "0.158 part C: run 5 (Home one-button hero, no Move/Hide, exclude from hero)",
+ "purpose": "0.158 part C: run 6 (player panel renders to inspect, language names, seek box, top bar)",
  "tests": [
   "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
   "com.archos.mediacenter.video.leanback.HiddenNovaContentTest",
@@ -29,7 +29,12 @@
   "com.archos.mediacenter.video.leanback.NextQaUiTest",
   "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
   "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
-  "com.archos.mediacenter.video.leanback.PreviewPagesTest"
+  "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+  "com.archos.mediacenter.video.player.Playback141RenderTest",
+  "com.archos.mediacenter.video.player.LanguageNamesTest",
+  "com.archos.mediacenter.video.leanback.TopNavigationTest",
+  "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest"
  ],
  "variants": {
   "normal": {}
