@@ -502,7 +502,7 @@ public final class StreamingRepository
             if (!response.isSuccessful() || response.body() == null)
             {
                 outcome = response.isSuccessful() ? "missing_body" : "http_error";
-                throw new IOException("Availability service unavailable");
+                throw new StatusException(response.code());
             }
             // Bound both API and HTML responses rather than loading an unlimited body.
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -659,8 +659,22 @@ public final class StreamingRepository
             }
             return persisted;
         }
-        JSONObject response = availabilityRequest(context,
-            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", client);
+        long corrected = "tv".equals(kind) ? prefs(context).getLong("streaming_tmdb_for:" + id, -1) : -1;
+        if (corrected > 0 && corrected != id)
+            return load(context, kind, corrected, country, season, client);
+        if (knownMissing(context, key))
+            return noAvailability();
+        JSONObject response;
+        try
+        {
+            response = availabilityRequest(context,
+                kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers",
+                client);
+        }
+        catch (StatusException failure)
+        {
+            return notFound(context, kind, id, country, season, client, key, failure);
+        }
         if (!enabled(context))
             return noAvailability();
         Availability availability = parseAvailability(response, country);
@@ -684,6 +698,72 @@ public final class StreamingRepository
                            .toString())
             .apply();
         return availability;
+    }
+
+    /** D7 (0.158.8): an HTTP answer that was not a success, with its status, so a 404 can be told apart. */
+    public static final class StatusException extends IOException
+    {
+        public final int status;
+
+        StatusException(int status)
+        {
+            super("Availability service unavailable");
+            this.status = status;
+        }
+    }
+
+    static final long MISSING_TTL = 24L * 60 * 60 * 1000;
+
+    /**
+     * D7 (0.158.8): where to watch for a show TMDB does not know by this id (43 × 404 in the 26 Nov diagnostics).
+     * Shows matched long ago, or from an .nfo, can carry a TVDB id; TMDB is asked once which show that is, and the
+     * answer is kept. A genuine 404 is kept as "no providers" for a day instead of being asked again on every view.
+     */
+    private static Availability notFound(Context context, String kind, long id, String country, int season,
+                                         OkHttpClient client, String key, StatusException failure) throws Exception
+    {
+        if (failure.status != 404)
+            throw failure;
+        if ("tv".equals(kind) && !prefs(context).contains("streaming_tvdb_checked:" + id))
+        {
+            prefs(context).edit().putBoolean("streaming_tvdb_checked:" + id, true).apply();
+            long tmdb = tmdbForTvdb(context, id, client);
+            if (tmdb > 0 && tmdb != id)
+            {
+                prefs(context).edit().putLong("streaming_tmdb_for:" + id, tmdb).apply();
+                Diagnostics.event("provider_metadata_id_corrected", "media_kind", kind);
+                return load(context, kind, tmdb, country, season, client);
+            }
+        }
+        prefs(context).edit().putLong("streaming_missing:" + key, System.currentTimeMillis()).apply();
+        Diagnostics.event("provider_metadata_not_found", "media_kind", kind, "season", season);
+        Availability none = noAvailability();
+        synchronized (CACHE)
+        {
+            CACHE.put(key, new Cached(none));
+        }
+        return none;
+    }
+
+    private static long tmdbForTvdb(Context context, long tvdb, OkHttpClient client)
+    {
+        try
+        {
+            JSONObject found = api(context, "find/" + tvdb, null, 0,
+                                   Collections.singletonMap("external_source", "tvdb_id"), client);
+            JSONArray shows = found.optJSONArray("tv_results");
+            return shows == null || shows.length() == 0 ? -1 : shows.getJSONObject(0).optLong("id", -1);
+        }
+        catch (Exception unavailable)
+        {
+            return -1;
+        }
+    }
+
+    static boolean knownMissing(Context context, String key)
+    {
+        long at = prefs(context).getLong("streaming_missing:" + key, 0);
+        return at > 0 && System.currentTimeMillis() - at < MISSING_TTL;
     }
 
     private static JSONObject availabilityRequest(Context context, String path, OkHttpClient base) throws Exception
