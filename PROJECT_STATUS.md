@@ -3,9 +3,14 @@
 Updated 26 November 2026 (discussion: Search done; Files review rounds 1–2 agreed, paused at round 3). Keep this page short and current: update it at the
 end of every session.
 
-## Next: 0.158 part C (owner go-ahead 26 Nov)
+## 0.158 part C (overnight 26 Nov): see `docs/0.158/REPORT_0158_C.md`
 
-Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`. First signing 0.158.8.
+Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`; judgement calls
+`docs/0.158/JUDGEMENT_CALLS_0158_C.md`. Built: every diagnostics fix (D1–D13), B1, the next-episode label, Home's
+one-button hero, search history settings, no Phone key, five NOVA items, the diagnostics upgrade and a set of player,
+Search and library fixes. 0.158.8 and 0.158.9: see the report's table for signing runs. The "not built" list is in the
+report. Waiting for the owner: install the newest signed APK, send a diagnostics report from it (0.159's baseline),
+check the phone app types into the box (no Phone key), the Reports / Backups folder decision.
 
 ## Before that: the rest of 0.158 part B
 
