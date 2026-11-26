@@ -68,6 +68,41 @@ public final class HeroExclusions
             values.add(identity);
         else
             values.remove(identity);
-        prefs(context).edit().putStringSet(KEY, values).apply();
+        SharedPreferences.Editor edit = prefs(context).edit().putStringSet(KEY, values);
+        if (add)
+            edit.putLong("at:" + identity, System.currentTimeMillis());
+        else
+            edit.remove("at:" + identity);
+        edit.apply();
+    }
+
+    /** When a title was excluded (0 when not known), for "Movie · 2019 · excluded 14 Oct 2026". */
+    public static long excludedAt(Context context, PreviewLibraryLoader.Entry entry)
+    {
+        return prefs(context).getLong("at:" + identity(entry), 0);
+    }
+
+    /**
+     * Files › Library Care › Excluded from hero (FILES.md, tv/19): the excluded titles still in the library, A–Z.
+     */
+    public static java.util.List<PreviewLibraryLoader.Entry> titles(Context context,
+                                                                   PreviewLibraryLoader.Snapshot snapshot)
+    {
+        java.util.List<PreviewLibraryLoader.Entry> found = new java.util.ArrayList<>();
+        if (snapshot == null)
+            return found;
+        java.util.List<PreviewLibraryLoader.Entry> all = new java.util.ArrayList<>(snapshot.movies);
+        all.addAll(snapshot.shows);
+        for (PreviewLibraryLoader.Entry entry : all)
+            if (excluded(context, entry))
+                found.add(entry);
+        found.sort((a, b) -> PreviewPages.displayName(a).compareToIgnoreCase(PreviewPages.displayName(b)));
+        return found;
+    }
+
+    /** Include all again (top right of the page). */
+    public static void includeAll(Context context)
+    {
+        prefs(context).edit().clear().apply();
     }
 }

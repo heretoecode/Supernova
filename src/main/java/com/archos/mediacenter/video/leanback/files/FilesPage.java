@@ -1038,6 +1038,14 @@ public final class FilesPage extends LinearLayout
         {
             hideChevron(check);
         }
+        int toFix = toFix().size();
+        row(column, "edit", "To fix", "Titles that need a new match", LibraryCareCounts.pill(toFix, "title", "titles"),
+            toFix > 0 ? () -> openCare("fix") : null, false);
+        heading(column, "Kept By You", "eye-off", true);
+        int hidden = com.archos.mediacenter.video.leanback.HeroExclusions.titles(getContext(),
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache()).size();
+        row(column, "hero-exclude", "Excluded from hero", "Titles kept off Home's hero",
+            LibraryCareCounts.pill(hidden, "title", "titles"), hidden > 0 ? () -> openCare("hero") : null, false);
         scanOneSource(column);
         recentScans(column);
     }
@@ -1091,7 +1099,8 @@ public final class FilesPage extends LinearLayout
     private void carePage(LinearLayout column)
     {
         String[] titles = {"missing", "Missing files", "unreadable", "Couldn't be read", "unmatched", "Not matched",
-                           "review", "Check matches", "scans", "All scans"};
+                           "review", "Check matches", "scans", "All scans", "fix", "To fix",
+                           "hero", "Excluded from hero"};
         String title = carePage;
         for (int index = 0; index < titles.length; index += 2)
         {
@@ -1118,6 +1127,12 @@ public final class FilesPage extends LinearLayout
                 break;
             case "review":
                 matchResults(column);
+                break;
+            case "fix":
+                toFixPage(column);
+                break;
+            case "hero":
+                heroPage(column);
                 break;
             default:
                 allScans(column);
@@ -1153,6 +1168,11 @@ public final class FilesPage extends LinearLayout
             actionRow(column, "folder", name, outcomes.containsKey(key) ? outcomes.get(key) : where, null, actions,
                       false);
         }
+        TextView note = text("Find it again looks for the same file and links it back, keeping where you stopped. "
+                             + "Remove takes it out of your library only.", 14, SECOND_LINE);
+        note.setSingleLine(false);
+        note.setPadding(0, SupernovaStyle.dp(getContext(), 14), 0, 0);
+        column.addView(note);
     }
 
     private void missingWork(com.archos.mediacenter.video.health.MissingFilesRepository.MissingFile file, String key,
@@ -1237,8 +1257,14 @@ public final class FilesPage extends LinearLayout
             column.addView(text(unreadable > 0 ? "Looking…" : "Every file could be read", 16, Color.WHITE));
             return;
         }
-        for (String[] row : unreadableRows)
+        java.util.Set<String> fine = getContext().getSharedPreferences(CARE, Context.MODE_PRIVATE)
+            .getStringSet("plays_fine", java.util.Collections.emptySet());
+        for (String[] row : new java.util.ArrayList<>(unreadableRows))
         {
+            if (fine.contains(row[0]))
+            {
+                continue;
+            }
             android.net.Uri uri = android.net.Uri.parse(row[0]);
             String name = uri.getLastPathSegment() == null ? row[0] : uri.getLastPathSegment();
             String key = "unreadable:" + row[0];
@@ -1252,9 +1278,12 @@ public final class FilesPage extends LinearLayout
                 outcomes.put(key, "Trying again with the next scan");
                 show(LIBRARY_CARE);
             }));
-            actions.add(new Action("Exclude", "remove", () -> {
-                boolean done = LibraryChanges.apply(getContext(), selection -> selection.exclude(uri));
-                outcomes.put(key, done ? "Excluded: the library leaves it out" : "Couldn't exclude it just now");
+            // "This is fine" beside the fix (FILES.md): the item leaves the list and its count.
+            actions.add(new Action("It plays fine", "check", () -> {
+                fine("plays_fine", row[0]);
+                unreadableRows.remove(row);
+                unreadable = Math.max(0, unreadable - 1);
+                publishBadge();
                 show(LIBRARY_CARE);
             }));
             String folder = parent(uri) == null ? "" : parent(uri).getPath();
@@ -1290,18 +1319,172 @@ public final class FilesPage extends LinearLayout
                     folderActions.fixMatch(video);
                 }
             }));
-            actions.add(new Action("Not a movie", "cancel", () -> {
-                android.content.SharedPreferences care =
-                    getContext().getSharedPreferences(CARE, Context.MODE_PRIVATE);
-                java.util.Set<String> skipped = new java.util.HashSet<>(
-                    care.getStringSet("not_a_movie", java.util.Collections.emptySet()));
-                skipped.add(String.valueOf(video.getId()));
-                care.edit().putStringSet("not_a_movie", skipped).apply();
+            actions.add(new Action("It's right", "check", () -> {
+                fine("not_a_movie", String.valueOf(video.getId()));
                 publishBadge();
                 show(LIBRARY_CARE);
             }));
             String name = video.getName() == null ? video.getFilenameNonCryptic() : video.getName();
-            actionRow(column, "film", name, video.getFilenameNonCryptic(), null, actions, false);
+            actionRow(column, "film", name, bestGuess(video.getFilenameNonCryptic(), where(video)), null, actions,
+                      false);
+        }
+        pendingLine(column);
+    }
+
+    /** M5: "Matching N new titles: they're not listed while Supernova is still looking them up." */
+    private void pendingLine(LinearLayout column)
+    {
+        int pending = counts == null ? 0 : counts.pending;
+        if (pending <= 0)
+        {
+            return;
+        }
+        TextView line = text("Matching " + pending + (pending == 1 ? " new title" : " new titles")
+                             + ": they're not listed while Supernova is still looking them up.", 14, SECOND_LINE);
+        line.setSingleLine(false);
+        line.setPadding(0, SupernovaStyle.dp(getContext(), 14), 0, 0);
+        column.addView(line);
+    }
+
+    private static String where(com.archos.mediacenter.video.browser.adapters.object.Video video)
+    {
+        android.net.Uri uri = video.getFileUri();
+        android.net.Uri folder = uri == null ? null : parent(uri);
+        return folder == null || folder.getLastPathSegment() == null ? "" : folder.getLastPathSegment();
+    }
+
+    /**
+     * The best guess from the file name (FILES.md, tv/20b): "Looks like Blue Planet III · S1 E2 · from the file
+     * name", or "No guess yet · <where>".
+     */
+    static String bestGuess(String fileName, String where)
+    {
+        String name = fileName == null ? "" : fileName.replaceAll("\\.[A-Za-z0-9]{2,4}$", "");
+        java.util.regex.Matcher episode =
+            java.util.regex.Pattern.compile("(?i)[ ._-]s(\\d{1,2})[ ._-]?e(\\d{1,3})").matcher(name);
+        String title = name;
+        String tail = "";
+        if (episode.find())
+        {
+            title = name.substring(0, episode.start());
+            tail = " · S" + Integer.parseInt(episode.group(1)) + " E" + Integer.parseInt(episode.group(2));
+        }
+        else
+        {
+            java.util.regex.Matcher year = java.util.regex.Pattern.compile("[ ._(\\[-](19|20)\\d\\d").matcher(name);
+            if (year.find())
+            {
+                title = name.substring(0, year.start());
+            }
+        }
+        title = title.replaceAll("[._]+", " ").trim();
+        if (title.isEmpty() || title.length() < 2)
+        {
+            return "No guess yet" + (where == null || where.isEmpty() ? "" : " · " + where);
+        }
+        return "Looks like " + title + tail + " · from the file name";
+    }
+
+    /** An item answered "this is fine": it leaves its list and its count. */
+    private void fine(String list, String id)
+    {
+        android.content.SharedPreferences care = getContext().getSharedPreferences(CARE, Context.MODE_PRIVATE);
+        java.util.Set<String> kept = new java.util.HashSet<>(care.getStringSet(list, java.util.Collections.emptySet()));
+        kept.add(id);
+        care.edit().putStringSet(list, kept).apply();
+    }
+
+    /** To fix (FILES.md, tv/17): titles TMDB no longer knows (D16), each with Fix match · It's right. */
+    private List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> toFix()
+    {
+        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> found = new java.util.ArrayList<>();
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        if (snapshot == null)
+        {
+            return found;
+        }
+        java.util.Set<String> fine = getContext().getSharedPreferences(CARE, Context.MODE_PRIVATE)
+            .getStringSet("fix_is_right", java.util.Collections.emptySet());
+        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> all =
+            new java.util.ArrayList<>(snapshot.movies);
+        all.addAll(snapshot.shows);
+        for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : all)
+        {
+            String kind = entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow
+                ? "tv" : "movie";
+            if (entry.onlineId > 0 && com.archos.mediacenter.video.leanback.TmdbGone.gone(getContext(), kind,
+                                                                                       entry.onlineId)
+                && !fine.contains(kind + ":" + entry.onlineId))
+            {
+                found.add(entry);
+            }
+        }
+        return found;
+    }
+
+    private void toFixPage(LinearLayout column)
+    {
+        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> titles = toFix();
+        if (titles.isEmpty())
+        {
+            column.addView(text("Nothing to fix", 16, Color.WHITE));
+            return;
+        }
+        for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : titles)
+        {
+            boolean show = entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow;
+            String kind = show ? "tv" : "movie";
+            List<Action> actions = new java.util.ArrayList<>();
+            actions.add(new Action("Fix match", "edit", () -> {
+                if (folderActions != null && entry.media instanceof com.archos.mediacenter.video.browser.adapters
+                                                                        .object.Video)
+                {
+                    folderActions.fixMatch((com.archos.mediacenter.video.browser.adapters.object.Video) entry.media);
+                }
+            }));
+            actions.add(new Action("It's right", "check", () -> {
+                fine("fix_is_right", kind + ":" + entry.onlineId);
+                show(LIBRARY_CARE);
+            }));
+            actionRow(column, show ? "tv" : "film",
+                      com.archos.mediacenter.video.leanback.PreviewPages.displayName(entry),
+                      com.archos.mediacenter.video.leanback.TmdbGone.line(kind), null, actions, false);
+        }
+    }
+
+    /** Excluded from hero (FILES.md, tv/19): A–Z, Include again on the focused row, Include all again on top. */
+    private void heroPage(LinearLayout column)
+    {
+        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> titles =
+            com.archos.mediacenter.video.leanback.HeroExclusions.titles(getContext(),
+                com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache());
+        if (titles.isEmpty())
+        {
+            column.addView(text("Every title can appear on the hero", 16, Color.WHITE));
+            return;
+        }
+        row(column, "plus", "Include all again", count(titles.size(), "title"), null, () -> {
+            com.archos.mediacenter.video.leanback.HeroExclusions.includeAll(getContext());
+            show(LIBRARY_CARE);
+        }, true);
+        java.text.DateFormat day = new java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale.UK);
+        for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : titles)
+        {
+            boolean show = entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow;
+            long at = com.archos.mediacenter.video.leanback.HeroExclusions.excludedAt(getContext(), entry);
+            int year = entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
+                ? ((com.archos.mediacenter.video.browser.adapters.object.Movie) entry.media).getYear() : 0;
+            String line = (show ? "TV show" : "Movie") + (year > 0 ? " · " + year : "")
+                + (at > 0 ? " · excluded " + day.format(new java.util.Date(at)) : "");
+            List<Action> actions = new java.util.ArrayList<>();
+            actions.add(new Action("Include again", "plus", () -> {
+                com.archos.mediacenter.video.leanback.HeroExclusions.include(getContext(), entry);
+                show(LIBRARY_CARE);
+            }));
+            actionRow(column, show ? "tv" : "film",
+                      com.archos.mediacenter.video.leanback.PreviewPages.displayName(entry), line, null, actions,
+                      false);
         }
     }
 
