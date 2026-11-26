@@ -2,8 +2,8 @@
 
 Approved by the owner, 26 Nov 2026 ("let's get the library pages, Home, Details, Player and Search, the app-wide pieces,
 the latest NOVA changes, and the Settings Backup bug"). Installed on the Shield: **0.158.7**. Follow CLAUDE.md
-(Definition of done, Working unattended) to the letter; sign as you go (standing approval), first signing **0.158.8**
-(code 1588), then .9 and so on.
+(Definition of done, Working unattended) to the letter: **hands-free until everything here is built** (owner, 26 Nov);
+sign finished work as you go (standing approval), first signing **0.158.8** (code 1588), then .9 and so on.
 
 ## Part C continued (owner, 26 Nov, after 0.158.9)
 0.158.9 built group 1, B1 and a slice of the pages, then stopped. **The rest of this brief is the job now, and the
