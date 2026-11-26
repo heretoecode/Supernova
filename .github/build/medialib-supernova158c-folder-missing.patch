@@ -1,0 +1,75 @@
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index 033a811..9014d81 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -1257,7 +1257,9 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                     new HashMap<String, NetworkScannerServiceVideo.PrescanItem>();
+                 if (prescan != null)
+                 {
+-                    while (prescan.moveToNext() && isForeground)
++                    // M4 (owner, 26 Nov): read every known file, whether or not the app is in front. A list cut
++                    // short made the scan think every file was new and could never mark one missing.
++                    while (prescan.moveToNext())
+                     {
+                         PrescanItem item = new PrescanItem(prescan);
+                         if (upnpUri != null && !item._data.startsWith(upnpUri))
+@@ -1565,6 +1567,18 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             return mHadListingError;
+         }
+ 
++        /** M4: a known file under a folder whose listing failed is held back, never marked missing. */
++        private boolean underFailedFolder(String data)
++        {
++            if (data == null || failedDirectories.isEmpty())
++                return false;
++            String file = SupernovaLibraryPolicy.canonical(Uri.parse(data));
++            for (String folder : failedDirectories)
++                if (SupernovaLibraryPolicy.contains(folder, file))
++                    return true;
++            return false;
++        }
++
+         private String mLastNotifiedDirectory = null;
+ 
+         public String getLastNotifiedDirectory()
+@@ -1765,12 +1779,22 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 }
+             if (SupernovaLibraryPolicy.retainsRecords(mService))
+             {
++                int markedMissing = 0;
++                int heldBack = 0;
+                 for (PrescanItem item : mPrescanItemsMap.values())
+                 {
+-                    if (item.needsDelete && !mHadListingError &&
++                    // M4: judged folder by folder. Folders read in full mark their missing files; only files under
++                    // a folder that failed (or anywhere, when the failure's folder is unknown) are held back.
++                    boolean held = item.needsDelete && (mUnknownListingError || underFailedFolder(item._data));
++                    if (held)
++                        heldBack++;
++                    if (item.needsDelete && !held &&
+                         !SupernovaLibraryPolicy.excluded(mService, Uri.parse(item._data)))
++                    {
+                         SupernovaLibraryPolicy.availability(mService, item._id + ArchosMediaCommon.SCANNED_ID_OFFSET,
+                                                             Uri.parse(item._data), true);
++                        markedMissing++;
++                    }
+                     String scheme = root == null ? "" : root.getUri().getScheme();
+                     boolean webdav = "webdav".equalsIgnoreCase(scheme) || "webdavs".equalsIgnoreCase(scheme);
+                     // A failed or deliberately bounded traversal retains ALL records.
+@@ -1779,7 +1803,15 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                     if (!complete || SupernovaLibraryPolicy.excluded(mService, Uri.parse(item._data)))
+                         item.needsDelete = false;
+                 }
+-                log.info("Library reconciliation: listingComplete={}", !mHadListingError);
++                log.info("Library reconciliation: listingComplete={}, markedMissing={}, heldBack={}, failedFolders={}",
++                         !mHadListingError, markedMissing, heldBack, failedDirectories.size());
++                if (mService != null)
++                    mService.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0).edit()
++                        .putString("scan_reconciliation:" + SupernovaLibraryPolicy.canonical(root == null ? Uri.EMPTY
++                                                                                               : root.getUri()),
++                                   markedMissing + " missing · " + heldBack + " held back · "
++                                       + failedDirectories.size() + " folders couldn't be read")
++                        .apply();
+                 if (root != null)
+                 {
+                     if (!mHadListingError)

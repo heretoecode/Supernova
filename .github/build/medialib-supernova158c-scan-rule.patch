@@ -1,0 +1,117 @@
+diff --git a/src/com/archos/mediaprovider/video/ForegroundImportRule.java b/src/com/archos/mediaprovider/video/ForegroundImportRule.java
+new file mode 100644
+index 0000000..73a6422
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/ForegroundImportRule.java
+@@ -0,0 +1,50 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++
++/**
++ * D14 (owner approved, 26 Nov 2026: scan only when there is something to find). Coming back to Supernova re-read the
++ * whole local library every time (20 imports in 80 minutes, 4-6 minutes each, nothing new). Now:
++ * back within 30 minutes, no import; opened after longer, only when the last import is over 6 hours old. Android's
++ * own "files changed" and drive broadcasts still import at once (they arrive as their own actions).
++ */
++public final class ForegroundImportRule
++{
++    static final long BACK_WITHIN_MS = 30L * 60 * 1000;
++    static final long STALE_AFTER_MS = 6L * 60 * 60 * 1000;
++    static final String LAST_IMPORT = "supernova_foreground_import_at";
++    static final String WENT_AWAY = "supernova_went_background_at";
++
++    private ForegroundImportRule()
++    {
++    }
++
++    /** Pure rule: {@code lastImport} and {@code wentAway} are wall-clock times, 0 when never. */
++    static boolean due(long now, long lastImport, long wentAway)
++    {
++        if (lastImport <= 0 || now < lastImport)
++            return true;
++        if (wentAway > 0 && now >= wentAway && now - wentAway < BACK_WITHIN_MS)
++            return false;
++        return now - lastImport >= STALE_AFTER_MS;
++    }
++
++    /** Whether returning to the app should start a local import now; records it when it does. */
++    public static boolean dueAndRecord(Context context)
++    {
++        SharedPreferences prefs = context.getSharedPreferences("supernova_scan_rule", Context.MODE_PRIVATE);
++        long now = System.currentTimeMillis();
++        boolean due = due(now, prefs.getLong(LAST_IMPORT, 0), prefs.getLong(WENT_AWAY, 0));
++        if (due)
++            prefs.edit().putLong(LAST_IMPORT, now).apply();
++        return due;
++    }
++
++    /** Supernova left the screen. */
++    public static void wentAway(Context context)
++    {
++        context.getSharedPreferences("supernova_scan_rule", Context.MODE_PRIVATE).edit()
++            .putLong(WENT_AWAY, System.currentTimeMillis()).apply();
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/VideoProvider.java b/src/com/archos/mediaprovider/video/VideoProvider.java
+index ff694f2..89919c5 100644
+--- a/src/com/archos/mediaprovider/video/VideoProvider.java
++++ b/src/com/archos/mediaprovider/video/VideoProvider.java
+@@ -1509,13 +1509,16 @@ public class VideoProvider extends ContentProvider implements DefaultLifecycleOb
+         if (foreground) {
+             if (log.isDebugEnabled()) log.debug("handleForeGround: app is foreground VideoStoreImportService.startService");
+             ArchosUtils.addBreadcrumb(SentryLevel.INFO, "handleForeGround", "app is foreground VideoStoreImportService.startService");
+-            VideoStoreImportService.startService(getContext());
++            // D14: only when there is likely something to find (back within 30 min: no; else not in the last 6 h).
++            if (ForegroundImportRule.dueAndRecord(context))
++                VideoStoreImportService.startService(getContext());
+             UpnpServiceManager.restartUpnpServiceIfWasStartedBefore();
+             // force check
+             RemoteStateService.start(context);
+             addNetworkListener();
+         } else {
+             if (log.isTraceEnabled()) log.trace("handleForeGround: app now in BackGround");
++            ForegroundImportRule.wentAway(context);
+             UpnpServiceManager.stopServiceIfLaunched();
+             removeNetworkListener();
+             try {
+diff --git a/test/java/com/archos/mediaprovider/video/ForegroundImportRuleTest.java b/test/java/com/archos/mediaprovider/video/ForegroundImportRuleTest.java
+new file mode 100644
+index 0000000..0f7ffb7
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/ForegroundImportRuleTest.java
+@@ -0,0 +1,33 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import org.junit.Test;
++
++/** D14: leaving and returning within 30 minutes starts no import; a stale library (6 h) imports on return. */
++public class ForegroundImportRuleTest
++{
++    private static final long HOUR = 60L * 60 * 1000;
++
++    @Test
++    public void backWithinHalfAnHourStartsNothing()
++    {
++        long now = 100 * HOUR;
++        assertFalse(ForegroundImportRule.due(now, now - 7 * HOUR, now - 10 * 60 * 1000));
++    }
++
++    @Test
++    public void openedAfterLongerImportsOnlyWhenTheLastIsOverSixHoursOld()
++    {
++        long now = 100 * HOUR;
++        assertFalse(ForegroundImportRule.due(now, now - 2 * HOUR, now - HOUR));
++        assertTrue(ForegroundImportRule.due(now, now - 7 * HOUR, now - HOUR));
++    }
++
++    @Test
++    public void theFirstEverImportAlwaysRuns()
++    {
++        assertTrue(ForegroundImportRule.due(100 * HOUR, 0, 0));
++    }
++}
