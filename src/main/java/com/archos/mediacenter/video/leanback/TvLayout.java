@@ -36,7 +36,8 @@ public final class TvLayout {
      * alike, so the card stays put going from one into the other.
      */
     public static int heroWidth(Context c) {
-        return Math.round(c.getResources().getDisplayMetrics().widthPixels * 1776f / 1920f);
+        // RULES §14d (owner, 21 Nov): 1816 × 820 at x 52, the hero's edges on the top bar's edges (was 1776 at 72).
+        return Math.round(c.getResources().getDisplayMetrics().widthPixels * 1816f / 1920f);
     }
 
     public static int heroHeight(Context c) {

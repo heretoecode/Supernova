@@ -280,6 +280,20 @@ final class LibraryPageModel
         return secondLine(e, null);
     }
 
+    /**
+     * The corner badge's fill (RULES §14c): a show, episodes watched out of all; a film or episode, time watched; 0 =
+     * not started (no badge).
+     */
+    static float badge(Entry e)
+    {
+        if (e.media instanceof Tvshow)
+        {
+            Tvshow show = (Tvshow) e.media;
+            return show.getEpisodeCount() <= 0 ? 0f : (float) show.getEpisodeWatchedCount() / show.getEpisodeCount();
+        }
+        return rowProgress(e) / 100f;
+    }
+
     /** How far into the film or episode, for a Home row card's inset bar. */
     static int rowProgress(Entry e)
     {

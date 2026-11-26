@@ -1,13 +1,19 @@
 {
- "purpose": "0.158 part C continued: Search to its sheet (landing, badge, loading row, nothing found, menu, voice)",
+ "purpose": "0.158 part C continued: Search fixes; Home (one hero text block, row design A, badge, dots, Customise Home, hero More)",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review0158cSearchTest",
   "com.archos.mediacenter.video.leanback.Review0158SearchTest",
-  "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
-  "com.archos.mediacenter.video.leanback.PreviewSearchLayoutTest",
-  "com.archos.mediacenter.video.leanback.search.SearchHistorySettingTest",
-  "com.archos.mediacenter.video.leanback.search.SearchReasonTest",
-  "com.archos.mediacenter.video.leanback.Review0158LibraryTest"
+  "com.archos.mediacenter.video.leanback.Review0158HomeTest",
+  "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+  "com.archos.mediacenter.video.leanback.Preview41RowsTest",
+  "com.archos.mediacenter.video.leanback.HeroReadabilityTest",
+  "com.archos.mediacenter.video.leanback.NextEpisodeLabelTest",
+  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+  "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+  "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
+  "com.archos.mediacenter.video.leanback.Review0158LibraryTest",
+  "com.archos.mediacenter.video.leanback.HomeRowControlsTest",
+  "com.archos.mediacenter.video.leanback.PreviewPagesTest"
  ],
  "variants": {
   "normal": {}

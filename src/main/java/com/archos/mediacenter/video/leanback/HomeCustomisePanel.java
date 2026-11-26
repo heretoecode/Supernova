@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.view.View;
 import android.widget.TextView;
 import com.archos.mediacenter.video.leanback.PreviewHomeRows.Row;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
@@ -61,50 +62,72 @@ final class HomeCustomisePanel
         return built.panel.dialog;
     }
 
+    /**
+     * Customise Home (owner, 21 Nov; `home-v3/tv/07`, `08`): **Shown on Home** in Home's order, **Hidden** A–Z, then
+     * **Add a row**. The focused row shows Move · Hide (your own rows also Edit); a hidden row shows Show. Move lifts
+     * the row: Up / Down, Home follows live; OK or Back puts it down.
+     */
     private void build(String focusTag)
     {
         panel = new FloatingPanel(context, "Customise Home");
-        panel.heading("Your Rows");
-        for (Row row : model.rows)
-        {
-            if (!row.custom())
-            {
-                continue;
-            }
-            android.view.View line = panel.openerWithSwitch(
-                "home.customise.row:" + row.id, PreviewHomeRows.iconName(row), row.name, summary(row), row.visible,
-                () -> rowSettings(row, false), on -> {
-                    row.visible = on;
-                    save();
-                });
-            panel.movable(line, (v, direction) -> move(row, direction));
-        }
-        panel.action("home.customise.add", "plus", "Add a row", this::addRow);
-        panel.heading("Built-In Rows");
-        // Built-in rows in Home's own order, so moving one here moves it on Home (live).
+        panel.heading("Shown on Home");
         for (Row row : new ArrayList<>(model.rows))
         {
-            String[] builtIn = builtIn(row.id);
-            if (row.custom() || builtIn == null)
+            if (!row.visible || !known(row))
             {
                 continue;
             }
-            android.view.View line = panel.toggle("home.customise.builtin:" + row.id, builtIn[3], builtIn[1],
-                                                  builtIn[2], row.visible, on -> {
-                                                      row.visible = on;
-                                                      save();
-                                                  });
-            panel.movable(line, (v, direction) -> move(row, direction));
+            String[] buttons = row.custom() ? new String[] {"Move", "Hide", "Edit"} : new String[] {"Move", "Hide"};
+            View[] line = {null};
+            line[0] = panel.buttons(tag(row), icon(row), name(row), second(row), buttons, n -> {
+                if (n == 0)
+                {
+                    panel.pickUp(line[0], (v, direction) -> move(row, direction));
+                }
+                else if (n == 1)
+                {
+                    row.visible = false;
+                    save();
+                    rebuild(neighbour(row));
+                }
+                else
+                {
+                    rowSettings(row, false);
+                }
+            });
         }
+        List<Row> hidden = new ArrayList<>();
+        for (Row row : model.rows)
+        {
+            if (!row.visible && known(row))
+            {
+                hidden.add(row);
+            }
+        }
+        hidden.sort((a, b) -> name(a).compareToIgnoreCase(name(b)));
+        if (!hidden.isEmpty())
+        {
+            panel.heading("Hidden");
+        }
+        for (Row row : hidden)
+        {
+            panel.buttons(tag(row), icon(row), name(row), second(row), new String[] {"Show"}, n -> {
+                row.visible = true;
+                save();
+                rebuild(tag(row));
+            });
+        }
+        panel.line();
+        panel.action("home.customise.add", "plus", "Add a row", this::addRow);
         android.content.SharedPreferences prefs =
             androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
         String remembered = focusTag != null ? focusTag : prefs.getString(LAST_ROW, null);
         for (int i = 0; i < panel.body.getChildCount(); i++)
         {
-            android.view.View row = panel.body.getChildAt(i);
+            View row = panel.body.getChildAt(i);
             if (row.isFocusable() && row.getTag() instanceof String)
             {
-                android.view.View.OnFocusChangeListener look = row.getOnFocusChangeListener();
+                View.OnFocusChangeListener look = row.getOnFocusChangeListener();
                 row.setOnFocusChangeListener((v, has) -> {
                     look.onFocusChange(v, has);
                     if (has)
@@ -115,6 +138,64 @@ final class HomeCustomisePanel
             }
         }
         panel.show(remembered == null ? null : panel.body.findViewWithTag(remembered));
+    }
+
+    private void rebuild(String focusTag)
+    {
+        panel.onClosed(() -> {
+        });
+        panel.dismiss();
+        build(focusTag);
+    }
+
+    /** Built-in rows Supernova knows, and every row of your own. */
+    private static boolean known(Row row)
+    {
+        return row.custom() || builtIn(row.id) != null;
+    }
+
+    static String tag(Row row)
+    {
+        return row.custom() ? "home.customise.row:" + row.id : "home.customise.builtin:" + row.id;
+    }
+
+    private static String name(Row row)
+    {
+        String[] builtIn = builtIn(row.id);
+        return builtIn != null && !row.custom() ? builtIn[1] : row.name;
+    }
+
+    private static String icon(Row row)
+    {
+        String[] builtIn = builtIn(row.id);
+        return builtIn != null && !row.custom() ? builtIn[3] : PreviewHomeRows.iconName(row);
+    }
+
+    private static String second(Row row)
+    {
+        String[] builtIn = builtIn(row.id);
+        return builtIn != null && !row.custom() ? builtIn[2] : summary(row);
+    }
+
+    /** After hiding a row, focus goes to the next shown row (or the one before, or Add a row). */
+    private String neighbour(Row hidden)
+    {
+        int at = model.rows.indexOf(hidden);
+        for (int i = at + 1; i < model.rows.size(); i++)
+        {
+            if (model.rows.get(i).visible && known(model.rows.get(i)))
+            {
+                return tag(model.rows.get(i));
+            }
+        }
+        for (int i = at - 1; i >= 0; i--)
+        {
+            if (model.rows.get(i).visible && known(model.rows.get(i)))
+            {
+                return tag(model.rows.get(i));
+            }
+        }
+        return "home.customise.add";
     }
 
     private static String[] builtIn(String id)
@@ -129,14 +210,14 @@ final class HomeCustomisePanel
         return null;
     }
 
-    /** Swaps a row with its neighbour of the same kind (your rows among themselves, built-in among built-in). */
+    /** Swaps a shown row with the next shown row above or below it (Home's order, live). */
     private boolean move(Row row, int direction)
     {
         int at = model.rows.indexOf(row);
         for (int i = at + direction; i >= 0 && i < model.rows.size(); i += direction)
         {
             Row other = model.rows.get(i);
-            if (other.custom() != row.custom() || !row.custom() && builtIn(other.id) == null)
+            if (!other.visible || !known(other))
             {
                 continue;
             }
@@ -240,16 +321,21 @@ final class HomeCustomisePanel
             row.rating = n == 0 ? 0 : 5 + n;
             apply.run();
         });
-        int sort = Math.max(0, Arrays.asList(SORTS).indexOf(row.sort));
         FloatingPanel.ChipRow[] order = {null};
-        settings.chips("home.row.sort", "sort", "Sort by", new String[] {"Title", "Release date", "Date added"}, sort,
-                       n -> {
-                           row.sort = SORTS[n];
-                           row.descending = !"title".equals(row.sort);
-                           order[0].setOptions(orderWords(row.sort));
-                           order[0].choose(0, false);
-                           apply.run();
-                       });
+        TextView[] sortValue = {null};
+        // Sort by opens the Sort list (owner, 21 Nov; home-v3/tv/12), a tick on the current one.
+        sortValue[0] = settings.opener("home.row.sort", "sort", "Sort by", SORT_WORDS[sortIndex(row)], () -> {
+            View anchor = (View) sortValue[0].getParent();
+            PreviewDialog.menu(context, anchor, "Sort by", SORT_WORDS, new String[] {"title", "date", "added"},
+                               sortIndex(row), n -> {
+                                   row.sort = SORTS[n];
+                                   row.descending = !"title".equals(row.sort);
+                                   sortValue[0].setText(SORT_WORDS[n]);
+                                   order[0].setOptions(orderWords(row.sort));
+                                   order[0].choose(0, false);
+                                   apply.run();
+                               });
+        });
         order[0] = settings.chips("home.row.order", row.descending ? "descending" : "ascending", "Order",
                                   orderWords(row.sort), "title".equals(row.sort) == row.descending ? 1 : 0, n -> {
                                       boolean first = n == 0;
@@ -280,15 +366,28 @@ final class HomeCustomisePanel
         if (!adding)
         {
             settings.line();
-            settings.action("home.row.delete", "delete", "Delete row", () -> PreviewDialog.warning(
-                context, "Delete " + row.name + "?", "Removes this row from Home. Your videos are never deleted.",
-                "Keep row", "Delete row", () -> {
-                    model.rows.remove(row);
-                    save();
-                    settings.dismiss();
-                    panel.dismiss();
-                    build("home.customise.add");
-                }));
+            // Delete this row warns beside itself and uses Undo, no pop-up (owner, 21 Nov; home-v3/tv/12).
+            View[] delete = {null};
+            delete[0] = settings.buttons("home.row.delete", "delete", "Delete this row",
+                                         "Your videos are never deleted.", new String[] {"Keep row", "Delete row"},
+                                         n -> {
+                                             if (n == 0)
+                                             {
+                                                 return;
+                                             }
+                                             int at = model.rows.indexOf(row);
+                                             model.rows.remove(row);
+                                             save();
+                                             settings.onClosed(() -> {
+                                             });
+                                             settings.dismiss();
+                                             rebuild("home.customise.add");
+                                             UndoNotice.show(context, row.name + " deleted", () -> {
+                                                 model.rows.add(Math.min(at, model.rows.size()), row);
+                                                 save();
+                                                 rebuild(tag(row));
+                                             });
+                                         });
         }
         settings.onClosed(() -> {
             if (panel != null && panel.dialog.isShowing())
@@ -298,6 +397,13 @@ final class HomeCustomisePanel
             }
         });
         settings.show(null);
+    }
+
+    static final String[] SORT_WORDS = {"Title", "Release date", "Date added"};
+
+    private static int sortIndex(Row row)
+    {
+        return Math.max(0, Arrays.asList(SORTS).indexOf(row.sort));
     }
 
     static String[] orderWords(String sort)

@@ -53,7 +53,7 @@ public final class PreviewCardPresenter extends Presenter {
 
     public static final class Card extends BaseCardView {
         /** 400 to 440 px wide when focused. */
-        public static final float FOCUS_SCALE = 1.1f;
+        public static final float FOCUS_SCALE = 1.08f;
         /** Library posters: the whole card (artwork and caption) grows about 8% (page sheet LIBRARY.md). */
         public static final float POSTER_FOCUS_SCALE = 1.08f;
         /** The library poster's caption box: three lines under the artwork (`library-pages/27`). */
@@ -63,7 +63,10 @@ public final class PreviewCardPresenter extends Presenter {
         /** One row card size everywhere: 400 × 225 px at 1080p (focused 440 × 248); caption box under it. */
         public static final int ROW_WIDTH_DP = 200;
         public static final int ROW_PICTURE_DP = 113;
-        public static final int ROW_CAPTION_DP = 46;
+        /** Row design A (RULES §14c, owner 19 Nov): the title and one line sit over the artwork; no box under it. */
+        public static final int ROW_CAPTION_DP = 0;
+        /** RULES §14d (owner, 21 Nov): a focused row card grows 8% (432 × 243) and cards sit 40 px apart. */
+        public static final int ROW_GAP_DP = 20;
         public final ImageView image;
         final TextView title, subtitle;
         /** Library posters: the line that follows the sort, and the tick on a watched title. */
@@ -143,13 +146,14 @@ public final class PreviewCardPresenter extends Presenter {
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
             title.setMaxLines(style == Style.CONTINUE ? 1 : 2);
             if (style == Style.ROW) {
-                // Home row card: title (bright), one soft line, inset bar; nothing over the artwork (13 Nov).
-                caption.setGravity(Gravity.TOP);
+                // Row design A (RULES §14c): title and one soft line over the artwork's foot on a dark fade.
+                caption.setGravity(Gravity.BOTTOM);
                 title.setLines(1);
                 title.setTextSize(12);
                 title.setIncludeFontPadding(false);
-                caption.setPadding(dp(8), dp(7), dp(8), dp(4));
-                caption.setBackgroundColor(POSTER_CAPTION_FILL);
+                caption.setPadding(dp(10), dp(22), dp(10), dp(8));
+                caption.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                                                           new int[] {0x00000000, 0xB3000000, 0xE6000000}));
             }
             if (style == Style.POSTER) {
                 // Poster and caption are one card (owner, 13 Nov; RULES §14): a charcoal-grey box under the
@@ -173,7 +177,7 @@ public final class PreviewCardPresenter extends Presenter {
             if (style == Style.ROW) {
                 secondSize.topMargin = dp(4);
                 subtitle.setTextSize(10);
-                subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+                subtitle.setTextColor(0xFFDCE3EE);
             }
             if (style == Style.POSTER) {
                 secondSize.topMargin = dp(3);
@@ -203,7 +207,7 @@ public final class PreviewCardPresenter extends Presenter {
             if (style == Style.POSTER)
                 captionParams.height = dp(POSTER_CAPTION_DP);
             if (style == Style.ROW)
-                captionParams.height = dp(ROW_CAPTION_DP);
+                captionParams.height = FrameLayout.LayoutParams.WRAP_CONTENT;
             if (style == Style.LIST) {
                 caption.setPadding(0, 0, 0, 0);
                 title.setSingleLine(true);
@@ -502,11 +506,10 @@ public final class PreviewCardPresenter extends Presenter {
         c.subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
         c.third.setText(third == null ? "" : third);
         c.third.setVisibility(View.VISIBLE);
-        c.progress.setProgress(progress);
-        c.progress.setVisibility(progress > 0 ? View.VISIBLE : View.GONE);
-        c.progress.setProgressTintList(ColorStateList.valueOf(Color.WHITE));
-        c.progress.setProgressBackgroundTintList(ColorStateList.valueOf(0x40FFFFFF));
-        c.tick.setVisibility(watched ? View.VISIBLE : View.GONE);
+        // The corner badge (RULES §14c): no bar, no separate tick.
+        c.progress.setVisibility(View.GONE);
+        c.tick.setVisibility(View.GONE);
+        badge(c, watched ? 1f : progress / 100f, watched);
         StringBuilder words = new StringBuilder(c.title.getText());
         if (second != null && !second.isEmpty())
             words.append(", ").append(second);
@@ -517,19 +520,28 @@ public final class PreviewCardPresenter extends Presenter {
         c.setContentDescription(words);
     }
 
-    /** A Home row card's caption: one soft line (e.g. "S1 E2 · 31 min left") and the inset bar (HOME.md). */
+    /** A Home row card's caption: one soft line (e.g. "S1 E2 · 31 min left") over the artwork (HOME.md). */
     public static void bindRowCaption(ViewHolder holder, String line, int progress) {
+        bindRowCaption(holder, line, progress / 100f, false);
+    }
+
+    /** Row design A with the corner badge (RULES §14c): {@code fraction} watched so far, or the tick. */
+    public static void bindRowCaption(ViewHolder holder, String line, float fraction, boolean watched) {
         Card c = (Card) holder.view;
         if (c.style != Style.ROW)
             return;
         c.subtitle.setText(line == null ? "" : line);
         c.subtitle.setVisibility(View.VISIBLE);
-        c.subtitle.setTextColor(SupernovaStyle.TEXT_SECONDARY);
-        c.progress.setProgress(progress);
-        c.progress.setVisibility(progress > 0 ? View.VISIBLE : View.GONE);
-        c.progress.setProgressTintList(ColorStateList.valueOf(Color.WHITE));
-        c.progress.setProgressBackgroundTintList(ColorStateList.valueOf(0x40FFFFFF));
-        c.setContentDescription(c.title.getText() + (line == null || line.isEmpty() ? "" : ", " + line));
+        c.progress.setVisibility(View.GONE);
+        badge(c, fraction, watched);
+        String words = c.title.getText() + (line == null || line.isEmpty() ? "" : ", " + line);
+        c.setContentDescription(watched ? words + ", watched" : words);
+    }
+
+    private static void badge(Card c, float fraction, boolean watched) {
+        com.archos.mediacenter.video.leanback.ProgressBadge.apply(
+            (FrameLayout) c.getChildAt(0), fraction, watched,
+            com.archos.mediacenter.video.leanback.ProgressBadge.SIZE_PX_1080);
     }
 
     /** The tick on a watched poster: a white disc with a dark tick (`library-pages/27`). */

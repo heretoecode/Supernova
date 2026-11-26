@@ -89,11 +89,13 @@ public class Review0158HomeTest
             Review0158Fixture.settle(nav);
             Review0158Fixture.saveWithDialog(nav, "0158-home-05-customise-home");
             Dialog panel = ShadowDialog.getLatestDialog();
-            // Order with the move gesture: long-press picks Continue Watching up, Down moves it, OK puts it down.
+            // Move on the focused row (home-v3/tv/07): picks Continue Watching up, Down moves it, OK puts it down.
             View continuing = panel.getWindow().getDecorView().findViewWithTag("home.customise.builtin:continue");
             assertNotNull(continuing);
             continuing.requestFocus();
-            continuing.performLongClick();
+            Review0158Fixture.settle(nav);
+            Review0158Fixture.saveWithDialog(nav, "0158-home-05a-customise-row-buttons");
+            continuing.performClick();
             panel.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             Review0158Fixture.settle(nav);
             Review0158Fixture.saveWithDialog(nav, "0158-home-05b-customise-home-moving");

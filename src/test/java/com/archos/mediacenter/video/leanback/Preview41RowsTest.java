@@ -63,11 +63,14 @@ public class Preview41RowsTest {
                 rows.rows.stream().filter(r -> r.id.equals("watchnext")).findFirst().get().members.contains(e.key()));
             PreviewHomeRows.customise(c, () -> {
             });
-            // Customise Home (0.158): Watch Next's switch hides the row; its titles stay in it.
+            // Customise Home (0.158, home-v3/tv/07): Hide on Watch Next's focused row hides it; its titles stay.
             Dialog editor = ShadowDialog.getLatestDialog();
             View root = editor.getWindow().getDecorView();
             View watched = root.findViewWithTag("home.customise.builtin:watchnext");
             assertNotNull(watched);
+            watched.requestFocus();
+            watched.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,
+                                                               android.view.KeyEvent.KEYCODE_DPAD_RIGHT));
             watched.performClick();
             int width = editor.getWindow().getAttributes().width;
             assertTrue(width <= TvLayout.safeWidth(c));

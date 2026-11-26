@@ -57,16 +57,12 @@ final class PreviewFeaturedCard extends FrameLayout {
         card.addView(art(c, entry), new LayoutParams(-1, -1));
         card.addTextScrim(); // same readability shade as the Details hero
 
-        LinearLayout copy = new LinearLayout(c);
-        copy.setOrientation(LinearLayout.VERTICAL);
-        copy.setTag("featured.copy");
-        copy.setPadding(dp(24), dp(22), dp(18), dp(18));
-        card.addView(copy, new LayoutParams(-1, -1));
+        // One hero, one text block (RULES §14d): the same anchored-to-the-foot layout as Details.
+        HeroText block = new HeroText(c, card);
+        block.copy.setTag("featured.copy");
         // The next-episode label above the logo (owner, 25 Nov; placement A), the same as on Details.
         TextView nextEpisode = NextEpisodeLabel.create(c);
-        LinearLayout.LayoutParams nextSize = new LinearLayout.LayoutParams(-2, dp(NextEpisodeLabel.LABEL_DP));
-        nextSize.bottomMargin = NextEpisodeLabel.gap(c);
-        copy.addView(nextEpisode, nextSize);
+        block.label(nextEpisode, dp(NextEpisodeLabel.LABEL_DP));
         TextView title = text(entry == null ? "" : PreviewPages.displayName(entry), 30);
         title.setTag("semantic:featured.title");
         title.setSingleLine(true);
@@ -74,7 +70,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         title.setTypeface(null, Typeface.BOLD);
         // Text and logo sit at the bottom of the title box, just above the metadata (0.155 notes #2).
         title.setGravity(Gravity.BOTTOM | Gravity.START);
-        copy.addView(title, new LinearLayout.LayoutParams(-1, dp(86)));
+        block.logo(title, -1, dp(86));
         boolean series = entry != null && (entry.media instanceof Tvshow || entry.media instanceof Episode);
         NextEpisodeLabel.bindCached(nextEpisode, title, dp(86), series ? entry.onlineId : 0);
         if (entry != null)
@@ -85,13 +81,9 @@ final class PreviewFeaturedCard extends FrameLayout {
         metadata.setMaxLines(2);
         metadata.setTag("semantic:featured.metadata");
         metadata.setPadding(0, dp(4), 0, dp(4));
-        LinearLayout.LayoutParams metadataSize = new LinearLayout.LayoutParams(-1, -2);
-        metadataSize.topMargin = dp(18);
-        copy.addView(metadata, metadataSize);
+        block.facts(metadata, false);
         LinearLayout badges = new LinearLayout(c);
-        LinearLayout.LayoutParams badgeSize = new LinearLayout.LayoutParams(-1, -2);
-        badgeSize.topMargin = dp(8);
-        copy.addView(badges, badgeSize);
+        block.withFacts(badges);
         SharedMetadata.bindCard(metadata, badges,
             entry != null && entry.homeMetadata != null ? entry.homeMetadata : SharedMetadata.entry(c, entry, true),
             true);
@@ -114,14 +106,11 @@ final class PreviewFeaturedCard extends FrameLayout {
         synopsis.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         synopsis.setShadowLayer(SharedMetadata.heroShadow(c), 0, dp(1), 0xCC000000);
         synopsis.setTag("semantic:featured.synopsis");
-        LinearLayout.LayoutParams synopsisSize = new LinearLayout.LayoutParams(-1, -2);
-        synopsisSize.topMargin = dp(12);
-        copy.addView(synopsis, synopsisSize);
+        block.description(synopsis, -1);
         card.addTextPatch(title, metadata, synopsis);
-        copy.addView(new View(c), new LinearLayout.LayoutParams(1, 0, 1));
         LinearLayout actions = new LinearLayout(c);
         actions.setClipChildren(false);
-        copy.addView(actions, new LinearLayout.LayoutParams(-1, dp(44)));
+        block.buttons(actions, dp(44));
         // One button, More (owner, 19 Nov; HOME.md): its menu holds Details, Playback and This Title.
         TextView[] holder = {null};
         holder[0] = action("More", () -> more.accept(holder[0]));

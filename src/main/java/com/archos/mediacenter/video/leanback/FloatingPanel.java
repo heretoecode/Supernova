@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Dialog;
+import com.archos.mediacenter.video.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -170,6 +171,11 @@ final class FloatingPanel
                 boolean value = "value".equals(tag) || "chevron".equals(tag);
                 ((TextView) child).setTextColor(value && !focused ? SupernovaStyle.TEXT_SECONDARY : ink);
             }
+            if (child instanceof LinearLayout && "buttons".equals(child.getTag()))
+            {
+                paintButtons((LinearLayout) child, focused, ink);
+                continue;
+            }
             if (child instanceof LinearLayout && !"chips".equals(child.getTag()))
             {
                 LinearLayout words = (LinearLayout) child;
@@ -188,6 +194,11 @@ final class FloatingPanel
                 mark.setColorFilter(null);
                 mark.invalidateSelf();
             }
+            if (child instanceof LinearLayout && "chips".equals(child.getTag()) && stepped((LinearLayout) child))
+            {
+                paintStepper((LinearLayout) child, focused, chosen, ink);
+                continue;
+            }
             if (child instanceof LinearLayout && "chips".equals(child.getTag()))
             {
                 LinearLayout chips = (LinearLayout) child;
@@ -202,6 +213,38 @@ final class FloatingPanel
                     chip.setTextColor(on && focused ? Color.WHITE : ink);
                 }
             }
+        }
+    }
+
+    /** RULES §8 (owner, 21 Nov): more than two choices are one value stepped with Left / Right, not chips. */
+    static boolean stepped(LinearLayout chips)
+    {
+        return chips.getChildCount() > 2;
+    }
+
+    /**
+     * The stepper look: only the current value, plain white; ‹ › beside it only while the row is focused, and at rest
+     * the arrows keep their room so values line up down the panel.
+     */
+    private void paintStepper(LinearLayout chips, boolean focused, int chosen, int ink)
+    {
+        for (int n = 0; n < chips.getChildCount(); n++)
+        {
+            TextView chip = (TextView) chips.getChildAt(n);
+            boolean on = n == chosen;
+            chip.setVisibility(on ? View.VISIBLE : View.GONE);
+            chip.setBackground(null);
+            if (!on)
+            {
+                continue;
+            }
+            String option = String.valueOf(chip.getContentDescription());
+            android.text.SpannableString text = new android.text.SpannableString("‹  " + option + "  ›");
+            int arrows = focused ? ink : Color.TRANSPARENT;
+            text.setSpan(new android.text.style.ForegroundColorSpan(arrows), 0, 1, 0);
+            text.setSpan(new android.text.style.ForegroundColorSpan(arrows), text.length() - 1, text.length(), 0);
+            chip.setText(text);
+            chip.setTextColor(ink);
         }
     }
 
@@ -268,6 +311,7 @@ final class FloatingPanel
             {
                 TextView chip = new TextView(context);
                 chip.setText(option);
+                chip.setContentDescription(option);
                 chip.setTextSize(13);
                 chip.setSingleLine(true);
                 chip.setIncludeFontPadding(false);
@@ -286,7 +330,7 @@ final class FloatingPanel
         {
             chosen = index;
             CharSequence label = ((TextView) row.findViewWithTag("label")).getText();
-            row.setContentDescription(label + ", " + ((TextView) chips.getChildAt(index)).getText());
+            row.setContentDescription(label + ", " + chips.getChildAt(index).getContentDescription());
             paint(row, row.isFocused(), chosen);
             if (notify)
             {
@@ -520,6 +564,88 @@ final class FloatingPanel
             return true;
         }
         return true;
+    }
+
+    /**
+     * A row whose buttons show only while it is focused (Customise Home, owner 21 Nov: "Move · Hide · Edit" on the
+     * focused row; a hidden row shows "Show"). Left / Right picks a button, OK presses it; Up / Down move between
+     * rows as usual. Returns the row.
+     */
+    View buttons(String tag, String icon, String label, String second, String[] names, IntConsumer pressed)
+    {
+        LinearLayout row = row(tag, icon, label, second);
+        LinearLayout buttons = new LinearLayout(context);
+        buttons.setTag("buttons");
+        buttons.setGravity(Gravity.CENTER_VERTICAL);
+        for (String name : names)
+        {
+            TextView button = new TextView(context);
+            button.setText(name);
+            button.setTag("button:" + name);
+            button.setTextSize(13);
+            button.setSingleLine(true);
+            button.setIncludeFontPadding(false);
+            button.setGravity(Gravity.CENTER);
+            button.setPadding(dp(10), 0, dp(10), 0);
+            LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-2, dp(23));
+            size.leftMargin = dp(4);
+            buttons.addView(button, size);
+        }
+        buttons.setVisibility(View.INVISIBLE);
+        row.addView(buttons, new LinearLayout.LayoutParams(-2, -1));
+        int[] picked = {0};
+        buttons.setTag(R.id.panel_button_picked, picked);
+        row.setOnFocusChangeListener((v, has) -> {
+            if (!has)
+            {
+                picked[0] = 0;
+            }
+            paint(row, has, -1);
+        });
+        row.setOnKeyListener((v, key, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+            {
+                return false;
+            }
+            if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT)
+            {
+                int next = picked[0] + (key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
+                if (next >= 0 && next < names.length)
+                {
+                    picked[0] = next;
+                    paint(row, true, -1);
+                }
+                return true;
+            }
+            return false;
+        });
+        row.setOnClickListener(v -> pressed.accept(picked[0]));
+        paint(row, false, -1);
+        return row;
+    }
+
+    /** Which button a buttons row has picked (for tests). */
+    static int picked(View row)
+    {
+        LinearLayout buttons = row.findViewWithTag("buttons");
+        return buttons == null ? -1 : ((int[]) buttons.getTag(R.id.panel_button_picked))[0];
+    }
+
+    /** The buttons show on the focused row only: the picked one black with white words, the others plain. */
+    private void paintButtons(LinearLayout buttons, boolean focused, int ink)
+    {
+        buttons.setVisibility(focused ? View.VISIBLE : View.INVISIBLE);
+        Object state = buttons.getTag(R.id.panel_button_picked);
+        int picked = state instanceof int[] ? ((int[]) state)[0] : 0;
+        for (int n = 0; n < buttons.getChildCount(); n++)
+        {
+            TextView button = (TextView) buttons.getChildAt(n);
+            GradientDrawable fill = new GradientDrawable();
+            fill.setCornerRadius(dp(7));
+            fill.setColor(n == picked ? SupernovaStyle.FOCUS_TEXT : Color.TRANSPARENT);
+            button.setBackground(fill);
+            button.setTextColor(n == picked ? Color.WHITE : ink);
+        }
     }
 
     /** A plain action row (e.g. Delete page at the foot). */

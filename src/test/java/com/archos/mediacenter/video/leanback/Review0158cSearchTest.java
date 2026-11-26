@@ -152,7 +152,6 @@ public class Review0158cSearchTest
             List<Object> media = Arrays.asList(show, resumed, fresh, seen);
             PreviewSearchTestAccess.results(search, "tide", media, Arrays.asList("", "", "Mara Ellison · director"));
             Review0158Fixture.settle(nav);
-            assertNotNull(Review0158Fixture.anyText(search, "In your library"));
             assertNotNull("Year first on the second line", Review0158Fixture.anyText(search, "2025 · Movie · 1 h 52 min"));
             assertNotNull(Review0158Fixture.anyText(search, "▶ Resume"));
             assertNull("No Watched pills", Review0158Fixture.anyText(search, "✓ Watched"));

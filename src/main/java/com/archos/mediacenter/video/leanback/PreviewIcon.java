@@ -242,6 +242,11 @@ public final class PreviewIcon extends Drawable {
             line(c, 10, 10, 10, 16);
             c.drawPoint(10, 7, p);
             line(c, 17, 18, 23, 18);
+        } else if (kind.equals("hero-exclude")) {
+            // Exclude from hero (owner, 21 Nov, A): the hero screen with a minus.
+            line(c, 2, 4, 22, 4, 22, 16, 2, 16, 2, 4);
+            line(c, 6, 20, 18, 20);
+            line(c, 8, 10, 16, 10);
         } else if (kind.contains("remove") && kind.contains("library")) {
             line(c, 3, 3, 3, 21, 18, 21);
             line(c, 8, 3, 8, 16);

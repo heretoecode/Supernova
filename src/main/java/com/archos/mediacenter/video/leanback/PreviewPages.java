@@ -657,10 +657,21 @@ public final class PreviewPages extends FrameLayout {
 
     public void recordRemoteInput() {
         lastInteraction = SystemClock.elapsedRealtime();
+        if (featuredIndicators != null)
+            featuredIndicators.resetFill();
         heroClock.input(lastInteraction);
         removeCallbacks(rotateFeatured);
         if (tab == 0 && isAttachedToWindow())
             postDelayed(rotateFeatured, HeroRotationPolicy.IDLE_MS);
+    }
+
+    /** True while the remote is on the hero (its More button or the card). */
+    boolean heroFocused() {
+        View focus = findFocus();
+        for (View v = focus; v != null; v = v.getParent() instanceof View ? (View)v.getParent() : null)
+            if (v instanceof PreviewFeaturedCard)
+                return true;
+        return false;
     }
 
     /** Settings › Library › Home Hero › Change every; 8 seconds unless chosen. */
@@ -689,11 +700,20 @@ public final class PreviewPages extends FrameLayout {
             if (!isAttachedToWindow())
                 return;
             long now = SystemClock.elapsedRealtime();
-            boolean visible = tab == 0 && hasWindowFocus() && isShown() && !list.canScrollVertically(-1);
+            // Automatic changes pause while focus is on the hero (HOME.md); so does the dot's fill.
+            boolean visible = tab == 0 && hasWindowFocus() && isShown() && !list.canScrollVertically(-1)
+                              && !heroFocused();
             int count = featuredCandidates().size();
             heroClock.interval(heroInterval());
             if (heroClock.due(now, visible, motionAllowed(), count))
                 changeFeatured(1, false);
+            boolean idle = now - lastInteraction >= HeroRotationPolicy.IDLE_MS;
+            if (featuredIndicators != null) {
+                if (visible && idle && motionAllowed() && count > 1)
+                    featuredIndicators.fillOver(heroClock.delay(now));
+                else
+                    featuredIndicators.pauseFill();
+            }
             postDelayed(this, visible && motionAllowed() && count > 1 ? Math.max(200, heroClock.delay(now))
                                                                       : HeroRotationPolicy.INTERVAL_MS);
         }
@@ -2868,56 +2888,34 @@ public final class PreviewPages extends FrameLayout {
     }
 
     /**
-     * The hero's More: beside the button, Details first (OK on the hero plays), then the library menu's Library and
-     * Files & Media items.
+     * Home's hero More (owner, 26 Nov: Playback first; HOME.md): Playback (Resume S2 E3 / Play · Play from the start;
+     * focus starts on Resume / Play), then Details, then This Title (Mark as watched · Exclude from hero). The same
+     * order as the library long-press menu. No library management on Home.
      */
     private void heroMenu(Entry e, View anchor) {
-        // Home's hero More, trimmed (owner, 21 Nov; home-v3/tv/09, 14): Details · Playback · This Title. No library
-        // management on Home.
-        List<String> labels = new ArrayList<>();
-        List<String> icons = new ArrayList<>();
-        List<Runnable> commands = new ArrayList<>();
-        boolean show = e.media instanceof Tvshow;
-        boolean watched = LibraryPageModel.watched(e);
-        labels.add("Details");
-        icons.add("details");
-        commands.add(() -> open(e, anchor));
-        labels.add("— Playback");
-        icons.add(null);
-        commands.add(null);
-        Entry next = show ? nextEpisodes.get(((Tvshow)e.media).getTvshowId()) : null;
+        LibraryItemMenu.Spec spec = new LibraryItemMenu.Spec();
+        spec.title = displayName(e);
+        spec.show = e.media instanceof Tvshow;
+        spec.watched = LibraryPageModel.watched(e);
+        Entry next = spec.show ? nextEpisodes.get(((Tvshow)e.media).getTvshowId()) : null;
         if (next != null && next.media instanceof Episode) {
             Episode episode = (Episode)next.media;
-            labels.add("Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber());
-            icons.add("resume");
-            commands.add(() -> play(next, anchor));
+            spec.playLabel = "Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber();
+            spec.started = true;
+            spec.play = () -> play(next, anchor);
         } else {
-            boolean resume = e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !watched;
-            labels.add(resume ? "Resume" : "Play");
-            icons.add(resume ? "resume" : "play");
-            commands.add(() -> play(e, anchor));
+            spec.started = e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !spec.watched;
+            spec.playLabel = spec.started ? heroPlayLabel(e) : "Play";
+            spec.play = () -> play(e, anchor);
         }
-        Entry first = show ? firstEpisode(e) : e;
-        if (first != null && (show ? next != null : e.media instanceof Video && ((Video)e.media).getResumeMs() > 0)) {
-            labels.add("Play from the start");
-            icons.add("history");
-            commands.add(() -> playFromStart(first));
-        }
-        labels.add("— This Title");
-        icons.add(null);
-        commands.add(null);
-        labels.add(watched ? (show ? "Mark show as unwatched" : "Mark as unwatched")
-                           : (show ? "Mark show as watched" : "Mark as watched"));
-        icons.add("check");
-        commands.add(() -> markWatched(e, !watched));
-        labels.add("Exclude from hero");
-        icons.add("remove");
-        commands.add(() -> excludeFromHero(e));
-        PreviewDialog.menu(getContext(), anchor, displayName(e), labels.toArray(new String[0]),
-                           icons.toArray(new String[0]), -1, n -> {
-                               if (commands.get(n) != null)
-                                   commands.get(n).run();
-                           });
+        Entry first = spec.show ? firstEpisode(e) : e;
+        if (first != null)
+            spec.playFromStart = () -> playFromStart(first);
+        spec.details = () -> open(e, anchor);
+        boolean watched = spec.watched;
+        spec.markWatched = () -> markWatched(e, !watched);
+        spec.excludeFromHero = () -> excludeFromHero(e);
+        LibraryItemMenu.show(getContext(), anchor, spec);
     }
 
     /** Exclude from hero: the title leaves the carousel at once, with an Undo notice (owner, 21 Nov). */
@@ -3234,7 +3232,9 @@ public final class PreviewPages extends FrameLayout {
                     PreviewCardPresenter.bindLibraryCaption(
                         h.card, LibraryPageModel.secondLine(e, next),
                         LibraryPageModel.thirdLine(getContext(), columns[tab], sortKey(), e),
-                        LibraryPageModel.progress(e, next), LibraryPageModel.watched(e));
+                        e.media instanceof Tvshow ? Math.round(100 * LibraryPageModel.badge(e))
+                                                  : LibraryPageModel.progress(e, next),
+                        LibraryPageModel.watched(e));
                     placeInRow(h.itemView, p);
                     h.itemView.setOnLongClickListener(v -> {
                         libraryMenu(e, v);
@@ -3830,11 +3830,11 @@ public final class PreviewPages extends FrameLayout {
             Holder h = new Holder(card.view);
             h.card = card;
             h.presenter = pr;
-            // One row card size: 400 × 225 at 1080p plus the caption box, 24 px gap (RULES §14).
+            // One row card size: 400 × 225 at 1080p, 40 px apart so the 8% growth never overlaps (RULES §14d).
             RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(
                 dp(PreviewCardPresenter.Card.ROW_WIDTH_DP),
                 dp(PreviewCardPresenter.Card.ROW_PICTURE_DP + PreviewCardPresenter.Card.ROW_CAPTION_DP));
-            lp.rightMargin = dp(12);
+            lp.rightMargin = dp(PreviewCardPresenter.Card.ROW_GAP_DP);
             h.itemView.setLayoutParams(lp);
             return h;
         }
@@ -3842,7 +3842,8 @@ public final class PreviewPages extends FrameLayout {
         public void onBindViewHolder(Holder h, int p) {
             Entry e = entries.get(p);
             pr.bindEntry(h.card, e);
-            PreviewCardPresenter.bindRowCaption(h.card, LibraryPageModel.rowLine(e), LibraryPageModel.rowProgress(e));
+            PreviewCardPresenter.bindRowCaption(h.card, LibraryPageModel.rowLine(e), LibraryPageModel.badge(e),
+                                                LibraryPageModel.watched(e));
             h.itemView.setTag(e.key());
             h.itemView.setOnClickListener(v -> {
                 if (resume)

@@ -191,34 +191,31 @@ public final class PreviewMoviePage extends ScrollView {
         cardArtwork.setScaleType(ImageView.ScaleType.CENTER_CROP);
         detailsCard.addView(cardArtwork, new FrameLayout.LayoutParams(-1, -1));
         detailsCard.addTextScrim();
-        LinearLayout cardCopy = new LinearLayout(c);
-        cardCopy.setTag("details.copy");
-        cardCopy.setOrientation(LinearLayout.VERTICAL);
-        cardCopy.setPadding(dp(24), dp(18), dp(24), dp(16));
-        detailsCard.addView(cardCopy, new FrameLayout.LayoutParams(-1, -1));
+        // One hero, one text block (RULES §14d): the same anchored-to-the-foot layout as Home's hero.
+        com.archos.mediacenter.video.leanback.HeroText heroText =
+            new com.archos.mediacenter.video.leanback.HeroText(c, detailsCard);
+        heroText.copy.setTag("details.copy");
         nextEpisode = NextEpisodeLabel.create(c);
-        LinearLayout.LayoutParams nextSize = new LinearLayout.LayoutParams(-2, dp(NextEpisodeLabel.LABEL_DP));
-        nextSize.bottomMargin = NextEpisodeLabel.gap(c);
-        cardCopy.addView(nextEpisode, nextSize);
+        heroText.label(nextEpisode, dp(NextEpisodeLabel.LABEL_DP));
         title = text("", 34);
         title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         title.setMaxLines(2);
-        title.setGravity(Gravity.CENTER_VERTICAL);
+        title.setGravity(Gravity.BOTTOM | Gravity.START);
         title.setEllipsize(TextUtils.TruncateAt.END);
-        cardCopy.addView(title, new LinearLayout.LayoutParams(dp(430), dp(TITLE_BOX_DP)));
-        meta = text("", 18);
-        meta.setSingleLine(true);
-        meta.setEllipsize(TextUtils.TruncateAt.END);
-        meta.setPadding(0, dp(10), 0, dp(4));
-        cardCopy.addView(meta);
+        heroText.logo(title, dp(430), dp(TITLE_BOX_DP));
+        // The optional title line ("Season 2 · Episode 8 · Title") sits above the facts line (RULES §14d).
         context = text("", 13);
         context.setTextColor(0xffe1e9ef);
         context.setMaxLines(1);
         context.setEllipsize(TextUtils.TruncateAt.END);
-        cardCopy.addView(context);
+        heroText.titleLine(context);
+        meta = text("", 18);
+        meta.setSingleLine(true);
+        meta.setEllipsize(TextUtils.TruncateAt.END);
+        heroText.facts(meta, true);
         pills = new LinearLayout(c);
         pills.setVisibility(GONE);
-        cardCopy.addView(pills);
+        heroText.withFacts(pills);
         // The full synopsis feeds the Details tab; the card itself shows the hero line (tagline, else a
         // two-line synopsis), the same as the Home hero (owner, 3 Nov 2026).
         plot = text("", 14);
@@ -239,25 +236,18 @@ public final class PreviewMoviePage extends ScrollView {
         heroLine.setLineSpacing(dp(2), 1);
         heroLine.setEllipsize(TextUtils.TruncateAt.END);
         heroLine.setShadowLayer(SharedMetadata.heroShadow(c), 0, dp(1), 0xCC000000);
-        LinearLayout.LayoutParams plotSize = new LinearLayout.LayoutParams(
-            Math.min(dp(440), getResources().getDisplayMetrics().widthPixels - dp(84)), dp(76));
-        plotSize.topMargin = dp(8);
-        View synopsisSpace = new View(c);
-        cardCopy.addView(synopsisSpace, new LinearLayout.LayoutParams(1, 0, 1));
-        cardCopy.addView(heroLine, plotSize);
+        heroText.description(heroLine, Math.min(dp(440), getResources().getDisplayMetrics().widthPixels - dp(84)));
         matchMetadata = button("Match Metadata", () -> {
             Action match = matchingAction();
             if (match != null)
                 action.accept(match);
         });
         matchMetadata.setVisibility(GONE);
-        cardCopy.addView(matchMetadata, new LinearLayout.LayoutParams(-2, dp(38)));
+        heroText.beforeButtons(matchMetadata, dp(38));
         LinearLayout buttons = new LinearLayout(c);
         buttons.setTag("details.actions");
         buttons.setClipChildren(false);
-        buttons.setPadding(0, dp(12), 0, dp(10));
-        cardCopy.addView(new View(c), new LinearLayout.LayoutParams(1, 0, 1));
-        cardCopy.addView(buttons);
+        heroText.buttons(buttons, -2);
         trailer = button("Play Trailer", this::chooseTrailer);
         trailer.setVisibility(GONE);
         play = button("Play", this::play);

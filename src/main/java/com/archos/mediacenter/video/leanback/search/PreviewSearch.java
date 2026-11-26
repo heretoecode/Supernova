@@ -241,6 +241,9 @@ public final class PreviewSearch extends LinearLayout {
         resultColumn.addView(resultArea, new LayoutParams(-1, 0, 1));
         resultArea.addView(results, new FrameLayout.LayoutParams(-1, -1));
         guidancePanel = new ScrollView(activity);
+        // More than fits: arrows in the margin, never a scroll bar (RULES §16).
+        guidancePanel.setVerticalScrollBarEnabled(false);
+        guidancePanel.setClipChildren(false);
         guidancePanel.addView(guidance());
         resultArea.addView(guidancePanel, new FrameLayout.LayoutParams(-1, -1));
         resultArea.addView(nothing(), new FrameLayout.LayoutParams(-1, -1));

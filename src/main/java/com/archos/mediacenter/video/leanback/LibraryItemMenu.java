@@ -30,6 +30,8 @@ public final class LibraryItemMenu
         public Runnable fixMatch;
         public Runnable remove;
         public Runnable delete;
+        /** Home's hero only: This Title › Exclude from hero, in place of the library rows (owner, 21 Nov). */
+        public Runnable excludeFromHero;
     }
 
     /** The menu's rows in order: labels (group headings start with "— "), icons and commands, same length. */
@@ -73,12 +75,20 @@ public final class LibraryItemMenu
         {
             rows.add("Details", "details", spec.details);
         }
+        if (spec.excludeFromHero != null)
+        {
+            rows.group("This Title");
+            if (spec.markWatched != null)
+            {
+                rows.add(watchedLabel(spec), "check", spec.markWatched);
+            }
+            rows.add("Exclude from hero", "hero-exclude", spec.excludeFromHero);
+            return rows;
+        }
         rows.group("Library");
         if (spec.markWatched != null)
         {
-            String label = spec.watched ? (spec.show ? "Mark show as unwatched" : "Mark as unwatched")
-                                        : (spec.show ? "Mark show as watched" : "Mark as watched");
-            rows.add(label, "check", spec.markWatched);
+            rows.add(watchedLabel(spec), "check", spec.markWatched);
         }
         if (spec.fixMatch != null)
         {
@@ -86,7 +96,7 @@ public final class LibraryItemMenu
         }
         if (spec.remove != null)
         {
-            rows.add("Remove from library", "remove", spec.remove);
+            rows.add("Remove from library", "remove library", spec.remove);
         }
         if (spec.delete != null)
         {
@@ -94,6 +104,12 @@ public final class LibraryItemMenu
             rows.add(spec.show ? "Delete all episode files" : "Delete file", "delete", spec.delete);
         }
         return rows;
+    }
+
+    private static String watchedLabel(Spec spec)
+    {
+        return spec.watched ? (spec.show ? "Mark show as unwatched" : "Mark as unwatched")
+                            : (spec.show ? "Mark show as watched" : "Mark as watched");
     }
 
     /** Opens the menu beside the anchor; focus starts on the first row (Resume / Play). */
