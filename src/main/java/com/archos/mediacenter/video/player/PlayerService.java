@@ -491,7 +491,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private int mNewAudioTrack;
     public int mAudioFilt;
     public boolean mNightModeOn;
-    private static final String KEY_AUDIO_FILT =
+    static final String KEY_AUDIO_FILT =
         "pref_audio_filt_int_key"; // used to be "pref_audio_filt_key", containing a string
     private static final String KEY_AUDIO_FILT_NIGHT = "pref_audio_filt_night_int_key";
     private static final String[] GENERIC_TEXT_SUBTITLE_FORMATS = {"srt", "vtt"};
