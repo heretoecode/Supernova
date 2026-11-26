@@ -120,8 +120,8 @@ public class Delete {
 
     /** Sorts a delete failure into one plain reason (D6), with the server's answer where it gave one. */
     static void recordFailure(Uri uri, Throwable failure) {
-        if (failure instanceof com.thegrizzlylabs.sardineandroid.impl.SardineException) {
-            int status = ((com.thegrizzlylabs.sardineandroid.impl.SardineException) failure).getStatusCode();
+        int status = httpStatus(failure);
+        if (status > 0) {
             boolean refused = status == 401 || status == 403 || status == 405 || status == 409 || status == 423;
             recordFailure(uri, refused ? REASON_REFUSED : REASON_SERVER, status, failure);
         } else if (failure instanceof IOException || failure instanceof JSchException) {
@@ -131,6 +131,18 @@ public class Delete {
             recordFailure(uri, id == 3 ? REASON_REFUSED : REASON_SERVER, -1, failure);
         } else {
             recordFailure(uri, REASON_UNKNOWN, -1, failure);
+        }
+    }
+
+    /** The server's HTTP answer carried by a WebDAV failure (Sardine's exception, read without linking to it). */
+    static int httpStatus(Throwable failure) {
+        if (failure == null)
+            return -1;
+        try {
+            Object status = failure.getClass().getMethod("getStatusCode").invoke(failure);
+            return status instanceof Integer ? (Integer) status : -1;
+        } catch (ReflectiveOperationException | RuntimeException absent) {
+            return -1;
         }
     }
 

@@ -3,7 +3,6 @@ package com.archos.mediacenter.video.browser;
 import static org.junit.Assert.assertEquals;
 
 import android.net.Uri;
-import com.thegrizzlylabs.sardineandroid.impl.SardineException;
 import java.io.IOException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,11 +14,26 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 30)
 public class DeleteFailureMessageTest
 {
-    private static SardineException status(int code)
+    /** Stands in for Sardine's exception: a WebDAV failure that carries the server's HTTP status. */
+    public static final class WebdavStatusException extends IOException
     {
-        SardineException failure = org.mockito.Mockito.mock(SardineException.class);
-        org.mockito.Mockito.when(failure.getStatusCode()).thenReturn(code);
-        return failure;
+        private final int code;
+
+        WebdavStatusException(int code)
+        {
+            super("HTTP " + code);
+            this.code = code;
+        }
+
+        public int getStatusCode()
+        {
+            return code;
+        }
+    }
+
+    private static IOException status(int code)
+    {
+        return new WebdavStatusException(code);
     }
 
     @Test public void aRefusedWebdavDeleteNamesTheServer()

@@ -854,7 +854,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
 
     /**
      * D13 (0.158.8): artwork kept in memory is capped at 48 MB (Picasso's default is 15 % of the large heap, about
-     * 77 MB on the Shield), and halved or emptied when Android asks for memory back (26 trim requests in a week).
+     * 77 MB on the Shield), and emptied when Android asks for memory back (26 trim requests in a week).
      */
     static final int ARTWORK_CACHE_BYTES = 48 * 1024 * 1024;
     static final com.squareup.picasso.LruCache ARTWORK_CACHE = new com.squareup.picasso.LruCache(ARTWORK_CACHE_BYTES);
@@ -866,12 +866,11 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     static void trimArtwork(int level) {
-        if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_COMPLETE
+        // Picasso's cache can only be emptied: done once the app is out of sight or memory runs low.
+        if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN
+            || level == android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW
             || level == android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL)
             ARTWORK_CACHE.clear();
-        else if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN
-                 || level == android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW)
-            ARTWORK_CACHE.trimToSize(ARTWORK_CACHE.size() / 2);
     }
 
     @Override
