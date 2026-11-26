@@ -46,6 +46,8 @@ public final class DeleteWarning
         /** Shows only: "S1 E1 · The Long Tide", and its season number for the grouping. */
         public String episode = "";
         public int season = -1;
+        /** False for a video file in the show's folders that the library doesn't know (the "Not in library" pill). */
+        public boolean inLibrary = true;
         boolean ticked = true;
 
         public File(Uri uri, String name, String facts, String place, long bytes)
@@ -316,7 +318,8 @@ public final class DeleteWarning
         row.setPadding(dp(10), dp(5), dp(10), dp(5));
         LinearLayout words = new LinearLayout(context);
         words.setOrientation(LinearLayout.VERTICAL);
-        String first = show ? file.episode : file.facts.isEmpty() ? file.name : file.facts;
+        String first = show ? (file.episode.isEmpty() ? file.name : file.episode)
+                            : file.facts.isEmpty() ? file.name : file.facts;
         String second = show ? joined(file.facts, size(file.bytes))
                              : joined(file.facts.isEmpty() ? "" : file.name, file.place, size(file.bytes));
         TextView line1 = text(first, 14);
@@ -326,6 +329,22 @@ public final class DeleteWarning
         words.addView(line1);
         words.addView(line2);
         row.addView(words, new LinearLayout.LayoutParams(0, -2, 1));
+        if (!file.inLibrary)
+        {
+            // LIBRARY.md: files the library doesn't know carry a Not in library pill between the text and the tick
+            // (outline = information, RULES §3).
+            TextView pill = text("Not in library", 11);
+            pill.setTag("delete.notInLibrary");
+            pill.setPadding(dp(8), dp(2), dp(8), dp(2));
+            android.graphics.drawable.GradientDrawable outline = new android.graphics.drawable.GradientDrawable();
+            outline.setCornerRadius(dp(10));
+            outline.setStroke(Math.max(1, dp(1)), 0xB3FFFFFF);
+            pill.setBackground(outline);
+            LinearLayout.LayoutParams pillSize = new LinearLayout.LayoutParams(-2, -2);
+            pillSize.leftMargin = dp(12);
+            pillSize.rightMargin = dp(12);
+            row.addView(pill, pillSize);
+        }
         ImageView tick = new ImageView(context);
         tick.setTag("tick");
         row.addView(tick, new LinearLayout.LayoutParams(dp(16), dp(16)));

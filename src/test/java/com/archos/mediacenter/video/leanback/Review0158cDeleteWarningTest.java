@@ -51,6 +51,25 @@ public class Review0158cDeleteWarningTest
     }
 
     @Test
+    public void filesNotInLibraryAreFoundInTheShowsFolders() throws Exception
+    {
+        java.io.File folder = java.nio.file.Files.createTempDirectory("tidelands").toFile();
+        java.io.File known = new java.io.File(folder, "Tidelands.S01E01.mkv");
+        assertTrue(known.createNewFile());
+        assertTrue(new java.io.File(folder, "Tidelands.S01E02.mkv").createNewFile());
+        assertTrue(new java.io.File(folder, "poster.jpg").createNewFile());
+        DeleteWarning.File episode = new DeleteWarning.File(Uri.fromFile(known), known.getName(), "1080p",
+                                                            "This device", 2_000_000_000L);
+        episode.season = 1;
+        List<DeleteWarning.File> all = LibraryActions.withFilesNotInLibrary(new ArrayList<>(Arrays.asList(episode)));
+        assertEquals("The other episode file, not the picture", 2, all.size());
+        assertEquals(false, all.get(1).inLibrary);
+        assertEquals(1, all.get(1).season);
+        assertEquals(2, LibraryActions.seasonOf("Show.s02e05.1080p.mkv"));
+        assertEquals(-1, LibraryActions.seasonOf("Show.Special.mkv"));
+    }
+
+    @Test
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void threeKindsRendered() throws Exception
     {
@@ -106,12 +125,18 @@ public class Review0158cDeleteWarningTest
                     episodes.add(episode);
                 }
             }
+            DeleteWarning.File stranger = file("Tidelands.S02E05.mkv", "", 2);
+            stranger.inLibrary = false;
+            stranger.season = 2;
+            episodes.add(stranger);
             DeleteWarning.show(host.get(), "Tidelands of the Northern Coast", true, episodes, false,
                                (files, history, trakt, folder) -> {
                                });
             Review0158Fixture.settle(page);
             root = ShadowDialog.getLatestDialog().getWindow().getDecorView();
-            assertEquals("Delete 8 files", ((TextView) root.findViewWithTag("delete.confirm")).getText().toString());
+            assertEquals("Delete 9 files", ((TextView) root.findViewWithTag("delete.confirm")).getText().toString());
+            assertNotNull("A file the library doesn't know has its pill",
+                          root.findViewWithTag("delete.notInLibrary"));
             Review0158Fixture.saveWithDialog(page, "0158c-delete-04-show-episodes");
         }
         finally

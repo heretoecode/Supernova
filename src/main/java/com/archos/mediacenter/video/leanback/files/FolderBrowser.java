@@ -1319,7 +1319,7 @@ public final class FolderBrowser extends LinearLayout
         return videoName(file.getName());
     }
 
-    static boolean videoName(String name)
+    public static boolean videoName(String name)
     {
         ArchosMediaFile.MediaFileType type = ArchosMediaFile.getFileType(name);
         return type != null && ArchosMediaFile.isVideoFileType(type.fileType);

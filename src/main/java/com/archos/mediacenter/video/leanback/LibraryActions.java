@@ -147,8 +147,93 @@ public final class LibraryActions
      */
     public static void confirmDelete(Context context, Object media, String name, Runnable changed)
     {
+        if (media instanceof Tvshow)
+        {
+            // A show's folders are listed too (network folders included), so read them away from the screen.
+            android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+            new Thread(() -> {
+                List<DeleteWarning.File> files = warningFiles(context, media);
+                files = withFilesNotInLibrary(files);
+                List<DeleteWarning.File> found = files;
+                main.post(() -> confirmDelete(context, media, name, changed, found));
+            }, "delete-warning-files").start();
+            return;
+        }
+        confirmDelete(context, media, name, changed, warningFiles(context, media));
+    }
+
+    /**
+     * LIBRARY.md › a show: "Tick the episodes to delete, including any not yet in your library": the other video
+     * files in the folders that hold its episodes, each with the "Not in library" pill, in season order (a file name's
+     * S01E02 decides its season). Folders that can't be read add nothing.
+     */
+    static List<DeleteWarning.File> withFilesNotInLibrary(List<DeleteWarning.File> known)
+    {
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        java.util.Set<Uri> folders = new java.util.LinkedHashSet<>();
+        for (DeleteWarning.File file : known)
+        {
+            seen.add(String.valueOf(file.uri));
+            Uri parent = com.archos.filecorelibrary.FileUtils.getParentUrl(file.uri);
+            if (parent != null)
+            {
+                folders.add(parent);
+            }
+        }
+        List<DeleteWarning.File> strangers = new ArrayList<>();
+        for (Uri folder : folders)
+        {
+            try
+            {
+                List<com.archos.filecorelibrary.MetaFile2> listed =
+                    com.archos.mediacenter.filecoreextension.upnp2.RawListerFactoryWithUpnp.getRawListerForUrl(folder)
+                        .getFileList();
+                for (com.archos.filecorelibrary.MetaFile2 each : listed == null
+                         ? java.util.Collections.<com.archos.filecorelibrary.MetaFile2>emptyList() : listed)
+                {
+                    if (each.isDirectory() || seen.contains(String.valueOf(each.getUri()))
+                        || !com.archos.mediacenter.video.leanback.files.FolderBrowser.videoName(each.getName()))
+                    {
+                        continue;
+                    }
+                    seen.add(String.valueOf(each.getUri()));
+                    DeleteWarning.File file = new DeleteWarning.File(
+                        each.getUri(), each.getName(), "",
+                        com.archos.mediacenter.video.browser.Delete.serverName(each.getUri()), each.length());
+                    file.inLibrary = false;
+                    file.season = seasonOf(each.getName());
+                    strangers.add(file);
+                }
+            }
+            catch (Exception unreadable)
+            {
+                // The warning still lists what the library knows.
+            }
+        }
+        if (strangers.isEmpty())
+        {
+            return known;
+        }
+        List<DeleteWarning.File> all = new ArrayList<>(known);
+        all.addAll(strangers);
+        // Stable: the library's own order inside a season, files it doesn't know after them; "Other" last.
+        all.sort((a, b) -> Integer.compare(a.season < 0 ? Integer.MAX_VALUE : a.season,
+                                           b.season < 0 ? Integer.MAX_VALUE : b.season));
+        return all;
+    }
+
+    /** The season in a file name ("Show.S02E05.mkv" → 2), or -1. */
+    static int seasonOf(String name)
+    {
+        java.util.regex.Matcher match =
+            java.util.regex.Pattern.compile("(?i)s(\\d{1,2})e\\d{1,3}").matcher(name == null ? "" : name);
+        return match.find() ? Integer.parseInt(match.group(1)) : -1;
+    }
+
+    private static void confirmDelete(Context context, Object media, String name, Runnable changed,
+                                      List<DeleteWarning.File> files)
+    {
         boolean show = media instanceof Tvshow;
-        List<DeleteWarning.File> files = warningFiles(context, media);
         if (files.isEmpty())
         {
             for (Uri uri : files(context, media))
