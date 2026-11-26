@@ -221,7 +221,8 @@ final class PreviewEpisodeMenu {
             }
 
             public void onDeleteVideoFailed(Uri videoFile) {
-                com.archos.mediacenter.video.leanback.PreviewNotice.show(activity, "Couldn't delete the file", true);
+                com.archos.mediacenter.video.leanback.PreviewNotice.show(activity, Delete.failureMessage(videoFile),
+                                                                         true);
             }
 
             public void onFolderRemoved(Uri folder) {

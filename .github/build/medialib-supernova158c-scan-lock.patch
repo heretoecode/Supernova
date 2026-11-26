@@ -111,7 +111,7 @@ index cabfb4d..92a636c 100644
      {
          for (Member member : new ArrayList<>(MEMBERS.values()))
 diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
-index 0e38597..82aa989 100644
+index 0e38597..253426b 100644
 --- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 +++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
 @@ -604,8 +604,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
@@ -185,7 +185,20 @@ index 0e38597..82aa989 100644
                  {
                      NetworkScanLedger.finish(member, scanHadDbError || !scanResolved, scanResolved, sFilesFoundCount,
                                               previewAdded, previewUpdated, previewRemoved);
-@@ -2548,5 +2581,22 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+@@ -1130,8 +1163,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         ScanIoScope.checkpoint();
+         if (ProviderDiscoveryGate.excludes(this, what))
+         {
+-            ScanFailure.record("provider_ownership", new IllegalStateException("Source is owned by a provider API"));
+-            return new ScanResult(false, false);
++            // D6 (0.158.8): the provider's own connection (Put.io's API) finds this source's titles; WebDAV stays for
++            // playing and deleting. Nothing to scan here is not a failed scan.
++            log.info("performScan: provider_ownership, the source is found through its provider's API; skipped");
++            return new ScanResult(true, false);
+         }
+         mFoundFiles = 0;
+         sFilesFoundCount = 0;
+@@ -2548,5 +2583,22 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
          if (log.isDebugEnabled())
              log.debug("onStart: LifecycleOwner app in foreground");
          isForeground = true;

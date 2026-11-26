@@ -2882,7 +2882,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         if (log.isDebugEnabled())
             log.debug("onDeleteVideoFailed: {}", videoFile);
         if (getActivity() != null)
-            Toast.makeText(getActivity(), R.string.delete_error, Toast.LENGTH_SHORT).show();
+            com.archos.mediacenter.video.leanback.PreviewNotice.show(getActivity(), Delete.failureMessage(videoFile),
+                                                                     true);
 
         // Failed or cancelled deletion leaves the file and its Details available for retry.
     }

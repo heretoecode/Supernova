@@ -2958,7 +2958,9 @@ public final class PreviewPages extends FrameLayout {
                         }
 
                         public void onDeleteVideoFailed(Uri videoFile) {
-                            PreviewNotice.show(getContext(), "Couldn't delete the file", true);
+                            PreviewNotice.show(getContext(),
+                                               com.archos.mediacenter.video.browser.Delete.failureMessage(videoFile),
+                                               true);
                         }
 
                         public void onFolderRemoved(Uri folder) {
