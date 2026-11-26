@@ -831,10 +831,106 @@ public final class FilesPage extends LinearLayout
     private void showSummary()
     {
         summary.removeAllViews();
-        TextView control = text(scanLabel(scanning, scanPercent()), 18, Color.WHITE);
+        ScanProgress progress = currentProgress();
+        String words = progress != null && (scanning || progress.running
+                                                || System.currentTimeMillis() - finishedAt(progress) < DONE_SHOWS_MS)
+            ? narrate(progress) : scanLabel(scanning, scanPercent());
+        TextView control = text(words, 18, Color.WHITE);
+        // Fixed-width digits, so the words never jiggle as numbers change (FILES.md).
+        control.setFontFeatureSettings("tnum");
+        control.setSingleLine(true);
+        control.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         PreviewIcon.apply(control, "scan", 16);
         summary.addView(control);
         scanControl(control);
+    }
+
+    /** How long "Done · 3 new · 1 missing" stays before "Scan library" comes back. */
+    static final long DONE_SHOWS_MS = 5000;
+    /** About 45 characters at most; long source names end "…". */
+    static final int NARRATION_MAX = 45;
+
+    private static ScanProgress currentProgress()
+    {
+        try
+        {
+            return com.archos.mediacenter.video.leanback.PreviewLibraryScan.progress();
+        }
+        catch (RuntimeException unavailable)
+        {
+            return null;
+        }
+    }
+
+    private static long finishedAt(ScanProgress progress)
+    {
+        return progress.startedUtcMs + Math.max(0, progress.durationMs);
+    }
+
+    /**
+     * Scan library narrates every step, never a bare "Scanning" (FILES.md, `tv/23`): Connecting to Seedbox… →
+     * Looking in Seedbox · 42% → Found 3 new videos → Done · 3 new · 1 missing; a failure says so in place
+     * ("Couldn't connect to Living-room NAS"). Pure, for tests.
+     */
+    public static String narrate(ScanProgress p)
+    {
+        String source = shortName(p.sourceLabel == null || p.sourceLabel.isEmpty() ? "your library" : p.sourceLabel);
+        if (p.running && p.stopping)
+        {
+            return "Stopping…";
+        }
+        if (p.running)
+        {
+            if (p.total <= 0 && p.checked <= 0)
+            {
+                return "Connecting to " + source + "…";
+            }
+            if (p.total > 0 && p.checked >= p.total && p.added > 0)
+            {
+                return "Found " + p.added + (p.added == 1 ? " new video" : " new videos");
+            }
+            if (p.total > 0)
+            {
+                long percent = Math.max(0, Math.min(100, p.checked * 100 / p.total));
+                return "Looking in " + source + " · " + percent + "%";
+            }
+            return "Looking in " + source;
+        }
+        switch (p.failure)
+        {
+        case NONE:
+            List<String> parts = new java.util.ArrayList<>();
+            parts.add("Done");
+            parts.add(p.added + " new");
+            if (p.removed > 0)
+            {
+                parts.add(p.removed + " missing");
+            }
+            if (p.updated > 0)
+            {
+                parts.add(p.updated + " updated");
+            }
+            return TextUtils.join(" · ", parts);
+        case CANCELLED:
+            return "Stopped";
+        case SIGN_IN:
+            return "Couldn't sign in to " + source;
+        case TIMEOUT:
+            return source + " took too long to answer";
+        case PERMISSION:
+            return source + " didn't allow Supernova in";
+        case STORAGE:
+            return "Couldn't read " + source;
+        default:
+            return "Couldn't connect to " + source;
+        }
+    }
+
+    /** A source name short enough for the narration (the rest of the line stays). */
+    static String shortName(String name)
+    {
+        int room = NARRATION_MAX - 22;
+        return name.length() <= room ? name : name.substring(0, room - 1) + "…";
     }
 
     /** "Scan library", or "Scanning · 42%" (just "Scanning" until the size is known). Pure, for tests. */
