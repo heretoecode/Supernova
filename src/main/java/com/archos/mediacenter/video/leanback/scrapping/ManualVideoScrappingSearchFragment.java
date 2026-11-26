@@ -97,8 +97,20 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
     @Override
     protected void configurePreviewSearch(PreviewMatchSearch search) {
-        if (mVideo != null)
+        if (mVideo != null) {
             search.setSubject(mVideo.getFileNameWithExtension());
+            android.net.Uri file = mVideo.getFileUri();
+            String size = mVideo.getSize() > 0
+                ? android.text.format.Formatter.formatShortFileSize(requireContext(), mVideo.getSize()) : "";
+            String place = file == null ? "" : com.archos.mediacenter.video.browser.Delete.serverName(file);
+            String where = size.isEmpty() ? place : place + " · " + size;
+            String matched = mVideo instanceof Episode
+                ? "Matched now as " + ((Episode) mVideo).getShowName() + " · TV show"
+                : mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
+                    && ((com.archos.mediacenter.video.browser.adapters.object.Movie) mVideo).getOnlineId() > 0
+                    ? "Matched now as " + mVideo.getName() + " · Movie" : "Not matched yet";
+            search.setThisFile(mVideo.getFileNameWithExtension(), where, matched);
+        }
         if (mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie) {
             com.archos.mediacenter.video.browser.adapters.object.Movie movie =
                 (com.archos.mediacenter.video.browser.adapters.object.Movie) mVideo;

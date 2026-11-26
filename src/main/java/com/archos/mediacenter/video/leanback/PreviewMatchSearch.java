@@ -19,6 +19,7 @@ public final class PreviewMatchSearch extends LinearLayout {
     private final TextView status;
     private final TextView title;
     private final ScrollView scroll;
+    private LinearLayout leftColumn;
     private long currentOnlineId = -1;
     private final List<BaseTags> rendered = new ArrayList<>();
     private final Consumer<BaseTags> choose;
@@ -68,6 +69,7 @@ public final class PreviewMatchSearch extends LinearLayout {
         LinearLayout left = new LinearLayout(context);
         left.setOrientation(VERTICAL);
         body.addView(left, new LayoutParams(0, -1, 44));
+        leftColumn = left;
         LinearLayout right = new LinearLayout(context);
         right.setOrientation(VERTICAL);
         LayoutParams rightSize = new LayoutParams(0, -1, 56);
@@ -151,7 +153,7 @@ public final class PreviewMatchSearch extends LinearLayout {
             buttons[i].setVisibility(INVISIBLE);
             buttons[i].setTag(i == 0 ? "semantic:match.return" : "semantic:match.stay");
             LayoutParams size = new LayoutParams(-2, -2);
-            size.leftMargin = dp(12);
+            size.rightMargin = dp(10);
             row.addView(buttons[i], size);
         }
         return buttons;
@@ -248,6 +250,40 @@ public final class PreviewMatchSearch extends LinearLayout {
 
     /** "Fix match · File: name.mkv" — which file is being matched. */
     /** Names the file only when the page was not opened from a title (which already names it). */
+    /**
+     * The left column's top (FILES.md, tv/18): **This file**, the file name, where it lives and its size, and what it
+     * is matched as now ("Matched now as Dine Out (2023) · TV show · 1 episode").
+     */
+    public void setThisFile(String fileName, String where, String matchedAs) {
+        if (leftColumn == null || leftColumn.findViewWithTag("semantic:match.this-file") != null)
+            return;
+        LinearLayout block = new LinearLayout(getContext());
+        block.setOrientation(VERTICAL);
+        block.setTag("semantic:match.this-file");
+        TextView heading = text("This file", 15);
+        heading.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+        PreviewIcon.apply(heading, "file", 14);
+        block.addView(heading);
+        TextView name = text(fileName == null ? "" : fileName, 14);
+        name.setSingleLine(true);
+        name.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+        name.setPadding(0, dp(6), 0, 0);
+        block.addView(name);
+        for (String line : new String[] {where, matchedAs}) {
+            if (line == null || line.isEmpty())
+                continue;
+            TextView soft = text(line, 13);
+            soft.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            soft.setSingleLine(true);
+            soft.setEllipsize(TextUtils.TruncateAt.END);
+            soft.setPadding(0, dp(3), 0, 0);
+            block.addView(soft);
+        }
+        LayoutParams size = new LayoutParams(-1, -2);
+        size.bottomMargin = dp(14);
+        leftColumn.addView(block, 0, size);
+    }
+
     public void setSubject(String fileName) {
         if (!fromTitle.isEmpty())
             return;
@@ -357,17 +393,33 @@ public final class PreviewMatchSearch extends LinearLayout {
                 current.setTag("semantic:match.current");
                 current.setTextColor(SupernovaStyle.TEXT_SECONDARY);
                 row.addView(current);
+            } else if (i == 0) {
+                // The first match is marked "Best match" (FILES.md, tv/18).
+                TextView best = text("Best match", 13);
+                best.setTag("semantic:match.best");
+                best.setPadding(dp(10), dp(3), dp(10), dp(3));
+                android.graphics.drawable.GradientDrawable outline = new android.graphics.drawable.GradientDrawable();
+                outline.setCornerRadius(dp(10));
+                outline.setStroke(Math.max(1, dp(1)), 0x80FFFFFF);
+                best.setBackground(outline);
+                row.addView(best);
             }
             row.setContentDescription(label(tags));
             // The focused match offers Match and return (first) and Match and stay (fix-match-from-details/v2);
             // Left/Right moves between them, OK applies.
             int[] choice = {0};
-            TextView[] actions = matchButtons(row);
+            // On its own line under the match's words, shown only on the focused match (FILES.md, tv/18).
+            LinearLayout buttonLine = new LinearLayout(getContext());
+            buttonLine.setVisibility(GONE);
+            buttonLine.setPadding(0, dp(8), 0, 0);
+            words.addView(buttonLine);
+            TextView[] actions = matchButtons(buttonLine);
             row.setOnFocusChangeListener((v, focused) -> {
                 // The focused match is the white box with black text (RULES §3; fix-match-from-details/v2).
                 v.setBackground(focused ? SupernovaStyle.rounded(getContext(), SupernovaStyle.FOCUS_FILL, 10) : null);
                 inkWords(words, focused);
                 paintMatchButtons(actions, focused, choice[0]);
+                buttonLine.setVisibility(focused && actions.length > 0 ? VISIBLE : GONE);
             });
             row.setOnClickListener(v -> {
                 stayOnFiles = !fromTitle.isEmpty() && choice[0] == 1;
