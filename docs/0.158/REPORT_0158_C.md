@@ -130,3 +130,14 @@ working branch (J20).
   404 for a title), D18 (memory trims).
 - **NOVA (item 7):** the check of NOVA's commits since 25 Nov and the leftovers (N2's second half with trakt-java 6.22.0,
   N3, N6, N7, N8, N10, `60df7be7`).
+
+### NOVA check (item 7, 26 Nov, ~17:00 UTC): everything merged since the 25 Nov audit
+Checked NOVA's main branches of aos-Video, aos-MediaLib and aos-FileCoreLibrary; no new release tag.
+
+| Repo · commit | Date | What | Taken? |
+| --- | --- | --- | --- |
+| aos-Video `60df7be7` | 25 Nov | Restore skip-button focus from the seek bar on TV | Not yet: in the brief already; under a day old, so it waits for the "a few days old, not reverted" rule (next run). |
+| aos-MediaLib `220f573` | 25 Nov | ShowTags: don't reuse a database episode from another show with the same title (+ test) | Not yet: a fix we likely suffer (two shows with an episode of the same name), but under a day old; take it at the next check if not reverted. |
+| aos-MediaLib `0459d28` | 25 Nov | ShowTags: share the premiered-date-to-year conversion | Skipped: tidy-up only. |
+| aos-MediaLib `26344b0`, `778b235` | 25 Nov | Scraper integration test cases and logging | Skipped: tests for NOVA's own suite. |
+| aos-FileCoreLibrary | — | Nothing new | — |
