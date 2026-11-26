@@ -324,6 +324,12 @@
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova158-connection-off.patch",
       "sha256": "38ee0882310dc0147e732466d79ffd5aad9c6e309196b76020a5ab4bca8b32e8"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova158c-scan-lock.patch",
+      "sha256": "260b7bac92d1945b76418e74fa42aafd020779f8d7a0056d377f31012d76446c"
     }
   ],
   "supernova155": {
@@ -337,5 +343,8 @@
   },
   "supernova158": {
     "note": "0.158: medialib-supernova158-scan-queue (X4, 19 Nov): a network scan waits for the scan lease before its IO scope and five-minute source deadline start, bounded by a one-hour queue deadline instead, so queued scans wait their turn rather than timing out on 'scan lock wait interrupted'; the lease may be taken again by the thread that holds it. Then medialib-supernova158-connection-off (FL3, 19 Nov): titles under a connection turned off on Files › Connections count as excluded until it is turned on again."
+  },
+  "supernova158c": {
+    "note": "0.158 part C: medialib-supernova158c-scan-lock: D1 (26 Nov diagnostics): an interrupted wait for the scan lock in a matching save is deferred (MATCH_DEFERRED, interrupt kept, title tried on the next run) instead of crashing the app. D2: a scan or local import whose wait for the lock is cut short is not a failure: it shows as queued and runs again from DeferredScans when the app is next in front."
   }
 }

@@ -1,0 +1,403 @@
+diff --git a/src/com/archos/mediaprovider/video/DeferredScans.java b/src/com/archos/mediaprovider/video/DeferredScans.java
+new file mode 100644
+index 0000000..9576534
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/DeferredScans.java
+@@ -0,0 +1,75 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.net.Uri;
++
++import java.io.InterruptedIOException;
++import java.util.ArrayList;
++import java.util.HashSet;
++import java.util.List;
++import java.util.Set;
++import java.util.concurrent.CancellationException;
++
++/**
++ * D2 (0.158.8): a scan whose wait for the scan lock was cut short (the service closing, the app leaving the screen,
++ * the scheduler's own wake-up ending) is not a failed scan. It waits here and runs again when the app is next in
++ * front, instead of being reported as {@code scan_failed} at stage {@code process_lock}.
++ */
++public final class DeferredScans
++{
++    static final String PREFS = "supernova_deferred_scans";
++    static final String KEY = "uris";
++    static final int MAX = 64;
++
++    private DeferredScans()
++    {
++    }
++
++    /** True when the failure only means "your turn did not come yet", not that the source failed. */
++    public static boolean isWaitCutShort(Throwable failure)
++    {
++        return failure instanceof InterruptedIOException || failure instanceof CancellationException;
++    }
++
++    public static synchronized void remember(Context context, Uri uri)
++    {
++        if (context == null || uri == null)
++        {
++            return;
++        }
++        SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
++        Set<String> uris = new HashSet<>(prefs.getStringSet(KEY, new HashSet<>()));
++        if (uris.size() >= MAX)
++        {
++            return;
++        }
++        uris.add(uri.toString());
++        prefs.edit().putStringSet(KEY, uris).apply();
++    }
++
++    public static synchronized List<Uri> takeAll(Context context)
++    {
++        List<Uri> taken = new ArrayList<>();
++        if (context == null)
++        {
++            return taken;
++        }
++        SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
++        for (String uri : prefs.getStringSet(KEY, new HashSet<>()))
++        {
++            taken.add(Uri.parse(uri));
++        }
++        prefs.edit().remove(KEY).apply();
++        return taken;
++    }
++
++    public static synchronized int count(Context context)
++    {
++        if (context == null)
++        {
++            return 0;
++        }
++        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getStringSet(KEY, new HashSet<>()).size();
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/NetworkScanLedger.java b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+index cabfb4d..92a636c 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScanLedger.java
++++ b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+@@ -218,6 +218,26 @@ final class NetworkScanLedger
+         }
+     }
+ 
++    /**
++     * D2 (0.158.8): the scan's wait for its turn was cut short. It is not a failure: no {@code scan_failed} is
++     * recorded, the source shows as waiting ("queued"), and the scan runs again from {@link DeferredScans}.
++     */
++    static synchronized void defer(Member member)
++    {
++        if (!pending(member))
++            return;
++        member.terminal = true;
++        if (member.acknowledgement != null)
++            member.acknowledgement.cancel(false);
++        if (member.sourceDeadline != null)
++            member.sourceDeadline.cancel(false);
++        MEMBERS.remove(member.id);
++        member.failureStage = "scan_waiting";
++        AutoScrapeService.completeNetworkScan(member.batch, false, false);
++        NetworkScannerServiceVideo.previewScanEvent(member.context, member.uri, "queued", Long.toString(member.batch),
++                                                    -1, 0, 0, 0, -1);
++    }
++
+     static synchronized void cancelOwner(Object service)
+     {
+         for (Member member : new ArrayList<>(MEMBERS.values()))
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index 0e38597..82aa989 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -604,8 +604,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                         }
+                         catch (java.io.IOException waited)
+                         {
+-                            // Cancelled or closed while waiting its turn.
+-                            NetworkScanLedger.reject(member);
++                            // D2 (0.158.8): closed while waiting its turn is not a failed scan; it runs again when
++                            // the app is next in front.
++                            DeferredScans.remember(NetworkScannerServiceVideo.this, uri);
++                            NetworkScanLedger.defer(member);
+                         }
+                         finally
+                         {
+@@ -1023,6 +1025,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         long start = log.isDebugEnabled() ? System.currentTimeMillis() : 0;
+         boolean scanResolved = false;
+         boolean scanHadDbError = false;
++        boolean scanDeferred = false;
+         previewAdded = 0;
+         previewUpdated = 0;
+         previewBatchId = previewBatch(batchId);
+@@ -1045,8 +1048,28 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         }
+         catch (java.io.IOException failure)
+         {
+-            ScanFailure.record("process_lock", failure);
+-            scanHadDbError = true;
++            if (DeferredScans.isWaitCutShort(failure))
++            {
++                // D2 (0.158.8): the wait for the scan lock was cut short; this scan waits its turn again.
++                scanDeferred = true;
++                DeferredScans.remember(this, what);
++            }
++            else
++            {
++                ScanFailure.record("process_lock", failure);
++                scanHadDbError = true;
++            }
++        }
++        catch (java.util.concurrent.CancellationException waiting)
++        {
++            if (!"process_lock".equals(ScanFailure.currentStage()))
++            {
++                ScanFailure.record("traversal", waiting);
++                scanHadDbError = true;
++                throw waiting;
++            }
++            scanDeferred = true;
++            DeferredScans.remember(this, what);
+         }
+         catch (RuntimeException failure)
+         {
+@@ -1063,7 +1086,17 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             // no longer depends on whichever thread happens to finish last.
+             try
+             {
+-                if (member != null)
++                if (member != null && scanDeferred)
++                {
++                    NetworkScanLedger.defer(member);
++                }
++                else if (scanDeferred)
++                {
++                    // The batch still counts this scan as done, so it is never left waiting on it.
++                    com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, false, false);
++                    previewScanEvent(what, "queued");
++                }
++                else if (member != null)
+                 {
+                     NetworkScanLedger.finish(member, scanHadDbError || !scanResolved, scanResolved, sFilesFoundCount,
+                                              previewAdded, previewUpdated, previewRemoved);
+@@ -2548,5 +2581,22 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         if (log.isDebugEnabled())
+             log.debug("onStart: LifecycleOwner app in foreground");
+         isForeground = true;
++        runDeferredScans(this);
++    }
++
++    /** D2 (0.158.8): scans that were waiting their turn when the service closed run again, one after another. */
++    static void runDeferredScans(Context context)
++    {
++        for (Uri uri : DeferredScans.takeAll(context))
++        {
++            try
++            {
++                startIfHandles(context, new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FILE, uri));
++            }
++            catch (RuntimeException failure)
++            {
++                log.warn("runDeferredScans: could not queue {} again", uri, failure);
++            }
++        }
+     }
+ }
+diff --git a/src/com/archos/mediaprovider/video/PersonalVideoActions.java b/src/com/archos/mediaprovider/video/PersonalVideoActions.java
+index 7e6b68d..178f08c 100644
+--- a/src/com/archos/mediaprovider/video/PersonalVideoActions.java
++++ b/src/com/archos/mediaprovider/video/PersonalVideoActions.java
+@@ -299,7 +299,14 @@ public final class PersonalVideoActions
+         return value.toString();
+     }
+ 
+-    /** Serialises a scan's final metadata save with role changes; -2 means deliberately personal. */
++    /** D1 (0.158.8): the save could not get the scan lock in time; the title stays unmatched and is tried later. */
++    public static final long MATCH_DEFERRED = -3;
++
++    /**
++     * Serialises a scan's final metadata save with role changes; -2 means deliberately personal, -1 a failed save and
++     * {@link #MATCH_DEFERRED} a save whose wait for the scan lock was cut short. It never throws for the lock: before
++     * 0.158.8 an interrupted wait escaped the matching worker and ended the whole app (six crashes, 20 and 22 Nov).
++     */
+     public static long saveIfMatchable(Context context, long id, com.archos.mediascraper.BaseTags tags)
+     {
+         try (ScanProcessLock lock = ScanProcessLock.acquire(new File(context.getFilesDir(), "supernova-scan.lock"),
+@@ -307,9 +314,19 @@ public final class PersonalVideoActions
+         {
+             return isPersonal(context, id) ? -2 : tags.save(context, id);
+         }
++        catch (java.io.InterruptedIOException waiting)
++        {
++            // Keep the worker's stop request visible to its loop, and try this title on the next run.
++            Thread.currentThread().interrupt();
++            org.slf4j.LoggerFactory.getLogger(PersonalVideoActions.class)
++                .info("match_deferred: scan_waiting for the scan lock, title {} kept for the next run", id);
++            return MATCH_DEFERRED;
++        }
+         catch (IOException unavailable)
+         {
+-            throw new IllegalStateException("Matching ownership unavailable", unavailable);
++            org.slf4j.LoggerFactory.getLogger(PersonalVideoActions.class)
++                .warn("match_deferred: scan lock unavailable for title {}", id, unavailable);
++            return -1;
+         }
+     }
+ 
+diff --git a/src/com/archos/mediaprovider/video/ScanFailure.java b/src/com/archos/mediaprovider/video/ScanFailure.java
+index d7f6d1f..065dec6 100644
+--- a/src/com/archos/mediaprovider/video/ScanFailure.java
++++ b/src/com/archos/mediaprovider/video/ScanFailure.java
+@@ -24,6 +24,12 @@ public final class ScanFailure
+         }
+     }
+ 
++    /** D2 (0.158.8): where this worker's scan is now, so a cut-short wait for the lock is told from a failure. */
++    public static String currentStage()
++    {
++        return CURRENT.get().stage;
++    }
++
+     public static void record(String stage, Throwable failure)
+     {
+         ScanFailure current = CURRENT.get();
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportService.java b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+index d7e3ed9..f3b69b6 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportService.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+@@ -690,6 +690,7 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         PreviewLocalImportTrace.begin(this, fullMode);
+         previewImportAttempted = false;
+         boolean returned = false;
++        boolean waitCutShort = false;
+         try (ScanProcessLock processLock =
+                  ScanProcessLock.acquire(new java.io.File(getFilesDir(), "supernova-scan.lock"), () -> !isForeground))
+         {
+@@ -698,7 +699,17 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         }
+         catch (java.io.IOException failure)
+         {
+-            PreviewLocalImportTrace.problem("process_lock", failure);
++            if (DeferredScans.isWaitCutShort(failure))
++            {
++                // D2 (0.158.8): the app left the screen while this import waited its turn. It is not a failure;
++                // the import runs again when the app is next in front (the volume observer queues it).
++                waitCutShort = true;
++                log.info("local import: scan_waiting, the wait for the scan lock ended as the app left the screen");
++            }
++            else
++            {
++                PreviewLocalImportTrace.problem("process_lock", failure);
++            }
+         }
+         catch (RuntimeException failure)
+         {
+@@ -707,8 +718,9 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         }
+         finally
+         {
+-            PreviewLocalImportTrace.finish(returned,
+-                                           previewImportAttempted && VideoStoreImportImpl.previewImportInterrupted());
++            PreviewLocalImportTrace.finish(returned, waitCutShort ||
++                                                         previewImportAttempted &&
++                                                             VideoStoreImportImpl.previewImportInterrupted());
+         }
+     }
+ 
+diff --git a/src/com/archos/mediascraper/AutoScrapeService.java b/src/com/archos/mediascraper/AutoScrapeService.java
+index f415e6b..2089c66 100644
+--- a/src/com/archos/mediascraper/AutoScrapeService.java
++++ b/src/com/archos/mediascraper/AutoScrapeService.java
+@@ -1253,6 +1253,9 @@ public class AutoScrapeService extends Service implements DefaultLifecycleObserv
+                                             long savedId = com.archos.mediaprovider.video.PersonalVideoActions.saveIfMatchable(
+                                                 AutoScrapeService.this, ID, tags);
+                                             DeleteFileCallback.DO_NOT_DELETE.clear();
++                                            if (savedId == com.archos.mediaprovider.video.PersonalVideoActions
++                                                              .MATCH_DEFERRED)
++                                                return; // D1: stopping; the title stays unmatched for the next run
+                                             if (savedId < 0 && savedId != -2)
+                                             {
+                                                 log.warn("startScraping: NFO save failed for ID {}", ID);
+@@ -1430,6 +1433,12 @@ public class AutoScrapeService extends Service implements DefaultLifecycleObserv
+                                             return;
+                                         long savedId = com.archos.mediaprovider.video.PersonalVideoActions.saveIfMatchable(
+                                             AutoScrapeService.this, ID, result.tag);
++                                        if (savedId == com.archos.mediaprovider.video.PersonalVideoActions
++                                                          .MATCH_DEFERRED)
++                                        {
++                                            DeleteFileCallback.DO_NOT_DELETE.clear();
++                                            return; // D1: stopping; the title stays unmatched for the next run
++                                        }
+                                         if (savedId == -2)
+                                         {
+                                             notScraped = false;
+diff --git a/test/java/com/archos/mediaprovider/video/ScanLockDeferralTest.java b/test/java/com/archos/mediaprovider/video/ScanLockDeferralTest.java
+new file mode 100644
+index 0000000..00fc5c0
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/ScanLockDeferralTest.java
+@@ -0,0 +1,59 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import android.app.Application;
++import android.content.Context;
++import android.net.Uri;
++import java.io.IOException;
++import java.io.InterruptedIOException;
++import java.util.List;
++import java.util.concurrent.CancellationException;
++import org.junit.After;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++/** D1 and D2 (0.158.8): a wait for the scan lock that is cut short never crashes and never counts as a failure. */
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class ScanLockDeferralTest
++{
++    @After public void clearInterrupt()
++    {
++        Thread.interrupted();
++    }
++
++    @Test public void anInterruptedMatchingSaveIsDeferredNotThrown()
++    {
++        Context context = RuntimeEnvironment.getApplication();
++        Thread.currentThread().interrupt();
++        long saved = PersonalVideoActions.saveIfMatchable(context, 42L, null);
++        assertEquals(PersonalVideoActions.MATCH_DEFERRED, saved);
++        assertTrue("the worker's stop request stays visible", Thread.currentThread().isInterrupted());
++    }
++
++    @Test public void aWaitCutShortIsToldFromARealFailure()
++    {
++        assertTrue(DeferredScans.isWaitCutShort(new InterruptedIOException("Scan lock wait interrupted")));
++        assertTrue(DeferredScans.isWaitCutShort(new CancellationException("Scan cancelled")));
++        assertFalse(DeferredScans.isWaitCutShort(new IOException("disk")));
++    }
++
++    @Test public void aDeferredScanIsKeptOnceAndTakenOnce()
++    {
++        Context context = RuntimeEnvironment.getApplication();
++        Uri sftp = Uri.parse("sftp://media.example/Films/");
++        DeferredScans.remember(context, sftp);
++        DeferredScans.remember(context, sftp);
++        assertEquals(1, DeferredScans.count(context));
++        List<Uri> taken = DeferredScans.takeAll(context);
++        assertEquals(1, taken.size());
++        assertEquals(sftp, taken.get(0));
++        assertEquals(0, DeferredScans.count(context));
++    }
++}
