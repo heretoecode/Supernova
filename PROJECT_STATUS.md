@@ -1,6 +1,6 @@
 # Supernova — project status
 
-Updated 26 November 2026 (discussion: Search done; Files rounds 1–3 approved, round 4 Your Library next; then the coding run). Keep this page short and current: update it at the
+Updated 26 November 2026 (discussion: Search and Files reviews finished; FILES.md final; next coding run ready: BRIEF_0158_C › Part C continued). Keep this page short and current: update it at the
 end of every session.
 
 ## 0.158 part C (overnight 26 Nov): see `docs/0.158/REPORT_0158_C.md`
@@ -23,7 +23,7 @@ signed APK; send a diagnostics report from it.
 
 ## Discussion (19–26 Nov): polish phase
 Reviewed and written up: library pages, Home, Details, Player, Search (page sheets in `docs/design/pages/`; decisions
-in `docs/0.158/BRIEF_0158_B.md`). Files rounds 1–3 approved 26 Nov, round 4 next; then Settings. NOVA fully
+in `docs/0.158/BRIEF_0158_B.md`). Files review finished 26 Nov (FILES.md final); next, Settings. NOVA fully
 audited 25 Nov (eleven items in the brief). Installed on the Shield: 0.158.7. Handover:
 `docs/DISCUSSION_HANDOVER.md` (start at "25 Nov — START HERE").
 

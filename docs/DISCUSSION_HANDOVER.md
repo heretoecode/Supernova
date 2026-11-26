@@ -1,16 +1,16 @@
 # Discussion handover (updated 26 Nov 2026)
 
-## 26 Nov — START HERE (Files review: round 4 to do, then the coding run)
-**Files review (owner, 26 Nov):** rounds 1–3 approved; **round 4 (Your Library, `tv/22`) not yet reviewed**; `docs/design/pages/FILES.md` rewritten as the final
+## 26 Nov — START HERE (Files review finished; next coding run ready)
+**Files review finished (owner, 26 Nov):** all four rounds approved; `docs/design/pages/FILES.md` rewritten as the final
 sheet (mock-ups `files-v2/tv/01`–`24`, Drive "2026-11-25 Files round 1–4"). Late additions: Scan library narrates every
 step; Scan one source is a menu of sources and folders; recent scans focusable, opening a Scan details page with the
 full step-by-step record. Bugs M5 (pending matches listed as Not matched) and M6 (connection rename doesn't save) are in
 BRIEF_0158_C item 8; item 10 (Files) is filled in.
 **Next coding run (owner, 26 Nov):** BRIEF_0158_C › Part C continued, in order: missed refinements, diagnostics record
-why, the Files page (item 10), MobLand bugs M2–M6, NOVA leftovers. Give the owner the starting prompt once round 4 is done.
+why, the Files page (item 10), MobLand bugs M2–M7, NOVA leftovers. The owner has the starting prompt (26 Nov).
 **Phase:** polish, page by page; designs and planning only, no coding (CLAUDE.md "Polish phase").
 **Done and written up:** library pages (LIBRARY.md), Home (HOME.md + RULES §14d), Details (DETAILS.md), Player and
-Playback Settings (PLAYER.md), Search (SEARCH.md), next episode on the hero (DETAILS.md), Files rounds 1–3 (FILES.md, 26 Nov).
+Playback Settings (PLAYER.md), Search (SEARCH.md), next episode on the hero (DETAILS.md), **Files (FILES.md, 26 Nov)**.
 **Then Settings** (SETTINGS.md): steppers on 3+ choice rows, Seek preview setting, search history rows (added 25 Nov),
 What's New / release notes leftovers, Plozz-inspired settings (REVISIT_LATER), Network options now on Files.
 **Parked this session:** Seerr requests from Search (Plozz does it), finer settings after Plozz, users-and-tags three

@@ -6,10 +6,10 @@ the latest NOVA changes, and the Settings Backup bug"). Installed on the Shield:
 sign finished work as you go (standing approval), first signing **0.158.8** (code 1588), then .9 and so on.
 
 ## Part C continued (owner, 26 Nov, after 0.158.9)
-**Not started yet (owner, 26 Nov): the owner starts this run after the Files review (round 4, Your Library) is finished.** Order (Claude's,
+**Ready to start (owner, 26 Nov): the Files review is finished and FILES.md is final.** Order (Claude's,
 owner: "an order that makes sense"): (A) the refinements 0.158.9 missed (items 1–6), (B) diagnostics record why (item
 9: everything after benefits from reasons in the report), (C) the Files page (item 10: Library Care's Missing files
-lives there), (D) the MobLand bugs M2–M6 (item 8, built onto the new Library Care), then (E) the NOVA leftovers (item 7,
+lives there), (D) the MobLand bugs M2–M7 (item 8, built onto the new Library Care), then (E) the NOVA leftovers (item 7,
 the riskiest ports, last).
 0.158.9 built group 1, B1 and a slice of the pages, then stopped. **The rest of this brief is the job now, and the
 redesigned pages come first.** Work through `REPORT_0158_C.md` › "Not built", line by line, in this order, each page
@@ -64,7 +64,7 @@ finished to its sheet (every action pressed and rendered) before the next:
    code and message). A test fails the build if any failure is recorded without one. Where the reason truly isn't
    known, the report says so and records what was attempted, how long it waited and the last thing that worked. The
    report's summary lists top reasons ("Delete failed ×6: server refused (403)").
-10. **The Files page (rounds 1–3 approved 26 Nov; round 4, Your Library, still to review; build from `docs/design/pages/FILES.md`).** One page at a
+10. **The Files page (owner's review finished 26 Nov; build from `docs/design/pages/FILES.md`, final).** One page at a
    time to the sheet, each finished (renders of every action, Definition of done) before the next: (a) the whole page:
    top bar signal slot, tabs, **Scan library narrating every step**; (b) This Device and browsing (sort menu, folder
    sizes, Fix match on one-title folders, empty folder, pills that never wobble); (c) Connections and the connection
@@ -72,7 +72,7 @@ finished to its sheet (every action pressed and rendered) before the next:
    Settings; (d) Library Care: the lists with their "this is fine" buttons, Not matched best guess and pending line
    (M5), To fix, Excluded from hero, Fix match page with inline buttons, **Scan one source menu**, **focusable recent
    scans and the Scan details page** (the scan record kept for the last ten scans and shared with item 9's
-   diagnostics); (e) Your Library with By Source. Mock-ups `files-v2/tv/01`–`24`. Sign as a point release when done.
+   diagnostics); (e) Your Library with By Source and Biggest Movies (M7). Mock-ups `files-v2/tv/01`–`24`. Sign as a point release when done.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
