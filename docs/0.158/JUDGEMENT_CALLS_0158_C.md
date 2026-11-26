@@ -1,0 +1,12 @@
+# 0.158 part C: judgement calls
+
+Made overnight under CLAUDE.md › Working unattended (no questions asked). Each can be changed; say which.
+
+| # | Item | Call | Why |
+| --- | --- | --- | --- |
+| J1 | D1 | An interrupted matching save returns "deferred" and the matcher stops for now; the title stays unmatched and is matched on the next run. No separate retry queue. | The interrupt only comes from the matcher being stopped (app leaving, service ending). The unmatched title is already picked up by the next run, so a second queue would only duplicate it. |
+| J2 | D2 | A scan or local import whose wait for the scan lock is cut short shows as "queued" (Waiting), not failed, and network scans are kept in a small list and run again when the app is next in front. The local import is re-run by the existing volume check on resume. | Who interrupts the waiters: the scanner and import services themselves, when the app leaves the screen or the service closes. That is not a source failing, so it should not count as one. |
+| J3 | D3 | Already fixed in 0.158.1 (the crash on 19 Nov predates it). Only a shared helper and a test were added. | Nothing more to fix; the test stops it coming back. |
+| J4 | D4 | NOVA's hidden browse rows on the main screen are sealed (never focusable) rather than removed. | They are still created by NOVA's browse fragment that hosts the Supernova pages; removing them belongs to 0.159's clean-out, as the brief says. |
+| J5 | B1 | The Backup row on System stays the single "Back up and restore ›" row that opens the existing backup view; it is now reachable with Up / Down. The in-row backup flow (What to back up, Backups folder, Back up now, Restore as separate rows) is not built. | Part B paused that flow (PART_B_PAUSED.md): it changes where backups live and waits for your folder decision (Download or a folder picker with one Android grant). |
+| J6 | D6 | A file that Put.io's own connection looks after is still **not** deleted over WebDAV (the earlier rule); the warning now says "Put.io looks after this file through your Put.io connection, so it can't be deleted from here. Delete it on Put.io." Scans of that WebDAV source are skipped, not failed: Put.io's connection wins for finding titles, WebDAV for playing. | The 0.157 design deliberately blocks WebDAV deletes of provider-managed files (a test guards it), and Supernova's Put.io client is read-only, so it cannot delete through Put.io's API either. Allowing the delete is a one-line change if you want it. |
