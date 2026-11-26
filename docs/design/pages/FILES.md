@@ -1,176 +1,180 @@
 # Page sheet: Files
 
-The one place to build Files from (CLAUDE.md "Definition of done"). Latest decisions as of 17 Nov 2026. Sources:
-`docs/design/RULES.md`, mock-ups in `docs/design/proposals/network-files-tabs/` and `files-review-0157-1/`, review
-`docs/0.157/REVIEW_0157_1.md` (F-numbers). Older mock-ups say "This Shield", "Network & Files", a boxed tab tray and
-facts on the right of the tabs: read them as This Device, Files, underline tabs, and the scan button alone.
+The one place to build Files from (CLAUDE.md "Definition of done"). **Final, 26 Nov 2026:** the owner's Files review
+(25–26 Nov, four rounds) is finished and everything below is approved. Mock-ups: `docs/design/proposals/files-v2/tv/`
+`01`–`24` (Drive › Supernova › Media › From Claude › "2026-11-25 Files round 1–4"; where a frame was redrawn, the
+newest file there). This sheet wins over every older Files document (`NETWORK_FILES.md`, `network-files-tabs/`,
+`files-review-0157-1/`, `REVIEW_0157_1.md`); RULES.md wins over this sheet only where it is newer. The 25–26 Nov
+review notes are folded in below; the round-by-round record is in this file's git history (commit "FILES.md: Files
+review round 3 agreed" and before).
+
+Test data (Definition of done 4): the made-up sources in the mock-ups: Internal storage, Backup #1, Backup #2 (USB),
+Put.io (WebDAV), Seedbox and Home server (SFTP), Living-room NAS with a very long name (SMB, three folders), MEDIA-PC
+and backup-nas.local found on the network; empty folders; long file and title names; items in every Library Care list.
 
 ## Whole page
-- Plain charcoal `#16181C`, side margins as today (lined up with the top bar). Files fills the page itself; it is
-  not a cell inside the old page list (F3). Nothing clipped: a grown card or ring may reach into the margin.
-- Top bar: Files on the right; the signal slot on its left (scan ring, else white dot, else nothing).
+- Plain charcoal `#16181C`, side margins lined up with the top bar. Files fills the page itself (F3). Nothing clipped:
+  a grown card or ring may reach into the margin.
+- **Top bar:** Files on the right. The signal slot sits **outside** the Files box, left of it, with a clear gap,
+  centred on the word: the scan ring while a scan runs, else a white dot while Library Care has anything waiting, else
+  nothing. The slot never shifts anything (RULES §2). (`tv/01`, `tv/21`)
 - Opens on **This Device** every time (F2). Re-choosing the open tab returns it to its start (F12).
-- Tab row: This Device · Connections · Library Care (badge) · Your Library; on the right only **"⟳ Scan library"**
-  (OK scans every source; "Scanning · 42%" while running, OK stops). No facts (F18).
-- Moving along the tabs switches the page at once. Up into the tab row lands on the open tab (F17). Up from the tab
-  row reaches the top bar (F1). Focus never jumps to the top bar by itself (F9).
-- No scroll bars: down arrow in the right margin at the foot when there is more; up arrow at the top once there is
-  something above, faint when not; none when it all fits (F15, F36).
-- Rows: icon, name, second line, pill in a fixed column, buttons on the focused row only, › only when OK opens a
-  page; everything on the row's centre line; black ink on the white focus, icons included (F13, F29, F30, F43).
+- **Tab row:** This Device · Connections · Library Care (count badge) · Your Library. Focused tab = the white box; the
+  open tab keeps a white underline (RULES focus and path). Moving along the tabs switches the page at once. Up into the
+  tab row lands on the open tab (F17); Up again reaches the top bar (F1). Focus never jumps to the top bar by itself.
+- **Scan library** (right end of the tab row): OK scans every source; OK while running stops it. **It narrates every
+  step, never a bare "Scanning"** (`tv/23`):
+  Connecting to Seedbox… → Looking in Seedbox › TV · 42% → Found 3 new videos → Matching 2 of 3 · Blue Planet III →
+  Fetching artwork · 5 of 12 → Checking for missing files · Seedbox → Done · 3 new · 1 missing · 1 not matched (a few
+  seconds), then "Scan library" again. "· 2 more waiting" when sources queue. A failure says so in place ("Couldn't
+  connect to Living-room NAS") and the scan moves on to the next source. Steps shorter than a second are skipped.
+  **Nothing jiggles:** the ⟳ icon is pinned at the right margin; the words grow leftwards into the empty space, about
+  45 characters at most, long names end "…"; numbers use fixed-width digits.
+- **No scroll bars:** a down arrow in the right margin at the foot when there is more; an up arrow at the top once
+  there is something above, faint when not; none when it all fits. Menus that scroll carry the arrows in their own
+  right-hand margin (RULES §11).
+- **Rows:** icon, name, second line, pill in one fixed column, buttons on the focused row only, › only when OK opens a
+  page; everything on the row's centre line; black ink on the white focus, icons included. Long names stop a clear
+  40 px before the pill column and end "…". Lines only between selectable rows, never under the last.
+- **Pills never wobble:** one fixed width; while working, the ring is pinned at the pill's left inset with the words
+  after it and fixed-width digits ("Adding · 40%", "Scanning · 100%" fit).
+- **Menus** reserve the tick column on every row; the current choice is ticked; each item has its own icon.
 
-## This Device
-- Rows: **Internal storage** (F19) and each USB drive: name, "USB drive · 1,203 videos · 1.1 TB free of 2 TB", and
-  the storage bar on every row (F14). USB-stick icon for drives. OK opens the drive.
+## This Device (`tv/01`)
+- Rows: **Internal storage** and each USB drive: name, "USB drive · 1,203 videos · 1.1 TB free of 2 TB", and the
+  storage bar on every row. USB-stick icon for drives. OK opens the drive.
 
-## Browsing a drive, folder or connection
-- Breadcrumb under the tab ("Backup #2 › Movies"): signpost only, not focusable; Back goes up one level.
-- Toolbar on the right: **Grid / List** (shows the other view) · **Sort: Name ▾** · **Order** · **Videos only / All
-  files**. List is the default (F5).
-- Sort menu: Name · Date modified · Size, tick on the current one; Order's words follow it: A → Z / Z → A, Newest /
-  Oldest first, Largest / Smallest first. Folders always first (F6, F25).
-- List rows: folder: "Folder · 86 videos" + pill In library / Excluded / Not added (F23); file: title line, second line
-  "2024 · 14.2 GB" (size only when the year is unknown) + pill (F20).
-- Grid cards (16:9): folder: mosaic of the artwork inside, or plain card with a folder icon (F8); library file: its
-  artwork; other file: a still from the video, or the plain card with a film icon (F24, `files-review-0157-1/03`);
-  pill top right; caption as in list.
-- After playing, Back returns to the same folder with focus on the file (F11).
+## Browsing a drive, folder or connection (`tv/02`–`08`)
+- Breadcrumb under the tabs ("Backup #2 › Movies"): signpost only, not focusable; Back goes up one level.
+- Toolbar on the right: **Grid / List** (shows the other view) · **Sort: Name ▾** · **Order** · **Videos only /
+  Show all files** (each with its icon). List is the default.
+- **Sort** drops down under its button (`tv/03`): Name · Date modified · Size, tick on the current one. Order's words
+  follow it: A → Z / Z → A, Newest / Oldest first, Largest / Smallest first. Folders always first.
+- **List rows:** folder: "Folder · 31 videos · 48.6 GB" + pill In library / Excluded / Not added. The size comes from
+  the library at once for folders in it; for folders not yet added it fills in quietly once counted. File: title,
+  second line "2024 · 14.2 GB" + pill.
+- **Grid cards** (16:9, `tv/04`): folder: mosaic of the artwork inside, or the plain card with a folder icon; library
+  file: its artwork; other file: a still from the video, or the plain card with a film icon; pill top right.
+- **A folder with no videos** says so (`tv/08`): "No videos in this folder" with **Show all files**.
+- After playing, Back returns to the same folder with focus on the file.
 
 | Action | Leads to |
 | --- | --- |
 | OK on a folder | Opens it below the same tab (breadcrumb grows); focus on its first item |
 | OK on a file | Plays it |
-| Long-press (or Menu) on a file | Menu beside it: Play · Details · Mark as watched · Exclude · Fix match |
-| Long-press (or Menu) on a folder | Menu beside it: Open · Add to library · Scan this folder · Exclude (`files-review-0157-1/01`) |
+| Menu (or long-press) on a file (`tv/05`) | Menu beside it: Play · Details · Mark as watched · Exclude · Fix match |
+| Menu on a folder (`tv/04`) | Open · Add to library · Scan this folder · Fix match · Exclude. Add / Scan only when they apply; **Fix match only on a folder holding one title** (a film's or a show's folder): it re-matches everything inside in one go |
 | Details | The title's Details page; Back returns here |
-| Fix match | Library Care's Fix match page for that title; Back returns here |
-| Grid / List | Switches view, focus stays on the same item |
-| Sort | Sort menu beside the button |
+| Fix match | The Fix match page (below) for that title or folder; Back returns here |
+| Exclude (`tv/06`) | At once; the pill becomes Excluded; notice with Understood · Undo |
+| Add to library / Scan this folder (`tv/07`) | Progress in the row's pill ("Adding · 40%"), then In library |
+| Grid / List | Switches view; focus stays on the same item |
+| Sort | Sort menu under the button; Back closes it |
 | Order / Videos only | Switches at once, in place |
 | Back | Up one level; from the top of a drive, This Device's list |
 
-## Connections
-- **Your connections:** one row per connection: "Put.io · alex", second line "WebDAV · 1,204 videos" (F38), pill
-  Reachable / Not reachable. Focused: **Open · Edit · Test · Remove** (F30).
-- **Add a connection** (last row): no buttons; OK opens the form (F39).
-- **Found on your network:** devices not yet added; focused: **Open · Add** (F40). Once added, a device moves up into
-  Your connections and leaves this list.
-- 0.158: one connection per server, its folders inside; one row and one scan button per server (F52).
+## Connections (`tv/09`–`15`)
+- **Your connections:** one row per connection, one per server with its folders inside: "Put.io · alex.morgan",
+  second line "WebDAV · 1,204 videos" or "SMB · 3 folders · 2,140 videos", pill Reachable / Not reachable.
+  Focused: **Open · Edit · Test · Remove**.
+- **Add a connection** (last row of the section): no buttons; OK opens the form.
+- **Found on your network:** devices not yet added, pill New; focused: **Open · Add**. Once added, a device moves up
+  into Your connections.
+- **Advanced › Network options** (last section): moved here from Settings (`tv/15`).
 
 | Action | Leads to |
 | --- | --- |
-| Open (or OK) on a connection | Browses it like a drive (breadcrumb from its name) (F33) |
-| Edit | The connection's form as a page in the tab, filled in (F32) |
-| Test | Result in the row ("Connected" / why not) |
-| Remove | Row goes at once; notice with Undo (`24`) (F31) |
-| OK on Add a connection | New connection form (F34) |
-| Open (or OK) on a found device | Browses it; asks for a username and password only if needed (F40) |
+| Open (or OK) on a connection | Browses it like a drive (breadcrumb from its name) |
+| Edit | The connection's form as a page in the tab, filled in (`tv/13`) |
+| Test | The answer in the row's second line: "Connected · 3 shared folders found" or why not ("Can't reach it · check it's switched on and on this network") (`tv/10`) |
+| Remove | Row goes at once; notice "Put.io · alex.morgan removed · Its videos leave your library. Nothing is deleted on Put.io." with Understood · Undo (`tv/11`) |
+| OK on Add a connection | New connection form (`tv/12`) |
+| Open on a found device | Browses it; only if it needs a sign-in, the sign-in page first (`tv/14`) |
 | Add on a found device | New connection form with address and type filled in |
+| Network options | Its page in the tab (`tv/15`); Back returns |
 
-- **Connection form** (`files-review-0157-1/04` 2): Type chips **SMB · WebDAV · SFTP · FTP** (help line "SMB: shared
-  folders on a Windows PC, Mac or NAS"); fields follow the type: Name (suggested from the address), Address,
-  Encryption switch on by default ("Encryption (HTTPS)" for WebDAV, "Encryption (FTPS)" for FTP), Port, Folder,
-  Username, Password (eye), Remember password; buttons Test connection · Save and browse. The one keyboard on the page
-  (RULES §15). Back leaves without saving.
+- **Connection form** (`tv/12`, `12b`, `12c`, `13`), a page in the tab, "Connections › New connection" / "Edit ·
+  <name>"; form left, the one keyboard right (RULES §15) with a help line for the chosen type. Every row has an icon.
+  - **Type** first: OK opens a short menu under the row with the four kinds, each with its line, the current one
+    ticked (`tv/12c`): SMB "Shared folders on a Windows PC, Mac or NAS" · WebDAV "Cloud storage and web servers" ·
+    SFTP "A computer or server you sign in to over SSH" · FTP "Older file servers; FTPS when encrypted". Back closes it.
+  - **Encryption** straight under Type, always: a switch for WebDAV (HTTPS) and FTP (FTPS), on by default; **greyed**
+    for the others, saying why ("Always on with SFTP", "Set by the server" for SMB); focus skips it while greyed.
+    Rows never jump when the type changes.
+  - Then Name (suggested from the address, change any time) · Address · Port (only where it isn't standard; "443 ·
+    the usual port with encryption") · Folder / Folders · Username · Password (eye) · Remember password.
+  - Height follows the type; buttons **Test connection · Save and browse** (Edit: **Test connection · Save**) sit
+    straight under the last field. Test answers under the buttons. Back leaves without saving.
+  - **Renaming must save** and show at once everywhere the connection is named (bug M6).
+- **Sign-in for a found device** (`tv/14`): "MEDIA-PC asks you to sign in · Windows computer · SMB"; Username,
+  Password, Remember password; **Sign in and browse · Add as a connection**. Only when needed.
+- **Network options** (`tv/15`): Windows Shares (SMB): Newer SMB method · Allow SMBv1 · Name lookup order (chips
+  Network first / Local first). Finding Devices: Look over TCP · UDP · mDNS (Bonjour). SFTP: Newer SFTP method. Each
+  switch with its line of explanation.
 
-## Library Care
-- **Library health:** Missing files · Couldn't be read · Not matched (count pills) · Check matches ("Last: 17 Nov").
-  A "None" row has no › and OK does nothing (F46). The badge equals the total.
-- **Scanning:** Scan one source (focused: one button per source; nothing shown at rest) (F48); pressed sources show
-  "Waiting" until their turn (F51). **Recent scans:** last three as plain rows, then Show all scans (F50).
+## Library Care (`tv/16`–`24`)
+- **Library health:** Missing files · Couldn't be read · Not matched · To fix (count pills) · Check matches ("Last:
+  17 Nov"). A "None" row has no › and OK does nothing. The tab's badge equals the total.
+- **Kept by you:** Excluded from hero ("46 titles").
+- **Scanning:** **Scan one source ›**, second line "One drive, server or folder only", or while scanning the same
+  narration as the tab bar ("Seedbox: Scanning · 42% · 1 waiting").
+- **Recent scans:** the three latest, **each focusable with ›** (`tv/23`): source, "Today 18:28 · 3 new · 1 missing ·
+  1 folder held back", pill Finished / Failed (second line soft red, with the reason) / Stopped; then **Show all
+  scans** ("The last ten").
+- **Every problem list has a "this is fine" answer** beside its fix; an item answered either way leaves the list and
+  its count:
+
+| List | Second line of each item | Buttons on the focused item |
+| --- | --- | --- |
+| Missing files (`tv/20`) | where it was and since when ("Living-room NAS › Movies · since 3 Nov") | Find it again · Remove |
+| Couldn't be read | where it is and what went wrong | Try again · It plays fine |
+| Not matched (`tv/20b`) | the best guess: "Looks like Blue Planet III · S1 E2 · from the file name", or "No guess yet · <where>" | Fix match · It's right (accepts the best guess) |
+| To fix (`tv/17`) | "TV show · 1 episode · opened in Fix match on 20 Nov from TV Shows" | Fix match · It's right |
+| Excluded from hero (`tv/19`) | "Movie · 2019 · excluded 14 Oct 2026"; search row first; Include all again top right | Include again |
+
+- Missing files ends with a quiet note: "Find it again looks for the same file and links it back, keeping where you
+  stopped. Remove takes it out of your library only."
+- **Not matched lists only real failures:** titles still being looked up are not listed or counted; while any are
+  pending, a line under the list says "Matching N new titles: they're not listed while Supernova is still looking them
+  up." (bug M5).
+- **To fix:** every title opened in Fix match anywhere in the app and left without a new match stays here until it is
+  matched or marked It's right. The Files dot shows while anything is waiting.
 
 | Action | Leads to |
 | --- | --- |
-| OK on Missing files | Its page in the tab: each file with Find it again · Remove (`12`) |
-| OK on Couldn't be read | Its page: Try again · Exclude (`13`) |
-| OK on Not matched | Its page: Fix match · Not a movie (`14`) |
-| Fix match | Fix match page: search and keyboard left, matches right, "Best match" (`14b`) |
-| OK on Check matches | Runs in the row; "No changes · 17 Nov", or "4 to review" and then OK opens the review page (F44) |
-| A source button | Scans that source; "Scanning · n%" in the row |
-| Show all scans | The last ten scans |
-| Fix match from a title (Details › More) | This page for that title: Match and return · Match and stay; Back returns to the title |
+| OK on Missing files / Couldn't be read / Not matched / To fix / Excluded from hero | Its list as a page in the tab ("Library Care › Not matched  3 videos") |
+| Fix match (any list, any page in the app) | **Fix match page** (`tv/18`) |
+| OK on Check matches | Runs in the row; "No changes · 17 Nov", or "4 to review" and OK opens the review page |
+| OK on Scan one source | **Menu** (`tv/21`): This device, each USB drive, then for each connection a group heading ("Seedbox · SFTP") with "All of Seedbox" and each of its folders; each line shows where it stands on the right: last scan time · Waiting · Scanning · 42% · Couldn't connect · 17:28. OK queues it; several can wait their turn. Scrolls, arrows in its right margin |
+| OK on a recent scan, or on a scan in Show all scans | **Scan details** (`tv/24`) |
+| Show all scans | The last ten scans, same rows |
 
-## Your Library
-- Read-only, nothing focusable: Total Library, By Library Page, Most space per episode (`44`). Picture row shows
-  every quality: 4K, 1080p, 720p, SD and HDR (F21). Down / Up scroll; arrows as above.
+- **Fix match page** (`tv/18`), "Fix match  from <where> · <page>": left column **This file**: the file name, its
+  location and size, and "Matched now as Dine Out (2023) · TV show · 1 episode"; under it the search box and the one
+  keyboard (narrow column). Right: **Matches**, the first marked "Best match"; the focused match carries **Match and
+  return · Match and stay** on its own line, at normal row height. Back returns to where Fix match was opened.
+- **Scan details** (`tv/24`), a whole page, "Library Care › Recent scans › Seedbox  Today 18:28":
+  - **Summary** (read-only): When (what started it; "Today 18:24 – 18:28 · 4 min 8 s") · Folders looked in ("2 of 3 ·
+    1 held back") · Files listed · Result ("3 new · 1 updated · 1 missing · 1 not matched").
+  - **What changed** (focusable, ›): each title new, updated, missing or not matched, with its pill; OK opens where it
+    went (Details, Missing files, Not matched).
+  - **Step by step** (read-only; Down / Up scroll): the transcript, times to the second: started (and by what),
+    connecting and connected (time taken), each folder looked in and listed (files, new, changed, seconds), every
+    failure with its reason and retries in soft red, folders held back, the missing check and each file found
+    missing, each match and how it was made, updates, artwork, finished with the totals.
+  - Kept for the last ten scans; the same record feeds the diagnostics report (BRIEF_0158_C item 9).
+
+## Your Library (`tv/22`)
+Read-only, nothing focusable; Down / Up scroll; arrows as above. Faint row lines (a long read-only list of facts).
+- **Total Library:** All library pages ("520 titles · 1,808 videos", size) · Watched ("318 of 520 titles", %) · Time
+  to watch everything (hours) · Picture (4K · 1080p · 720p · SD · HDR counts) · Added this month.
+- **By Library Page:** one row per library page with titles (episodes for TV) and size.
+- **By Source:** note "The videos in your library on each source, not the space left on it."; one row per drive or
+  connection (type, folders) with size and video count; last row **By connection type** (USB · SMB · WebDAV · SFTP ·
+  this device).
+- **Most Space Per Episode:** the top three shows, "6 episodes · 14.4 GB", "2.4 GB per episode".
 
 ## Never opens from Files
 NOVA's Network Shares / Saved Locations / "Browse a network share" pages, the "Add Network Source" pop-up, Android's
-keyboard, the three-panel browser (Locations · list · Information), the old Library Health screens.
-
-## Review 25–26 Nov (owner; mock-ups `files-v2/tv/01`–`22`; rounds 1–4)
-**Round 1 (owner, 26 Nov): agreed with the notes below; redrawn `files-v2/tv/01`–`08` (Drive › Files round 1 › Revised 26 Nov).**
-- **Tabs (confirmed):** focused tab = the white box; inside the tab the open tab keeps a white underline, no box (RULES
-  one tab behaviour).
-- **Scan library narrates its work (owner):** "Scanning Backup #1 · 42%" → "Scanning Put.io · 3 of 6 sources" →
-  "Fetching details · 12 of 40" → "Done · 23 new" (a few seconds), then "Scan library"; OK while running stops it.
-  **Nothing jiggles (owner):** the ⟳ icon sits at the right end, pinned to the margin; the words grow leftwards into
-  the empty space; numbers use fixed-width digits; long source names end in "…" so the text has a ceiling.
-- **Menus reserve the tick column** on every row (Sort: "Date modified" must fit its tick); drawing fix.
-- **Folder size on folder rows (owner):** "Folder · 31 videos · 48.6 GB"; from the library at once for folders in it;
-  for folders not yet added (network) it fills in quietly when counted.
-- **Signal dot (owner, 26 Nov):** stays **outside** the Files box, with a clear gap, centred on the word (RULES §2: the
-  slot never shifts anything).
-- **Fix match on a folder (owner, 26 Nov):** only when the folder holds one title (a TV show's or a film's folder);
-  it re-matches everything inside in one go. Not offered on mixed folders. Folder menu then: Open · (Add to library ·
-  Scan this folder) · Fix match · Exclude.
-- **"Show all files"** carries its file icon, black on the white focus (drawing fix).
-- **Progress in a pill doesn't wobble (owner, 26 Nov):** pills keep their one fixed width; while working, the ring is
-  pinned at the pill's left inset with the words left-aligned after it and fixed-width digits ("Adding · 40%",
-  "Scanning · 100%" fit).
-
-**Round 2 (owner, 26 Nov): agreed with the notes below; redrawn `tv/09`, `12`, `12b`, `12c`, `13` (Drive › Files round 2 › Revised 26 Nov).**
-- Long names stop well short of the pill: a clear 40 px gap before the pill column ("…" earlier).
-- **Type is a short menu (owner, 26 Nov; an exception to RULES §8 because each kind needs a line of explanation):** OK on
-  Type (value and ›) opens the four kinds under the row, each with its second line, the current one ticked (`tv/12c`):
-  SMB "Shared folders on a Windows PC, Mac or NAS" · WebDAV "Cloud storage and web servers" · SFTP "A computer or server
-  you sign in to over SSH" · FTP "Older file servers; FTPS when encrypted". Back closes it.
-- **Encryption sits straight under Type, always (owner, 26 Nov):** a switch for WebDAV (HTTPS) and FTP (FTPS), on by
-  default; **greyed** for the others, saying why: "Always on with SFTP", "Set by the server" (SMB); focus skips it while
-  greyed (`tv/12b`, `tv/13`). Rows never jump when the type changes.
-- **Form rows get icons** (Claude, as every other row in the app): Type, Name, Address, Encryption, Port, Folder(s),
-  Username, Password, Remember password.
-- Form height follows the type (WebDAV nine rows, SMB seven: no encryption switch, standard port); the buttons sit
-  straight under the last field, never pinned to the foot.
-
-**Round 3, Library Care (owner, 26 Nov): agreed with the notes below; redrawn `tv/18`, `20b`, `21` (Drive › Files round 3).**
-- **Every problem list has a "this is fine" answer** beside its fix: Not matched › Fix match · It's right (accepts the
-  best guess); Couldn't be read › Try again · It plays fine; To fix › Fix match · It's right; Missing files stays Find
-  it again · Remove. An item answered "fine" leaves the list and its count.
-- **Not matched shows the best guess** under each file ("Looks like Blue Planet III · S1 E2 · from the file name"; "No
-  guess yet" when there is none) (`tv/20b`). Titles still being looked up are **not** listed; a line under the list says
-  "Matching N new titles: they're not listed while Supernova is still looking them up." (bug M5, BRIEF_0158_C item 8).
-- **Fix match:** Match and return · Match and stay sit on the focused match's own line, at normal row height; the
-  keyboard column is narrower to make room (`tv/18`).
-- **Scan one source ›** opens a menu, not a row of buttons (`tv/21`): every drive, server and folder, grouped under
-  each connection ("All of Seedbox", then its folders), each line with where it stands (Waiting · Scanning · 42% · last
-  scan time · Couldn't connect). Several can be queued. The menu scrolls, with the up and down arrows in its own
-  right-hand margin (RULES §11). The row's second line says what is running ("Seedbox: Scanning · 42% · 1 waiting").
-- Renaming a connection must save and show everywhere at once (bug M6, BRIEF_0158_C item 8).
-- **Scan library narrates every step (owner, 26 Nov; replaces the round 1 list above):** never a bare "Scanning".
-  Connecting to Seedbox… → Looking in Seedbox › TV · 42% → Found 3 new videos → Matching 2 of 3 · Blue Planet III →
-  Fetching artwork · 5 of 12 → Checking for missing files · Seedbox → Done · 3 new · 1 missing · 1 not matched (a few
-  seconds, then "Scan library"). "· 2 more waiting" when sources queue; a failure says so in place ("Couldn't connect
-  to Living-room NAS") and the scan moves on. About 45 characters, long titles end "…", the icon never moves; steps
-  shorter than a second are skipped. The same words show on Scan one source's second line.
-- **Recent scans are focusable (owner, 26 Nov; proposed `tv/23`, awaiting the owner's look):** the three latest scans
-  and Show all scans, each with ›; OK on a scan opens **Scan details**, as does OK on a scan in Show all scans.
-- **Scan details (owner, 26 Nov; proposed `tv/24`, awaiting the owner's look):** a whole page, "Library Care › Recent
-  scans › <source>  <time>". **Summary** (read-only): when and who started it, how long; folders looked in and held
-  back; files listed; result. **What changed** (focusable, ›): each title new, updated, missing or not matched, with a
-  pill; OK opens where it went (Details, Missing files, Not matched). **Step by step** (read-only, Down / Up scroll):
-  the full transcript with times to the second: connecting, each folder listed (files, new, time taken), every
-  failure with its reason and retries (soft red), folders held back, missing checks, each match and how it was made,
-  artwork, finished. Kept for the last ten scans. The same record feeds the diagnostics report (BRIEF_0158_C item 9).
-
-## To fix (approved idea, owner 20 Nov; draw at the Files review)
-A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
-match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on
-Files in the top bar shows while anything is waiting. **Mock-up and details at the Files review**, not before.
-
-## To settle at the Files review (owner, 20 Nov)
-- **Fix match shows the file:** the file name and its location on the Fix match page, so the owner can tell which
-  show or film the file really is before choosing a match. Place and look decided at the Files review.
-
-- **New, to walk through at the Files review (owner, 21 Nov):** Library Care › **Excluded from hero** (list of titles
-  kept off Home's hero; mock-up `home-v3/tv/17`, approved in principle only) and its row in Library Care.
+keyboard, the three-panel browser (Locations · list · Information), the old Library Health screens, the old scan
+history.

@@ -60,8 +60,15 @@ finished to its sheet (every action pressed and rendered) before the next:
    code and message). A test fails the build if any failure is recorded without one. Where the reason truly isn't
    known, the report says so and records what was attempted, how long it waited and the last thing that worked. The
    report's summary lists top reasons ("Delete failed ×6: server refused (403)").
-10. **The Files page** (FILES.md, once the review is finished and the sheet rewritten): to be filled in at the end of
-   the Files review.
+10. **The Files page (owner's review finished 26 Nov; build from `docs/design/pages/FILES.md`, final).** One page at a
+   time to the sheet, each finished (renders of every action, Definition of done) before the next: (a) the whole page:
+   top bar signal slot, tabs, **Scan library narrating every step**; (b) This Device and browsing (sort menu, folder
+   sizes, Fix match on one-title folders, empty folder, pills that never wobble); (c) Connections and the connection
+   form (Type menu, Encryption greyed with reasons, form icons, rename saves: M6), sign-in, Network options moved from
+   Settings; (d) Library Care: the lists with their "this is fine" buttons, Not matched best guess and pending line
+   (M5), To fix, Excluded from hero, Fix match page with inline buttons, **Scan one source menu**, **focusable recent
+   scans and the Scan details page** (the scan record kept for the last ten scans and shared with item 9's
+   diagnostics); (e) Your Library with By Source. Mock-ups `files-v2/tv/01`–`24`. Sign as a point release when done.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
