@@ -4,14 +4,14 @@ import android.content.Context;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
-import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * A key of the one keyboard (RULES §15). No Phone key (owner, 25 Nov 2026): while a key holds the remote's focus it
  * tells Android that the text box is being typed into and hands over the box's own input connection, so the phone
  * app's typing box (and paste) lands in the box with no button to press. Android's on-screen keyboard stays hidden.
  */
-final class KeyboardKey extends TextView
+final class KeyboardKey extends AppCompatTextView
 {
     private final EditText target;
 
