@@ -98,6 +98,21 @@ facts on the right of the tabs: read them as This Device, Files, underline tabs,
 NOVA's Network Shares / Saved Locations / "Browse a network share" pages, the "Add Network Source" pop-up, Android's
 keyboard, the three-panel browser (Locations · list · Information), the old Library Health screens.
 
+## Review 25–26 Nov (owner; mock-ups `files-v2/tv/01`–`22`; rounds 1–4)
+**Round 1 notes (owner, 26 Nov):**
+- **Tabs (confirmed):** focused tab = the white box; inside the tab the open tab keeps a white underline, no box (RULES
+  one tab behaviour).
+- **Scan library narrates its work (owner):** "Scanning Backup #1 · 42%" → "Scanning Put.io · 3 of 6 sources" →
+  "Fetching details · 12 of 40" → "Done · 23 new" (a few seconds), then "Scan library"; OK while running stops it.
+  **Nothing jiggles (owner):** the ⟳ icon sits at the right end, pinned to the margin; the words grow leftwards into
+  the empty space; numbers use fixed-width digits; long source names end in "…" so the text has a ceiling.
+- **Menus reserve the tick column** on every row (Sort: "Date modified" must fit its tick); drawing fix.
+- **Folder size on folder rows (owner):** "Folder · 31 videos · 48.6 GB"; from the library at once for folders in it;
+  for folders not yet added (network) it fills in quietly when counted.
+- Proposed, waiting: (a) the signal dot beside Files stays **outside** its box, with a clear gap, centred on the word
+  (Claude); (b) **Fix match on a folder** only when the folder holds one title (a TV show's or a film's folder: re-matches
+  everything inside); not on mixed folders (Claude).
+
 ## To fix (approved idea, owner 20 Nov; draw at the Files review)
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
 match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on
