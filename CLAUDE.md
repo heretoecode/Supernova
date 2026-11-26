@@ -152,6 +152,11 @@ done from still renders. From now on a redesigned page is done only when all of 
 
 When the owner sets Supernova Coding going (often overnight), the aim is a signed APK ready when they wake:
 - **Never sit idle while a GitHub build runs.** Start it, carry on with the next item, check the run when it ends.
+- **Never end a turn while work remains (owner, 26 Nov).** A finished turn stops the session: nothing wakes it when a
+  build ends, so it looks idle all night. Keep working the next item while runs go. If there is truly nothing left to do
+  but wait for a run, first book a wake-up with `send_later` (claude-code-remote; about the run's remaining time, e.g.
+  40 min, message "Check run <id> and carry on with BRIEF …"), then end the turn; on waking, check the run and carry on.
+  Before any turn ends, ask: is everything in the brief built, signed and reported? If not, book the wake-up first.
 - **Don't stop for questions.** Use best judgement, follow the rules and page sheets, and list every judgement call
   for the owner at the end (with the reason), so they can be changed later.
 - Push after each finished item, so nothing is lost if the session stops.
