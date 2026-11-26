@@ -16,6 +16,13 @@ approved for Details and Playback Settings (PS1 / DT2: white box on the focused 
 on the open tab once focus goes down, no underlines), "this device" never "Shield" (RULES §22). Where a mock-up and a
 later dated decision differ, the decision wins (listed under "Newer than the pictures").
 
+## Review 26 Nov (owner; mock-ups `settings-v3/tv/01`–`19`, Drive "2026-11-26 Settings round 1–4")
+Drawn on today's rules (top bar, speckle, Files-style tabs with the underline, steppers for three or more choices).
+Rounds: 1 Playback, Audio (`01`–`02`) · 2 Subtitles (`03`–`06`) · 3 Library, Services (`07`–`11`) · 4 System, About
+(`12`–`19`). **New, proposed by Claude, to approve or park:** Playback › Start a little earlier (rewind on resume);
+Subtitles › Subtitles for the hard of hearing (SDH: Prefer · Avoid · Either); Library › Hide spoilers; Trakt panel's
+Sync now. Look for new videos (approved 26 Nov) is drawn on Library. Notes go here, round by round.
+
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·
   Services · System · About. Settings is a tool: it opens on OK in the top bar, on Playback (or the tab last used

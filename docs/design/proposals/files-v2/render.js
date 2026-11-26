@@ -991,7 +991,9 @@ ROUND23.push(['23-recent-scans', f23, 1080], ['24-scan-details', f24, 3200]);
 const FRAMES = [['01-this-device', f01], ['02-drive-list', f02], ['03-sort-menu', f03], ['04-grid-folder-menu', f04],
   ['05-file-menu', f05], ['06-exclude-undo', f06], ['07-add-progress', f07], ['08-no-videos', f08]].concat(ROUND23);
 
-(async () => {
+module.exports = { css, css2, css4, svg, I, speckle, ring, hd, rbtns, crow, keyboard, stat, font };
+
+if (require.main === module) (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch();
   const pg = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
