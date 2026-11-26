@@ -206,7 +206,7 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 
 ## 0.159 — NOVA clean-out (owner, 20 Nov)
 
-- **Diagnostics record why, not just what (owner, 26 Nov; after the Put.io delete failed six times with no reason):**
+- **[Moved to 0.158 part C, 26 Nov]** **Diagnostics record why, not just what (owner, 26 Nov; after the Put.io delete failed six times with no reason):**
   every failure event carries its reason: the error, the step (connecting, listing, deleting…), the kind of source,
   and the server's answer (status code and message). A test fails the build if any failure is recorded without one.
   Where the reason truly isn't known, the report says so and records what was attempted, how long it waited and the

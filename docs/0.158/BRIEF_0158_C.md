@@ -6,6 +6,9 @@ the latest NOVA changes, and the Settings Backup bug"). Installed on the Shield:
 sign finished work as you go (standing approval), first signing **0.158.8** (code 1588), then .9 and so on.
 
 ## Part C continued (owner, 26 Nov, after 0.158.9)
+**Not started yet (owner, 26 Nov): the owner starts this run after the Files review is finished.** The order, as the
+owner set it: (A) the refinements 0.158.9 missed (items 1–6), (B) diagnostics record why (item 9), (C) the MobLand bugs
+M2–M4 (item 8), (D) the Files page (item 10), then the NOVA leftovers (item 7).
 0.158.9 built group 1, B1 and a slice of the pages, then stopped. **The rest of this brief is the job now, and the
 redesigned pages come first.** Work through `REPORT_0158_C.md` › "Not built", line by line, in this order, each page
 finished to its sheet (every action pressed and rendered) before the next:
@@ -41,6 +44,13 @@ finished to its sheet (every action pressed and rendered) before the next:
      in full mark their missing files; only folders that failed hold back, and Library Care says so ("Couldn't check 1
      folder on Home server"). Diagnostics record per scan how many were marked missing and why any were held back (the
      0.159 "record why" rule, early). Tests: a scan with one failing subfolder still marks a missing file in a good one.
+9. **Diagnostics record why, not just what (owner, 26 Nov; moved here from 0.159):** every failure event carries its
+   reason: the error, the step (connecting, listing, deleting…), the kind of source, and the server's answer (status
+   code and message). A test fails the build if any failure is recorded without one. Where the reason truly isn't
+   known, the report says so and records what was attempted, how long it waited and the last thing that worked. The
+   report's summary lists top reasons ("Delete failed ×6: server refused (403)").
+10. **The Files page** (FILES.md, once the review is finished and the sheet rewritten): to be filled in at the end of
+   the Files review.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
