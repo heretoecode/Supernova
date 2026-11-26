@@ -1,17 +1,17 @@
 {
- "purpose": "0.158.10: Search, Home, Details tabs, delete warnings, full-width hero",
+ "purpose": "0.158.11 candidate: D14, M3, M5, D16, item 9, Files narration, artwork edge",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review0158cSearchTest",
-  "com.archos.mediacenter.video.leanback.Review0158cDeleteWarningTest",
-  "com.archos.mediacenter.video.leanback.Review0158HomeTest",
+  "com.archos.mediacenter.video.scanning.ScanNarrationTest",
+  "com.archos.mediacenter.video.diagnostics.DiagnosticReasonTest",
+  "com.archos.mediacenter.video.leanback.files.LibraryCareCountsTest",
+  "com.archos.mediacenter.video.leanback.files.ConnectionRenameTest",
+  "com.archos.mediacenter.video.leanback.files.FilesPageTest",
+  "com.archos.mediacenter.video.browser.DeleteFailureMessageTest",
+  "com.archos.mediacenter.video.leanback.Review01572FilesTest",
+  "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
   "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
-  "com.archos.mediacenter.video.leanback.Preview41RowsTest",
-  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
-  "com.archos.mediacenter.video.leanback.Review01572DetailsTest",
-  "com.archos.mediacenter.video.leanback.Review0158LibraryTest",
-  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
-  "com.archos.mediacenter.video.player.Playback141RenderTest",
-  "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest"
+  "com.archos.mediacenter.video.leanback.Review0158cSearchTest",
+  "com.archos.mediacenter.video.leanback.Review0158HomeTest"
  ],
  "variants": {
   "normal": {}
