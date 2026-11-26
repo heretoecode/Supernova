@@ -99,7 +99,7 @@ NOVA's Network Shares / Saved Locations / "Browse a network share" pages, the "A
 keyboard, the three-panel browser (Locations · list · Information), the old Library Health screens.
 
 ## Review 25–26 Nov (owner; mock-ups `files-v2/tv/01`–`22`; rounds 1–4)
-**Round 1 notes (owner, 26 Nov):**
+**Round 1 (owner, 26 Nov): agreed with the notes below; redrawn `files-v2/tv/01`–`08` (Drive › Files round 1 › Revised 26 Nov).**
 - **Tabs (confirmed):** focused tab = the white box; inside the tab the open tab keeps a white underline, no box (RULES
   one tab behaviour).
 - **Scan library narrates its work (owner):** "Scanning Backup #1 · 42%" → "Scanning Put.io · 3 of 6 sources" →
