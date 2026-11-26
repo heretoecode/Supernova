@@ -133,6 +133,21 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
 - Form height follows the type (WebDAV nine rows, SMB seven: no encryption switch, standard port); the buttons sit
   straight under the last field, never pinned to the foot.
 
+**Round 3, Library Care (owner, 26 Nov): agreed with the notes below; redrawn `tv/18`, `20b`, `21` (Drive › Files round 3).**
+- **Every problem list has a "this is fine" answer** beside its fix: Not matched › Fix match · It's right (accepts the
+  best guess); Couldn't be read › Try again · It plays fine; To fix › Fix match · It's right; Missing files stays Find
+  it again · Remove. An item answered "fine" leaves the list and its count.
+- **Not matched shows the best guess** under each file ("Looks like Blue Planet III · S1 E2 · from the file name"; "No
+  guess yet" when there is none) (`tv/20b`). Titles still being looked up are **not** listed; a line under the list says
+  "Matching N new titles: they're not listed while Supernova is still looking them up." (bug M5, BRIEF_0158_C item 8).
+- **Fix match:** Match and return · Match and stay sit on the focused match's own line, at normal row height; the
+  keyboard column is narrower to make room (`tv/18`).
+- **Scan one source ›** opens a menu, not a row of buttons (`tv/21`): every drive, server and folder, grouped under
+  each connection ("All of Seedbox", then its folders), each line with where it stands (Waiting · Scanning · 42% · last
+  scan time · Couldn't connect). Several can be queued. The menu scrolls, with the up and down arrows in its own
+  right-hand margin (RULES §11). The row's second line says what is running ("Seedbox: Scanning · 42% · 1 waiting").
+- Renaming a connection must save and show everywhere at once (bug M6, BRIEF_0158_C item 8).
+
 ## To fix (approved idea, owner 20 Nov; draw at the Files review)
 A **To fix** row in Library Care, with a count pill like the others: every title opened in Fix match (from any Fix
 match in the app) and left without a new match is kept here until it is matched or marked "It's right". The dot on
