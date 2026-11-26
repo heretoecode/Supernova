@@ -182,16 +182,17 @@ public class Review0158LibraryTest
                 Review0158Fixture.settle(nav);
                 assertNotNull("Clear filters brings everything back", Review0158Fixture.anyText(page.pages, "Conclave"));
 
-                // Sort: grouped menu; File size; the Order button follows (Largest first), line three shows sizes.
+                // Sort (final tv/48): grouped menu; "Size" on every page; the Order button follows (Largest first).
                 View sort = Review0158Fixture.byTextStart(page.pages, "Sort:");
                 assertNotNull(sort);
                 sort.requestFocus();
                 sort.performClick();
                 Review0158Fixture.settle(nav);
                 Review0158Fixture.saveWithDialog(nav, "0158-lib-08-sort-menu");
-                clickRow(ShadowDialog.getLatestDialog(), "File size");
+                assertNull("No Resolution sort any more", rowLabel("Resolution"));
+                clickRow(ShadowDialog.getLatestDialog(), "Size");
                 Review0158Fixture.settle(nav);
-                assertNotNull(Review0158Fixture.byText(page.pages, "Sort: File size"));
+                assertNotNull(Review0158Fixture.byText(page.pages, "Sort: Size"));
                 View order = Review0158Fixture.byText(page.pages, "Largest first");
                 assertNotNull("Order follows the sort", order);
                 Review0158Fixture.save(nav, "0158-lib-09-sorted-by-size");

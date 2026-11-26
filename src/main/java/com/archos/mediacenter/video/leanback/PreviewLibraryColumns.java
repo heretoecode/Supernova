@@ -34,6 +34,7 @@ public final class PreviewLibraryColumns {
         SIZE("File size", 1.15f),
         AVERAGE("Size per episode", 1.3f),
         ADDED("Date added", 1.25f),
+        LATEST("Last episode added", 1.3f),
         MODIFIED("Date modified", 1.25f),
         CODEC("Codec", 1.05f),
         BITRATE("Bitrate", 1f),
@@ -93,9 +94,36 @@ public final class PreviewLibraryColumns {
 
     public List<Column> available() {
         List<Column> values = new ArrayList<>(Arrays.asList(Column.values()));
+        // Date modified is dropped, as in Sort (BRIEF_0158_B › Columns).
+        values.remove(Column.MODIFIED);
         if (!tv)
-            values.removeAll(Arrays.asList(Column.SEASONS, Column.EPISODES, Column.AVERAGE));
+            values.removeAll(Arrays.asList(Column.SEASONS, Column.EPISODES, Column.AVERAGE, Column.LATEST));
         return values;
+    }
+
+    /**
+     * The column's name in the menu and its heading (BRIEF_0158_B › Columns): where TV shows can appear the pairs read
+     * Average running time · Average size · Total size; where only films can, Running time and File size.
+     */
+    public String label(Column c) {
+        switch (c) {
+            case DURATION:
+                return tv ? "Average running time" : "Running time";
+            case SIZE:
+                return tv ? "Total size" : "File size";
+            case AVERAGE:
+                return "Average size";
+            case SEASONS:
+                return "Number of seasons";
+            case EPISODES:
+                return "Number of episodes";
+            case CODEC:
+                return "Video codec";
+            case PATH:
+                return "Location";
+            default:
+                return c.label;
+        }
     }
 
     private List<Column> parse(String value) {
@@ -115,12 +143,13 @@ public final class PreviewLibraryColumns {
         order.addAll(available());
         shown.clear();
         // Defaults (page sheet LIBRARY.md): Movies, TV Shows and your own page each have their own.
+        // At most seven besides Title (owner, 21 Nov), in the brief's order.
         if (own)
             shown.addAll(Arrays.asList(Column.TITLE, Column.YEAR, Column.EPISODES, Column.DURATION,
-                Column.RESOLUTION, Column.SIZE, Column.AVERAGE, Column.ADDED));
+                Column.AVERAGE, Column.SIZE, Column.RESOLUTION, Column.ADDED));
         else if (tv)
             shown.addAll(Arrays.asList(Column.TITLE, Column.SEASONS, Column.EPISODES, Column.DURATION,
-                Column.RESOLUTION, Column.SIZE, Column.AVERAGE, Column.ADDED));
+                Column.AVERAGE, Column.SIZE, Column.LATEST));
         else
             shown.addAll(Arrays.asList(Column.TITLE, Column.YEAR, Column.DURATION, Column.RESOLUTION, Column.AUDIO,
                 Column.SIZE, Column.ADDED));
@@ -194,7 +223,7 @@ public final class PreviewLibraryColumns {
     private static boolean isNumeric(Column c) {
         return Arrays
             .asList(Column.YEAR, Column.SEASONS, Column.EPISODES, Column.DURATION, Column.SIZE, Column.AVERAGE,
-                Column.ADDED, Column.MODIFIED, Column.BITRATE, Column.RESOLUTION)
+                Column.ADDED, Column.LATEST, Column.MODIFIED, Column.BITRATE, Column.RESOLUTION)
             .contains(c);
     }
 
@@ -215,6 +244,7 @@ public final class PreviewLibraryColumns {
             case AVERAGE:
                 return e.episodes > 0 ? e.bytes / e.episodes : 0;
             case ADDED:
+            case LATEST:
                 return e.added;
             case MODIFIED:
                 return e.modified;
@@ -276,6 +306,7 @@ public final class PreviewLibraryColumns {
                     ? Formatter.formatShortFileSize(context, e.bytes / e.episodes)
                     : "";
             case ADDED:
+            case LATEST:
                 return date(e.added);
             case MODIFIED:
                 return date(e.modified);
@@ -322,7 +353,7 @@ public final class PreviewLibraryColumns {
         row.setTag("library.columns.header");
         for (Column c : visible()) {
             boolean sorted = sortColumn == c;
-            TextView label = text(c.label + (sorted ? (ascending ? "  ⌃" : "  ⌄") : ""), 11);
+            TextView label = text(label(c) + (sorted ? (ascending ? "  ⌃" : "  ⌄") : ""), 11);
             label.setTextColor(SupernovaStyle.TEXT_SECONDARY);
             if (sorted)
                 label.setTypeface(android.graphics.Typeface.create("sans-serif-medium",
@@ -403,7 +434,7 @@ public final class PreviewLibraryColumns {
             }
             String value = value(entry, c);
             if (!value.isEmpty())
-                description.append(c.label).append(": ").append(value).append(". ");
+                description.append(label(c)).append(": ").append(value).append(". ");
         }
         row.setContentDescription(description.toString());
     }
@@ -441,6 +472,8 @@ public final class PreviewLibraryColumns {
                 return "size";
             case ADDED:
                 return "added";
+            case LATEST:
+                return "tv";
             case MODIFIED:
                 return "edit";
             case CODEC:
@@ -462,7 +495,7 @@ public final class PreviewLibraryColumns {
         for (Column c : order)
             if (!shown.contains(c) && c != Column.TITLE)
                 result.add(c);
-        result.sort(Comparator.comparing(c -> c.label));
+        result.sort(Comparator.comparing(this::label));
         return result;
     }
 
@@ -500,7 +533,7 @@ public final class PreviewLibraryColumns {
         rows.add(null);
         for (Column c : shownMovable()) {
             ticked.add(labels.size());
-            labels.add(c == moving ? c.label + "   ⌃⌄" : c.label);
+            labels.add(c == moving ? label(c) + "   ⌃⌄" : label(c));
             icons.add(icon(c));
             rows.add(c);
         }
@@ -508,7 +541,7 @@ public final class PreviewLibraryColumns {
         icons.add(null);
         rows.add(null);
         for (Column c : hidden()) {
-            labels.add(c.label);
+            labels.add(label(c));
             icons.add(icon(c));
             rows.add(c);
         }

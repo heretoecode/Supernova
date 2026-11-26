@@ -52,8 +52,9 @@ final class LibraryPageModel
     }
 
     /**
-     * General (Date added · Title · Release date / Air date) · Trakt (only when connected) · Files · Series (not on
-     * Movies). No Year sort (sheet).
+     * The Sort menu (LIBRARY.md, final `tv/48`): General (Date added · Title · Release date / Air date) · Trakt (only
+     * when connected) · Series (Last episode added · Number of seasons · Number of episodes; not on Movies) · Files
+     * last (Running time · Size: a film's file, a show's size per episode). Never scrolls; no Year sort.
      */
     static List<SortItem> sortItems(boolean trakt, boolean series, boolean tvOnly)
     {
@@ -66,24 +67,17 @@ final class LibraryPageModel
             items.add(new SortItem(TRENDING, "Trending", "trending", "Trakt", 3, null));
             items.add(new SortItem(POPULAR, "Popular", "popular", "Trakt", 4, null));
         }
-        Object[][] files = {
-            {Column.DURATION, "runtime"}, {Column.RESOLUTION, "resolution"}, {Column.HDR, "hdr"},
-            {Column.AUDIO, "audio"}, {Column.SIZE, "total size"}, {Column.MODIFIED, "edit"},
-            {Column.CODEC, "codec"}, {Column.BITRATE, "speed"}, {Column.CONTAINER, "file"}, {Column.PATH, "folder"}
-        };
-        for (Object[] file : files)
-        {
-            Column column = (Column) file[0];
-            items.add(new SortItem(column.name(), column.label, (String) file[1], "Files", -1, column));
-        }
         if (series)
         {
-            items.add(new SortItem(Column.SEASONS.name(), Column.SEASONS.label, "tv", "Series", -1, Column.SEASONS));
-            items.add(new SortItem(Column.EPISODES.name(), Column.EPISODES.label, "list", "Series", -1,
+            items.add(new SortItem(Column.LATEST.name(), "Last episode added", "tv", "Series", -1, Column.LATEST));
+            items.add(new SortItem(Column.SEASONS.name(), "Number of seasons", "list", "Series", -1, Column.SEASONS));
+            items.add(new SortItem(Column.EPISODES.name(), "Number of episodes", "play", "Series", -1,
                                    Column.EPISODES));
-            items.add(new SortItem(Column.AVERAGE.name(), Column.AVERAGE.label, "size", "Series", -1,
-                                   Column.AVERAGE));
         }
+        items.add(new SortItem(Column.DURATION.name(), "Running time", "runtime", "Files", -1, Column.DURATION));
+        // "Size" on every page (owner, 20 Nov): a film's file; a show's size per episode.
+        Column size = tvOnly ? Column.AVERAGE : Column.SIZE;
+        items.add(new SortItem(size.name(), "Size", "total size", "Files", -1, size));
         return items;
     }
 
@@ -117,7 +111,8 @@ final class LibraryPageModel
         {
             return ascending ? "A → Z" : "Z → A";
         }
-        if (ADDED.equals(key) || RELEASE.equals(key) || key.equals(Column.MODIFIED.name()))
+        if (ADDED.equals(key) || RELEASE.equals(key) || key.equals(Column.MODIFIED.name())
+            || key.equals(Column.LATEST.name()))
         {
             return ascending ? "Oldest first" : "Newest first";
         }
