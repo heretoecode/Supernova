@@ -264,14 +264,7 @@ public final class NetworkDeviceDiscovery
                 if (detached[0])
                     return;
                 detached[0] = true;
-                try
-                {
-                    smb.removeListener(smbListener);
-                }
-                catch (RuntimeException alreadyGone)
-                {
-                    // Not a listener any more: nothing to remove.
-                }
+                removeQuietly(smb, smbListener);
                 manager.removeListener(upnpListener);
                 IO.execute(smb::abort);
             };
@@ -286,6 +279,19 @@ public final class NetworkDeviceDiscovery
             {
                 job.finish(true);
             }
+        }
+    }
+
+    /** D3 (0.158.8): a Samba listener already gone ("This is not a listener (anymore?)") is ignored, never thrown. */
+    static void removeQuietly(SambaDiscovery smb, SambaDiscovery.Listener listener)
+    {
+        try
+        {
+            smb.removeListener(listener);
+        }
+        catch (IllegalStateException alreadyGone)
+        {
+            // Not a listener any more: nothing to remove.
         }
     }
 

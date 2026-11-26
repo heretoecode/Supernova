@@ -317,4 +317,34 @@ public class TopNavigationTest {
             host.pause().stop().destroy();
         }
     }
+
+    /** Owner, 21 Nov: Home drops its grey open-page box the moment focus lands on Movies; a tool keeps it. */
+    @Test
+    public void theOldPageLosesItsGreyBoxAtOnceButKeepsItBesideATool() {
+        var host = Robolectric.buildActivity(Host.class).setup().visible();
+        try {
+            Button content = new Button(host.get());
+            content.setFocusableInTouchMode(true);
+            TopNavigation nav = new TopNavigation(host.get(), content, index -> {
+            }, () -> true);
+            host.get().setContentView(nav);
+            PreviewPagesTest.layout(nav);
+            nav.selectTab(0);
+            View home = nav.findViewWithTag("semantic:topnav.home");
+            View movies = nav.findViewWithTag("semantic:topnav.movies");
+            View settings = nav.findViewWithTag("semantic:topnav.settings");
+            home.requestFocus();
+            movies.requestFocus();
+            assertNull("Home's grey box goes on the very next frame", home.getBackground());
+            assertNotNull(movies.getBackground());
+            nav.selectTab(0);
+            home.requestFocus();
+            if (settings != null) {
+                settings.requestFocus();
+                assertNotNull("beside a tool the open page keeps its grey box", home.getBackground());
+            }
+        } finally {
+            host.pause().stop().destroy();
+        }
+    }
 }

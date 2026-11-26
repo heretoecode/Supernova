@@ -87,11 +87,34 @@ public class HeroReadabilityTest {
     public void wideLogoSitsAtTheBottomOfABottomAlignedTitle() throws Exception {
         TextView title = new TextView(RuntimeEnvironment.getApplication());
         title.setGravity(Gravity.BOTTOM | Gravity.START);
-        assertEquals("logo bottom", 86, logoTop(title) + 20);
+        // The logo's foot sits on the box's foot, whatever its size (RULES §19 logo placement: same area, 900 × 240).
+        assertEquals("logo bottom", 85, logoBottom(title));
 
         TextView centred = new TextView(RuntimeEnvironment.getApplication());
         centred.setGravity(Gravity.CENTER);
         assertEquals("other title views keep the logo at the top", 0, logoTop(centred));
+    }
+
+    /** The last row of a 400×40 white logo drawn into a 200×86 box. */
+    private static int logoBottom(TextView view) throws Exception {
+        Bitmap logo = Bitmap.createBitmap(400, 40, Bitmap.Config.ARGB_8888);
+        logo.eraseColor(Color.WHITE);
+        Method logoFor = OfficialTitleArtwork.class.getDeclaredMethod("logoFor", TextView.class, Bitmap.class,
+            boolean.class);
+        logoFor.setAccessible(true);
+        Drawable drawable = (Drawable) logoFor.invoke(null, view, logo, false);
+        drawable.setBounds(0, 0, 200, 86);
+        Bitmap box = Bitmap.createBitmap(200, 86, Bitmap.Config.ARGB_8888);
+        drawable.draw(new Canvas(box));
+        int bottom = -1;
+        for (int y = 0; y < 86; y++) {
+            if (Color.alpha(box.getPixel(20, y)) > 200) {
+                bottom = y;
+            }
+        }
+        box.recycle();
+        logo.recycle();
+        return bottom;
     }
 
     /** Draws a 400×40 white logo into a 200×86 box and returns the first row that has logo pixels. */

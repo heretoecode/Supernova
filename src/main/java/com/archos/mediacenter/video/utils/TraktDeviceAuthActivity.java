@@ -117,6 +117,13 @@ public class TraktDeviceAuthActivity extends AppCompatActivity {
         mStatusText = findViewById(R.id.status_message);
         mProgressBar = findViewById(R.id.progress_bar);
         mCancelButton = findViewById(R.id.cancel_button);
+        // Supernova's look (page sheet SETTINGS.md › Trakt): the speckled page, white words (no NOVA blue or red),
+        // the shared small button.
+        View root = ((android.view.ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+        if (root != null)
+            root.setBackground(new com.archos.mediacenter.video.leanback.PreviewUtilityBackground(this));
+        com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(
+            mCancelButton, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
         resetDeviceCodeViews();
 
         mCancelButton.setOnClickListener(v -> {

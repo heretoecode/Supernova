@@ -440,7 +440,7 @@ public final class FilesPage extends LinearLayout
         videos = videoCount;
         lastScanMs = lastScan;
         scanning = scanRunning;
-        tabs.setBadge(LIBRARY_CARE, toCheck());
+        publishBadge();
         nextWaiting();
         show(tabs.openTab());
     }
@@ -465,7 +465,7 @@ public final class FilesPage extends LinearLayout
             unpark(parked, key);
             return;
         }
-        ScrollView scroll = new ScrollView(getContext());
+        ScrollView scroll = new BelowBarScroll(getContext());
         scroll.setClipToPadding(false);
         scroll.setClipChildren(false);
         scroll.setVerticalScrollBarEnabled(false);
@@ -575,6 +575,7 @@ public final class FilesPage extends LinearLayout
                 : joinDot(count(page.titles, "title"), size(page.bytes()));
             statRow(column, page == s.shows ? "tv" : "film", page.name, line, places(page), false);
         }
+        ownPage(column);
         if (!s.heaviest.isEmpty())
         {
             heading(column, "Most Space Per Episode", "sort", true);
@@ -585,6 +586,39 @@ public final class FilesPage extends LinearLayout
                         size(heavy.perEpisode()) + " per episode", false);
             }
         }
+    }
+
+    /** FL7 (owner, 18 Nov 2026): your own library page under By Library Page too, after Movies and TV Shows. */
+    private void ownPage(LinearLayout column)
+    {
+        com.archos.mediacenter.video.leanback.CustomLibraryPage page =
+            com.archos.mediacenter.video.leanback.CustomLibraryPage.load(getContext());
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        if (page == null || snapshot == null)
+        {
+            return;
+        }
+        long bytes = 0;
+        int titles = 0;
+        for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : page.entries(snapshot))
+        {
+            titles++;
+            if (entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video)
+            {
+                bytes += ((com.archos.mediacenter.video.browser.adapters.object.Video) entry.media).getSize();
+                continue;
+            }
+            for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry episode : snapshot.episodes)
+            {
+                if (episode.show == entry.show
+                    && episode.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video)
+                {
+                    bytes += ((com.archos.mediacenter.video.browser.adapters.object.Video) episode.media).getSize();
+                }
+            }
+        }
+        statRow(column, "library", page.name, joinDot(count(titles, "title"), size(bytes)), "", false);
     }
 
     private static String joinDot(String... parts)
@@ -1028,7 +1062,7 @@ public final class FilesPage extends LinearLayout
         for (com.archos.mediacenter.video.browser.adapters.object.Video video : videos)
         {
             List<Action> actions = new java.util.ArrayList<>();
-            actions.add(new Action("Fix match", "search", () -> {
+            actions.add(new Action("Fix match", "edit", () -> {
                 if (folderActions != null)
                 {
                     folderActions.fixMatch(video);
@@ -1041,12 +1075,20 @@ public final class FilesPage extends LinearLayout
                     care.getStringSet("not_a_movie", java.util.Collections.emptySet()));
                 skipped.add(String.valueOf(video.getId()));
                 care.edit().putStringSet("not_a_movie", skipped).apply();
-                tabs.setBadge(LIBRARY_CARE, toCheck());
+                publishBadge();
                 show(LIBRARY_CARE);
             }));
             String name = video.getName() == null ? video.getFilenameNonCryptic() : video.getName();
             actionRow(column, "film", name, video.getFilenameNonCryptic(), null, actions, false);
         }
+    }
+
+    /** The Library Care badge, also the top bar's dot (FL8: the dot shows only when a tab has a badge). */
+    private void publishBadge()
+    {
+        int count = toCheck();
+        tabs.setBadge(LIBRARY_CARE, count);
+        com.archos.mediacenter.video.leanback.TopBarSignal.filesBadge(getContext(), count);
     }
 
     private int toCheck()
@@ -1134,6 +1176,17 @@ public final class FilesPage extends LinearLayout
         for (int index = 0; index < Math.min(10, scans.size()); index++)
         {
             scanLine(column, scans.get(index), now);
+            // FL10 (owner, 18 Nov 2026): focus stays on the page and moves through the scans, so the list scrolls;
+            // nothing to press, so a soft box (not the white one) shows where the remote is.
+            View line = column.getChildAt(column.getChildCount() - 1);
+            line.setFocusable(true);
+            line.setFocusableInTouchMode(true);
+            line.setOnFocusChangeListener((view, focused) -> view.setBackground(focused
+                ? SupernovaStyle.rounded(getContext(), 0x26FFFFFF, SupernovaStyle.SMALL_BOX_RADIUS_DP) : null));
+            if (index == 0)
+            {
+                line.setTag("files.row.first");
+            }
         }
         if (scans.isEmpty())
         {
@@ -1238,18 +1291,39 @@ public final class FilesPage extends LinearLayout
         {
             String scheme = connection.root == null ? "" : connection.root.getScheme();
             String key = connection.root == null ? connection.name : connection.root.toString();
+            // FL3 (owner, 18 Nov 2026; review-0157-2/01 3): Turn off keeps the settings and hides its titles; the row
+            // says Off and dims; Turn on brings them back.
+            boolean off = connectionOff(connection);
             List<Action> actions = new java.util.ArrayList<>();
-            actions.add(new Action("Open", "folder", () -> openServer(connection)));
+            if (off)
+            {
+                actions.add(new Action("Turn on", "play", () -> setConnectionOff(connection, false)));
+            }
+            else
+            {
+                actions.add(new Action("Open", "folder", () -> openServer(connection)));
+            }
             actions.add(new Action("Edit", "edit", () -> openForm(connection.root, connection.name)));
-            actions.add(new Action("Test", "done", () -> testConnection(connection.root, key)));
+            if (!off)
+            {
+                actions.add(new Action("Test", "done", () -> testConnection(connection.root, key)));
+                actions.add(new Action("Turn off", "pause", () -> setConnectionOff(connection, true)));
+            }
             actions.add(new Action("Remove", "discard", () -> removeConnection(connection)));
             String title = connection.account == null || connection.account.isEmpty()
                 ? connection.name : connection.name + " · " + connection.account;
-            String second = outcomes.containsKey(key) ? outcomes.get(key)
+            String second = off ? ConnectionLine.kind(scheme) + " · Off · its " + count(connection.videos, "video")
+                    + (connection.videos == 1 ? " is" : " are") + " hidden"
+                : outcomes.containsKey(key) ? outcomes.get(key)
                 : ConnectionLine.kind(scheme) + " · " + (connection.folders.size() > 1
                     ? FilesPageData.folderNames(connection.folders) : count(connection.videos, "video"));
+            String pill = off ? "Off" : connection.reachable == null ? null : ConnectionLine.pill(connection.reachable);
             actionRow(column, ConnectionLine.kind(scheme).equals("WebDAV") ? "cloud" : "integration", title, second,
-                      connection.reachable == null ? null : ConnectionLine.pill(connection.reachable), actions, true);
+                      pill, actions, true);
+            if (off)
+            {
+                column.getChildAt(column.getChildCount() - 1).setAlpha(.6f);
+            }
         }
         // Add a connection: the row itself opens the form (F39).
         row(column, "plus", "Add a connection", "SMB, WebDAV, SFTP or FTP", null, () -> openForm(null, null),
@@ -1495,18 +1569,24 @@ public final class FilesPage extends LinearLayout
         };
         for (Action action : actions)
         {
-            TextView button = text(action.label, 15, Color.WHITE);
+            // FL5 (owner, 18 Nov 2026): smaller buttons, the one small-box size (RULES §3).
+            TextView button = text(action.label, 13, Color.WHITE);
             button.setGravity(Gravity.CENTER);
             button.setFocusable(true);
             button.setFocusableInTouchMode(true);
-            int inner = SupernovaStyle.dp(context, 12);
+            int inner = SupernovaStyle.dp(context, SupernovaStyle.SMALL_BOX_SIDE_DP);
             button.setPadding(inner, 0, inner, 0);
-            PreviewIcon.apply(button, action.icon, 14);
+            // Render check (19 Nov 2026): five buttons beside the pill don't fit with icons, so a row with five shows
+            // the words alone.
+            if (actions.size() < 5)
+            {
+                PreviewIcon.apply(button, action.icon, 14);
+            }
             button.setContentDescription(action.label + ", " + name);
             button.setOnClickListener(view -> action.run.run());
             button.setOnFocusChangeListener((view, focused) -> row.post(restyle));
-            LayoutParams size = new LayoutParams(-2, SupernovaStyle.dp(context, 30));
-            size.leftMargin = SupernovaStyle.dp(context, 6);
+            LayoutParams size = new LayoutParams(-2, SupernovaStyle.dp(context, SupernovaStyle.SMALL_BOX_HEIGHT_DP));
+            size.leftMargin = SupernovaStyle.dp(context, 4);
             row.addView(button, size);
             buttons.add(button);
         }
@@ -1526,6 +1606,44 @@ public final class FilesPage extends LinearLayout
         divider(column);
         row.setTag(column.findViewWithTag("files.row.first") == null ? "files.row.first" : ROW);
         column.addView(row, new LayoutParams(-1, SupernovaStyle.dp(context, ROW_HEIGHT_DP)));
+    }
+
+    private boolean connectionOff(Connection connection)
+    {
+        if (connection.root == null)
+        {
+            return false;
+        }
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext())
+            .getStringSet(com.archos.mediaprovider.video.SupernovaLibraryPolicy.CONNECTIONS_OFF,
+                          java.util.Collections.emptySet())
+            .contains(com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(connection.root));
+    }
+
+    /** Turn off / Turn on (FL3): the connection's titles leave or return to the library; its settings stay. */
+    private void setConnectionOff(Connection connection, boolean off)
+    {
+        if (connection.root == null)
+        {
+            return;
+        }
+        android.content.SharedPreferences prefs =
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        java.util.Set<String> roots = new java.util.HashSet<>(prefs.getStringSet(
+            com.archos.mediaprovider.video.SupernovaLibraryPolicy.CONNECTIONS_OFF, java.util.Collections.emptySet()));
+        String root = com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(connection.root);
+        if (off ? !roots.add(root) : !roots.remove(root))
+        {
+            return;
+        }
+        prefs.edit().putStringSet(com.archos.mediaprovider.video.SupernovaLibraryPolicy.CONNECTIONS_OFF, roots).apply();
+        getContext().getContentResolver().notifyChange(
+            com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
+        com.archos.mediacenter.video.leanback.UndoNotice.show(getContext(),
+            connection.name + (off ? " is off: its titles are hidden" : " is on again"),
+            () -> setConnectionOff(connection, !off));
+        show(CONNECTIONS);
+        focusContent();
     }
 
     private void divider(LinearLayout column)
@@ -1642,7 +1760,7 @@ public final class FilesPage extends LinearLayout
                 changes.remove(change);
                 refreshMatches();
             }));
-            actions.add(new Action("Fix match", "search", () -> {
+            actions.add(new Action("Fix match", "edit", () -> {
                 if (folderActions != null)
                 {
                     folderActions.fixMatch(change.movie);

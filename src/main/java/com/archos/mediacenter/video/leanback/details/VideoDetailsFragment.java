@@ -278,6 +278,33 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         return false;
     }
 
+    /**
+     * R5 (owner, 18 Nov 2026; review-0157-2/01 4): Play opens a small menu beside it, one row per file
+     * ("4K · HDR · 18.2 GB"); the version last chosen for this title has the tick; choosing one plays it.
+     */
+    private void playVersionMenu(View anchor) {
+        List<Video> variants = new ArrayList<>(mVideoList);
+        variants.sort(PreviewVariants.BEST_FIRST);
+        String[] labels = new String[variants.size()];
+        String[] icons = new String[variants.size()];
+        int ticked = -1;
+        for (int i = 0; i < variants.size(); i++) {
+            labels[i] = PreviewVariants.shortName(requireContext(), variants.get(i));
+            icons[i] = i == 0 ? "play" : "film";
+            if (mVideo != null && variants.get(i).getId() == mVideo.getId())
+                ticked = i;
+        }
+        PreviewDialog.menu(requireContext(), anchor, "Play", labels, icons, ticked, n -> {
+            Video chosen = variants.get(n);
+            PreviewVariants.remember(requireActivity(), chosen);
+            if (mVideo != null && chosen.getId() != mVideo.getId()) {
+                chosen.setAutomaticResumeMs(mVideo.getResumeMs());
+                chosen.setRemoteResumeMs(mVideo.getRemoteResumeMs());
+            }
+            PlayUtils.startVideo(requireActivity(), chosen, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+        });
+    }
+
     private void showPreviewVersions() {
         List<Video> variants = new ArrayList<>(mVideoList);
         variants.sort(PreviewVariants.BEST_FIRST);
@@ -1860,6 +1887,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         if (mPreviewMovie != null) {
             mPreviewMovie.bind(video);
             mPreviewMovie.setVersions(mVideoList.size(), this::showPreviewVersions);
+            mPreviewMovie.setPlayVersions(this::playVersionMenu);
         }
         if (!mPreviewAutoPlayed && requireActivity().getIntent().getBooleanExtra("preview_play", false)) {
             mPreviewAutoPlayed = true;
@@ -2854,7 +2882,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         if (log.isDebugEnabled())
             log.debug("onDeleteVideoFailed: {}", videoFile);
         if (getActivity() != null)
-            Toast.makeText(getActivity(), R.string.delete_error, Toast.LENGTH_SHORT).show();
+            com.archos.mediacenter.video.leanback.PreviewNotice.show(getActivity(), Delete.failureMessage(videoFile),
+                                                                     true);
 
         // Failed or cancelled deletion leaves the file and its Details available for retry.
     }

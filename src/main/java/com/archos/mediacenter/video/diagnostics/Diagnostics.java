@@ -376,7 +376,7 @@ public final class Diagnostics
                                       Context.MODE_PRIVATE);
     }
 
-    private static String currentProcessName(Context c)
+    public static String currentProcessName(Context c)
     {
         if (Build.VERSION.SDK_INT >= 28)
         {
@@ -409,6 +409,7 @@ public final class Diagnostics
         {
             heartbeatInstalled = true;
             HEARTBEAT.scheduleWithFixedDelay(Diagnostics::heartbeat, 10, 10, TimeUnit.SECONDS);
+            HEARTBEAT.scheduleWithFixedDelay(Diagnostics::freezeWatch, 1, FREEZE_TICK_MS, TimeUnit.MILLISECONDS);
         }
         PreferenceManager.getDefaultSharedPreferences(app).registerOnSharedPreferenceChangeListener(CONFIG);
         sessionState = processSessionState(app, currentProcessName(app));
@@ -476,6 +477,20 @@ public final class Diagnostics
             {
                 SCREEN_OPENED.put(a, SystemClock.elapsedRealtime());
                 life(a, "created");
+                if (a.getClass().getSimpleName().equals("MainActivityLeanback"))
+                    DiagnosticTimings.mainScreenCreated();
+                DiagnosticTimings.componentStarted(a, a.getClass().getSimpleName());
+                if (a instanceof androidx.fragment.app.FragmentActivity)
+                    ((androidx.fragment.app.FragmentActivity) a).getSupportFragmentManager()
+                        .registerFragmentLifecycleCallbacks(new androidx.fragment.app.FragmentManager
+                                                                .FragmentLifecycleCallbacks() {
+                            @Override
+                            public void onFragmentStarted(androidx.fragment.app.FragmentManager manager,
+                                                          androidx.fragment.app.Fragment fragment)
+                            {
+                                DiagnosticTimings.componentStarted(fragment, a.getClass().getSimpleName());
+                            }
+                        }, true);
             }
             public void onActivityStarted(Activity a)
             {
@@ -1164,6 +1179,76 @@ public final class Diagnostics
     private static long lastStall, lastCpu = Process.getElapsedCpuTime();
     private static int trendSamples;
     private static long heapMin = Long.MAX_VALUE, heapMax, heapTotal, nativeMax;
+
+    /**
+     * D11 (0.158.8): the 26 Nov report showed freezes of 2 to 4.5 s (Details, the subtitle downloader, the player, the
+     * TV show page) but not what the main thread was doing. Every quarter second the main thread is asked to answer;
+     * when it has not answered for a second, what it is running is written down once for that freeze (class and
+     * method names only, nothing personal), so the next report names the work to move off it.
+     */
+    static final long FREEZE_TICK_MS = 250;
+    static final long FREEZE_REPORT_MS = 1000;
+    private static volatile long freezeAck = SystemClock.elapsedRealtime();
+    private static volatile boolean freezeAsked, freezeReported;
+    private static int freezesThisSession;
+
+    private static void freezeWatch()
+    {
+        try
+        {
+            if (!enabled || context == null || foreground <= 0)
+            {
+                freezeAsked = false;
+                return;
+            }
+            long now = SystemClock.elapsedRealtime();
+            if (!freezeAsked)
+            {
+                freezeAsked = true;
+                freezeReported = false;
+                freezeAck = now;
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    freezeAsked = false;
+                    if (freezeReported)
+                        event("main_thread_freeze_end", "screen", uiScreen, "freeze_ms",
+                              SystemClock.elapsedRealtime() - freezeAck);
+                });
+                return;
+            }
+            if (!freezeReported && now - freezeAck >= FREEZE_REPORT_MS && freezesThisSession < 200)
+            {
+                freezeReported = true;
+                freezesThisSession++;
+                Thread main = Looper.getMainLooper().getThread();
+                event("main_thread_freeze", "screen", uiScreen, "page", uiPage, "waited_ms", now - freezeAck,
+                      "trace", appFrames(main.getStackTrace()));
+            }
+        }
+        catch (RuntimeException ignored)
+        {
+            // Diagnostics never disturb the app.
+        }
+    }
+
+    /** The frames that tell what is slow: every app frame, and the platform frame each one calls into. */
+    static String appFrames(StackTraceElement[] frames)
+    {
+        StringBuilder out = new StringBuilder();
+        int written = 0;
+        for (int i = 0; i < frames.length && written < 16; i++)
+        {
+            String name = frames[i].getClassName();
+            boolean ours = name.startsWith("com.archos.") || name.startsWith("app.supernova.");
+            boolean callee = i + 1 < frames.length && (frames[i + 1].getClassName().startsWith("com.archos.") ||
+                                                       frames[i + 1].getClassName().startsWith("app.supernova."));
+            if (!ours && !callee && written > 0)
+                continue;
+            out.append(name).append('.').append(frames[i].getMethodName()).append(':')
+                .append(frames[i].getLineNumber()).append('\n');
+            written++;
+        }
+        return out.toString();
+    }
 
     private static void heartbeat()
     {
@@ -1941,7 +2026,7 @@ public final class Diagnostics
         {
             linked = "\nLinked summary unavailable; raw evidence retained.\n";
         }
-        return linked +
+        return DiagnosticHealthSummary.build(retainedRecords) + linked +
             "Supernova diagnostic summary\nCompleteness: PARTIAL (native/direct transport coverage is incomplete)\n" +
             retained + "Current logger dropped: " + DROPPED.get() + "; write errors: " + WRITE_ERRORS.get() +
             "\nBuild: " + BuildConfig.VERSION_NAME + "\nSource: " + BuildConfig.PREVIEW_GIT_SHA +

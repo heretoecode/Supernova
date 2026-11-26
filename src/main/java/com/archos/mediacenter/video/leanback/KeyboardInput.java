@@ -44,7 +44,8 @@ public final class KeyboardInput extends AppCompatEditText {
 
     // ---- Phone keyboard (owner, 14 Nov 2026; 0.157 notes §36) ------------------------------------------------------
     // The NVIDIA phone app offers its text box (and so paste) only while Android's own keyboard serves a text box.
-    // The "Phone" key starts such a session on this box; Back, Done or moving away returns to Supernova's keys.
+    // 0.158.8: no Phone key (owner, 25 Nov); the keys offer this box's connection (KeyboardKey). The session below is
+    // kept for a host that starts it itself; Back, Done or moving away returns to Supernova's keys.
 
     private boolean systemSession;
     private Runnable sessionEnded;

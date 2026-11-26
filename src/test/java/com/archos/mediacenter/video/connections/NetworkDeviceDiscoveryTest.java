@@ -62,4 +62,18 @@ public class NetworkDeviceDiscoveryTest
         assertFalse(job.accepting());
         job.close();
     }
+
+    /** D3 (0.158.8): leaving discovery twice never crashes on "This is not a listener (anymore?)". */
+    @Test public void removingASambaListenerAlreadyGoneIsIgnored()
+    {
+        com.archos.filecorelibrary.samba.SambaDiscovery smb =
+            org.mockito.Mockito.mock(com.archos.filecorelibrary.samba.SambaDiscovery.class);
+        com.archos.filecorelibrary.samba.SambaDiscovery.Listener listener =
+            org.mockito.Mockito.mock(com.archos.filecorelibrary.samba.SambaDiscovery.Listener.class);
+        org.mockito.Mockito.doThrow(new IllegalStateException("This is not a listener (anymore?)"))
+            .when(smb)
+            .removeListener(listener);
+        NetworkDeviceDiscovery.removeQuietly(smb, listener);
+        org.mockito.Mockito.verify(smb).removeListener(listener);
+    }
 }

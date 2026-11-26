@@ -587,6 +587,11 @@ public final class SupernovaStyle {
     public static final int TAB_OPEN = 0xFF454B55;
 
     /** A plain filled rounded rectangle (no border, no states). */
+    /** Information, not an action (RULES §3): the small-box shape outlined in soft white, nothing filled. */
+    public static Drawable outline(Context c) {
+        return new Box(0x00000000, 0xB3FFFFFF, Math.max(1, dp(c, 1)), dp(c, SMALL_BOX_RADIUS_DP), 0);
+    }
+
     public static Drawable rounded(Context c, int colour, float radiusDp) {
         return new Box(colour, 0, 0, dp(c, radiusDp), 0);
     }

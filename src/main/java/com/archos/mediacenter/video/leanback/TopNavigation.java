@@ -307,8 +307,8 @@ public final class TopNavigation extends LinearLayout {
     }
 
     private final ViewTreeObserver.OnGlobalFocusChangeListener pathListener = (before, after) -> {
-        refreshPath();
         openOnFocus(before, after);
+        refreshPath();
     };
 
     /** The soft grey box behind the open page while focus is elsewhere (`files-review-0157-1/08`). */
@@ -327,7 +327,9 @@ public final class TopNavigation extends LinearLayout {
             if (tab == null)
                 continue;
             boolean focused = tab.isFocused();
-            boolean open = tab == selected && !focused;
+            // Owner, 21 Nov: once focus lands on another media page, the old page drops its grey box at once,
+            // not after the new page has loaded; a tool (Files, Search, Settings) needs OK, so the page keeps it.
+            boolean open = tab == selected && !focused && pendingOpen < 0;
             tab.setTextColor(focused ? SupernovaStyle.FOCUS_TEXT : open ? OPEN_PAGE_INK : Color.WHITE);
             if (tab != tabs[6] || tab.getAlpha() > .99f)
                 tab.setAlpha(1f);
@@ -356,8 +358,10 @@ public final class TopNavigation extends LinearLayout {
     private final Runnable openFocusedPage = () -> {
         int index = pendingOpen;
         pendingOpen = -1;
-        if (index < 0 || !tabs[index].isFocused() || index == selectedIndex)
+        if (index < 0 || !tabs[index].isFocused() || index == selectedIndex) {
+            refreshPath();
             return;
+        }
         if (index == 6 && getContext() instanceof CustomLibraryActivity)
             return;
         tabs[index].performClick();

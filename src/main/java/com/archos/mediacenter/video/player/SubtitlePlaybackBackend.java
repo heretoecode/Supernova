@@ -447,8 +447,13 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     /** Audio boost level 0..3 (Off · Low · Medium · High), or null when this video has no boost. */
     @Override
     public Integer boostLevel() {
-        if (optionItem("boost") == null || PlayerService.sPlayerService == null)
+        if (optionItem("boost") == null)
             return null;
+        // Owner, 22 Nov: Audio boost is the Off · Low · Medium · High stepper, never a switch, even while the
+        // player service is being reconnected (then the saved level is shown).
+        if (PlayerService.sPlayerService == null)
+            return Math.max(0, Math.min(3, androidx.preference.PreferenceManager.getDefaultSharedPreferences(owner)
+                .getInt(PlayerService.KEY_AUDIO_FILT, 0)));
         return Math.max(0, Math.min(3, PlayerService.sPlayerService.mAudioFilt));
     }
 

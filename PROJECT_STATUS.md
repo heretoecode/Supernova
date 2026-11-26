@@ -3,9 +3,14 @@
 Updated 26 November 2026 (discussion: Search done; Files review rounds 1–2 agreed, paused at round 3). Keep this page short and current: update it at the
 end of every session.
 
-## Next: 0.158 part C (owner go-ahead 26 Nov)
+## 0.158 part C (overnight 26 Nov): see `docs/0.158/REPORT_0158_C.md`
 
-Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`. First signing 0.158.8.
+Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`; judgement calls
+`docs/0.158/JUDGEMENT_CALLS_0158_C.md`. Built: every diagnostics fix (D1–D13), B1, the next-episode label, Home's
+one-button hero, search history settings, no Phone key, five NOVA items, the diagnostics upgrade and a set of player,
+Search and library fixes. **0.158.9 signed 26 Nov** (run 45774774374, from green conformance run 45764555253 on `a4bf56e`); artifact `supernova-0157-signed-qa` (`Supernova_0.158.9.apk`), the one to install. 0.158.8 was never signed (its contents are in 0.158.9). The "not built" list is in the
+report. Waiting for the owner: install the newest signed APK, send a diagnostics report from it (0.159's baseline),
+check the phone app types into the box (no Phone key), the Reports / Backups folder decision.
 
 ## Before that: the rest of 0.158 part B
 
@@ -13,7 +18,7 @@ Report, "not built" list and run links: `docs/0.158/REPORT_0158_B.md`; judgement
 `docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Still to do from `docs/0.158/BRIEF_0158_B.md`: the look sweep on the speckle,
 the rest of Details (DT1, DT3–DT6, DT8, R3–R5, episodes), titles (group 6), Files (group 7), Back and page position
 (group 8), Settings' remaining sheet items (in-row backup flow, OpenSubtitles and Trakt panels), PL8, X4. Work branch
-for part B: `claude/build-0158-part-b-wsupv2`, merged onto the working branch. Waiting for the owner: install the last
+for part B: `claude/build-0158-part-b-wsupv2`, then `claude/0158-part-b-continued-d5u9w1` (the working branch is fast-forwarded to it only when a build is due). Waiting for the owner: install the last
 signed APK; send a diagnostics report from it.
 
 ## Discussion (19–26 Nov): polish phase
@@ -30,9 +35,18 @@ evening").
 
 ## Released
 
+**0.158.4** (code 1584) — signed 19 Nov 2026 (run 44531272454, from green conformance run 44521801198 on `ef5af36`).
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.4.apk`). 0.158.3 plus Playback Settings round two (820 px,
+stepping rows, no scrolling), every panel at 99%, FL9.
+
+**0.158.7** (code 1587) — signed 19 Nov 2026 (run 44604872477, from green conformance run 44597211401 on
+`ecbfdde`). Artifact `supernova-0157-signed-qa` (`Supernova_0.158.7.apk`). The one to install. 0.158.5 and 0.158.6
+were never signed. Part B is paused after 0.158.7 (owner, 19 Nov): `docs/0.158/PART_B_PAUSED.md`. Waiting for the
+owner: Reports folder (keep Download › Supernova, or a folder picker with one Android grant).
+
 **0.158.3** (code 1583) — signed 19 Nov 2026 (run 44506040551, from green conformance run 44500505615 on `4d310f4`).
 Artifact `supernova-0157-signed-qa` (`Supernova_0.158.3.apk`). 0.158.2 plus the Settings redesign (seven tabs), DT4,
-DT8, stronger row lines, pages reopening at their top. The one to install.
+DT8, stronger row lines, pages reopening at their top.
 
 **0.158.2** (code 1582) — signed 19 Nov 2026 (run 44500001166, from green conformance run 44493050022 on `8b8a8ff`).
 Artifact `supernova-0157-signed-qa` (`Supernova_0.158.2.apk`). 0.158.1 plus the title block, player and Details fixes.

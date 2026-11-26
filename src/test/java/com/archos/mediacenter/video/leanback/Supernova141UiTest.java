@@ -126,10 +126,10 @@ public class Supernova141UiTest {
             View info = pages.findViewWithTag("hero:info");
             assertNotNull(info);
             info.requestFocus();
-            // 0.158: Right on More shows the next hero, Left reaches Play, Left on Play the previous, Right back to More.
+            // 0.158.8: More is the hero's one button; Right and Left on it show the next and previous hero.
             int[] keys = {KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_LEFT,
                           KeyEvent.KEYCODE_DPAD_RIGHT};
-            int[] shown = {1, 1, 0, 0};
+            int[] shown = {1, 0, -1, 0};
             for (int i = 0; i < 24; i++) {
                 int key = keys[i % 4];
                 pages.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, key));

@@ -166,6 +166,49 @@ public final class OfficialTitleArtwork {
         READY.put(view, true);
         view.setForeground(null);
         view.setTextColor(0xffffffff);
+        houseStyle(view);
+    }
+
+    private static final Map<TextView, Boolean> STYLED = new WeakHashMap<>();
+
+    /**
+     * A title with no logo, in the house style (RULES §19; owner, 18 Nov 2026, style A Modern block): heavy capitals,
+     * white, no glow, two lines at most; a colon title shows the part before the colon small (C's split). The words
+     * themselves are never changed, only how they look.
+     */
+    static void houseStyle(TextView view) {
+        view.setAllCaps(true);
+        view.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
+        view.setShadowLayer(0, 0, 0, 0);
+        view.setLetterSpacing(.005f);
+        view.setMaxLines(2);
+        view.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        if (STYLED.containsKey(view))
+            return;
+        STYLED.put(view, true);
+        colonSplit(view);
+        // A new name set later is split at its next layout (callers set the name after binding).
+        view.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> colonSplit(view));
+    }
+
+    /** "Father Frost: The Movie": "Father Frost:" small above, "The Movie" large (house style, C's colon split). */
+    static void colonSplit(TextView view) {
+        CharSequence text = view.getText();
+        if (text == null || text instanceof android.text.Spanned
+            && ((android.text.Spanned) text).getSpans(0, text.length(), SplitMark.class).length > 0)
+            return;
+        String plain = text.toString();
+        int colon = plain.indexOf(": ");
+        if (colon <= 0 || colon + 2 >= plain.length())
+            return;
+        android.text.SpannableString split = new android.text.SpannableString(plain);
+        split.setSpan(new android.text.style.RelativeSizeSpan(.34f), 0, colon + 1, 0);
+        split.setSpan(new SplitMark(), 0, plain.length(), 0);
+        view.setText(split);
+    }
+
+    /** Marks a title already split, so the split is applied once. */
+    private static final class SplitMark {
     }
 
     private static void request(
@@ -468,10 +511,9 @@ public final class OfficialTitleArtwork {
         @Override
         public void draw(Canvas canvas) {
             Rect bounds = getBounds();
-            float scale = Math.min(bounds.width() / (float) bitmap.getWidth(),
-                bounds.height() / (float) bitmap.getHeight());
-            float width = bitmap.getWidth() * scale;
-            float height = bitmap.getHeight() * scale;
+            float[] size = placement(bitmap.getWidth(), bitmap.getHeight(), bounds.width(), bounds.height());
+            float width = size[0];
+            float height = size[1];
             int top = alignBottom ? Math.round(bounds.bottom - height) : bounds.top;
             Rect b = new Rect(bounds.left, top, bounds.right, bounds.bottom);
             if (contrast) {
@@ -511,6 +553,26 @@ public final class OfficialTitleArtwork {
         public int getOpacity() {
             return PixelFormat.TRANSLUCENT;
         }
+    }
+
+    /**
+     * Logo placement (RULES §19; owner, 18 Nov 2026; title-style/05): every logo the same area, 42% of the title's
+     * box (the 900 × 240 box at 1080p on the heroes), wide ones capped by width, tall ones by height.
+     */
+    static float[] placement(int logoWidth, int logoHeight, int boxWidth, int boxHeight) {
+        float ratio = logoWidth / (float) Math.max(1, logoHeight);
+        float area = boxWidth * (float) boxHeight * .42f;
+        float height = (float) Math.sqrt(area / ratio);
+        float width = ratio * height;
+        if (width > boxWidth) {
+            width = boxWidth;
+            height = width / ratio;
+        }
+        if (height > boxHeight) {
+            height = boxHeight;
+            width = height * ratio;
+        }
+        return new float[] {width, height};
     }
 
     private OfficialTitleArtwork() {

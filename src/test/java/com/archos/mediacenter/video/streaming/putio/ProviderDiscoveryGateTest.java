@@ -64,5 +64,9 @@ public class ProviderDiscoveryGateTest {
         method.setAccessible(true);
         assertEquals(
             Boolean.FALSE, method.invoke(operation, context, Uri.parse("https://webdav.put.io/Films/title.mkv")));
+        // D6 (0.158.8): the warning says why, in plain words, instead of "Couldn't delete the file".
+        assertEquals("Put.io looks after this file through your Put.io connection, so it can't be deleted from here. "
+                         + "Delete it on Put.io.",
+                     Delete.failureMessage(Uri.parse("https://webdav.put.io/Films/title.mkv")));
     }
 }

@@ -60,12 +60,19 @@ public final class HeroRotationPolicy {
     public static final class Clock {
         private long inputAt, nextAt;
         private boolean active;
+        private long interval = INTERVAL_MS;
+
+        /** Settings › Library › Home Hero › Change every (8, 12 or 20 seconds). */
+        public void interval(long ms) {
+            interval = ms >= 1_000 ? ms : INTERVAL_MS;
+        }
+
         public void resume(long elapsed) { active = true; input(elapsed); }
         public void suspend() { active = false; }
         public void input(long elapsed) { inputAt = elapsed; nextAt = elapsed + IDLE_MS; }
         public boolean due(long elapsed, boolean homeAndHeroVisible, boolean motionAllowed, int poolSize) {
             if (!active || !homeAndHeroVisible || !motionAllowed || poolSize < 2 || elapsed - inputAt < IDLE_MS || elapsed < nextAt) return false;
-            nextAt = elapsed + INTERVAL_MS; return true;
+            nextAt = elapsed + interval; return true;
         }
         public long delay(long elapsed) { return Math.max(1, nextAt - elapsed); }
     }

@@ -312,6 +312,24 @@
       "module": "MediaLib",
       "path": ".github/build/medialib-supernova157-ledger-test.patch",
       "sha256": "d4a44d08cfedd242a29f93d8087341acba880c432f21d2945a365b47b2821903"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova158-scan-queue.patch",
+      "sha256": "fc7fa57d8305d9e1520994dfc3e11e08a4f87c2746543fc44844767e6058ce9c"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova158-connection-off.patch",
+      "sha256": "38ee0882310dc0147e732466d79ffd5aad9c6e309196b76020a5ab4bca8b32e8"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova158c-scan-lock.patch",
+      "sha256": "c20e60e7947af59c97bb52874381dc3c920ac522ca146105953d3460f57ab542"
     }
   ],
   "supernova155": {
@@ -322,5 +340,11 @@
   },
   "supernova157": {
     "note": "0.157: Codex continuation patches (six Java registrations from docs/codex/reports/2026-11-06-0157.md, in its order), then the seek-preview retriever fix and the TV-relevant NOVA 6.6.5+ changes (matching by file name, SMB share credentials, Trakt list paging and 64-bit ids, messenger folders; Samba discovery start result, network initialisation priority). Not carried: import notification change, Dolby Vision colour-fallback metadata key (clashes with this engine's keys), dependency bumps. The two native avos 0.157 patches wait for a new reviewed engine archive. Then medialib-supernova157-ledger-test (15 Nov): the ledger test's scanner gets a real files folder so the scan lock works and the test no longer depends on timing."
+  },
+  "supernova158": {
+    "note": "0.158: medialib-supernova158-scan-queue (X4, 19 Nov): a network scan waits for the scan lease before its IO scope and five-minute source deadline start, bounded by a one-hour queue deadline instead, so queued scans wait their turn rather than timing out on 'scan lock wait interrupted'; the lease may be taken again by the thread that holds it. Then medialib-supernova158-connection-off (FL3, 19 Nov): titles under a connection turned off on Files › Connections count as excluded until it is turned on again."
+  },
+  "supernova158c": {
+    "note": "0.158 part C: medialib-supernova158c-scan-lock: D1 (26 Nov diagnostics): an interrupted wait for the scan lock in a matching save is deferred (MATCH_DEFERRED, interrupt kept, title tried on the next run) instead of crashing the app. D2: a scan or local import whose wait for the lock is cut short is not a failure: it shows as queued and runs again from DeferredScans when the app is next in front."
   }
 }

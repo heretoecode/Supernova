@@ -93,6 +93,97 @@ public class Delete {
     private int counter = 0;
     private Uri firstFailure; // only for video files not for associated files
 
+    /**
+     * D6 (0.158.8): why the last delete of a file failed, kept so the warning can say it in plain words and the
+     * diagnostics record it. Before 0.158.8 every failure went to the log as "not_supplied".
+     */
+    private static final java.util.Map<String, String[]> FAILURES =
+        java.util.Collections.synchronizedMap(new java.util.LinkedHashMap<String, String[]>() {
+            @Override protected boolean removeEldestEntry(java.util.Map.Entry<String, String[]> eldest) {
+                return size() > 32;
+            }
+        });
+
+    static final String REASON_PROVIDER = "provider_owned";
+    static final String REASON_REFUSED = "server_refused";
+    static final String REASON_SERVER = "server_error";
+    static final String REASON_NETWORK = "network";
+    static final String REASON_MISSING = "not_found";
+    static final String REASON_UNKNOWN = "unknown";
+
+    static void recordFailure(Uri uri, String reason, int httpStatus, Throwable failure) {
+        if (uri == null)
+            return;
+        String failureClass = failure == null ? "" : failure.getClass().getSimpleName();
+        FAILURES.put(uri.toString(), new String[] {reason, Integer.toString(httpStatus), failureClass});
+    }
+
+    /** Sorts a delete failure into one plain reason (D6), with the server's answer where it gave one. */
+    static void recordFailure(Uri uri, Throwable failure) {
+        int status = httpStatus(failure);
+        if (status > 0) {
+            boolean refused = status == 401 || status == 403 || status == 405 || status == 409 || status == 423;
+            recordFailure(uri, refused ? REASON_REFUSED : REASON_SERVER, status, failure);
+        } else if (failure instanceof IOException || failure instanceof JSchException) {
+            recordFailure(uri, REASON_NETWORK, -1, failure);
+        } else if (failure instanceof SftpException) {
+            int id = ((SftpException) failure).id;
+            recordFailure(uri, id == 3 ? REASON_REFUSED : REASON_SERVER, -1, failure);
+        } else {
+            recordFailure(uri, REASON_UNKNOWN, -1, failure);
+        }
+    }
+
+    /** The server's HTTP answer carried by a WebDAV failure (Sardine's exception, read without linking to it). */
+    static int httpStatus(Throwable failure) {
+        if (failure == null)
+            return -1;
+        try {
+            Object status = failure.getClass().getMethod("getStatusCode").invoke(failure);
+            return status instanceof Integer ? (Integer) status : -1;
+        } catch (ReflectiveOperationException | RuntimeException absent) {
+            return -1;
+        }
+    }
+
+    /** The delete warning's words for why this file could not be deleted (D6, RULES §7b). */
+    public static String failureMessage(Uri uri) {
+        String[] failure = uri == null ? null : FAILURES.get(uri.toString());
+        return describe(uri, failure == null ? REASON_UNKNOWN : failure[0],
+                        failure == null ? -1 : Integer.parseInt(failure[1]));
+    }
+
+    static String describe(Uri uri, String reason, int httpStatus) {
+        String server = serverName(uri);
+        switch (reason) {
+            case REASON_PROVIDER:
+                return server + " looks after this file through your " + server +
+                       " connection, so it can't be deleted from here. Delete it on " + server + ".";
+            case REASON_REFUSED:
+                if (httpStatus == 405)
+                    return server + " doesn't allow deleting files over this connection.";
+                return server + " didn't allow this file to be deleted.";
+            case REASON_SERVER:
+                return server + " couldn't delete this file" + (httpStatus > 0 ? " (error " + httpStatus + ")." : ".");
+            case REASON_NETWORK:
+                return "Couldn't reach " + server + " to delete this file. Check the connection and try again.";
+            case REASON_MISSING:
+                return "This file couldn't be found on " + server + ".";
+            default:
+                return "Couldn't delete the file.";
+        }
+    }
+
+    static String serverName(Uri uri) {
+        String host = uri == null ? null : uri.getHost();
+        if (host == null || host.isEmpty())
+            return "This device";
+        String lower = host.toLowerCase(Locale.ROOT);
+        if (lower.equals("put.io") || lower.endsWith(".put.io"))
+            return "Put.io";
+        return host;
+    }
+
     public long getCurrentVideoFileToDeleteSize() {
         return currentVideoFileToDeleteSize;
     }
@@ -187,7 +278,11 @@ public class Delete {
     }
 
     public synchronized void deleteNOK(Uri fileUri) {
-        Diagnostics.event("delete_failed", "scheme", fileUri == null ? "" : fileUri.getScheme());
+        String[] failure = fileUri == null ? null : FAILURES.get(fileUri.toString());
+        Diagnostics.event("delete_failed", "scheme", fileUri == null ? "" : fileUri.getScheme(),
+                          "reason", failure == null ? REASON_UNKNOWN : failure[0],
+                          "http_status", failure == null ? -1 : Integer.parseInt(failure[1]),
+                          "failure_class", failure == null || failure[2].isEmpty() ? "none" : failure[2]);
         if (firstFailure == null) firstFailure = fileUri;
         counter--;
         if (log.isDebugEnabled()) log.debug("deleteNOK: {} counter {}", sourceKind(fileUri), counter);
@@ -306,6 +401,7 @@ public class Delete {
                 } catch (Exception e) { }
                 boolean webdav="webdav".equalsIgnoreCase(fileUri.getScheme())||"webdavs".equalsIgnoreCase(fileUri.getScheme());
                 if (currentVideoFileToDelete==null&&!webdav) {
+                    recordFailure(fileUri, REASON_MISSING, -1, null);
                     deleteNOK(fileUri);
                     return;
                 }
@@ -347,6 +443,8 @@ public class Delete {
                             if (log.isDebugEnabled()) log.debug("deleteFileAndAssociatedFiles: delete achieved {}, counter {}", sourceKind(uri), counter);
                         } catch (Exception e) {
                             log.error("deleteFileAndAssociatedFiles: failed to delete source {}, counter {}, error_class={}", sourceKind(uri), counter, e.getClass().getSimpleName());
+                            if (uri == fileUri) // D6: keep the real reason for the warning and diagnostics
+                                recordFailure(fileUri, e);
                             if (uri == fileUri) { // if failure is on main file
                                 deleteNOK(fileUri);
                                 log.error("deleteFileAndAssociatedFiles: failed to delete main source {}, counter {}, error_class={}", sourceKind(uri), counter, e.getClass().getSimpleName());
@@ -370,7 +468,11 @@ public class Delete {
      * success; its local null return means a pending system permission request. */
     private Boolean deletePhysicalFile(Context context, Uri uri) throws Exception {
         synchronized(ProviderDiscoveryGate.LOCK){
-        if(ProviderDiscoveryGate.protects(context,uri))return false;
+        if(ProviderDiscoveryGate.protects(context,uri)){
+            // D6: a file Put.io's own connection looks after is not deleted over WebDAV; say so plainly.
+            recordFailure(uri, REASON_PROVIDER, -1, null);
+            return false;
+        }
         absentRemoteSource.set(false);
         FileEditor editor = FileEditorFactory.getFileEditorForUrl(uri, context);
         Boolean result = editor.delete();
@@ -382,7 +484,10 @@ public class Delete {
             ((LocalStorageFileEditor) editor).deleteFromDatabase(uri);
             notifyLocalDeleted(uri);
         } else {
-            if (Boolean.FALSE.equals(result)) return false;
+            if (Boolean.FALSE.equals(result)) {
+                recordFailure(uri, REASON_REFUSED, -1, null);
+                return false;
+            }
             NetworkScanner.removeVideos(context, uri);
         }
         return true;

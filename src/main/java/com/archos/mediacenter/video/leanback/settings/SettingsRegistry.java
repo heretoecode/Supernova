@@ -66,7 +66,9 @@ final class SettingsRegistry {
         if (entries.size() != 171)
             throw new IllegalStateException("Incomplete 0.151 ratings-key settings extension");
         read(context, "foundation/settings-map-0158.json", ids);
-        if (entries.size() != 173)
+        // 0.158: Seek previews, Clear diagnostics; then Because you watched, Change every, Keep diagnostics for and
+        // When a video was started (part B continued); Keep and Clear search history (part C).
+        if (entries.size() != 179)
             throw new IllegalStateException("Incomplete 0.158 Settings page extension");
     }
 

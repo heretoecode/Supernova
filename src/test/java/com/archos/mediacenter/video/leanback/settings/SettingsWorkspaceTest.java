@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.time.Duration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import org.junit.*;
@@ -397,8 +398,8 @@ public class SettingsWorkspaceTest {
     @Test
     public void mapAccountsForBaselineAndNativeSubtitleExtensionWithoutResurrectingHiddenState() {
         SettingsRegistry registry = new SettingsRegistry(host.get());
-        assertEquals(173, registry.entries.size());
-        assertEquals(2, registry.entries.stream().filter(e -> e.id.startsWith("N158")).count());
+        assertEquals(179, registry.entries.size());
+        assertEquals(8, registry.entries.stream().filter(e -> e.id.startsWith("N158")).count());
         assertEquals(1, registry.entries.stream().filter(e -> e.id.startsWith("N151") && !e.nested()).count());
         assertEquals(165, registry.entries.stream().filter(e -> e.id.startsWith("S")).count());
         assertEquals(5, registry.entries.stream().filter(e -> e.id.startsWith("N146") && !e.nested()).count());
@@ -416,6 +417,25 @@ public class SettingsWorkspaceTest {
         }
     }
 
+    /** Owner, 19 Nov 2026: the skip rows use the sheet's words, as chips, values unchanged. */
+    @Test
+    public void skipRowsUseTheSheetsWords() {
+        workspace.open(0, null);
+        layout();
+        ListPreference intro = fragment.findPreference("supernova_segment_intro");
+        assertNotNull(intro);
+        View row = tagged("settings.preference.supernova_segment_intro");
+        assertNotNull(row);
+        assertEquals(java.util.Arrays.asList("Off", "Show button", "Skip", "Skip when binge-watching"),
+                     java.util.Arrays.asList(java.util.Arrays.stream(intro.getEntries())
+                                                 .map(CharSequence::toString).toArray(String[]::new)));
+        assertEquals(java.util.Arrays.asList("NORMAL", "PROMPT", "AUTO", "SMART"),
+                     java.util.Arrays.asList(java.util.Arrays.stream(intro.getEntryValues())
+                                                 .map(CharSequence::toString).toArray(String[]::new)));
+        assertTrue(SettingsWorkspace.inline(intro));
+        assertFalse("No NOVA words", containsText(row, "Play Normally"));
+    }
+
     /** Owner question 2 Nov 2026: the OMDb key must be reachable; 0.158: Settings › Services › Ratings. */
     @Test
     public void ratingsKeyIsVisibleUnderLibraryAndMetadata() {
@@ -424,7 +444,7 @@ public class SettingsWorkspaceTest {
         View row = tagged("settings.preference.omdb_api_key");
         assertTrue("row is shown", row.isShown());
         assertTrue("row is reachable with the remote", row.isFocusable());
-        assertTrue("row is titled for the owner", containsText(row, "Ratings key (OMDb)"));
+        assertTrue("row is titled for the owner", containsText(row, "OMDb ratings key"));
     }
 
     private static boolean containsText(View view, String text) {
@@ -745,5 +765,66 @@ public class SettingsWorkspaceTest {
         } finally {
             activity.pause().stop().destroy();
         }
+    }
+
+    /**
+     * B1 and D5 (0.158.8): Down walks every row of every tab in order, the Backup row on System included (it was
+     * skipped from General to Diagnostics), and each focused row is wholly on screen.
+     */
+    @Test
+    public void downReachesEveryRowOfEveryTabInOrderAndEachFocusedRowIsOnScreen() {
+        for (int category : new int[] {0, 1, 2, 3, 4, 5}) {
+            workspace.open(category, null);
+            layout();
+            assertTrue(tagged("settings.tab." + category).requestFocus());
+            key(KeyEvent.KEYCODE_DPAD_DOWN);
+            List<View> order = workspace.verticalOrder();
+            assertFalse("tab " + category + " has rows", order.isEmpty());
+            for (int i = 0; i < order.size(); i++) {
+                View expected = order.get(i);
+                View focused = root.findFocus();
+                assertNotNull("tab " + category + " row " + i + " holds focus", focused);
+                assertTrue("tab " + category + ": Down reaches " + expected.getTag() + " in order, not " +
+                               focused.getTag(),
+                           focused == expected || isInside(focused, expected));
+                assertOnScreen(category, expected);
+                if (expected instanceof SubtitleStyleBlock)
+                    break; // the style block's own rows move with the standard focus search
+                if (i < order.size() - 1)
+                    key(KeyEvent.KEYCODE_DPAD_DOWN);
+            }
+        }
+        workspace.open(5, null);
+        layout();
+        List<Object> tags = new java.util.ArrayList<>();
+        for (View row : workspace.verticalOrder())
+            tags.add(row.getTag());
+        int backupRow = tags.indexOf("settings.link.Backup & restore");
+        assertTrue("System lists the Backup row", backupRow > 0);
+        assertTrue("Backup comes after General's row and before Diagnostics",
+                   backupRow < tags.indexOf("settings.preference.supernova_diagnostic_logging"));
+    }
+
+    private static boolean isInside(View child, View parent) {
+        for (android.view.ViewParent p = child.getParent(); p != null; p = p.getParent())
+            if (p == parent)
+                return true;
+        return false;
+    }
+
+    private void assertOnScreen(int category, View row) {
+        View scroll = row;
+        while (scroll != null && !(scroll instanceof android.widget.ScrollView))
+            scroll = scroll.getParent() instanceof View ? (View) scroll.getParent() : null;
+        if (scroll == null)
+            return;
+        int[] rowAt = new int[2], scrollAt = new int[2];
+        row.getLocationInWindow(rowAt);
+        scroll.getLocationInWindow(scrollAt);
+        assertTrue("tab " + category + ": " + row.getTag() + " starts on screen", rowAt[1] >= scrollAt[1] - 1);
+        if (row.getHeight() > scroll.getHeight())
+            return; // a block taller than the screen (the subtitle style block) starts on screen; its rows scroll
+        assertTrue("tab " + category + ": " + row.getTag() + " ends on screen",
+                   rowAt[1] + row.getHeight() <= scrollAt[1] + scroll.getHeight() + 1);
     }
 }

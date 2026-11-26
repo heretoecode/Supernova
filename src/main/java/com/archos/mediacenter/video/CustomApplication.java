@@ -852,6 +852,27 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             supported, maxAudioChannelCount);
     }
 
+    /**
+     * D13 (0.158.8): artwork kept in memory is capped at 48 MB (Picasso's default is 15 % of the large heap, about
+     * 77 MB on the Shield), and emptied when Android asks for memory back (26 trim requests in a week).
+     */
+    static final int ARTWORK_CACHE_BYTES = 48 * 1024 * 1024;
+    static final com.squareup.picasso.LruCache ARTWORK_CACHE = new com.squareup.picasso.LruCache(ARTWORK_CACHE_BYTES);
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        trimArtwork(level);
+    }
+
+    static void trimArtwork(int level) {
+        // Picasso's cache can only be emptied: done once the app is out of sight or memory runs low.
+        if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN
+            || level == android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW
+            || level == android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL)
+            ARTWORK_CACHE.clear();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -972,12 +993,14 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                         .addRequestHandler(new SmbRequestHandler(mContext))
                         .downloader(new TrustingOkHttp3Downloader(mContext))
                         .executor(picassoExecutor)
+                        .memoryCache(ARTWORK_CACHE)
                         .build());
             } else {
                 Picasso.setSingletonInstance(new Picasso.Builder(mContext)
                         .addRequestHandler(new ThumbnailRequestHandler(mContext))
                         .addRequestHandler(new SmbRequestHandler(mContext))
                         .executor(picassoExecutor)
+                        .memoryCache(ARTWORK_CACHE)
                         .build());
             }
         } catch (IllegalStateException ignored) {
@@ -1001,7 +1024,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                     if (log.isTraceEnabled())
                         log.trace("NetworkState for {} changed:{} -> {}", evt.getPropertyName(), evt.getOldValue(),
                             evt.getNewValue());
-                    launchSambaDiscovery();
+                    // Network changed: restart the discovery even if one is still running (N9).
+                    launchSambaDiscovery(true);
                     requestPreviewNetworkRefresh();
                 }
             };
@@ -1166,8 +1190,32 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     private void launchSambaDiscovery() {
+        launchSambaDiscovery(false);
+    }
+
+    /** N9: set when the app leaves the screen, so coming back refreshes discovery. */
+    private volatile boolean wasBackgrounded;
+    /** N9: a discovery has really started in this process (it may already have finished). */
+    private volatile boolean discoveryLaunchedOnce;
+
+    /**
+     * N9 (NOVA 8a1a2310, 0.158.8): one Samba discovery at start-up, in the main process only. {@code forceRestart} is
+     * for a network change or a real resume; the deferred start-up and the first foreground share one discovery.
+     */
+    private synchronized void launchSambaDiscovery(boolean forceRestart) {
         if (BuildConfig.FOUNDATION && !SupernovaLibraryPolicy.configured(this))
             return;
+        String process = Diagnostics.currentProcessName(this);
+        if (!process.startsWith("unknown_") && !process.equals(getPackageName())) {
+            if (log.isDebugEnabled())
+                log.debug("launchSambaDiscovery: not the main process, doing nothing");
+            return;
+        }
+        if (!forceRestart && (discoveryLaunchedOnce || mSambaDiscovery != null && mSambaDiscovery.isRunning())) {
+            if (log.isDebugEnabled())
+                log.debug("launchSambaDiscovery: discovery already launched, skipping duplicate launch");
+            return;
+        }
         if (networkState.hasLocalConnection()) {
             if (log.isDebugEnabled())
                 log.debug("launchSambaDiscovery: local connection, launching samba discovery");
@@ -1177,9 +1225,11 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             }
             try {
                 SambaDiscovery.flushShareNameResolver();
-                mSambaDiscovery = new SambaDiscovery(mContext);
-                mSambaDiscovery.setMinimumUpdatePeriodInMs(0);
-                mSambaDiscovery.start();
+                SambaDiscovery discovery = new SambaDiscovery(mContext);
+                discovery.setMinimumUpdatePeriodInMs(0);
+                mSambaDiscovery = discovery;
+                if (discovery.start())
+                    discoveryLaunchedOnce = true;
             } catch (UnsatisfiedLinkError e) {
                 log.warn(
                     "launchSambaDiscovery: Failed to initialize SambaDiscovery due to missing or corrupted native library",
@@ -1237,12 +1287,16 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             previewHasForegrounded = true;
             requestPreviewNetworkRefresh();
             MigrationBackup.resumeArtwork(this);
-            launchSambaDiscovery();
+            // N9 (NOVA 8a1a2310): a real resume refreshes discovery; the cold-start foreground does not repeat the
+            // discovery the deferred start-up already launched.
+            launchSambaDiscovery(wasBackgrounded);
+            wasBackgrounded = false;
             // Trigger an incremental Trakt sync when returning to foreground if signed in and not in private mode
             if (Trakt.isTraktV2Enabled(this, PreferenceManager.getDefaultSharedPreferences(this))) {
                 TraktService.sync(this, TraktService.FLAG_SYNC_AUTO);
             }
         } else {
+            wasBackgrounded = true;
             // Keep audio observers active for picture-in-picture/background playback.
             if (isVideStoreImportReceiverRegistered) {
                 if (log.isDebugEnabled())

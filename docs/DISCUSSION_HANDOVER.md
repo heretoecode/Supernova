@@ -145,6 +145,9 @@ recheck only what NOVA adds after 25 Nov (CLAUDE.md).
 - **Reminder:** before Coding's next version, ask for the diagnostics report covering 19 Nov 14:30–14:45 (MobLand).
 
 ## 19 Nov — start here
+- **Part B paused by the owner (19 Nov, evening):** read `docs/0.158/PART_B_PAUSED.md` first: what is done (in
+  0.158.7, signed by run 44604872477), what is paused and why, and one decision for the owner (Reports and
+  Backups folder: Download, or a folder picker with one Android grant). To install: 0.158.7 (the owner had 0.158.4).
 - **Reminder (owner, 19 Nov): before the go-ahead for Coding's next version, ask the owner for the diagnostics
   report covering the MobLand delete, 19 Nov 14:30–14:45 local time** (D1 in `docs/0.158/REVIEW_0158.md`), and read it.
 - Waiting for the owner: 0.158.7 installed (then make the whole-app walkthrough checklist), and replies on L1, R6

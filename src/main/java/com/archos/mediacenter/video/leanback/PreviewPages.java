@@ -569,7 +569,8 @@ public final class PreviewPages extends FrameLayout {
 
     private boolean eligibleFeatured(Entry entry) {
         if (!(entry.media instanceof Movie || entry.media instanceof Tvshow) || entry.heroSequential ||
-            !entry.heroEligible || HeroPlaybackEligibility.consumed(entry))
+            !entry.heroEligible || HeroPlaybackEligibility.consumed(entry) ||
+            HeroExclusions.excluded(getContext(), entry))
             return false;
         if (entry.media instanceof Video) {
             Video video = (Video)entry.media;
@@ -602,7 +603,8 @@ public final class PreviewPages extends FrameLayout {
     private List<Entry> featuredCandidates() {
         if (!SupernovaLibraryPolicy.configured(getContext()))
             return Collections.emptyList();
-        String choices = (preferences == null || preferences.getBoolean("preview_featured_recent", true)) + ":" +
+        String choices = (preferences == null || preferences.getBoolean("preview_featured_because", true)) + ":" +
+                         (preferences == null || preferences.getBoolean("preview_featured_recent", true)) + ":" +
                          (preferences != null && preferences.getBoolean("preview_featured_trending", true)) + ":" +
                          (preferences != null && preferences.getBoolean("preview_featured_popular", true));
         long generation = HeroPlaybackEligibility.generation();
@@ -630,7 +632,9 @@ public final class PreviewPages extends FrameLayout {
             heroSource(preferences != null && preferences.getBoolean("preview_featured_popular", true)
                            ? discovery.matches(snapshot, false)
                            : Collections.emptyList()),
-            heroSource(seed == null ? Collections.emptyList() : PreviewDiscovery.similar(seed, snapshot)));
+            heroSource(seed == null || preferences != null && !preferences.getBoolean("preview_featured_because", true)
+                           ? Collections.emptyList()
+                           : PreviewDiscovery.similar(seed, snapshot)));
         List<Entry> result = new ArrayList<>();
         String[] reasons = {"Recently Added", "TRENDING ON TRAKT · IN YOUR LIBRARY",
                             "POPULAR ON TRAKT · IN YOUR LIBRARY", "Because You Watched", "Recently Added"};
@@ -659,6 +663,17 @@ public final class PreviewPages extends FrameLayout {
             postDelayed(rotateFeatured, HeroRotationPolicy.IDLE_MS);
     }
 
+    /** Settings › Library › Home Hero › Change every; 8 seconds unless chosen. */
+    private long heroInterval() {
+        if (preferences == null)
+            return HeroRotationPolicy.INTERVAL_MS;
+        try {
+            return Long.parseLong(preferences.getString("preview_featured_interval", "8000"));
+        } catch (RuntimeException unreadable) {
+            return HeroRotationPolicy.INTERVAL_MS;
+        }
+    }
+
     private void startHeroClock() {
         removeCallbacks(rotateFeatured);
         if (tab == 0 && isAttachedToWindow()) {
@@ -676,6 +691,7 @@ public final class PreviewPages extends FrameLayout {
             long now = SystemClock.elapsedRealtime();
             boolean visible = tab == 0 && hasWindowFocus() && isShown() && !list.canScrollVertically(-1);
             int count = featuredCandidates().size();
+            heroClock.interval(heroInterval());
             if (heroClock.due(now, visible, motionAllowed(), count))
                 changeFeatured(1, false);
             postDelayed(this, visible && motionAllowed() && count > 1 ? Math.max(200, heroClock.delay(now))
@@ -1127,7 +1143,6 @@ public final class PreviewPages extends FrameLayout {
         });
         list.setLayoutManager(layout);
         list.setAdapter(adapter);
-        rowMover().watchFirstCards(() -> tab == 0);
         list.setItemAnimator(null);
         Diagnostics.uiRebuild(list, "library.adapter", "adapter_created", 0,
                                                                        adapter.getItemCount(), true);
@@ -1361,9 +1376,16 @@ public final class PreviewPages extends FrameLayout {
         files = f;
         if (sharedBrowser != null)
             sharedBrowser.browser().locations(files, librarySources, savedLocations, this::networkSection);
-        if (tab == 3 || tab == 0 && snapshot.technical.isEmpty())
-            render("storage_changed");
+        if (tab == 3 || tab == 0 && snapshot.technical.isEmpty()) {
+            // D9 (0.158.8): storage broadcasts come in bursts (27 of 54 renders that changed nothing, 26 Nov);
+            // one render after the burst settles.
+            removeCallbacks(storageRender);
+            postDelayed(storageRender, STORAGE_SETTLE_MS);
+        }
     }
+
+    static final long STORAGE_SETTLE_MS = 400;
+    private final Runnable storageRender = () -> render("storage_changed");
 
     /**
      * Approved empty page (0.156 #43, mock-up suggestions/07): one calm line, why the page is empty and one useful
@@ -1625,8 +1647,8 @@ public final class PreviewPages extends FrameLayout {
             String tag = focused == null ? "" : String.valueOf(focused.getTag());
             // Play then More (page sheet HOME.md): Right from Play reaches More; Left on Play shows the previous hero
             // and Right on More the next, focus staying on the same button.
-            boolean between = "hero:play".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT
-                              || "hero:info".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_LEFT;
+            // 0.158.8 (owner, 19 Nov): Home's hero has one button, More; Left / Right change the hero.
+            boolean between = "hero:play".equals(tag) && remoteKey == KeyEvent.KEYCODE_DPAD_RIGHT;
             if (between && !heroOwnsHorizontal) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     View other = findViewWithTag("hero:play".equals(tag) ? "hero:info" : "hero:play");
@@ -1952,6 +1974,16 @@ public final class PreviewPages extends FrameLayout {
                     updates.onChanged(position, count, payload);
                 }
             });
+        boolean unchanged = previous.size() == cells.size() && changes[0] + changes[1] + changes[2] + changes[3] == 0;
+        if (unchanged && !preserve) {
+            // D9: nothing on the page changed, so nothing is re-laid out, re-scrolled or re-enriched.
+            Diagnostics.event("ui_rebuild_skipped", "surface", tab == 0 ? "home" : "library", "reason",
+                              "unchanged_cells", "trigger", reason);
+            removeCallbacks(importRefresh);
+            if (loaded && emptyHome() && isAttachedToWindow())
+                postDelayed(importRefresh, 1000);
+            return;
+        }
         Diagnostics.event(
             "home_page_render", "reason", reason, "tab", tab, "previous_cells", previous.size(), "cells", cells.size(),
             "inserted", changes[0], "removed", changes[1], "moved", changes[2], "rebound", changes[3],
@@ -2294,7 +2326,7 @@ public final class PreviewPages extends FrameLayout {
         while (first > 0 && cells.get(first - 1).type == POSTER)
             first--;
         int column = (position - first) % libraryColumns();
-        int gap = dp(12);
+        int gap = dp(16); // 32 px at 1080p between posters (LIBRARY.md, tv/50)
         RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams)card.getLayoutParams();
         lp.leftMargin = column * gap / libraryColumns();
         lp.rightMargin = gap - (column + 1) * gap / libraryColumns();
@@ -2793,8 +2825,8 @@ public final class PreviewPages extends FrameLayout {
                           : firstEpisode(e) != null ? (Video)firstEpisode(e).media
                                                     : null;
         if (matchable != null) {
-            labels.add("Fix match");
-            icons.add("search");
+            labels.add("Fix match"); // a pencil putting it right (owner, 21 Nov; home-v3/tv/10 B)
+            icons.add("edit");
             commands.add(() -> adapter.openFixMatch(matchable));
         }
         labels.add("Remove from library");
@@ -2873,9 +2905,64 @@ public final class PreviewPages extends FrameLayout {
      * Files & Media items.
      */
     private void heroMenu(Entry e, View anchor) {
-        heroDetails = () -> open(e, anchor);
-        libraryMenu(e, anchor);
-        heroDetails = null;
+        // Home's hero More, trimmed (owner, 21 Nov; home-v3/tv/09, 14): Details · Playback · This Title. No library
+        // management on Home.
+        List<String> labels = new ArrayList<>();
+        List<String> icons = new ArrayList<>();
+        List<Runnable> commands = new ArrayList<>();
+        boolean show = e.media instanceof Tvshow;
+        boolean watched = LibraryPageModel.watched(e);
+        labels.add("Details");
+        icons.add("details");
+        commands.add(() -> open(e, anchor));
+        labels.add("— Playback");
+        icons.add(null);
+        commands.add(null);
+        Entry next = show ? nextEpisodes.get(((Tvshow)e.media).getTvshowId()) : null;
+        if (next != null && next.media instanceof Episode) {
+            Episode episode = (Episode)next.media;
+            labels.add("Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber());
+            icons.add("resume");
+            commands.add(() -> play(next, anchor));
+        } else {
+            boolean resume = e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !watched;
+            labels.add(resume ? "Resume" : "Play");
+            icons.add(resume ? "resume" : "play");
+            commands.add(() -> play(e, anchor));
+        }
+        Entry first = show ? firstEpisode(e) : e;
+        if (first != null && (show ? next != null : e.media instanceof Video && ((Video)e.media).getResumeMs() > 0)) {
+            labels.add("Play from the start");
+            icons.add("history");
+            commands.add(() -> playFromStart(first));
+        }
+        labels.add("— This Title");
+        icons.add(null);
+        commands.add(null);
+        labels.add(watched ? (show ? "Mark show as unwatched" : "Mark as unwatched")
+                           : (show ? "Mark show as watched" : "Mark as watched"));
+        icons.add("check");
+        commands.add(() -> markWatched(e, !watched));
+        labels.add("Exclude from hero");
+        icons.add("remove");
+        commands.add(() -> excludeFromHero(e));
+        PreviewDialog.menu(getContext(), anchor, displayName(e), labels.toArray(new String[0]),
+                           icons.toArray(new String[0]), -1, n -> {
+                               if (commands.get(n) != null)
+                                   commands.get(n).run();
+                           });
+    }
+
+    /** Exclude from hero: the title leaves the carousel at once, with an Undo notice (owner, 21 Nov). */
+    private void excludeFromHero(Entry e) {
+        HeroExclusions.exclude(getContext(), e);
+        heroPoolSnapshot = null;
+        render("hero_exclusion");
+        UndoNotice.show(getContext(), displayName(e) + " excluded from hero", () -> {
+            HeroExclusions.include(getContext(), e);
+            heroPoolSnapshot = null;
+            render("hero_exclusion_undone");
+        });
     }
 
     /** Set only while the hero's More builds its menu: adds Details at the top. */
@@ -2901,13 +2988,12 @@ public final class PreviewPages extends FrameLayout {
                                  null, -1);
     }
 
-    /** Mark as watched: in place, with an Undo notice; caption and tick update (sheet). */
+    /**
+     * Mark as watched: at once, with no notice (owner, 20 Nov; LIBRARY.md); the menu then reads Mark as unwatched, so
+     * it is undone from the same menu. Caption and tick update.
+     */
     private void markWatched(Entry e, boolean watched) {
         LibraryActions.markWatched(getContext(), e.media, watched);
-        UndoNotice.show(getContext(), watched ? "Marked as watched" : "Marked as unwatched", () -> {
-            LibraryActions.markWatched(getContext(), e.media, !watched);
-            requestLibraryRefresh();
-        });
         requestLibraryRefresh();
     }
 
@@ -2943,7 +3029,9 @@ public final class PreviewPages extends FrameLayout {
                         }
 
                         public void onDeleteVideoFailed(Uri videoFile) {
-                            PreviewNotice.show(getContext(), "Couldn't delete the file", true);
+                            PreviewNotice.show(getContext(),
+                                               com.archos.mediacenter.video.browser.Delete.failureMessage(videoFile),
+                                               true);
                         }
 
                         public void onFolderRemoved(Uri folder) {
@@ -3108,8 +3196,8 @@ public final class PreviewPages extends FrameLayout {
 
     static final int SPANS = 840;
 
-    /** One portrait poster size on every library page, seven a row (page sheet LIBRARY.md). */
-    static final int POSTERS_A_ROW = 7;
+    /** One portrait poster size on every library page, six a row (owner, 20 Nov; LIBRARY.md, tv/50). */
+    static final int POSTERS_A_ROW = 6;
 
     private int libraryColumns() {
         return POSTERS_A_ROW;
@@ -3366,8 +3454,8 @@ public final class PreviewPages extends FrameLayout {
                     if (tab == 0 && !c.headingIcon.isEmpty())
                         MenuFoundation.icon(title, c.headingIcon);
                     v.addView(title);
-                    if (tab == 0 && !c.homeRowId.isEmpty())
-                        addRowControls(v, c.homeRowId);
+                    // RULES §14d (owner, 21 Nov): Home's row headings are never focusable and have no Move or Hide;
+                    // ordering and hiding live in Customise Home.
                 }
             } else if (c.type == RAIL) {
                 v.setPadding(0, 0, 0, dp(10));

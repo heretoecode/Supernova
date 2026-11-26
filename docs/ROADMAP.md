@@ -135,6 +135,11 @@ the hidden grid stealing focus, scans failing at the lock, the Put.io delete, TV
 freezes), the Settings Backup bug, the refined library pages, Home, Details (with the next-episode label), Player and
 Search, the app-wide pieces, NOVA's eleven catch-up items (+ one since), the diagnostics upgrade. Files and Settings
 designs wait for their reviews.
+**Signed 26 Nov: 0.158.9** (`docs/0.158/REPORT_0158_C.md`). Built: every diagnostics fix, the Backup bug, the
+next-episode label, Home's one-button hero, search history settings, no Phone key, five NOVA items, the diagnostics
+upgrade, and some player, Search and library fixes. **Still to build from part C** (the report's "Not built" list):
+most of the Home, Details, Player and Search redesigns (shared hero and row, Customise Home, Search landing cards,
+player lists and title block), the library toolbar redraws, the app-wide check, six NOVA items.
 
 All the planned redesigns except Settings, then a bug-fixing phase on a settled design (owner, 18 Nov). Each page
 gets its page sheet before coding (CLAUDE.md, Definition of done).

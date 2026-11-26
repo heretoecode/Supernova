@@ -1048,8 +1048,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             if (resume)
                 start(PlayerController.STATE_OTHER);
         }
-        else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-                 focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+        else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT)
         {
             mFocusGranted = false;
             mFocusSuspended = true;
@@ -1448,7 +1447,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
                                                                  .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
                                                                  .build())
                                          .setAcceptsDelayedFocusGain(false)
-                                         .setWillPauseWhenDucked(true)
+                                         // N5 (NOVA 6056f957): Android ducks the sound for a notification
+                                         // and the video keeps playing.
                                          .setOnAudioFocusChangeListener(mFocusListener, mHandler)
                                          .build();
             }

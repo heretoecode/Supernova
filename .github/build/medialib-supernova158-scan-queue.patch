@@ -1,0 +1,182 @@
+diff --git a/src/com/archos/mediaprovider/video/NetworkScanLedger.java b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+index 3d00f34..cabfb4d 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScanLedger.java
++++ b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+@@ -31,6 +31,11 @@ final class NetworkScanLedger
+     static final String EXTRA_MEMBER = "scan_member_extra";
+     static final long START_ACK_MS = 15_000L;
+     static final long SOURCE_MS = 300_000L;
++    /**
++     * X4 (0.158): a scan waiting its turn (behind the serial executor or another scan's lease) is bounded by this, not
++     * by the source deadline; the source deadline starts once the scan holds the lease.
++     */
++    static final long QUEUE_MS = 3_600_000L;
+     static ScheduledExecutorService clock = Executors.newSingleThreadScheduledExecutor(r -> {
+         Thread thread = new Thread(r, "ScanStartDeadline");
+         thread.setDaemon(true);
+@@ -142,14 +147,8 @@ final class NetworkScanLedger
+             member.acknowledgement.cancel(false);
+         try
+         {
+-            // Includes time waiting for the serial executor, so accepted queued work is bounded too.
+-            member.sourceDeadline = clock.schedule(() -> {
+-                synchronized (NetworkScanLedger.class)
+-                {
+-                    member.failureStage = "source_deadline";
+-                    reject(member);
+-                }
+-            }, SOURCE_MS, TimeUnit.MILLISECONDS);
++            // Waiting for the serial executor and the scan lease is bounded by the queue deadline (X4).
++            member.sourceDeadline = deadline(member, "queue_deadline", QUEUE_MS);
+         }
+         catch (RuntimeException failure)
+         {
+@@ -159,6 +158,34 @@ final class NetworkScanLedger
+         return true;
+     }
+ 
++    private static ScheduledFuture<?> deadline(Member member, String stage, long ms)
++    {
++        return clock.schedule(() -> {
++            synchronized (NetworkScanLedger.class)
++            {
++                member.failureStage = stage;
++                reject(member);
++            }
++        }, ms, TimeUnit.MILLISECONDS);
++    }
++
++    /** X4: the scan holds the lease, so its own source deadline starts now. */
++    static synchronized void leaseHeld(Member member)
++    {
++        if (!pending(member))
++            return;
++        if (member.sourceDeadline != null)
++            member.sourceDeadline.cancel(false);
++        try
++        {
++            member.sourceDeadline = deadline(member, "source_deadline", SOURCE_MS);
++        }
++        catch (RuntimeException failure)
++        {
++            reject(member);
++        }
++    }
++
+     /** Called by the executor, not by the receiver/handler that merely queued it. */
+     static synchronized boolean begin(Member member, ScanIoScope io)
+     {
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index 4a84d36..0e38597 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -570,8 +570,15 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                     mScanExecutor.execute(() -> {
+                         mScanThread = Thread.currentThread();
+                         boolean followUp = false;
+-                        try (ScanIoScope io = new ScanIoScope(NetworkScanLedger.SOURCE_MS, TimeUnit.MILLISECONDS))
++                        // X4 (0.158): wait for the scan lease first, so a queued scan waits its turn instead of
++                        // spending its five minutes on the wait; its IO scope and source deadline start after.
++                        try (ScanProcessLock turn = ScanProcessLock.acquire(
++                                 new java.io.File(getFilesDir(), "supernova-scan.lock"),
++                                 () -> mClosing || member != null && !NetworkScanLedger.pending(member));
++                             ScanIoScope io = new ScanIoScope(NetworkScanLedger.SOURCE_MS, TimeUnit.MILLISECONDS))
+                         {
++                            if (member != null)
++                                NetworkScanLedger.leaseHeld(member);
+                             if (mClosing)
+                             {
+                                 NetworkScanLedger.reject(member);
+@@ -595,6 +602,11 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                         {
+                             NetworkScanLedger.finish(member, true, false);
+                         }
++                        catch (java.io.IOException waited)
++                        {
++                            // Cancelled or closed while waiting its turn.
++                            NetworkScanLedger.reject(member);
++                        }
+                         finally
+                         {
+                             NetworkScanLedger.finish(member, true, false);
+diff --git a/src/com/archos/mediaprovider/video/ScanProcessLock.java b/src/com/archos/mediaprovider/video/ScanProcessLock.java
+index c2c93f3..924ca0e 100644
+--- a/src/com/archos/mediaprovider/video/ScanProcessLock.java
++++ b/src/com/archos/mediaprovider/video/ScanProcessLock.java
+@@ -14,6 +14,8 @@ public final class ScanProcessLock implements AutoCloseable
+ {
+     private final RandomAccessFile owner;
+     private final FileLock lease;
++    /** X4 (0.158): a thread that already holds the lease (a queued scan waiting its turn) may take it again. */
++    private static final ThreadLocal<int[]> HELD = ThreadLocal.withInitial(() -> new int[1]);
+ 
+     private ScanProcessLock(RandomAccessFile owner, FileLock lease)
+     {
+@@ -23,6 +25,15 @@ public final class ScanProcessLock implements AutoCloseable
+ 
+     public static ScanProcessLock acquire(File file, BooleanSupplier cancelled) throws IOException
+     {
++        if (cancelled.getAsBoolean())
++        {
++            throw new InterruptedIOException("Scan lock wait cancelled");
++        }
++        if (HELD.get()[0] > 0)
++        {
++            HELD.get()[0]++;
++            return new ScanProcessLock(null, null);
++        }
+         RandomAccessFile owner = new RandomAccessFile(file, "rw");
+         boolean acquired = false;
+         try
+@@ -46,6 +57,7 @@ public final class ScanProcessLock implements AutoCloseable
+                 if (lease != null)
+                 {
+                     acquired = true;
++                    HELD.get()[0] = 1;
+                     return new ScanProcessLock(owner, lease);
+                 }
+                 try
+@@ -70,6 +82,11 @@ public final class ScanProcessLock implements AutoCloseable
+ 
+     @Override public void close() throws IOException
+     {
++        HELD.get()[0] = Math.max(0, HELD.get()[0] - 1);
++        if (lease == null)
++        {
++            return;
++        }
+         try
+         {
+             lease.release();
+diff --git a/test/java/com/archos/mediaprovider/video/ScanProcessLockTest.java b/test/java/com/archos/mediaprovider/video/ScanProcessLockTest.java
+index fea4bdb..66cd79a 100644
+--- a/test/java/com/archos/mediaprovider/video/ScanProcessLockTest.java
++++ b/test/java/com/archos/mediaprovider/video/ScanProcessLockTest.java
+@@ -54,4 +54,27 @@ public class ScanProcessLockTest
+             directory.delete();
+         }
+     }
++
++    /** X4 (0.158): a scan that already holds the lease (waiting its turn) takes it again without waiting on itself. */
++    @Test public void theHolderTakesTheLeaseAgainWithoutWaiting() throws Exception
++    {
++        File lock = File.createTempFile("scan", ".lock");
++        try (ScanProcessLock outer = ScanProcessLock.acquire(lock, () -> false))
++        {
++            try (ScanProcessLock inner = ScanProcessLock.acquire(lock, () -> false))
++            {
++                assertTrue(lock.exists());
++            }
++            // Still held after the inner one closes: another holder would still have to wait.
++            assertThrows(InterruptedIOException.class, () -> ScanProcessLock.acquire(lock, () -> true));
++        }
++        try (ScanProcessLock again = ScanProcessLock.acquire(lock, () -> false))
++        {
++            assertTrue(lock.exists());
++        }
++        finally
++        {
++            lock.delete();
++        }
++    }
+ }

@@ -34,7 +34,7 @@ public final class TopBarSignal extends View
         @Override
         public void run()
         {
-            show(decide(scanning(), LibraryHealth.needsAttentionCount(getContext())));
+            show(decide(scanning(), filesBadge(getContext())));
             postDelayed(this, CHECK_MS);
         }
     };
@@ -56,6 +56,22 @@ public final class TopBarSignal extends View
             return State.RING;
         }
         return needsAttention > 0 ? State.DOT : State.NONE;
+    }
+
+    private static final String BADGE = "supernova_files_badge";
+
+    /**
+     * FL8 (owner, 18 Nov 2026): the dot beside Files shows only when a Files tab has a badge, so it is the Library Care
+     * badge itself, as last counted on Files (kept across restarts). Never counted yet: no dot.
+     */
+    public static void filesBadge(Context context, int count)
+    {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(BADGE, count).apply();
+    }
+
+    static int filesBadge(Context context)
+    {
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getInt(BADGE, 0);
     }
 
     static boolean scanning()

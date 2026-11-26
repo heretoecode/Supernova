@@ -28,7 +28,11 @@ public class SegmentSkippingPolicyTest {
     public void smartRecapRequiresAutomaticBingeArrivalAndUnclassifiedPreviewPlays() {
         assertFalse(SegmentSkippingPolicy.auto(SegmentSkippingPolicy.Mode.SMART, IntroSegments.Type.RECAP, false));
         assertTrue(SegmentSkippingPolicy.auto(SegmentSkippingPolicy.Mode.SMART, IntroSegments.Type.RECAP, true));
-        assertFalse(SegmentSkippingPolicy.auto(SegmentSkippingPolicy.Mode.SMART, IntroSegments.Type.PREVIEW, true));
+        // "Skip when binge-watching" skips every part when binge-watching, and shows the button otherwise.
+        assertTrue(SegmentSkippingPolicy.auto(SegmentSkippingPolicy.Mode.SMART, IntroSegments.Type.PREVIEW, true));
+        assertTrue(SegmentSkippingPolicy.prompt(SegmentSkippingPolicy.Mode.SMART, false));
+        assertFalse(SegmentSkippingPolicy.prompt(SegmentSkippingPolicy.Mode.SMART, true));
+        assertFalse(SegmentSkippingPolicy.prompt(SegmentSkippingPolicy.Mode.NORMAL, false));
     }
 
     @Test

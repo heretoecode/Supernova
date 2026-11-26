@@ -491,7 +491,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private int mNewAudioTrack;
     public int mAudioFilt;
     public boolean mNightModeOn;
-    private static final String KEY_AUDIO_FILT =
+    static final String KEY_AUDIO_FILT =
         "pref_audio_filt_int_key"; // used to be "pref_audio_filt_key", containing a string
     private static final String KEY_AUDIO_FILT_NIGHT = "pref_audio_filt_night_int_key";
     private static final String[] GENERIC_TEXT_SUBTITLE_FORMATS = {"srt", "vtt"};
@@ -2684,7 +2684,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 // A series' own skipping choice, when it has one (Playback tab save row).
                 SegmentSkippingPolicy.Mode mode =
                     SeriesPlaybackChoices.skipFor(type, SegmentSkippingPolicy.mode(mPreferences, type));
-                if (mode == SegmentSkippingPolicy.Mode.PROMPT)
+                boolean binge = mPlayMode == PLAYMODE_BINGE && mArrivedViaBingeTransition;
+                if (SegmentSkippingPolicy.prompt(mode, binge))
                 {
                     // Asked once per visit: a seek clears this, so rewinding to before the part offers Skip again.
                     if (segment.endMs == mLastPromptedEndMs)
@@ -2696,7 +2697,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                       segment.endMs);
                     return;
                 }
-                if (SegmentSkippingPolicy.auto(mode, type, mPlayMode == PLAYMODE_BINGE && mArrivedViaBingeTransition))
+                if (SegmentSkippingPolicy.auto(mode, type, binge))
                 {
                     mLastAutoSkippedEndMs = segment.endMs;
                     Diagnostics.event("introdb_skip_used", "mode", "auto", "segment", type.name(), "target_ms",

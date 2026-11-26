@@ -75,6 +75,8 @@ public final class PreviewMoviePage extends ScrollView {
     private final List<PreviewLandscapeCard> landscapeCards = new ArrayList<>(), extraCards = new ArrayList<>();
     private final TextView title, meta, plot, heroLine, play, trailer, context, moreButton, matchMetadata;
     private final LinearLayout pills;
+    /** Next-episode label above the logo (owner, 25 Nov; placement A; BRIEF_0158_B › Next episode on the hero). */
+    private final TextView nextEpisode;
     private final LinearLayout providerActions;
     private TextView versions;
     private Runnable chooseVersions = () -> {
@@ -194,12 +196,16 @@ public final class PreviewMoviePage extends ScrollView {
         cardCopy.setOrientation(LinearLayout.VERTICAL);
         cardCopy.setPadding(dp(24), dp(18), dp(24), dp(16));
         detailsCard.addView(cardCopy, new FrameLayout.LayoutParams(-1, -1));
+        nextEpisode = NextEpisodeLabel.create(c);
+        LinearLayout.LayoutParams nextSize = new LinearLayout.LayoutParams(-2, dp(NextEpisodeLabel.LABEL_DP));
+        nextSize.bottomMargin = NextEpisodeLabel.gap(c);
+        cardCopy.addView(nextEpisode, nextSize);
         title = text("", 34);
         title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         title.setMaxLines(2);
         title.setGravity(Gravity.CENTER_VERTICAL);
         title.setEllipsize(TextUtils.TruncateAt.END);
-        cardCopy.addView(title, new LinearLayout.LayoutParams(dp(430), dp(96)));
+        cardCopy.addView(title, new LinearLayout.LayoutParams(dp(430), dp(TITLE_BOX_DP)));
         meta = text("", 18);
         meta.setSingleLine(true);
         meta.setEllipsize(TextUtils.TruncateAt.END);
@@ -903,6 +909,10 @@ public final class PreviewMoviePage extends ScrollView {
     private LinearLayout section(String name) {
         LinearLayout section = new LinearLayout(getContext());
         section.setOrientation(LinearLayout.VERTICAL);
+        // DT3 (owner, 18 Nov 2026): no invisible frame. A grown card and its ring may reach past the row's sides,
+        // and rows run off the page's edges (D6), so neither the section nor its content clips its children.
+        section.setClipChildren(false);
+        section.setClipToPadding(false);
         section.setPadding(0, dp(10), 0, dp(8));
         TextView label = text(name, 16);
         label.setTextColor(0xff9ed4f7);
@@ -911,6 +921,8 @@ public final class PreviewMoviePage extends ScrollView {
             label.setVisibility(GONE);
         LinearLayout content = new LinearLayout(getContext());
         content.setOrientation(LinearLayout.VERTICAL);
+        content.setClipChildren(false);
+        content.setClipToPadding(false);
         content.setPadding(0, dp(6), 0, 0);
         section.addView(content);
         body.addView(section);
@@ -1077,6 +1089,27 @@ public final class PreviewMoviePage extends ScrollView {
         heroLine.setVisibility(heroLine.length() == 0 ? GONE : VISIBLE);
     }
 
+    static final int TITLE_BOX_DP = 96;
+
+    /**
+     * Shows or hides the next-episode label. Its line is taken from the title box above the facts line, so the facts
+     * line and the buttons never move (placement A).
+     */
+    private void bindNextEpisode(JSONObject enriched) {
+        boolean series = show != null || movie instanceof Episode || "tv".equals(remoteKind);
+        String words = !series || enriched == null ? null
+            : NextEpisodeLabel.words(enriched,
+                                     enrichment == null ? null : NextEpisodeLabel.airDates(enrichment.episodes.values()),
+                                     java.time.LocalDate.now());
+        NextEpisodeLabel.show(nextEpisode, words);
+        int box = dp(TITLE_BOX_DP) - (words == null ? 0 : NextEpisodeLabel.lineHeight(getContext()));
+        ViewGroup.LayoutParams size = title.getLayoutParams();
+        if (size != null && size.height != box) {
+            size.height = box;
+            title.setLayoutParams(size);
+        }
+    }
+
     private void renderDetails(String reason) {
         updateHeroLine();
         int previous = details.getChildCount();
@@ -1092,6 +1125,7 @@ public final class PreviewMoviePage extends ScrollView {
                      technical =
                          factPanel(panels, remoteDetails != null ? "Streaming Availability" : "Technical Information");
         JSONObject enriched = enrichment != null ? enrichment.details : remoteDetails;
+        bindNextEpisode(enriched);
         Episode selectedEpisode = movie instanceof Episode ? (Episode)movie : null;
         JSONObject episodeFacts =
             selectedEpisode != null && enrichment != null
@@ -1206,7 +1240,7 @@ public final class PreviewMoviePage extends ScrollView {
                  enriched.optString("original_title", enriched.optString("original_name")));
             if (show != null || "tv".equals(remoteKind)) {
                 fact(key, "Last air date", enriched.optString("last_air_date"));
-                fact(key, "Series status", enriched.optString("status"));
+                fact(key, "Status", NextEpisodeLabel.status(enriched, java.time.LocalDate.now()));
             }
             fact(key, "Countries", jsonNames(enriched.optJSONArray("production_countries"), "name"));
             JSONObject collection = enriched.optJSONObject("belongs_to_collection");
@@ -1845,7 +1879,30 @@ public final class PreviewMoviePage extends ScrollView {
         bindShow(value, playAction);
         seasons.clear();
         setSeason(number, local);
+        Uri art = seasonArtwork(value, local);
+        if (art != null)
+            cardArtwork(art);
         requestEnrichment();
+    }
+
+    /** R3 (owner, 18 Nov 2026): a season page shows the show's backdrop, else an episode's picture, else the poster. */
+    static Uri seasonArtwork(Tvshow value, List<Episode> local) {
+        com.archos.mediascraper.ShowTags tags = value.getShowTags();
+        ScraperImage backdrop = tags == null ? null : tags.getDefaultBackdrop();
+        if (backdrop != null) {
+            File file = backdrop.getLargeFileF();
+            if (file != null && file.exists())
+                return Uri.fromFile(file);
+            if (backdrop.getLargeUrl() != null)
+                return Uri.parse(backdrop.getLargeUrl());
+        }
+        for (Episode episode : local)
+            if (episode.getPreviewBackdrop() != null)
+                return episode.getPreviewBackdrop();
+        for (Episode episode : local)
+            if (episode.getPictureUri() != null)
+                return episode.getPictureUri();
+        return value.getPosterUri();
     }
 
     public void setSeason(int number, List<Episode> values) {
@@ -1903,13 +1960,23 @@ public final class PreviewMoviePage extends ScrollView {
                 headingSize.topMargin = episodeRows.isEmpty() ? dp(8) : -dp(10);
                 headingSize.bottomMargin = dp(6);
                 episodes.addView(seasonInfo, headingSize);
-            } else
-                episodes.addView(text(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(), 18));
+            } else {
+                TextView heading = text(season.getKey() == 0 ? "Specials" : "Season " + season.getKey(), 18);
+                PreviewIcon.apply(heading, "tv", 16);
+                episodes.addView(heading);
+            }
             PreviewEpisodeRow row =
                 new PreviewEpisodeRow((Activity)getContext(), season.getValue(), id,
                                       enrichment == null ? null : enrichment.seasonAvailability.get(season.getKey()));
             episodeRows.add(row);
-            episodes.addView(row, new LinearLayout.LayoutParams(-1, dp(156)));
+            // DT3 (D6): the row runs off the page's edges; its padding keeps the first card where it was.
+            int side = Math.round(getResources().getDisplayMetrics().widthPixels * .04f) + dp(8);
+            LinearLayout.LayoutParams rowSize = new LinearLayout.LayoutParams(-1, dp(156));
+            rowSize.leftMargin = -side;
+            rowSize.rightMargin = -side;
+            row.setPadding(row.getPaddingLeft() + side, row.getPaddingTop(), row.getPaddingRight() + side,
+                           row.getPaddingBottom());
+            episodes.addView(row, rowSize);
         }
         if (key instanceof String) {
             String tag = (String)key;
@@ -1978,6 +2045,8 @@ public final class PreviewMoviePage extends ScrollView {
             card.release();
         landscapeCards.clear();
         related.removeAllViews();
+        relatedGroups.clear();
+        relatedProviders.clear();
         if (movie == null && show == null && remoteDetails == null)
             return;
         boolean television = show != null || "tv".equals(remoteKind);
@@ -2028,7 +2097,7 @@ public final class PreviewMoviePage extends ScrollView {
                             com.archos.mediacenter.video.leanback.PreviewNotice.show(
                                 getContext(), "The " + service + " app isn't on this device", true);
                     });
-                    addRecommendation(card);
+                    addRecommendation(card, recommendation.provider);
                     shown.add("id:" + id);
                 }
             }
@@ -2045,11 +2114,7 @@ public final class PreviewMoviePage extends ScrollView {
                 if (entry.onlineId > 0)
                     shown.add("id:" + entry.onlineId);
             }
-        if (related.getChildCount() > 0) {
-            LinearLayout row = (LinearLayout)related.getChildAt(related.getChildCount() - 1);
-            while (row.getChildCount() < 4)
-                row.addView(new View(getContext()), new LinearLayout.LayoutParams(0, 1, 1));
-        }
+        layoutRelatedRows();
         restoreRowFocus(related, focusKey, oldY);
         rebuildTabs();
     }
@@ -2067,7 +2132,7 @@ public final class PreviewMoviePage extends ScrollView {
         card.setOnClickListener(v
                                 -> new VideoViewClickedListener((Activity)getContext())
                                        .onItemClicked(new Presenter.ViewHolder(v), entry.media, null, null));
-        addRecommendation(card);
+        addRecommendation(card, null);
     }
 
     /** The Episodes card width: a quarter of the row (PreviewEpisodeRow.cardWidth). */
@@ -2076,19 +2141,79 @@ public final class PreviewMoviePage extends ScrollView {
         return Math.max(1, (width - dp(36)) / 4);
     }
 
-    private void addRecommendation(PreviewLandscapeCard card) {
-        LinearLayout row;
-        if (landscapeCards.size() % 4 == 0) {
-            row = new LinearLayout(getContext());
-            row.setClipChildren(false);
-            related.addView(row);
-        } else
-            row = (LinearLayout)related.getChildAt(related.getChildCount() - 1);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, dp(142), 1);
-        lp.setMargins(dp(5), dp(8), dp(5), dp(8));
-        row.addView(card, lp);
+    /** More Like This, grouped: null = In your library, else the service the titles are on. */
+    private final Map<String, List<PreviewLandscapeCard>> relatedGroups = new LinkedHashMap<>();
+    private final Map<String, StreamingRepository.Provider> relatedProviders = new HashMap<>();
+    private static final String IN_LIBRARY = "";
+
+    private void addRecommendation(PreviewLandscapeCard card, StreamingRepository.Provider provider) {
+        String group = provider == null ? IN_LIBRARY : provider.name;
+        if (provider != null)
+            relatedProviders.put(group, provider);
+        relatedGroups.computeIfAbsent(group, key -> new ArrayList<>()).add(card);
         landscapeCards.add(card);
-        rowKeys(card, row);
+    }
+
+    /**
+     * DT5 (owner, 18 Nov 2026; review-0157-2/01 2): More Like This in rows like Episodes and Extras: In your library
+     * first, then one row per service, the top of Your services first, each heading with the service's colour logo.
+     */
+    private void layoutRelatedRows() {
+        List<String> order = new ArrayList<>(relatedGroups.keySet());
+        List<String> yours = new ArrayList<>(StreamingRepository.selected(getContext()));
+        order.sort((a, b) -> Integer.compare(groupRank(a, yours), groupRank(b, yours)));
+        int side = Math.round(getResources().getDisplayMetrics().widthPixels * .04f) + dp(8);
+        for (String group : order) {
+            LinearLayout heading = new LinearLayout(getContext());
+            heading.setGravity(Gravity.CENTER_VERTICAL);
+            heading.setPadding(dp(5), dp(12), 0, dp(4));
+            StreamingRepository.Provider provider = relatedProviders.get(group);
+            if (provider != null) {
+                ImageView logo = new ImageView(getContext());
+                PreviewProviderIcons.bindProvider(logo, provider, 0, "details.related");
+                LinearLayout.LayoutParams logoSize = new LinearLayout.LayoutParams(dp(22), dp(22));
+                logoSize.rightMargin = dp(8);
+                heading.addView(logo, logoSize);
+            }
+            TextView words = text(group.equals(IN_LIBRARY) ? "In your library" : "On " + group, 18);
+            if (provider == null)
+                PreviewIcon.apply(words, "library", 16);
+            heading.addView(words);
+            heading.setTag("related.heading:" + (group.equals(IN_LIBRARY) ? "library" : group));
+            related.addView(heading);
+            HorizontalScrollView rail = new HorizontalScrollView(getContext());
+            rail.setFocusable(false);
+            rail.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+            rail.setHorizontalScrollBarEnabled(false);
+            rail.setClipChildren(false);
+            rail.setClipToPadding(false);
+            rail.setPadding(dp(10) + side, dp(10), dp(10) + side, dp(10));
+            LinearLayout row = new LinearLayout(getContext());
+            row.setClipChildren(false);
+            row.setClipToPadding(false);
+            rail.addView(row);
+            LinearLayout.LayoutParams railSize =
+                new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28));
+            railSize.leftMargin = -side;
+            railSize.rightMargin = -side;
+            related.addView(rail, railSize);
+            for (PreviewLandscapeCard card : relatedGroups.get(group)) {
+                LinearLayout.LayoutParams lp =
+                    new LinearLayout.LayoutParams(extraCardWidth(), extraCardWidth() * 9 / 16);
+                lp.rightMargin = dp(12);
+                row.addView(card, lp);
+                rowKeys(card, row);
+            }
+        }
+    }
+
+    /** In your library first, then services in the order of Your services, then any others. */
+    private int groupRank(String group, List<String> yours) {
+        if (group.equals(IN_LIBRARY))
+            return -1;
+        StreamingRepository.Provider provider = relatedProviders.get(group);
+        int at = provider == null ? -1 : yours.indexOf(String.valueOf(provider.id));
+        return at < 0 ? Integer.MAX_VALUE : at;
     }
 
     private boolean hasPlayableExtras() {
@@ -2144,6 +2269,8 @@ public final class PreviewMoviePage extends ScrollView {
             if (category.getValue().isEmpty())
                 continue;
             TextView heading = text(category.getKey(), 18);
+            // DT5: one row design: every row heading has its icon (Trailers a play mark, the rest film).
+            PreviewIcon.apply(heading, category.getKey().equals("Trailers") ? "play" : "film", 16);
             heading.setPadding(dp(5), dp(12), 0, dp(4));
             trailers.addView(heading);
             HorizontalScrollView rail = new HorizontalScrollView(getContext());
@@ -2153,12 +2280,17 @@ public final class PreviewMoviePage extends ScrollView {
             rail.setHorizontalScrollBarEnabled(false);
             rail.setClipChildren(false);
             rail.setClipToPadding(false);
-            rail.setPadding(dp(10), dp(10), dp(10), dp(10));
+            // DT3 (D6): Extras rows run off the page's edges too; the padding keeps the first card where it was.
+            int side = Math.round(getResources().getDisplayMetrics().widthPixels * .04f) + dp(8);
+            rail.setPadding(dp(10) + side, dp(10), dp(10) + side, dp(10));
             LinearLayout row = new LinearLayout(getContext());
             row.setClipChildren(false);
             row.setClipToPadding(false);
             rail.addView(row);
-            trailers.addView(rail, new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28)));
+            LinearLayout.LayoutParams railSize = new LinearLayout.LayoutParams(-1, extraCardWidth() * 9 / 16 + dp(28));
+            railSize.leftMargin = -side;
+            railSize.rightMargin = -side;
+            trailers.addView(rail, railSize);
             for (ScraperTrailer extra : category.getValue()) {
                 PreviewLandscapeCard card = new PreviewLandscapeCard(getContext());
                 card.bind(safe(extra.mName),
@@ -2417,7 +2549,18 @@ public final class PreviewMoviePage extends ScrollView {
         });
     }
 
+    private java.util.function.Consumer<View> playVersions;
+
+    /** R5: with two or more files for one title, Play opens the versions menu beside it. */
+    public void setPlayVersions(java.util.function.Consumer<View> chooser) {
+        playVersions = chooser;
+    }
+
     public void play() {
+        if (playVersions != null && versionCount > 1 && movie != null) {
+            playVersions.accept(play);
+            return;
+        }
         if (showPlay != null) {
             showPlay.run();
             return;
@@ -2606,14 +2749,25 @@ public final class PreviewMoviePage extends ScrollView {
 
     private void more() {
         if (seasonNumber >= 0) {
-            PreviewDialog.choose(getContext(), "Season " + seasonNumber, new String[] {"Series Details", "Episodes"},
-                                 -1, n -> {
-                                     if (n == 0)
-                                         nativeDetails.run();
-                                     else {
-                                         showSection("Episodes", true);
-                                     }
-                                 });
+            // R4 (owner, 18 Nov 2026): the Details More menu beside its button, with Delete season.
+            List<com.archos.mediacenter.video.browser.adapters.object.Episode> files = new ArrayList<>();
+            for (PreviewEpisodeRow row : episodeRows)
+                files.addAll(row.localEpisodes());
+            List<String> labels = new ArrayList<>();
+            List<String> icons = new ArrayList<>();
+            List<Runnable> commands = new ArrayList<>();
+            moreItem(labels, icons, commands, "Series details", "details", nativeDetails);
+            moreItem(labels, icons, commands, "Episodes", "list", () -> showSection("Episodes", true));
+            if (!files.isEmpty() && getContext() instanceof Activity) {
+                moreItem(labels, icons, commands, "— Files & Media", null, null);
+                moreItem(labels, icons, commands, "Delete season", "delete",
+                         () -> PreviewEpisodeMenu.deleteSeason((Activity)getContext(), seasonNumber, files));
+            }
+            PreviewDialog.menu(getContext(), moreButton, "Season " + seasonNumber, labels.toArray(new String[0]),
+                               icons.toArray(new String[0]), -1, n -> {
+                                   if (commands.get(n) != null)
+                                       commands.get(n).run();
+                               });
             return;
         }
         // The More menu (page sheet DETAILS.md; D1, D2): beside More, an icon per item, groups Playback · Library ·
@@ -2658,7 +2812,7 @@ public final class PreviewMoviePage extends ScrollView {
                          () -> action.accept(toggle));
             }
             if (movie != null) {
-                moreItem(labels, icons, commands, "Fix match", "search",
+                moreItem(labels, icons, commands, "Fix match", "edit",
                          () -> getContext().startActivity(new android.content.Intent(
                              getContext(), com.archos.mediacenter.video.leanback.scrapping
                                                .ManualVideoScrappingActivity.class)
@@ -2668,7 +2822,7 @@ public final class PreviewMoviePage extends ScrollView {
             if (movie == null && fixShow != null) {
                 // DT8 (D2): Fix match in More for a TV show too, through the show's own match action.
                 Action fix = fixShow;
-                moreItem(labels, icons, commands, "Fix match", "search", () -> action.accept(fix));
+                moreItem(labels, icons, commands, "Fix match", "edit", () -> action.accept(fix));
             }
             if (unindex != null) {
                 Action remove = unindex;

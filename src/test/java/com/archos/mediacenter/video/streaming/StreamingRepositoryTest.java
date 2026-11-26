@@ -45,6 +45,49 @@ public class StreamingRepositoryTest {
         }
     }
 
+    /** D7 (0.158.8): a show known by its TVDB id is found once on TMDB; a genuine 404 is not asked again all day. */
+    @Test
+    public void aTvdbShowIdIsCorrectedOnceAndAGenuine404IsKeptForADay() throws Exception {
+        Application app = RuntimeEnvironment.getApplication();
+        StreamingRepository.prefs(app).edit().clear().putBoolean(StreamingRepository.ENABLED, true).commit();
+        List<String> asked = new ArrayList<>();
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
+            .addInterceptor(chain -> {
+                String path = chain.request().url().encodedPath();
+                asked.add(path);
+                int code = 200;
+                String body;
+                if (path.endsWith("/3/find/81189"))
+                    body = "{\"movie_results\":[],\"tv_results\":[{\"id\":1396}]}";
+                else if (path.endsWith("/3/find/555"))
+                    body = "{\"movie_results\":[],\"tv_results\":[]}";
+                else if (path.endsWith("/3/tv/1396/watch/providers"))
+                    body = "{\"id\":1396,\"results\":{\"GB\":{}}}";
+                else {
+                    code = 404;
+                    body = "{\"success\":false}";
+                }
+                return new okhttp3.Response.Builder()
+                    .request(chain.request())
+                    .protocol(okhttp3.Protocol.HTTP_1_1)
+                    .code(code)
+                    .message("fixture")
+                    .body(okhttp3.ResponseBody.create(okhttp3.MediaType.parse("application/json"), body))
+                    .build();
+            })
+            .build();
+        assertNotNull(StreamingRepository.load(app, "tv", 81189, "GB", -1, client));
+        assertTrue(asked.contains("/3/tv/1396/watch/providers"));
+        asked.clear();
+        assertNotNull(StreamingRepository.load(app, "tv", 555, "GB", -1, client));
+        assertNotNull(StreamingRepository.load(app, "tv", 555, "GB", -1, client));
+        int providerCalls = 0;
+        for (String path : asked)
+            if (path.endsWith("/3/tv/555/watch/providers"))
+                providerCalls++;
+        assertEquals("a genuine 404 is asked once, then kept as no providers", 1, providerCalls);
+    }
+
     @Test
     public void metadataTransportReportsSafeServiceStatusBoundsAndParent() throws Exception {
         Application app = RuntimeEnvironment.getApplication();

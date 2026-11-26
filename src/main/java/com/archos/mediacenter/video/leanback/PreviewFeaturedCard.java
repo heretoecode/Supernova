@@ -62,6 +62,11 @@ final class PreviewFeaturedCard extends FrameLayout {
         copy.setTag("featured.copy");
         copy.setPadding(dp(24), dp(22), dp(18), dp(18));
         card.addView(copy, new LayoutParams(-1, -1));
+        // The next-episode label above the logo (owner, 25 Nov; placement A), the same as on Details.
+        TextView nextEpisode = NextEpisodeLabel.create(c);
+        LinearLayout.LayoutParams nextSize = new LinearLayout.LayoutParams(-2, dp(NextEpisodeLabel.LABEL_DP));
+        nextSize.bottomMargin = NextEpisodeLabel.gap(c);
+        copy.addView(nextEpisode, nextSize);
         TextView title = text(entry == null ? "" : PreviewPages.displayName(entry), 30);
         title.setTag("semantic:featured.title");
         title.setSingleLine(true);
@@ -70,6 +75,8 @@ final class PreviewFeaturedCard extends FrameLayout {
         // Text and logo sit at the bottom of the title box, just above the metadata (0.155 notes #2).
         title.setGravity(Gravity.BOTTOM | Gravity.START);
         copy.addView(title, new LinearLayout.LayoutParams(-1, dp(86)));
+        boolean series = entry != null && (entry.media instanceof Tvshow || entry.media instanceof Episode);
+        NextEpisodeLabel.bindCached(nextEpisode, title, dp(86), series ? entry.onlineId : 0);
         if (entry != null)
             OfficialTitleArtwork.bindStable(title, entry.media);
         else
@@ -115,18 +122,13 @@ final class PreviewFeaturedCard extends FrameLayout {
         LinearLayout actions = new LinearLayout(c);
         actions.setClipChildren(false);
         copy.addView(actions, new LinearLayout.LayoutParams(-1, dp(44)));
-        TextView start = action(entry == null ? "Play" : playLabel.apply(entry), play);
-        PreviewIcon.apply(start, "play", 18);
-        start.setTag("hero:play");
-        actions.addView(start, new LinearLayout.LayoutParams(-2, -1));
+        // One button, More (owner, 19 Nov; HOME.md): its menu holds Details, Playback and This Title.
         TextView[] holder = {null};
         holder[0] = action("More", () -> more.accept(holder[0]));
         PreviewIcon.apply(holder[0], "more", 18);
-        // Kept as the hero's second focus target for Down-then-Up and the Details glide (tag shared with 0.157).
+        // The tag shared since 0.157 (Down-then-Up and the Details glide).
         holder[0].setTag("hero:info");
-        LinearLayout.LayoutParams moreSize = new LinearLayout.LayoutParams(-2, -1);
-        moreSize.leftMargin = dp(10);
-        actions.addView(holder[0], moreSize);
+        actions.addView(holder[0], new LinearLayout.LayoutParams(-2, -1));
     }
 
     @Override

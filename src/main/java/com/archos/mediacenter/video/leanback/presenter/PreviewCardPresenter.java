@@ -436,6 +436,11 @@ public final class PreviewCardPresenter extends Presenter {
                 request.centerInside();
             else
                 request.centerCrop();
+            final Uri requested = uri;
+            final com.archos.mediacenter.video.browser.adapters.object.Base recoverable =
+                item instanceof com.archos.mediacenter.video.browser.adapters.object.Base
+                    ? (com.archos.mediacenter.video.browser.adapters.object.Base) item
+                    : null;
             request.noPlaceholder().noFade().into(c.image, new Callback() {
                 @Override
                 public void onSuccess() {
@@ -453,6 +458,31 @@ public final class PreviewCardPresenter extends Presenter {
                     c.hasArtwork = c.image.getDrawable() != null;
                     c.updateFocus();
                     trace.failed(error == null ? "unknown" : error.getClass().getSimpleName(), c.hasArtwork);
+                    // D8: the kept file is gone; fetch it again from its source instead of leaving it blank.
+                    ArtworkRecovery.recover(c.getContext(), recoverable, requested, found -> {
+                        if (generation != c.artworkGeneration || !c.isAttachedToWindow())
+                            return;
+                        c.requestedArtwork = found;
+                        RequestCreator again = Picasso.get().load(found).resize(
+                            style == Style.LIST ? Math.round(112 * c.getResources().getDisplayMetrics().density)
+                                                : c.width,
+                            c.height);
+                        if (letterbox)
+                            again.centerInside();
+                        else
+                            again.centerCrop();
+                        again.noPlaceholder().noFade().into(c.image, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                c.hasArtwork = true;
+                                c.updateFocus();
+                            }
+
+                            @Override
+                            public void onError(Exception ignored) {
+                            }
+                        });
+                    });
                 }
             });
         }
