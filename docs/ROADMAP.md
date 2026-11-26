@@ -130,6 +130,12 @@ Bug fixes only (owner, 17 Nov): as many as possible before 0.158. Findings in `d
 
 ## 0.158
 
+**Part C (owner go-ahead, 26 Nov; `docs/0.158/BRIEF_0158_C.md`):** fixes from the 0.158.7 diagnostics (two crashes,
+the hidden grid stealing focus, scans failing at the lock, the Put.io delete, TV posters, TMDB TV where-to-watch,
+freezes), the Settings Backup bug, the refined library pages, Home, Details (with the next-episode label), Player and
+Search, the app-wide pieces, NOVA's eleven catch-up items (+ one since), the diagnostics upgrade. Files and Settings
+designs wait for their reviews.
+
 All the planned redesigns except Settings, then a bug-fixing phase on a settled design (owner, 18 Nov). Each page
 gets its page sheet before coding (CLAUDE.md, Definition of done).
 

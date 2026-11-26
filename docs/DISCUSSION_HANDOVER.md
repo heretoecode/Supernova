@@ -1,6 +1,9 @@
 # Discussion handover (updated 26 Nov 2026)
 
 ## 26 Nov — START HERE (paused by the owner mid-Files review)
+**Coding go-ahead (26 Nov):** 0.158 part C, `docs/0.158/BRIEF_0158_C.md` (refined pages, app-wide pieces, NOVA, the
+Settings Backup bug, fixes from the 0.158.7 diagnostics in `docs/0.158/DIAGNOSTICS_0158_7.md`). Supernova Coding runs it;
+the discussion carries on with Files round 3 meanwhile.
 **Phase:** polish, page by page; designs and planning only, no coding (CLAUDE.md "Polish phase").
 **Done and written up:** library pages (LIBRARY.md), Home (HOME.md + RULES §14d), Details (DETAILS.md), Player and
 Playback Settings (PLAYER.md), **Search (SEARCH.md, 25 Nov)**, **Next episode on the hero** (DETAILS.md, RULES §14d,

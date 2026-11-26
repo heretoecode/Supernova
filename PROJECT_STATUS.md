@@ -3,7 +3,11 @@
 Updated 26 November 2026 (discussion: Search done; Files review rounds 1–2 agreed, paused at round 3). Keep this page short and current: update it at the
 end of every session.
 
-## Next: the rest of 0.158 part B
+## Next: 0.158 part C (owner go-ahead 26 Nov)
+
+Brief `docs/0.158/BRIEF_0158_C.md`; diagnostics read `docs/0.158/DIAGNOSTICS_0158_7.md`. First signing 0.158.8.
+
+## Before that: the rest of 0.158 part B
 
 Report, "not built" list and run links: `docs/0.158/REPORT_0158_B.md`; judgement calls:
 `docs/0.158/JUDGEMENT_CALLS_0158_B.md`. Still to do from `docs/0.158/BRIEF_0158_B.md`: the look sweep on the speckle,
