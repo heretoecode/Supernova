@@ -1,5 +1,5 @@
 {
- "purpose": "0.158 part C: run 7 (Search tips under the keyboard, three recent searches)",
+ "purpose": "0.158 part C: run 8 (six posters a row, Mark as watched without a notice, Search)",
  "tests": [
   "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
   "com.archos.mediacenter.video.leanback.HiddenNovaContentTest",
@@ -36,7 +36,9 @@
   "com.archos.mediacenter.video.leanback.TopNavigationTest",
   "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
   "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
-  "com.archos.mediacenter.video.leanback.Review0158SearchTest"
+  "com.archos.mediacenter.video.leanback.Review0158SearchTest",
+  "com.archos.mediacenter.video.leanback.Review0158LibraryTest",
+  "com.archos.mediacenter.video.leanback.PreviewLibraryReturnTest"
  ],
  "variants": {
   "normal": {}

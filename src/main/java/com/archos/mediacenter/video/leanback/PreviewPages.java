@@ -2326,7 +2326,7 @@ public final class PreviewPages extends FrameLayout {
         while (first > 0 && cells.get(first - 1).type == POSTER)
             first--;
         int column = (position - first) % libraryColumns();
-        int gap = dp(12);
+        int gap = dp(16); // 32 px at 1080p between posters (LIBRARY.md, tv/50)
         RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams)card.getLayoutParams();
         lp.leftMargin = column * gap / libraryColumns();
         lp.rightMargin = gap - (column + 1) * gap / libraryColumns();
@@ -2988,13 +2988,12 @@ public final class PreviewPages extends FrameLayout {
                                  null, -1);
     }
 
-    /** Mark as watched: in place, with an Undo notice; caption and tick update (sheet). */
+    /**
+     * Mark as watched: at once, with no notice (owner, 20 Nov; LIBRARY.md); the menu then reads Mark as unwatched, so
+     * it is undone from the same menu. Caption and tick update.
+     */
     private void markWatched(Entry e, boolean watched) {
         LibraryActions.markWatched(getContext(), e.media, watched);
-        UndoNotice.show(getContext(), watched ? "Marked as watched" : "Marked as unwatched", () -> {
-            LibraryActions.markWatched(getContext(), e.media, !watched);
-            requestLibraryRefresh();
-        });
         requestLibraryRefresh();
     }
 
@@ -3197,8 +3196,8 @@ public final class PreviewPages extends FrameLayout {
 
     static final int SPANS = 840;
 
-    /** One portrait poster size on every library page, seven a row (page sheet LIBRARY.md). */
-    static final int POSTERS_A_ROW = 7;
+    /** One portrait poster size on every library page, six a row (owner, 20 Nov; LIBRARY.md, tv/50). */
+    static final int POSTERS_A_ROW = 6;
 
     private int libraryColumns() {
         return POSTERS_A_ROW;
