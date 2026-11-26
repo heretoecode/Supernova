@@ -105,12 +105,43 @@ final class SearchStreaming
                 titles.add(new Title(id, part.optString("title"), year, relation, top.provider.name,
                                      part.optString("poster_path"), link));
             }
-            return titles.isEmpty() ? null : new Group("Stream more from the world of " + libraryTitle, titles);
+            return titles.isEmpty() ? null : new Group(heading(libraryTitle, documentary(details)), titles);
         }
         catch (Exception unavailable)
         {
             return null;
         }
+    }
+
+    /**
+     * One heading starting "Stream" (SEARCH.md): "Stream more from the world of Tidelands" (fiction: sequels,
+     * prequels, spin-offs, same collection), "Stream more related to Our Blue Planet II" (non-fiction). Never
+     * "similar".
+     */
+    static String heading(String libraryTitle, boolean nonFiction)
+    {
+        return (nonFiction ? "Stream more related to " : "Stream more from the world of ") + libraryTitle;
+    }
+
+    /** People results: "Stream more from Mara Ellison". */
+    static String personHeading(String name)
+    {
+        return "Stream more from " + name;
+    }
+
+    /** True for a documentary, judged from TMDB's genres on the title. */
+    static boolean documentary(JSONObject details)
+    {
+        JSONArray genres = details == null ? null : details.optJSONArray("genres");
+        for (int i = 0; genres != null && i < genres.length(); i++)
+        {
+            JSONObject genre = genres.optJSONObject(i);
+            if (genre != null && (genre.optInt("id") == 99 || "Documentary".equalsIgnoreCase(genre.optString("name"))))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     static int year(String date)

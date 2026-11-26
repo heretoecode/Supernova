@@ -2776,73 +2776,40 @@ public final class PreviewPages extends FrameLayout {
      * Files & Media; no "More info" (OK opens Details), no Restart on an unstarted title.
      */
     private void libraryMenu(Entry e, View anchor) {
-        List<String> labels = new ArrayList<>();
-        List<String> icons = new ArrayList<>();
-        List<Runnable> commands = new ArrayList<>();
-        boolean show = e.media instanceof Tvshow;
-        boolean watched = LibraryPageModel.watched(e);
-        if (heroDetails != null) {
-            Runnable details = heroDetails;
-            labels.add("Details");
-            icons.add("details");
-            commands.add(details);
-        }
-        labels.add("— Playback");
-        icons.add(null);
-        commands.add(null);
-        if (show) {
+        LibraryItemMenu.Spec spec = new LibraryItemMenu.Spec();
+        spec.title = displayName(e);
+        spec.show = e.media instanceof Tvshow;
+        spec.watched = LibraryPageModel.watched(e);
+        spec.details = heroDetails;
+        if (spec.show) {
             Entry next = nextEpisodes.get(((Tvshow)e.media).getTvshowId());
             if (next != null && next.media instanceof Episode) {
                 Episode episode = (Episode)next.media;
-                labels.add("Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber());
-                icons.add("resume");
-                commands.add(() -> play(next, anchor));
+                spec.playLabel = "Resume S" + episode.getSeasonNumber() + " E" + episode.getEpisodeNumber();
+                spec.started = true;
+                spec.play = () -> play(next, anchor);
                 Entry first = firstEpisode(e);
-                if (first != null) {
-                    labels.add("Play from the start");
-                    icons.add("history");
-                    commands.add(() -> playFromStart(first));
-                }
-            } else {
-                labels.add("Play");
-                icons.add("play");
-                commands.add(() -> play(e, anchor));
-            }
+                if (first != null)
+                    spec.playFromStart = () -> playFromStart(first);
+            } else
+                spec.play = () -> play(e, anchor);
         } else {
-            boolean resume = e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !watched;
-            labels.add(resume ? "Resume" : "Play");
-            icons.add(resume ? "resume" : "play");
-            commands.add(() -> play(e, anchor));
+            spec.started = e.media instanceof Video && ((Video)e.media).getResumeMs() > 0 && !spec.watched;
+            spec.playLabel = spec.started ? heroPlayLabel(e) : "Play";
+            spec.play = () -> play(e, anchor);
+            if (spec.started)
+                spec.playFromStart = () -> playFromStart(e);
         }
-        labels.add("— Library");
-        icons.add(null);
-        commands.add(null);
-        labels.add(watched ? (show ? "Mark show as unwatched" : "Mark as unwatched")
-                           : (show ? "Mark show as watched" : "Mark as watched"));
-        icons.add("check");
-        commands.add(() -> markWatched(e, !watched));
+        boolean watched = spec.watched;
+        spec.markWatched = () -> markWatched(e, !watched);
         Video matchable = e.media instanceof Video ? (Video)e.media
                           : firstEpisode(e) != null ? (Video)firstEpisode(e).media
                                                     : null;
-        if (matchable != null) {
-            labels.add("Fix match"); // a pencil putting it right (owner, 21 Nov; home-v3/tv/10 B)
-            icons.add("edit");
-            commands.add(() -> adapter.openFixMatch(matchable));
-        }
-        labels.add("Remove from library");
-        icons.add("remove");
-        commands.add(() -> removeFromLibrary(e));
-        labels.add("— Files & Media");
-        icons.add(null);
-        commands.add(null);
-        labels.add(show ? "Delete all episode files" : "Delete file");
-        icons.add("delete");
-        commands.add(() -> deleteFiles(e));
-        PreviewDialog.menu(getContext(), anchor, displayName(e), labels.toArray(new String[0]),
-                           icons.toArray(new String[0]), -1, n -> {
-                               if (commands.get(n) != null)
-                                   commands.get(n).run();
-                           });
+        if (matchable != null)
+            spec.fixMatch = () -> adapter.openFixMatch(matchable); // a pencil (owner, 21 Nov; home-v3/tv/10 B)
+        spec.remove = () -> removeFromLibrary(e);
+        spec.delete = () -> deleteFiles(e);
+        LibraryItemMenu.show(getContext(), anchor, spec);
     }
 
     static final int HERO_FADE_MS = 450;
@@ -3011,41 +2978,7 @@ public final class PreviewPages extends FrameLayout {
 
     /** Delete file(s): the delete warning, "Keep file" focused first (RULES §7b); then the files go. */
     private void deleteFiles(Entry e) {
-        boolean show = e.media instanceof Tvshow;
-        PreviewDialog.warning(
-            getContext(), show ? "Delete every episode of " + displayName(e) + "?" : "Delete " + displayName(e) + "?",
-            show ? "Every episode file is deleted from its drive or server. This can't be undone."
-                 : "The file is deleted from its drive or server. This can't be undone.",
-            show ? "Keep files" : "Keep file", show ? "Delete all episode files" : "Delete file",
-            () -> {
-                List<Uri> files = LibraryActions.files(getContext(), e.media);
-                if (files.isEmpty() || !(getContext() instanceof Activity))
-                    return;
-                com.archos.mediacenter.video.browser.Delete delete = new com.archos.mediacenter.video.browser.Delete(
-                    new com.archos.mediacenter.video.browser.Delete.DeleteListener() {
-                        public void onVideoFileRemoved(Uri videoFile, boolean askForFolderRemoval,
-                                                       Uri folderToDelete) {
-                            requestLibraryRefresh();
-                        }
-
-                        public void onDeleteVideoFailed(Uri videoFile) {
-                            PreviewNotice.show(getContext(),
-                                               com.archos.mediacenter.video.browser.Delete.failureMessage(videoFile),
-                                               true);
-                        }
-
-                        public void onFolderRemoved(Uri folder) {
-                        }
-
-                        public void onDeleteSuccess() {
-                            requestLibraryRefresh();
-                        }
-                    }, getContext());
-                if (files.size() == 1)
-                    delete.startDeleteProcess(files.get(0));
-                else
-                    delete.startMultipleDeleteProcess(files);
-            });
+        LibraryActions.confirmDelete(getContext(), e.media, displayName(e), this::requestLibraryRefresh);
     }
 
     /** The library changed underneath: reload the snapshot (the page refreshes as it arrives). */

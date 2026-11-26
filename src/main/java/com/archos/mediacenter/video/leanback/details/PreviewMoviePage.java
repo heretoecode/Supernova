@@ -1842,6 +1842,8 @@ public final class PreviewMoviePage extends ScrollView {
                 String path = value.optString("profile_path");
                 if (portrait != null && path.matches("/[A-Za-z0-9._-]+")) {
                     Uri uri = Uri.parse("https://image.tmdb.org/t/p/w185" + path);
+                    com.archos.mediacenter.video.leanback.search.PersonPhotos.remember(getContext(), name,
+                                                                                       uri.toString());
                     ArtworkRequest.load(
                         portrait, uri, diagnosticMedia(), "details." + section, "portrait",
                         Picasso.get()

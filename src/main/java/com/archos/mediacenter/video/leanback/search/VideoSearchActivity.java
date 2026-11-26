@@ -111,6 +111,13 @@ public class VideoSearchActivity extends FragmentActivity {
 
     /** Voice search with the Shield remote's microphone (the keyboard's Voice key and the Search button). */
     public void startVoice() {
+        if (previewSearch != null && previewSearch.listen())
+            return;
+        voiceScreen();
+    }
+
+    /** No speech service for "Listening…" in the field: Android's own voice screen. */
+    private void voiceScreen() {
         Intent speak = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speak.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         try {
@@ -149,6 +156,18 @@ public class VideoSearchActivity extends FragmentActivity {
         setIntent(intent);
         newSearchIntent = true;
         recreate();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int request, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(request, permissions, results);
+        if (request != PreviewSearch.VOICE_PERMISSION || previewSearch == null)
+            return;
+        boolean granted = results.length > 0 && results[0] == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        if (granted)
+            previewSearch.listen();
+        else
+            voiceScreen();
     }
 
     @Override

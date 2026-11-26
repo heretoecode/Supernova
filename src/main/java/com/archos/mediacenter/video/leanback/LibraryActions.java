@@ -63,7 +63,7 @@ public final class LibraryActions
     }
 
     /** Hides a film or a whole show from the library (the file stays); {@code false} brings it back (Undo). */
-    static void removeFromLibrary(Context context, Object media, boolean removed)
+    public static void removeFromLibrary(Context context, Object media, boolean removed)
     {
         if (media instanceof Video)
         {
@@ -87,7 +87,7 @@ public final class LibraryActions
     }
 
     /** The files a delete would remove: the film's file, or every episode file of the show. */
-    static List<Uri> files(Context context, Object media)
+    public static List<Uri> files(Context context, Object media)
     {
         List<Uri> result = new ArrayList<>();
         if (media instanceof Movie && ((Movie) media).getFileUri() != null)
@@ -138,5 +138,59 @@ public final class LibraryActions
             return numbers;
         }
         return numbers;
+    }
+
+    /**
+     * Delete file(s) from a long-press menu: the delete warning, "Keep file" focused first (RULES §7b); then the files
+     * go and {@code changed} runs so the page refreshes.
+     */
+    public static void confirmDelete(Context context, Object media, String name, Runnable changed)
+    {
+        boolean show = media instanceof Tvshow;
+        PreviewDialog.warning(
+            context, show ? "Delete every episode of " + name + "?" : "Delete " + name + "?",
+            show ? "Every episode file is deleted from its drive or server. This can't be undone."
+                 : "The file is deleted from its drive or server. This can't be undone.",
+            show ? "Keep files" : "Keep file", show ? "Delete all episode files" : "Delete file",
+            () -> delete(context, files(context, media), changed));
+    }
+
+    private static void delete(Context context, List<Uri> files, Runnable changed)
+    {
+        if (files.isEmpty() || !(context instanceof android.app.Activity))
+        {
+            return;
+        }
+        com.archos.mediacenter.video.browser.Delete delete = new com.archos.mediacenter.video.browser.Delete(
+            new com.archos.mediacenter.video.browser.Delete.DeleteListener()
+            {
+                public void onVideoFileRemoved(Uri videoFile, boolean askForFolderRemoval, Uri folderToDelete)
+                {
+                    changed.run();
+                }
+
+                public void onDeleteVideoFailed(Uri videoFile)
+                {
+                    PreviewNotice.show(context, com.archos.mediacenter.video.browser.Delete.failureMessage(videoFile),
+                                       true);
+                }
+
+                public void onFolderRemoved(Uri folder)
+                {
+                }
+
+                public void onDeleteSuccess()
+                {
+                    changed.run();
+                }
+            }, context);
+        if (files.size() == 1)
+        {
+            delete.startDeleteProcess(files.get(0));
+        }
+        else
+        {
+            delete.startMultipleDeleteProcess(files);
+        }
     }
 }
