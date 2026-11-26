@@ -312,7 +312,7 @@ public final class PreviewSearch extends LinearLayout {
         recentChips.setOrientation(VERTICAL);
         recentChips.setPadding(0, dp(6), 0, 0);
         column.addView(recentChips, new LayoutParams(-1, -2));
-        genreHeading = heading("Genres in your library", "genre");
+        genreHeading = heading("Genres in your library", "tag");
         column.addView(genreHeading, new LayoutParams(-1, -2));
         genreGrid = new LinearLayout(activity);
         genreGrid.setOrientation(VERTICAL);

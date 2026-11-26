@@ -242,6 +242,10 @@ public final class PreviewIcon extends Drawable {
             line(c, 10, 10, 10, 16);
             c.drawPoint(10, 7, p);
             line(c, 17, 18, 23, 18);
+        } else if (kind.equals("tag")) {
+            // A label tag with its hole (Search's Genres in your library, SEARCH.md).
+            line(c, 3, 3, 12, 3, 21, 12, 12, 21, 3, 12, 3, 3);
+            c.drawCircle(8, 8, 1.5f, p);
         } else if (kind.equals("hero-exclude")) {
             // Exclude from hero (owner, 21 Nov, A): the hero screen with a minus.
             line(c, 2, 4, 22, 4, 22, 16, 2, 16, 2, 4);
