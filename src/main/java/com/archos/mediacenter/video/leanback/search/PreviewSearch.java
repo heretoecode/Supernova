@@ -119,6 +119,8 @@ public final class PreviewSearch extends LinearLayout {
     static final String[] FILTERS = {ALL, FILMS, SHOWS, EPISODES, PEOPLE};
     static final String RECENT_KEY = "preview_search_recent";
     static final int RECENT_MAX = 8;
+    /** Recent searches on the landing: the last three (owner, 25 Nov; search-v6/tv/09). */
+    static final int RECENT_SHOWN = 3;
     static final int GROUP_CAP = 20;
     static final int MATCH = 0xFFFFFFFF;
 
@@ -277,9 +279,19 @@ public final class PreviewSearch extends LinearLayout {
         recentChips.setPadding(0, dp(6), 0, 0);
         column.addView(recentChips, new LayoutParams(-1, -2));
         bindRecent();
+        return column;
+    }
+
+    /**
+     * What you can search (SEARCH.md, owner 25 Nov): under the keyboard at all times, results or not; plain tips, no
+     * lines, not focusable.
+     */
+    private View tips() {
         LinearLayout tips = new LinearLayout(activity);
         tips.setOrientation(VERTICAL);
-        tips.setPadding(0, dp(32), 0, 0);
+        tips.setTag("search.tips");
+        tips.setFocusable(false);
+        tips.setPadding(0, dp(24), 0, 0);
         tips.addView(heading("What you can search", "info"));
         List<String[]> features = new ArrayList<>(Arrays.asList(
             new String[] {"film", "Titles", "movies and TV shows in your library"},
@@ -307,8 +319,7 @@ public final class PreviewSearch extends LinearLayout {
             row.addView(line2, new LayoutParams(0, -2, 1));
             tips.addView(row);
         }
-        column.addView(tips);
-        return column;
+        return tips;
     }
 
     /** A section heading with its icon, white, medium weight (RULES §5). */
@@ -382,8 +393,8 @@ public final class PreviewSearch extends LinearLayout {
         recentLine.setVisibility(values.isEmpty() ? GONE : VISIBLE);
         recentChips.setVisibility(values.isEmpty() ? GONE : VISIBLE);
         for (String value : values) {
-            if (recentChips.getChildCount() >= 9)
-                break;
+            if (recentChips.getChildCount() >= RECENT_SHOWN * 2 - 1)
+                break; // the last three (SEARCH.md), each row with the line before it
             if (recentChips.getChildCount() > 0) {
                 View rule = new View(activity);
                 rule.setBackgroundColor(0x1FFFFFFF);
@@ -501,6 +512,7 @@ public final class PreviewSearch extends LinearLayout {
             }
         });
         column.addView(keyboard, new LayoutParams(-1, -2));
+        column.addView(tips(), new LayoutParams(-1, -2));
         keyboard.setActions(() -> {
             if (!items.isEmpty())
                 results.requestFocus();
