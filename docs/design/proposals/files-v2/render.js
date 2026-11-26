@@ -423,6 +423,7 @@ const css2 = `
 .sw:after{content:'';position:absolute;right:4px;top:4px;width:28px;height:28px;border-radius:14px;background:#111215}
 .sw.off{background:rgba(255,255,255,.22)}
 .sw.off:after{left:4px;right:auto;background:#c9d3e6}
+.fr2.dis{opacity:.4}
 .fr2.on .sw,.sw.swf{background:#0b0d12}
 .fr2.on .sw:after,.sw.swf:after{background:#fff}
 .step{display:flex;align-items:center;gap:14px;font-weight:500}
@@ -559,6 +560,7 @@ const FI = {
   Username: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', Password: I.key,
   'Remember password': '<path d="M6 3h12v18l-6-4-6 4z"/>',
 };
+FI.Encryption = FI['Encryption (HTTPS)'];
 
 // field: [label, value, kind] kind: 'typing' | 'on' | 'ph' | 'sw' | 'swoff' | 'step' | 'pw'
 function field([lb, vl, kind, on]) {
@@ -574,6 +576,11 @@ function field([lb, vl, kind, on]) {
     v = `${vl}<i class="caret"></i>`;
   } else if (kind === 'sw' || kind === 'swoff') {
     v = `<span style="flex:1"></span><span class="sw${kind === 'swoff' ? ' off' : ''}"></span>`;
+  } else if (kind === 'menu') {
+    v = `<span style="flex:1">${vl}</span>${svg(I.chev, 26)}`;
+  } else if (kind === 'dis') {
+    cls.push('dis');
+    v = `<span style="flex:1">${vl}</span><span class="sw"></span>`;
   } else if (kind === 'step') {
     v = `<span class="step"><i>‹</i>${vl}<i>›</i></span>`;
   } else if (kind === 'pw') {
@@ -589,8 +596,8 @@ function formCrumb(t) {
 }
 
 function f12() {
-  const fields = [['Type', 'WebDAV', 'step'], ['Name', 'Put.io', ''], ['Address', 'webdav.put.io', 'typing'],
-    ['Encryption (HTTPS)', 'On', 'sw'], ['Port', '443 · the usual port with encryption', ''],
+  const fields = [['Type', 'WebDAV', 'menu'], ['Encryption (HTTPS)', 'On', 'sw'], ['Name', 'Put.io', ''],
+    ['Address', 'webdav.put.io', 'typing'], ['Port', '443 · the usual port with encryption', ''],
     ['Folder', '/ (everything)', 'ph'], ['Username', 'alex.morgan', ''], ['Password', '••••••••••', 'pw'],
     ['Remember password', 'On', 'sw']];
   return bar() + tabs('Connections', null) + formCrumb('New connection')
@@ -602,21 +609,41 @@ function f12() {
 }
 
 function f12b() {
-  const fields = [['Type', 'SFTP', 'step', true], ['Name', 'Home server', ''], ['Address', 'home.example.net', ''],
+  const fields = [['Type', 'SFTP', 'menu'], ['Encryption', 'Always on with SFTP', 'dis'], ['Name', 'Home server', ''],
+    ['Address', 'home.example.net', 'typing'],
     ['Port', '22 · the usual port for SFTP', ''], ['Folder', '/ (everything)', 'ph'], ['Username', 'alex', ''],
     ['Password', '••••••••', 'pw'], ['Remember password', 'On', 'sw']];
   return bar() + tabs('Connections', null) + formCrumb('New connection')
     + `<div class="form">${fields.map(field).join('')}<div class="fbtns"><span>${svg(I.test, 22)}Test connection</span>
     <span>${svg(I.ok, 22)}Save and browse</span></div></div>`
-    + keyboard('', '<b>SFTP:</b> folders on a computer or server you can sign in to over SSH.<br>Left / Right on Type: '
-      + 'SMB · WebDAV · SFTP · FTP; the fields change to suit.')
-    + '<div class="cap2">12b · Type focused: Left / Right step SMB · WebDAV · SFTP · FTP</div>';
+    + keyboard('e', '<b>SFTP:</b> folders on a computer or server you can sign in to over SSH.<br>Encryption is greyed: '
+      + 'SFTP is always encrypted. Focus skips it.')
+    + '<div class="cap2">12b · SFTP chosen: Encryption stays in place, greyed, saying why</div>';
+}
+
+function f12c() {
+  const fields = [['Type', 'WebDAV', 'menu'], ['Encryption (HTTPS)', 'On', 'sw'], ['Name', 'Put.io', ''],
+    ['Address', 'webdav.put.io', ''], ['Port', '443 · the usual port with encryption', ''],
+    ['Folder', '/ (everything)', 'ph'], ['Username', 'alex.morgan', ''], ['Password', '••••••••••', 'pw'],
+    ['Remember password', 'On', 'sw']];
+  const T = [['SMB', 'Shared folders on a Windows PC, Mac or NAS', I.smb], ['WebDAV', 'Cloud storage and web servers (Put.io, Nextcloud)', I.cloud, 'tick'],
+    ['SFTP', 'A computer or server you sign in to over SSH', I.server, 'focus'], ['FTP', 'Older file servers; FTPS when encrypted', I.nas]];
+  const menu = `<div class="menu" style="left:52px;top:350px;width:900px">${T.map(([n, l, ic, st]) => `<div class="it${st === 'focus'
+    ? ' f' : ''}" style="height:84px">${svg(ic, 28)}<span style="display:flex;flex-direction:column;gap:2px">${n}
+    <small style="font-size:21px;color:${st === 'focus' ? '#3a4256' : '#c9d3e6'}">${l}</small></span>
+    <span class="tk"${st === 'tick' ? '' : ' style="visibility:hidden"'}>${svg(I.tick, 24)}</span></div>`).join('')}</div>`;
+  return bar() + tabs('Connections', null) + formCrumb('New connection')
+    + `<div class="form">${fields.map(field).join('')}</div>` + menu
+    + keyboard('', '<b>Type</b> reshapes the form: each kind asks only for what it needs.<br>Back closes the menu.')
+    + '<div class="cap2">12c · OK on Type: the four kinds, the current one ticked</div>';
 }
 
 function f13() {
-  const fields = [['Type', 'SMB', 'step'], ['Name', 'Living-room NAS (Synology DS920+ in the cupboard)', ''],
+  const fields = [['Type', 'SMB', 'menu'], ['Encryption', 'Set by the server', 'dis'],
+    ['Name', 'Living-room NAS (Synology DS920+ in the cupboard)', ''],
     ['Address', 'nas.local', ''], ['Folders', 'Movies · TV Shows · Documentaries', ''],
     ['Username', 'media', ''], ['Password', '••••••••', 'pw'], ['Remember password', 'On', 'sw']];
+  // SMB: no port row (standard port)
   return bar() + tabs('Connections', null) + formCrumb('Edit · Living-room NAS')
     + `<div class="form">${fields.map(field).join('')}<div class="fbtns"><span class="f">${svg(I.test, 22)}Test connection
     </span><span>${svg(I.ok, 22)}Save</span></div><div class="fres">${svg(I.ok, 24)}Connected · 3 shared folders found
@@ -781,7 +808,7 @@ function f21() {
 }
 
 const ROUND23 = [['09-connections', f09, 1380], ['10-test-failed', f10], ['11-remove-undo', f11],
-  ['12-new-connection', f12], ['12b-type-stepper', f12b], ['13-edit-connection', f13], ['14-sign-in-found', f14], ['15-network-options', f15, 1380],
+  ['12-new-connection', f12], ['12c-type-menu', f12c], ['12b-sftp-encryption-greyed', f12b], ['13-edit-connection', f13], ['14-sign-in-found', f14], ['15-network-options', f15, 1380],
   ['16-library-care', f16, 1900], ['17-to-fix', f17], ['18-fix-match-file', f18], ['19-excluded-from-hero', f19],
   ['20-missing-files', f20], ['21-scan-one-source', f21, 1900]];
 

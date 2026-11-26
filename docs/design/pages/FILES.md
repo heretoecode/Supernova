@@ -121,8 +121,13 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
 
 **Round 2 notes (owner, 26 Nov; redrawn `tv/09`, `12`, `12b`, `13`):**
 - Long names stop well short of the pill: a clear 40 px gap before the pill column ("…" earlier).
-- **Type is a stepper, no menu** (RULES §8, four choices): Left / Right on the Type row step SMB · WebDAV · SFTP · FTP; the
-  fields below change at once; ‹ › show only while the row is focused (`tv/12b`).
+- **Type is a short menu (owner, 26 Nov; an exception to RULES §8 because each kind needs a line of explanation):** OK on
+  Type (value and ›) opens the four kinds under the row, each with its second line, the current one ticked (`tv/12c`):
+  SMB "Shared folders on a Windows PC, Mac or NAS" · WebDAV "Cloud storage and web servers" · SFTP "A computer or server
+  you sign in to over SSH" · FTP "Older file servers; FTPS when encrypted". Back closes it.
+- **Encryption sits straight under Type, always (owner, 26 Nov):** a switch for WebDAV (HTTPS) and FTP (FTPS), on by
+  default; **greyed** for the others, saying why: "Always on with SFTP", "Set by the server" (SMB); focus skips it while
+  greyed (`tv/12b`, `tv/13`). Rows never jump when the type changes.
 - **Form rows get icons** (Claude, as every other row in the app): Type, Name, Address, Encryption, Port, Folder(s),
   Username, Password, Remember password.
 - Form height follows the type (WebDAV nine rows, SMB seven: no encryption switch, standard port); the buttons sit
