@@ -643,6 +643,60 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             row.refresh();
     }
 
+    /**
+     * B1 (0.158.8): every row of the open tab in the order it is drawn, preference rows, the Backup and OpenSubtitles
+     * rows and the subtitle style block alike. Before 0.158.8 Up / Down walked the preference rows only, so the
+     * Backup row on System could never be reached.
+     */
+    List<View> verticalOrder() {
+        List<View> order = new ArrayList<>();
+        if (body == null)
+            return order;
+        for (int i = 0; i < body.getChildCount(); i++) {
+            View child = body.getChildAt(i);
+            if (child.getVisibility() != View.VISIBLE)
+                continue;
+            if (child.isFocusable() || child instanceof ViewGroup && child.hasFocusable())
+                order.add(child);
+        }
+        return order;
+    }
+
+    private boolean moveVertically(View from, boolean up) {
+        List<View> order = verticalOrder();
+        int n = order.indexOf(from) + (up ? -1 : 1);
+        if (n >= 0 && n < order.size())
+            order.get(n).requestFocus(up ? View.FOCUS_UP : View.FOCUS_DOWN);
+        else if (n < 0)
+            selectedRail().requestFocus();
+        return true;
+    }
+
+    /** D5 (0.158.8): the focused row is always wholly on screen, with a little room above and below it. */
+    void reveal(View row) {
+        ScrollView scroll = rightScroll;
+        if (scroll == null || row == null)
+            return;
+        scroll.post(() -> {
+            if (!row.isAttachedToWindow() || row.getParent() == null || scroll.getHeight() == 0)
+                return;
+            android.graphics.Rect bounds = new android.graphics.Rect();
+            row.getDrawingRect(bounds);
+            try {
+                scroll.offsetDescendantRectToMyCoords(row, bounds);
+            } catch (IllegalArgumentException notInside) {
+                return;
+            }
+            int margin = dp(24);
+            int top = scroll.getScrollY();
+            int bottom = top + scroll.getHeight();
+            if (bounds.top - margin < top)
+                scroll.scrollTo(0, Math.max(0, bounds.top - margin));
+            else if (bounds.bottom + margin > bottom)
+                scroll.scrollTo(0, bounds.bottom + margin - scroll.getHeight());
+        });
+    }
+
     private static final class Heading {
         final String name;
 
@@ -697,6 +751,18 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             remember();
             select(name);
             enter();
+        });
+        // B1 (0.158.8): Up / Down reach this row like any other (Backup was skipped from General to Diagnostics).
+        row.setOnKeyListener((v, key, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return false;
+            if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN)
+                return moveVertically(row, key == KeyEvent.KEYCODE_DPAD_UP);
+            return false;
+        });
+        row.setOnFocusChangeListener((v, yes) -> {
+            if (yes)
+                reveal(row);
         });
         return row;
     }
@@ -816,6 +882,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
                 if (yes) {
                     anchors.put(category + ":" + section, String.valueOf(getTag()));
                     rowAnchor = this;
+                    reveal(this);
                 }
                 refresh();
             });
@@ -826,15 +893,8 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
                     step(key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
                     return true;
                 }
-                if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    List<Row> values = new ArrayList<>(bindings.values());
-                    int n = values.indexOf(this) + (key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1);
-                    if (n >= 0 && n < values.size())
-                        values.get(n).requestFocus();
-                    else if (n < 0)
-                        selectedRail().requestFocus();
-                    return true;
-                }
+                if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN)
+                    return moveVertically(this, key == KeyEvent.KEYCODE_DPAD_UP);
                 return false;
             });
         }

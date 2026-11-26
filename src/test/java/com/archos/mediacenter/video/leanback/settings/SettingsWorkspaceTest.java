@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.time.Duration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import org.junit.*;
@@ -764,5 +765,64 @@ public class SettingsWorkspaceTest {
         } finally {
             activity.pause().stop().destroy();
         }
+    }
+
+    /**
+     * B1 and D5 (0.158.8): Down walks every row of every tab in order, the Backup row on System included (it was
+     * skipped from General to Diagnostics), and each focused row is wholly on screen.
+     */
+    @Test
+    public void downReachesEveryRowOfEveryTabInOrderAndEachFocusedRowIsOnScreen() {
+        for (int category : new int[] {0, 1, 2, 3, 4, 5}) {
+            workspace.open(category, null);
+            layout();
+            assertTrue(tagged("settings.tab." + category).requestFocus());
+            key(KeyEvent.KEYCODE_DPAD_DOWN);
+            List<View> order = workspace.verticalOrder();
+            assertFalse("tab " + category + " has rows", order.isEmpty());
+            for (int i = 0; i < order.size(); i++) {
+                View expected = order.get(i);
+                View focused = root.findFocus();
+                assertNotNull("tab " + category + " row " + i + " holds focus", focused);
+                assertTrue("tab " + category + ": Down reaches " + expected.getTag() + " in order, not " +
+                               focused.getTag(),
+                           focused == expected || isInside(focused, expected));
+                assertOnScreen(category, expected);
+                if (expected instanceof SubtitleStyleBlock)
+                    break; // the style block's own rows move with the standard focus search
+                if (i < order.size() - 1)
+                    key(KeyEvent.KEYCODE_DPAD_DOWN);
+            }
+        }
+        workspace.open(5, null);
+        layout();
+        List<Object> tags = new java.util.ArrayList<>();
+        for (View row : workspace.verticalOrder())
+            tags.add(row.getTag());
+        int backupRow = tags.indexOf("settings.link.Backup & restore");
+        assertTrue("System lists the Backup row", backupRow > 0);
+        assertTrue("Backup comes after General's row and before Diagnostics",
+                   backupRow < tags.indexOf("settings.preference.supernova_diagnostic_logging"));
+    }
+
+    private static boolean isInside(View child, View parent) {
+        for (android.view.ViewParent p = child.getParent(); p != null; p = p.getParent())
+            if (p == parent)
+                return true;
+        return false;
+    }
+
+    private void assertOnScreen(int category, View row) {
+        View scroll = row;
+        while (scroll != null && !(scroll instanceof android.widget.ScrollView))
+            scroll = scroll.getParent() instanceof View ? (View) scroll.getParent() : null;
+        if (scroll == null)
+            return;
+        int[] rowAt = new int[2], scrollAt = new int[2];
+        row.getLocationInWindow(rowAt);
+        scroll.getLocationInWindow(scrollAt);
+        assertTrue("tab " + category + ": " + row.getTag() + " starts on screen", rowAt[1] >= scrollAt[1] - 1);
+        assertTrue("tab " + category + ": " + row.getTag() + " ends on screen",
+                   rowAt[1] + row.getHeight() <= scrollAt[1] + scroll.getHeight() + 1);
     }
 }
