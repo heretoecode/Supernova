@@ -477,6 +477,20 @@ public final class Diagnostics
             {
                 SCREEN_OPENED.put(a, SystemClock.elapsedRealtime());
                 life(a, "created");
+                if (a.getClass().getSimpleName().equals("MainActivityLeanback"))
+                    DiagnosticTimings.mainScreenCreated();
+                DiagnosticTimings.componentStarted(a, a.getClass().getSimpleName());
+                if (a instanceof androidx.fragment.app.FragmentActivity)
+                    ((androidx.fragment.app.FragmentActivity) a).getSupportFragmentManager()
+                        .registerFragmentLifecycleCallbacks(new androidx.fragment.app.FragmentManager
+                                                                .FragmentLifecycleCallbacks() {
+                            @Override
+                            public void onFragmentStarted(androidx.fragment.app.FragmentManager manager,
+                                                          androidx.fragment.app.Fragment fragment)
+                            {
+                                DiagnosticTimings.componentStarted(fragment, a.getClass().getSimpleName());
+                            }
+                        }, true);
             }
             public void onActivityStarted(Activity a)
             {
@@ -2012,7 +2026,7 @@ public final class Diagnostics
         {
             linked = "\nLinked summary unavailable; raw evidence retained.\n";
         }
-        return linked +
+        return DiagnosticHealthSummary.build(retainedRecords) + linked +
             "Supernova diagnostic summary\nCompleteness: PARTIAL (native/direct transport coverage is incomplete)\n" +
             retained + "Current logger dropped: " + DROPPED.get() + "; write errors: " + WRITE_ERRORS.get() +
             "\nBuild: " + BuildConfig.VERSION_NAME + "\nSource: " + BuildConfig.PREVIEW_GIT_SHA +

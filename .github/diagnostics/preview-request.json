@@ -1,5 +1,5 @@
 {
- "purpose": "0.158 part C: group 1, B1, next-episode label, search history, keyboard (run 3)",
+ "purpose": "0.158 part C: run 4 (diagnostics upgrade, NOVA items, test fixes)",
  "tests": [
   "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
   "com.archos.mediacenter.video.leanback.HiddenNovaContentTest",
@@ -19,7 +19,8 @@
   "com.archos.mediacenter.video.leanback.search.SearchHistorySettingTest",
   "com.archos.mediacenter.video.leanback.PreviewNextTest",
   "com.archos.mediacenter.video.leanback.NextQaReliabilityTest",
-  "com.archos.mediacenter.video.leanback.PreviewMatchPanelTest"
+  "com.archos.mediacenter.video.leanback.PreviewMatchPanelTest",
+  "com.archos.mediacenter.video.diagnostics.DiagnosticHealthSummaryTest"
  ],
  "variants": {
   "normal": {}

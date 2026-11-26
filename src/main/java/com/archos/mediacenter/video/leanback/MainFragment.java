@@ -471,6 +471,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                             @Override
                             public boolean onPreDraw() {
                                 composed.getViewTreeObserver().removeOnPreDrawListener(this);
+                                // Diagnostics upgrade: launch to Home drawn, then to the first focus.
+                                com.archos.mediacenter.video.diagnostics.DiagnosticTimings.homeReady(composed);
                                 launch.animate()
                                     .alpha(0f)
                                     .setDuration(160)
@@ -498,6 +500,12 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             navigateTop(tab);
     }
 
+    private static final String[] PAGE_NAMES = {"home", "movies", "tv", "files"};
+
+    private static String pageName(int tab) {
+        return tab >= 0 && tab < PAGE_NAMES.length ? PAGE_NAMES[tab] : "page_" + tab;
+    }
+
     private void navigateTop(int tab) {
         if (tab == 4) {
             startActivity(new Intent(
@@ -507,6 +515,9 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             search.putExtra(VideoSearchActivity.EXTRA_SEARCH_MODE, VideoSearchActivity.SEARCH_MODE_ALL);
             startActivity(search);
         } else {
+            if (mPreviewPages != null && tab != mActiveTab)
+                com.archos.mediacenter.video.diagnostics.DiagnosticTimings.pageSwitch(
+                    mPreviewPages, pageName(mActiveTab), pageName(tab));
             mActiveTab = tab;
             if (mNavigation != null) {
                 mNavigation.selectTab(tab);
