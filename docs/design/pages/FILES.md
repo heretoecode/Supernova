@@ -119,7 +119,7 @@ keyboard, the three-panel browser (Locations · list · Information), the old Li
   pinned at the pill's left inset with the words left-aligned after it and fixed-width digits ("Adding · 40%",
   "Scanning · 100%" fit).
 
-**Round 2 notes (owner, 26 Nov; redrawn `tv/09`, `12`, `12b`, `13`):**
+**Round 2 (owner, 26 Nov): agreed with the notes below; redrawn `tv/09`, `12`, `12b`, `12c`, `13` (Drive › Files round 2 › Revised 26 Nov).**
 - Long names stop well short of the pill: a clear 40 px gap before the pill column ("…" earlier).
 - **Type is a short menu (owner, 26 Nov; an exception to RULES §8 because each kind needs a line of explanation):** OK on
   Type (value and ›) opens the four kinds under the row, each with its second line, the current one ticked (`tv/12c`):
