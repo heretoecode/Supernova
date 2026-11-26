@@ -166,7 +166,7 @@ public final class NextEpisodeLabel
         return Math.round(LABEL_DP * c.getResources().getDisplayMetrics().density) + gap(c);
     }
 
-    static final int LABEL_DP = 15;
+    public static final int LABEL_DP = 15;
 
     public static int gap(Context c)
     {
