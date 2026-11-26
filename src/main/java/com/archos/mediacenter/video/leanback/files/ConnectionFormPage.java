@@ -316,7 +316,7 @@ public final class ConnectionFormPage extends LinearLayout
             {
                 labels[index] = TYPES[index] + " · " + TYPE_LINES[index];
             }
-            PreviewDialog.menu(getContext(), row, "Type", labels,
+            com.archos.mediacenter.video.leanback.PreviewDialog.menu(getContext(), row, "Type", labels,
                                new String[] {"network", "cloud", "settings.nodes", "folder"}, type, this::chooseType);
         });
         styleRow(row);

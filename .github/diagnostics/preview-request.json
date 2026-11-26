@@ -1,11 +1,14 @@
 {
- "purpose": "0.158.11: Files C1 browsing, C2 connection form and Network options",
+ "purpose": "0.158.11: Files C1\u2013C5",
  "tests": [
   "com.archos.mediacenter.video.leanback.Review01572FilesTest",
   "com.archos.mediacenter.video.leanback.files.FolderMenuTest",
   "com.archos.mediacenter.video.leanback.files.FilesPageTest",
+  "com.archos.mediacenter.video.leanback.files.LibraryCareListsTest",
   "com.archos.mediacenter.video.scanning.ScanNarrationTest",
-  "com.archos.mediacenter.video.leanback.files.ConnectionRenameTest"
+  "com.archos.mediacenter.video.leanback.files.ConnectionRenameTest",
+  "com.archos.mediacenter.video.leanback.PreviewMatchPanelTest",
+  "com.archos.mediacenter.video.leanback.Review0158cDeleteWarningTest"
  ],
  "variants": {
   "normal": {}
