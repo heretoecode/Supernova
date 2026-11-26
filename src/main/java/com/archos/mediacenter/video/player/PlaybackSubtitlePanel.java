@@ -1312,7 +1312,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             boolean checked = on != null && on;
             boolean enabled = on != null && backend.optionEnabled(key);
             value.setImageDrawable(StandardSwitchDrawable.snapshot(owner, checked, onFocusedRow(value)));
-            row.setContentDescription(label + ", " + (checked ? "On" : "Off") + (enabled ? "" : ", not on this device"));
+            String state = (checked ? "On" : "Off") + (enabled ? "" : ", not on this device");
+            row.setContentDescription(label + ", " + state);
             row.setEnabled(enabled);
             row.setAlpha(enabled ? 1f : .72f);
             note.setVisibility(enabled ? GONE : VISIBLE);
