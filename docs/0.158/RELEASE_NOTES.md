@@ -4,7 +4,7 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
-## 0.158.10 (code 15810) — 26 Nov 2026: Search to its sheet; first pass on Home, Details, player and library pages
+## 0.158.10 (code 1590) — 26 Nov 2026: Search to its sheet; first pass on Home, Details, player and library pages
 **Search**
 - Before you type: your last three searches, then **Genres in your library** (cards with a picture and a count) and
   **People in your library** (the six with the most titles). OK on a card searches for it.
@@ -40,6 +40,16 @@ The app shows the same notes in About › What's New. Run links and test counts 
   Select all and the total; Clean Up offers clearing viewing history, Trakt history (when connected) and removing an
   empty folder. "This can't be undone." shows only beside a focused Delete.
 - Side panels: three or more choices step with Left / Right.
+
+**Fixes**
+- Deleting a file that was already gone from its server (M2): it is removed from your library and the message says
+  "This file was already gone from <server>, so it's been removed from your library." A server that can't be reached
+  is still a failure and keeps the file.
+- A renamed connection keeps its new name (M6); every library page, your own included, shows its size in Files ›
+  Your Library (M7), which also gains **By Source** and **Biggest Movies**.
+- Diagnostics record why (item 9): every failure carries its reason, step and kind of source; an unknown reason says so
+  with what was tried and the last thing that worked; the summary lists the top reasons; each event is recorded once
+  (D15). Player errors are named in words ("file unreadable", "connection lost").
 
 ## 0.158.9 (code 1589) — signed 26 Nov 2026 (run 45774774374): Home, player, Search and library pages, plus everything listed under 0.158.8
 **Home**
