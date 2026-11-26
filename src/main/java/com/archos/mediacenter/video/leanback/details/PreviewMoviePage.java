@@ -2125,10 +2125,13 @@ public final class PreviewMoviePage extends ScrollView {
         addRecommendation(card, null);
     }
 
-    /** The Episodes card width: a quarter of the row (PreviewEpisodeRow.cardWidth). */
+    /** RULES §14d (one row everywhere): Home's row card, 400 × 225 at 1080p, 40 px apart. */
     private int extraCardWidth() {
-        int width = getResources().getDisplayMetrics().widthPixels - dp(84);
-        return Math.max(1, (width - dp(36)) / 4);
+        return dp(PreviewCardPresenter.Card.ROW_WIDTH_DP);
+    }
+
+    private int rowGap() {
+        return dp(PreviewCardPresenter.Card.ROW_GAP_DP);
     }
 
     /** More Like This, grouped: null = In your library, else the service the titles are on. */
@@ -2190,7 +2193,7 @@ public final class PreviewMoviePage extends ScrollView {
             for (PreviewLandscapeCard card : relatedGroups.get(group)) {
                 LinearLayout.LayoutParams lp =
                     new LinearLayout.LayoutParams(extraCardWidth(), extraCardWidth() * 9 / 16);
-                lp.rightMargin = dp(12);
+                lp.rightMargin = rowGap();
                 row.addView(card, lp);
                 rowKeys(card, row);
             }
@@ -2300,10 +2303,10 @@ public final class PreviewMoviePage extends ScrollView {
                         post(this::revealContentFocus);
                     }
                 });
-                // One card size everywhere (D7, RULES §14): the same quarter-row width as Episodes, 16:9.
+                // One card size everywhere (D7, RULES §14d): Home's row card, the same as Episodes, 16:9.
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(extraCardWidth(),
                                                                              extraCardWidth() * 9 / 16);
-                lp.setMargins(0, 0, dp(12), 0);
+                lp.setMargins(0, 0, rowGap(), 0);
                 row.addView(card, lp);
                 extraCards.add(card);
                 extraHeadings.put(card, heading);

@@ -38,7 +38,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
                 PreviewLandscapeCard card = new PreviewLandscapeCard(activity);
                 RecyclerView.LayoutParams size = new RecyclerView.LayoutParams(cardWidth(), -1);
-                size.rightMargin = PreviewDialog.dp(activity, 12);
+                size.rightMargin = PreviewDialog.dp(activity, PreviewCardPresenter.Card.ROW_GAP_DP);
                 card.setLayoutParams(size);
                 return new RecyclerView.ViewHolder(card) {
                 };
@@ -154,13 +154,9 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
         return false;
     }
 
+    /** RULES §14d (one row everywhere): Home's row card, 400 × 225 at 1080p. */
     private int cardWidth() {
-        int width = getWidth() > 0
-            ? getWidth()
-            : getResources().getDisplayMetrics().widthPixels - PreviewDialog.dp(getContext(), 84)
-                // A row widened under the page's margins (DT3) gets that width back as padding.
-                + getPaddingLeft() + getPaddingRight() - 2 * PreviewDialog.dp(getContext(), 5);
-        return Math.max(1, (width - getPaddingLeft() - getPaddingRight() - PreviewDialog.dp(getContext(), 36)) / 4);
+        return PreviewDialog.dp(getContext(), PreviewCardPresenter.Card.ROW_WIDTH_DP);
     }
 
     @Override
