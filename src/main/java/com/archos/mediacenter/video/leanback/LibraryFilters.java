@@ -21,7 +21,8 @@ final class LibraryFilters
     static final int IN_PROGRESS = 2;
     static final int WATCHED = 3;
     static final String[] WATCHED_LABELS = {"All", "Unwatched", "In progress", "Watched"};
-    static final String[] WATCHED_ICONS = {"close", "eye", "continue", "check"};
+    /** The poster badge's marks (LIBRARY.md, tv/41): grid, empty ring, pie, tick. */
+    static final String[] WATCHED_ICONS = {"grid", "badge.ring", "badge.pie", "check"};
 
     private LibraryFilters()
     {

@@ -121,6 +121,15 @@ public final class PreviewIcon extends Drawable {
         } else if (kind.equals("caps lock")) {
             line(c, 4, 13, 12, 4, 20, 13, 16, 13, 16, 17, 8, 17, 8, 13, 4, 13);
             c.drawRect(8, 20, 16, 22, p);
+        } else if (kind.equals("badge.ring")) {
+            // The poster badge's unwatched mark (RULES §14c): an empty ring.
+            c.drawCircle(12, 12, 8, p);
+        } else if (kind.equals("badge.pie")) {
+            // The poster badge's in-progress mark: a ring with a filled slice.
+            c.drawCircle(12, 12, 8, p);
+            p.setStyle(Paint.Style.FILL);
+            c.drawArc(6, 6, 18, 18, -90, 150, true, p);
+            p.setStyle(Paint.Style.STROKE);
         } else if (kind.equals("empty")) {
             // a screen with a cross: nothing on this page yet
             c.drawRoundRect(3, 3, 21, 16, 2.5f, 2.5f, p);

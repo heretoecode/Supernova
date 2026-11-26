@@ -2569,7 +2569,7 @@ public final class PreviewPages extends FrameLayout {
         List<String> labels = new ArrayList<>();
         List<String> icons = new ArrayList<>();
         labels.add(genreAll[tab] ? "Match: All" : "Match: Any");
-        icons.add("chevrons");
+        icons.add("checkbox"); // Match: a ticked list (LIBRARY.md)
         for (String name : names) {
             labels.add(name + " · " + titles(counts.get(name)));
             icons.add(name);

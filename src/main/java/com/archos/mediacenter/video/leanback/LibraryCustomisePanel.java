@@ -220,7 +220,7 @@ final class LibraryCustomisePanel
         List<String> icons = new ArrayList<>();
         List<String> names = new ArrayList<>();
         labels.add(page.allGenres ? "Match: All" : "Match: Any");
-        icons.add("chevrons");
+        icons.add("checkbox"); // Match: a ticked list (LIBRARY.md)
         names.add(null);
         for (Map.Entry<String, Integer> genre : counts.entrySet())
         {
