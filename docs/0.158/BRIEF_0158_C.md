@@ -21,6 +21,15 @@ finished to its sheet (every action pressed and rendered) before the next:
    delete warnings with versions.
 6. **App-wide check** (group 4): every rule checked on every page above.
 7. **NOVA leftovers:** N2's second half with trakt-java 6.22.0, N3, N6, N7, N8, N10, `60df7be7`.
+8. **Bugs found on 0.158.9 (owner, 26 Nov), fixed alongside the pages:**
+   - **M2. Deleting a file that's already gone "fails".** The owner deleted a MobLand episode by hand on the SFTP server,
+     then deleted it in Supernova: "can't be found" error. A delete whose file is already missing is a success: remove
+     it from the library and say "This file was already gone from <source>, so it's been removed from your library."
+     (delete warnings' wording, RULES §7b). Test with SFTP, SMB, WebDAV and USB.
+   - **M3. Missing files only learns from scans.** Whenever Supernova finds a library file missing (delete, play,
+     Details, thumbnail or subtitle work), mark it missing at once: it appears in Files › Library Care › Missing files
+     with Find it again · Remove, the badge and the dot beside Files update. Test that a failed open of a gone file
+     lands it there.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
