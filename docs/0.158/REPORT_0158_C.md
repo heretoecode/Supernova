@@ -7,8 +7,8 @@ Release notes: `RELEASE_NOTES.md`. Work branch: `claude/supernova-github-access-
 
 | APK | Source | Conformance | Signing | What it holds |
 | --- | --- | --- | --- | --- |
-| **0.158.8** (code 1588) | `ecd7066` | run 45750826340 | _pending_ | Group 1 (D1–D13), B1, the next-episode label, Keep / Clear search history, no Phone key, NOVA N1 N2½ N4 N5 N9, the diagnostics upgrade |
-| **0.158.9** (code 1589) | _pending_ | _pending_ | _pending_ | Home's one-button hero and trimmed More (Exclude from hero), no Move / Hide on Home, the top bar's grey box, player seek box and language names, Audio boost stepper, Search tips under the keyboard, six posters a row, Mark as watched without a notice |
+| **0.158.8** (code 1588) | `ecd7066` | run 45750826340: all 2226 tests passed; lint found 2 errors (an Android 7 call in the start-up timer, `String.join`) | **Not signed**; fixed in `d1502b3`, everything carried into 0.158.9 | Group 1 (D1–D13), B1, the next-episode label, Keep / Clear search history, no Phone key, NOVA N1 N2½ N4 N5 N9, the diagnostics upgrade |
+| **0.158.9** (code 1589) | `d1502b3` | _running_ | _pending_ | Everything in 0.158.8, plus Home's one-button hero and trimmed More (Exclude from hero), no Move / Hide on Home, the top bar's grey box, player seek box and language names, Audio boost stepper, Search tips under the keyboard, six posters a row, Mark as watched without a notice |
 
 ## What each item became
 

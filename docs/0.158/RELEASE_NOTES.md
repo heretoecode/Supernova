@@ -26,7 +26,7 @@ The app shows the same notes in About › What's New. Run links and test counts 
 **Everywhere**
 - The top bar: the page you leave loses its grey box as soon as the remote lands on the next page.
 
-## 0.158.8 (code 1588) — fixes from the 26 Nov diagnostics report
+## 0.158.8 (code 1588) — not signed (a lint error stopped its build); everything below is in 0.158.9
 **Fewer sudden closes**
 - Supernova no longer closes by itself while titles are being matched (six times, 20 and 22 Nov) or while it looks
   for network devices.
