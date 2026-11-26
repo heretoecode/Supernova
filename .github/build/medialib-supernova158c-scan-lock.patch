@@ -1,3 +1,74 @@
+diff --git a/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java b/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java
+index ee02504..69966bb 100644
+--- a/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java
++++ b/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java
+@@ -193,7 +193,7 @@ public class IntroDbApiHelper
+         return null;
+     }
+ 
+-    private static IntroDbResult parseMedia(JSONObject json)
++    static IntroDbResult parseMedia(JSONObject json)
+     {
+         IntroDbResult result = new IntroDbResult();
+         result.setType(json.optString("type", null));
+@@ -203,14 +203,15 @@ public class IntroDbApiHelper
+             result.setSeason(json.optInt("season"));
+         if (json.has("episode") && !json.isNull("episode"))
+             result.setEpisode(json.optInt("episode"));
+-        parseSegments(json, "intro", result.getIntro());
+-        parseSegments(json, "recap", result.getRecap());
+-        parseSegments(json, "credits", result.getCredits());
+-        parseSegments(json, "preview", result.getPreview());
++        parseSegments(json, "intro", result.getIntro(), true);
++        parseSegments(json, "recap", result.getRecap(), true);
++        parseSegments(json, "credits", result.getCredits(), false);
++        parseSegments(json, "preview", result.getPreview(), false);
+         return result;
+     }
+ 
+-    private static void parseSegments(JSONObject root, String key, List<IntroDbResult.Segment> out)
++    private static void parseSegments(JSONObject root, String key, List<IntroDbResult.Segment> out,
++                                      boolean introOrRecap)
+     {
+         if (!root.has(key) || root.isNull(key))
+             return;
+@@ -224,13 +225,34 @@ public class IntroDbApiHelper
+                 continue;
+             Long startMs = optNullableLong(segment, "start_ms");
+             Long endMs = optNullableLong(segment, "end_ms");
+-            // v4 uses end_ms == 0 as the "no segment" marker: not a skip.
+-            if (endMs != null && endMs <= 0)
++            // N1 (NOVA e5886e04, 0.158.8): v4 marks "no segment" with zero bounds: end 0 for intro / recap, start 0
++            // for credits / preview. A credits entry {start_ms: 0, end_ms: null} used to become a skip over the
++            // whole episode.
++            if (!isUsableSegment(startMs, endMs, introOrRecap))
++            {
++                if (log.isDebugEnabled())
++                    log.debug("parseSegments: dropping invalid {} segment {} -> {}", key, startMs, endMs);
+                 continue;
++            }
+             out.add(new IntroDbResult.Segment(startMs, endMs));
+         }
+     }
+ 
++    static boolean isUsableSegment(Long startMs, Long endMs, boolean introOrRecap)
++    {
++        if (startMs != null && startMs < 0)
++            return false;
++        if (endMs != null && endMs <= 0)
++            return false;
++        if (introOrRecap)
++        {
++            // Intro and recap: the start may be open (the beginning); the end is needed.
++            return endMs != null && (startMs == null || endMs > startMs);
++        }
++        // Credits and preview: a start after zero is needed; the end may be open (the end of the video).
++        return startMs != null && startMs > 0 && (endMs == null || endMs > startMs);
++    }
++
+     private static Long optNullableLong(JSONObject object, String key)
+     {
+         if (object == null || !object.has(key) || object.isNull(key))
 diff --git a/src/com/archos/mediaprovider/video/DeferredScans.java b/src/com/archos/mediaprovider/video/DeferredScans.java
 new file mode 100644
 index 0000000..9576534
@@ -481,6 +552,50 @@ index f415e6b..2089c66 100644
                                          if (savedId == -2)
                                          {
                                              notScraped = false;
+diff --git a/test/java/com/archos/mediacenter/utils/introdb/IntroDbZeroStartTest.java b/test/java/com/archos/mediacenter/utils/introdb/IntroDbZeroStartTest.java
+new file mode 100644
+index 0000000..b70568d
+--- /dev/null
++++ b/test/java/com/archos/mediacenter/utils/introdb/IntroDbZeroStartTest.java
+@@ -0,0 +1,38 @@
++package com.archos.mediacenter.utils.introdb;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import org.json.JSONObject;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++/** N1 (NOVA e5886e04): TheIntroDB's zero-start credits are not a skip over the whole episode. */
++@RunWith(RobolectricTestRunner.class)
++@Config(sdk = 30)
++public class IntroDbZeroStartTest
++{
++    @Test public void zeroStartCreditsAreDroppedAndValidOnesKept() throws Exception
++    {
++        JSONObject media = new JSONObject("{\"type\":\"episode\",\"season\":1,\"episode\":2," +
++            "\"intro\":[{\"start_ms\":null,\"end_ms\":0},{\"start_ms\":5000,\"end_ms\":65000}]," +
++            "\"credits\":[{\"start_ms\":0,\"end_ms\":null},{\"start_ms\":2500000,\"end_ms\":null}]," +
++            "\"preview\":[{\"start_ms\":0,\"end_ms\":0}]}");
++        IntroDbResult result = IntroDbApiHelper.parseMedia(media);
++        assertEquals(1, result.getIntro().size());
++        assertEquals(1, result.getCredits().size());
++        assertEquals(0, result.getPreview().size());
++    }
++
++    @Test public void boundsAreCheckedBySegmentType()
++    {
++        assertTrue(IntroDbApiHelper.isUsableSegment(null, 60000L, true));
++        assertFalse(IntroDbApiHelper.isUsableSegment(70000L, 60000L, true));
++        assertFalse(IntroDbApiHelper.isUsableSegment(0L, null, false));
++        assertTrue(IntroDbApiHelper.isUsableSegment(2500000L, null, false));
++        assertFalse(IntroDbApiHelper.isUsableSegment(-1L, 5L, false));
++    }
++}
 diff --git a/test/java/com/archos/mediaprovider/video/BackgroundWakeTest.java b/test/java/com/archos/mediaprovider/video/BackgroundWakeTest.java
 new file mode 100644
 index 0000000..852c44b
