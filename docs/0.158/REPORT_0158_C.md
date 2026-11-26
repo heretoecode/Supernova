@@ -127,8 +127,14 @@ genre heading's tag icon, D18's artwork release, NOVA `60df7be7` (skip-button fo
 **Item 11**
 - D18: the custom library page's slow frames.
 
-**(E) NOVA (item 7)**
-- N2's second half with trakt-java 6.22.0, N3, N6, N7, N8, N10.
+**(E) NOVA (item 7)** — N2's second half (trakt-java 6.22.0) and N7 (HDMI refresh pause race) taken; N8 needs
+nothing (our subtitle engine times cues from the video, with no display timer to restart while paused). Still open:
+- N3 USB library after the TV wakes: 21 conflicts, up to 200 lines, in the two import files that carry our own scan
+  patches; needs real USB drives on the Shield to judge (J36).
+- N6 passthrough on TV speakers: only for TVs whose own speakers take compressed audio and have no HDMI out; never a
+  Shield's route, and our route code has drifted far from NOVA's (J37).
+- N10 picture-subtitle position and size: needs NOVA's native engine change (setGfxPosition, bottom inset for
+  bitmaps), which our engine archive does not have; the rows are built only when the engine honours them.
 
 ### NOVA check (item 7, 26 Nov, ~17:00 UTC): everything merged since the 25 Nov audit
 Checked NOVA's main branches of aos-Video, aos-MediaLib and aos-FileCoreLibrary; no new release tag.
