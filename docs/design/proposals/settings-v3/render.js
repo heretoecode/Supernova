@@ -756,11 +756,26 @@ function s16(focus = '0.158.9') {
     2026 · based on NOVA 6.6.4 · Android TV 11</div><div style="display:flex;gap:12px;margin-top:22px">
     ${btn(I.heartc, 'Services', focus === 'Credits')}${btn(I.licence, 'Open-source licences', focus === 'Licences')}</div>
     </div></div>`;
-  return page('About', [
-    [I.news, 'What\'s New', V.map(([v, d]) => ({ ic: I.version, n: v, l: d, k: 'go', v: '', on: v === focus }))
-      .concat([{ ic: I.all, n: 'All versions', l: 'Back to 0.135', k: 'go', v: '' }])],
-  ], { pre: `${head}<div style="height:58px"></div>`, arrows: false,
-    cap: '16 · About (whole tab): Services and Open-source licences under the name; What\'s New below' });
+  const vrow = ([v, d], k) => `<div class="r std${v === focus ? ' on' : ''}${k === V.length - 1 ? ' last' : ''}"
+    style="height:92px"><span class="ic">${svg(I.version, 32)}</span><span class="t"><b>${v}</b><small>${d}</small></span>
+    <span class="ch">${v === focus ? '' : ''}</span><i class="ln"></i></div>`;
+  const older = [['0.158.3', '19 Nov 2026'], ['0.158.2', '19 Nov 2026'], ['0.158.1', '18 Nov 2026']];
+  const notes = `<div style="position:absolute;left:640px;right:0;top:0;bottom:0;padding:6px 40px 0 44px;
+    border-left:1px solid rgba(255,255,255,.12)"><div style="font-size:34px;font-weight:500">0.158.9</div>
+    <div style="font-size:24px;color:#c9d3e6;margin:4px 0 18px">26 Nov 2026</div><div class="notes" style="padding:0;
+    font-size:26px;line-height:40px"><h4>Home</h4>The hero has one button, More: Details · Playback · This Title.<br>Exclude
+    from hero takes the title off at once, with an Undo notice.<br>Row headings no longer stop the remote.
+    <h4>Player</h4>Seek previews never show a grey box.<br>Track languages in words ("Chinese", not "chi").
+    <h4>Search</h4>What you can search stays under the keyboard; the landing shows your last three searches.
+    <h4>Library pages</h4>Six posters a row.<br>Mark as watched happens at once; the menu then offers Mark as unwatched.
+    </div></div>`;
+  const body = `<div style="position:relative;height:940px">${hd(I.news, 'What\'s New', true)}<div style="position:absolute;
+    left:0;top:70px;width:600px">${V.concat(older).map(vrow).join('')}</div><div style="position:absolute;left:0;right:0;
+    top:70px;bottom:0">${notes}</div><div style="position:absolute;right:-48px;bottom:30px;color:#fff">${svg(I.down, 32)}</div>
+    </div>`;
+  return bar() + tabs('About', null) + `<div class="list" style="top:212px">${head}<div style="height:58px"></div>${body}</div>`
+    + `<div class="cap2">16 · About: versions on the left; the focused version's notes on the right (Right to read them)</div>`;
+
 }
 
 function s17() {
@@ -832,7 +847,7 @@ const ROUNDS = {
   'round-3': [['07-library', s07, 2700], ['08-clear-viewing-history', s08], ['09-services', s09, 1820],
     ['10-your-services', s10], ['11a-trakt-signed-out', s11a], ['11b-trakt-signed-in', s11b, 1500]],
   'round-4': [['12-system', s12, 2900], ['13-what-to-back-up', s13], ['14-restore', s14], ['14b-in-this-backup', s14b],
-    ['15-restore-progress', s15, 1500], ['16-about', s16, 1240], ['17-whats-new-notes', s17], ['18-credits', s18], ['18b-credits-tmdb', s18b],
+    ['15-restore-progress', s15, 1500], ['16-about', s16, 1400], ['17-whats-new-notes', s17], ['18-credits', s18], ['18b-credits-tmdb', s18b],
     ['19-licences', s19], ['19b-licence-ffmpeg', s19b]],
 };
 

@@ -59,11 +59,15 @@ Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
   row → Restart now (`15`). The list ends with a plain line: "Backups from another device: copy them into Download ›
   Supernova › Backups and they appear here." With none yet: "No backups yet. Back up now, or copy one from another
   device into Download › Supernova › Backups." (the folder named as it is set). What to back up `13` v2 approved.
-- About uses the official Supernova mark (RULES §21).
+- About uses the official Supernova mark (RULES §21). **All four Settings rounds approved (owner, 27 Nov).**
 - **About (owner, 27 Nov; `16` v3):** two small buttons under the version line, **Services ›** and **Open-source
   licences ›** (no "More" section at the foot); What's New below. OK on a button opens its list floating beside the
   page, the button still focused behind it (`18`, `19`); OK on an item opens its pop-up a step down and left in front
   of the list (`18b`, `19b`); Back steps back.
+- **What's New in two columns (owner, 27 Nov; `16` v4; replaces the notes pop-up `17`):** versions on the left (about
+  a third of the width), every version back to 0.135 in one scrolling list (no All versions row); the right side shows
+  the focused version's notes, the newest when the tab opens, changing as focus moves down the list. Right moves into
+  the notes (read-only: Down / Up scroll, arrows in the margin); Left returns to the version.
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·
