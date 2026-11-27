@@ -108,6 +108,26 @@ finished to its sheet (every action pressed and rendered) before the next:
      nothing (should stay put without a warning, or wrap where the rules say). Settings: 3 off-screen rows.
    - **D18. Memory trims:** Android asked 23 times in 80 minutes; Files up to 433 MB. Release artwork and lists on pages
      left behind; record memory per page (D13); a custom library page had 2.4 % slow frames.
+12. **Two old bugs still on the Shield (owner, 27 Nov; first reported 19 and 21 Nov, never carried into this brief).
+   Build these first in the next run.**
+   - **R2. Your own library page: a solid bar under the top bar when you scroll.** Cause (found 19 Nov, still in the
+     code on 27 Nov): `TopNavigation` decides once, in its constructor, whether the page may run behind the bar
+     (`prepareScrollingContent`). `CustomLibraryActivity` builds it before `workspace.render()` creates the
+     `PreviewPages`, and the search only descends through `FrameLayout`s, while the own page's `PreviewPages` sits in a
+     `LinearLayout`. Fix: let the search walk any `ViewGroup`, and run it again (inset included) whenever the content
+     is rebuilt (e.g. `TopNavigation.refreshScrollingContent()` at the end of `Workspace.render()`). Prove it: a
+     Robolectric test that the own page's stage is laid out from y = 0 with the inset on its `PreviewPages` (fails
+     today), and renders of Movies and the own page scrolled, side by side, attached to the report.
+   - **DT3. Details: the hero and the rows (Episodes, More Like This, Extras) are cut off left and right by an
+     invisible frame.** The 19 Nov attempt (negative margins on Episodes and Extras rows) did not cure it on the Shield
+     (owner's 0.158.7 photos, 21 Nov), and nothing has changed since. Find every ancestor that clips: the `reading`
+     ScrollView and `lower` inside `PreviewMoviePage`, `sectionFrame`, `body` (4 % side padding), the fragment's
+     container and `TopNavigation`'s stage; a scrolling container clips its children to its own bounds whatever
+     `clipChildren` says, so rows must live in a container as wide as the screen, with the 4 % margin as padding.
+     The hero card must be whole: its white edge and all four corners visible. Prove it: a test that the hero's and
+     each row's first and last card's global visible rect equals their full size (or reaches the screen edge for rows
+     running off it) on all four Details kinds, plus renders of Details › Episodes and More Like This scrolled
+     sideways, attached to the report.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
