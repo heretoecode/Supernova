@@ -1,11 +1,12 @@
 {
- "purpose": "0.158.12: Details A1 (season card, hero foot, top bar fade, Artwork, Subtitles panel, Extras line)",
+ "purpose": "0.158.12: Details tests updated to the 21 Nov sheet; four kinds' rows",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Review01572DetailsTest",
   "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
   "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
-  "com.archos.mediacenter.video.leanback.Review0158LibraryTest",
-  "com.archos.mediacenter.video.leanback.TopNavigationTest"
+  "com.archos.mediacenter.video.leanback.details.DetailsKindFactsTest",
+  "com.archos.mediacenter.video.leanback.details.ReceptionSupplementTest",
+  "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest",
+  "com.archos.mediacenter.video.leanback.Review01572DetailsTest"
  ],
  "variants": {
   "normal": {}

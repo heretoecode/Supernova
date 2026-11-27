@@ -142,7 +142,8 @@ public class DetailsReferenceRenderTest {
             root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             layout(root);
             assertSame(tab, root.findFocus());
-            assertFalse(root.findViewWithTag("semantic:topnav.home").isShown());
+            // DETAILS.md (21 Nov): the top bar stays over the dimmed content on a tab.
+            assertTrue(root.findViewWithTag("semantic:topnav.home").isShown());
             Bitmap bitmap = Bitmap.createBitmap(
                 root.getWidth(), root.getHeight(), Bitmap.Config.ARGB_8888);
             root.draw(new Canvas(bitmap));
