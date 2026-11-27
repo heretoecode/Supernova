@@ -204,7 +204,7 @@ gets its page sheet before coding (CLAUDE.md, Definition of done).
 - The owner's notes on 0.158.3/0.158.4 (`docs/0.158/REVIEW_0158.md`): the delete bug first, About, Home hero one
   button, Settings tab size and scroll arrows; the NOVA app-side catch-up; release notes for every APK
 
-## 0.159 — NOVA clean-out (owner, 20 Nov)
+## 0.159 — NOVA clean-out (owner, 20 Nov) — [Brought forward to the next 0.158 run, 27 Nov: BRIEF_0158_C item 14]
 
 - **[Moved to 0.158 part C, 26 Nov]** **Diagnostics record why, not just what (owner, 26 Nov; after the Put.io delete failed six times with no reason):**
   every failure event carries its reason: the error, the step (connecting, listing, deleting…), the kind of source,
