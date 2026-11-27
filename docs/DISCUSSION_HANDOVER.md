@@ -1,5 +1,15 @@
 # Discussion handover (updated 26 Nov 2026)
 
+## 27 Nov — START HERE (owner's plan until usage resets next week)
+- **Now:** the owner critiques the refined pages on 0.158.12 and reports focus issues; each note goes into
+  `docs/0.158/REVIEW_0158_12.md` (P-numbers, P1–P38 so far) and BRIEF_0158_C item 13. No coding run until next week.
+- **Next week:** finish the Settings review (`settings-v3/tv/01`–`19`, round 1 waiting: Skipping four choices or the
+  player's three?), then ONE coding run: Settings + item 12 (R2, DT3) + item 13 (today's notes) + item 14 (the NOVA
+  clean-out, brought forward) + the flaky test. Ask the owner for a 0.158.12 diagnostics report first, and whether
+  to add N3 (USB after sleep, the owner tests it).
+- Approved today: launch focus on Home (RULES), the Extras window 1280 × 720 (`details-v3/tv/29`), tab entry and Up
+  through a page (RULES §4), the soft inner shade (RULES §14).
+
 ## 26 Nov — START HERE (Files review finished; next coding run ready)
 **Files review finished (owner, 26 Nov):** all four rounds approved; `docs/design/pages/FILES.md` rewritten as the final
 sheet (mock-ups `files-v2/tv/01`–`24`, Drive "2026-11-25 Files round 1–4"). Late additions: Scan library narrates every
