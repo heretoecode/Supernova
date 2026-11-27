@@ -153,6 +153,11 @@ finished to its sheet (every action pressed and rendered) before the next:
    - **Measure:** diagnostics before (the 0.158.12 report) and after each signed batch: memory per page, start-up,
      page switches, stutters, freezes, focus anomalies, which NOVA pieces ran (aim: none).
    - **For the owner after each signed batch:** a short Shield checklist of what to try (the areas touched).
+15. **The GitHub front page needs another tidy-up (owner, 27 Nov).** The README and the repository's front page still
+   carry out-of-date information and the **old Supernova icon** (the owner found it quickly). Replace every old mark
+   with the official one (RULES §21), bring the README's text, screenshots and version line up to date, check the
+   repository description and topics, and remove or archive anything stale on the front page (keeping the version
+   folders the app reads). Never add personal details (CLAUDE.md). Do it near the end of the run.
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
 carry on until the list is empty. Never end a turn while work remains; book a `send_later` wake-up only when truly
 waiting on a run.
