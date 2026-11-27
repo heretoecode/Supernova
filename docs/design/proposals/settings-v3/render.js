@@ -118,7 +118,7 @@ const css = `
 .ctl .chips span.c{background:rgba(255,255,255,.18)}
 .r.on .ctl .chips span.c{background:#0b0d12;color:#fff}
 .ctl .step{display:flex;align-items:center;gap:14px;font-weight:500}
-.ctl .step i{font-style:normal;width:28px;display:flex;justify-content:center;opacity:0}
+.ctl .step i{font-style:normal;width:28px;display:flex;justify-content:center;opacity:.45}
 .r.on .ctl .step i{opacity:1}
 .r.on .sw{background:#0b0d12}
 .r.on .sw:after{background:#fff}
@@ -661,8 +661,10 @@ function sysSections(focus, over = {}) {
     ]],
     [I.backup, 'Backup', [
       { ic: I.choose, n: 'What to back up', l: 'Choose picks the parts', k: 'step', v: 'Everything' },
-      { ic: I.folder, n: 'Backups folder', l: '', k: 'go', v: 'Download › Supernova › Backups' },
+      { ic: I.folder, n: 'Backups folder', l: 'Restore lists the backups in this folder', k: 'go', v: 'Download › Supernova › Backups' },
       { ic: I.backup, n: 'Back up now', l: 'Last: 24 Nov 21:10', k: 'act', v: 'Back up' },
+      { ic: I.timer, n: 'Back up automatically', l: 'Keeps the last five; your own backups are never removed', k: 'step',
+        v: 'Every week' },
       { ic: I.restore, n: 'Restore', l: 'Puts a backup back in place', k: 'go', v: '3 backups' },
     ]],
     [I.diag, 'Diagnostics', [
@@ -697,18 +699,19 @@ function s12() {
 }
 
 function s13() {
-  const list = cl([[`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(I.general, 28)}</span>`,
-    'Settings', '', true], [`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(I.hero, 28)}</span>`,
-    'Home rows and library pages', '', true, true],
-  [`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(I.history, 28)}</span>`, 'Viewing history', '',
-    true], [`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(I.fix, 28)}</span>`,
-    'Fixed matches and hidden titles', '', false],
-  [`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(I.conn, 28)}</span>`,
-    'Connections', '<span class="sm">without passwords</span>', true],
-  [`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(I.font, 28)}</span>`, 'Subtitle fonts', '',
-    false]], { top: 360, width: 700 });
+  const P = [[I.general, 'Settings', 'Every choice on these seven tabs', true],
+    [I.hero, 'Home rows and library pages', 'Your rows, their order and your own pages', true, true],
+    [I.history, 'Viewing history', 'What you have watched and where you stopped', true],
+    [I.fix, 'Fixed matches and hidden titles', 'Matches you corrected, titles kept off the hero', false],
+    [I.conn, 'Connections', 'Servers and their folders; no usernames or passwords', true],
+    [I.font, 'Subtitle fonts', 'Fonts you added for subtitles', false]];
+  const it = ([ic, n, l, t, f]) => `<div class="it${f ? ' f' : ''}" style="height:92px"><span style="width:40px;display:flex;
+    justify-content:center;color:${f ? '#0b0d12' : '#c9d3e6'}">${svg(ic, 28)}</span><span style="display:flex;flex-direction:column;
+    gap:4px"><span>${n}</span><span class="sm" style="margin:0">${l}</span></span><span class="tk">${t ? svg(I.tick, 28) : ''}
+    </span></div>`;
+  const list = `<div class="pane cl" style="right:52px;top:330px;width:820px">${P.map(it).join('')}</div>`;
   return page('System', sysSections('What to back up', { 'What to back up': { v: 'Choose' } }).slice(1, 2), {
-    arrows: false, extra: list, cap: '13 · What to back up › Choose: the six parts, ticked' });
+    arrows: false, extra: list, cap: '13 · What to back up › Choose: the six parts, each with what it holds' });
 }
 
 function s14() {
@@ -743,17 +746,17 @@ function s15() {
     <div class="cap2">15 · Restore runs in its row (top), then Restart now (bottom)</div>`;
 }
 
-function s16() {
+function s16(focus = '0.158.9') {
   const V = [['0.158.9', '26 Nov 2026'], ['0.158.7', '24 Nov 2026'], ['0.158.6', '22 Nov 2026'], ['0.158.5', '21 Nov 2026'],
     ['0.158.4', '20 Nov 2026']];
   const head = `<div class="abouthd"><div class="mark"></div><div><div class="an">Supernova 0.158.9</div><div class="ab">Built 26 Nov
     2026 · based on NOVA 6.6.4 · Android TV 11</div></div></div>`;
   return page('About', [
-    [I.news, 'What\'s New', V.map(([v, d], k) => ({ ic: I.version, n: v, l: d, k: 'go', v: '', on: k === 0 }))
+    [I.news, 'What\'s New', V.map(([v, d]) => ({ ic: I.version, n: v, l: d, k: 'go', v: '', on: v === focus }))
       .concat([{ ic: I.all, n: 'All versions', l: 'Back to 0.135', k: 'go', v: '' }])],
     [I.more, 'More', [
-      { ic: I.heartc, n: 'Credits', l: 'The services and components Supernova uses', k: 'go', v: '' },
-      { ic: I.licence, n: 'Open-source licences', l: 'Every component and its licence', k: 'go', v: '' },
+      { ic: I.heartc, n: 'Credits', l: 'The services and components Supernova uses', k: 'go', v: '', on: focus === 'Credits' },
+      { ic: I.licence, n: 'Open-source licences', l: 'Every component and its licence', k: 'go', v: '', on: focus === 'Licences' },
     ]],
   ], { pre: `${head}<div style="height:58px"></div>`, cap: '16 · About (whole tab)' });
 }
@@ -772,37 +775,52 @@ function s17() {
     + '<div class="cap2">17 · A version opens its notes: text alone, no title bar, no Close</div>';
 }
 
+const mk = ic => `<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(ic, 26)}</span>`;
+
+function creditsList(f) {
+  const svc = [['TMDB', 'Details, pictures, cast'], ['Trakt', 'History, lists, trending'], ['OpenSubtitles', 'Subtitles'],
+    ['JustWatch', 'Where to watch'], ['OMDb', 'Rotten Tomatoes, Metacritic'], ['TheIntroDB and IntroDB', 'Skip times']];
+  return cl([grp('Services'), ...svc.map(([n, l], k) => [mk(I.heartc), n, `<span class="sm" style="margin-left:auto;
+    padding-left:30px">${l}</span>`, false, f && k === 0]), grp('Built On'), [mk(I.heartc), 'NOVA Video Player',
+    '<span class="sm" style="margin-left:auto;padding-left:30px">The player Supernova grew from</span>', false]],
+  { top: 300, width: 860 });
+}
+
 function s18() {
-  const svc = [['TMDB', 'Film and TV details, pictures and cast'], ['Trakt', 'Watched history, lists, trending'],
-    ['OpenSubtitles', 'Subtitles to download'], ['JustWatch', 'Where to watch'], ['OMDb', 'Rotten Tomatoes and Metacritic'],
-    ['TheIntroDB and IntroDB', 'Skip times'], ['NOVA Video Player', 'The player Supernova grew from']];
-  const list = cl([grp('Services'), ...svc.slice(0, 6).map(([n, l], k) => [`<span style="width:40px;display:flex;
-    justify-content:center;color:#c9d3e6">${svg(I.heartc, 26)}</span>`, `${n}<span class="sm" style="margin-left:14px">${l}</span>`,
-    '', false, k === 0]), grp('Built On'), [`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(
-    I.heartc, 26)}</span>`, 'NOVA Video Player<span class="sm" style="margin-left:14px">The player Supernova grew from</span>', '',
-    false]], { top: 230, width: 820, right: 980 });
-  const pop = `<div class="pane pnl" style="right:52px;top:330px;width:860px"><div class="pt">TMDB</div><div class="pl2">Film and TV
-    details, pictures and cast come from TMDB.<br>This product uses the TMDB API but is not endorsed or certified by TMDB.</div>
-    <div class="qrw">${qr(170, 11)}<div class="qt"><b>themoviedb.org</b><br>Scan to visit.</div></div></div>`;
-  return s16().replace(/<div class="cap2">.*<\/div>$/, '') + '<div class="dim"></div>' + list + pop
-    + '<div class="cap2">18 · Credits: the list, and a service\'s pop-up with its wording and QR code</div>';
+  return s16('Credits').replace(/<div class="cap2">.*<\/div>$/, '') + creditsList(true)
+    + '<div class="cap2">18 · OK on About › Credits: the list floats beside the page</div>';
+}
+
+function s18b() {
+  const pop = `<div class="pane pnl" style="right:110px;top:380px;width:860px;box-shadow:0 0 0 1.5px rgba(255,255,255,.7),
+    0 24px 64px 16px rgba(0,0,0,.9)"><div class="pt">TMDB</div><div class="pl2">Film and TV details, pictures and cast come
+    from TMDB.<br>This product uses the TMDB API but is not endorsed or certified by TMDB.</div><div class="qrw">${qr(170, 11)}
+    <div class="qt"><b>themoviedb.org</b><br>Scan to visit. Back returns to the list.</div></div></div>`;
+  return s16('Credits').replace(/<div class="cap2">.*<\/div>$/, '') + creditsList(true) + pop
+    + '<div class="cap2">18b · OK on TMDB: its pop-up, a step down and left, in front of the list</div>';
+}
+
+function licList(f) {
+  const comp = [['ExoPlayer (Media3)', 'Apache 2.0'], ['FFmpeg', 'LGPL 2.1'], ['jcifs-ng', 'LGPL 2.1'],
+    ['OkHttp', 'Apache 2.0'], ['SSHJ', 'Apache 2.0']];
+  const row = ([n, l], k) => [mk(I.licence), n, `<span class="sm" style="margin-left:auto;padding-left:30px">${l}</span>`, false,
+    f && k === 1];
+  return cl([srch('Search licences'), grp('Player'), ...comp.slice(0, 2).map(row), grp('Network'),
+    ...comp.slice(2).map((c, k) => row(c, k + 9))], { top: 300, width: 760, arrows: true, pr: true });
 }
 
 function s19() {
-  const comp = [['ExoPlayer (Media3)', 'Apache 2.0'], ['FFmpeg', 'LGPL 2.1'], ['Glide', 'BSD, MIT, Apache 2.0'],
-    ['jcifs-ng', 'LGPL 2.1'], ['OkHttp', 'Apache 2.0'], ['Picasso', 'Apache 2.0'], ['SSHJ', 'Apache 2.0'],
-    ['trakt-java', 'Unlicense']];
-  const list = cl([srch('Search licences'), grp('Player'), ...comp.slice(0, 2).map(([n, l], k) => [`<span style="width:40px;
-    display:flex;justify-content:center;color:#c9d3e6">${svg(I.licence, 26)}</span>`, n, `<span class="sm" style="margin-left:
-    auto;padding-left:30px">${l}</span>`, false, k === 1]), grp('Network'), ...comp.slice(3, 5).concat([comp[6]]).map(([n, l]) =>
-    [`<span style="width:40px;display:flex;justify-content:center;color:#c9d3e6">${svg(I.licence, 26)}</span>`, n,
-      `<span class="sm" style="margin-left:auto;padding-left:30px">${l}</span>`, false])],
-  { top: 230, width: 720, right: 1080, arrows: true, pr: true });
-  const pop = `<div class="pane pnl" style="right:52px;top:330px;width:860px"><div class="pt">FFmpeg</div><div class="pl2">GNU Lesser
-    General Public License 2.1<br>Decodes most audio and video formats.</div><div class="qrw">${qr(170, 23)}<div class="qt">
-    <b>The licence's full text</b><br>Scan to read it on your phone.</div></div></div>`;
-  return s16().replace(/<div class="cap2">.*<\/div>$/, '') + '<div class="dim"></div>' + list + pop
-    + '<div class="cap2">19 · Open-source licences: grouped list with search; a component\'s pop-up with one QR code</div>';
+  return s16('Licences').replace(/<div class="cap2">.*<\/div>$/, '') + licList(true)
+    + '<div class="cap2">19 · OK on About › Open-source licences: grouped, with search</div>';
+}
+
+function s19b() {
+  const pop = `<div class="pane pnl" style="right:110px;top:380px;width:820px;box-shadow:0 0 0 1.5px rgba(255,255,255,.7),
+    0 24px 64px 16px rgba(0,0,0,.9)"><div class="pt">FFmpeg</div><div class="pl2">GNU Lesser General Public License 2.1<br>
+    Decodes most audio and video formats.</div><div class="qrw">${qr(170, 23)}<div class="qt"><b>The licence's full text</b><br>
+    Scan to read it on your phone. Back returns to the list.</div></div></div>`;
+  return s16('Licences').replace(/<div class="cap2">.*<\/div>$/, '') + licList(true) + pop
+    + '<div class="cap2">19b · OK on FFmpeg: its pop-up with one QR code</div>';
 }
 
 const ROUNDS = {
@@ -811,9 +829,9 @@ const ROUNDS = {
     ['05b-opensubtitles-sign-in', s05b], ['05c-opensubtitles-signed-in', s05c], ['06-font', s06]],
   'round-3': [['07-library', s07, 2700], ['08-clear-viewing-history', s08], ['09-services', s09, 1820],
     ['10-your-services', s10], ['11a-trakt-signed-out', s11a], ['11b-trakt-signed-in', s11b, 1500]],
-  'round-4': [['12-system', s12, 2800], ['13-what-to-back-up', s13], ['14-restore', s14], ['14b-in-this-backup', s14b],
-    ['15-restore-progress', s15, 1500], ['16-about', s16], ['17-whats-new-notes', s17], ['18-credits', s18],
-    ['19-licences', s19]],
+  'round-4': [['12-system', s12, 2900], ['13-what-to-back-up', s13], ['14-restore', s14], ['14b-in-this-backup', s14b],
+    ['15-restore-progress', s15, 1500], ['16-about', s16], ['17-whats-new-notes', s17], ['18-credits', s18], ['18b-credits-tmdb', s18b],
+    ['19-licences', s19], ['19b-licence-ffmpeg', s19b]],
 };
 
 (async () => {

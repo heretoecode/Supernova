@@ -45,6 +45,21 @@ Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
   and episodes watched, lists, ratings), **Sync now**, Change account, Sign out; room to show more later.
 - Hide spoilers and the rest as drawn (`07`–`10`). **Trakt page approved (owner, 27 Nov): `11a` signed out, `11b`
   signed in** (frame `11`, the panel, is dropped); to be tuned once the owner signs in with real data.
+**Round 4, System and About (owner, 27 Nov), redrawn `12`, `13`, `18`, `18b`, `19`, `19b`:**
+- Steppers show ‹ › at rest too (RULES §8 changed, app-wide).
+- **Back up automatically** (new, owner): Off · Every day · Every week (default) · Every month; keeps the last five
+  automatic backups, never removes ones you made yourself.
+- **What to back up › Choose:** taller rows, each with a line on what it holds. **Connections are backed up without
+  usernames or passwords** (owner): after a restore each connection asks for its sign-in once.
+- **Backups folder ›** opens Supernova's folder picker (RULES §7b): "Choose a folder for backups", Current marked,
+  Use this folder · Open, New folder; default Download › Supernova › Backups.
+- **Restore ›** lists every backup found in the backups folder, newest first, including one copied there by hand (a
+  fresh install sees it once Android's access to the folder is granted, asked the first time). OK → In This Backup
+  (`14b`) → Restore this backup (warning, "This can't be undone." beside the focused button) → progress in the Restore
+  row → Restart now (`15`).
+- About uses the official Supernova mark (RULES §21).
+- Credits and Licences (`18`–`19b`): OK on the About row opens the list floating beside the page, the row still
+  focused behind it; OK on an item opens its pop-up a step down and left in front of the list; Back steps back.
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·

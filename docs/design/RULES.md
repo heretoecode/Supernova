@@ -194,8 +194,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Two choices → inline chips on the row.** The chosen one sits in a small rounded chip (light grey at rest; black
   with white text on a focused row). No separators between chips (§6).
 - **More than two choices → one value stepped with Left / Right (owner, 21 Nov; `library-pages/tv/63`, `68`):** the row
-  shows only the current value; ‹ › appear beside it only while the row is focused; at rest the value keeps the
-  arrow's room so values line up down the panel. Applies app-wide from now on (Customise page, Playback Settings,
+  shows only the current value with ‹ › beside it **always** (owner, 27 Nov: at rest the arrows are soft, about 45 %;
+  on the focused row full strength), so a changeable value is always recognisable. Applies app-wide from now on (Customise page, Playback Settings,
   Settings …): any row still drawn with three or more chips changes when its page is next built.
 - **On/off → a switch.**
 - More than five → **reduce or reword** the options first (freedom to rethink, CLAUDE.md); only then the shared
