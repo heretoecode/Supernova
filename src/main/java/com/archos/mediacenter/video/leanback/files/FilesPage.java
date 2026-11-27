@@ -1696,6 +1696,63 @@ public final class FilesPage extends LinearLayout
         fact(column, "Result", TextUtils.join(" · ", result));
         fact(column, "Outcome", RecentScanLine.pill(scan.outcome())
             + (scan.outcome() == ScanProgress.Outcome.FAILED ? " · " + scan.failureReason() : ""));
+        whatChanged(column, scan);
+        // Step by step (tv/24): the transcript, times to the second; failures in soft red.
+        List<com.archos.mediacenter.video.scanning.ScanTranscript.Line> steps =
+            com.archos.mediacenter.video.scanning.ScanTranscript.lines(scan.batchId, scan.sourceId);
+        heading(column, "Step by step", "list", true);
+        if (steps.isEmpty())
+        {
+            fact(column, "Steps", "Kept only for scans since the app last started");
+        }
+        for (com.archos.mediacenter.video.scanning.ScanTranscript.Line step : steps)
+        {
+            TextView line = text(step.text(), 14, step.failed ? 0xFFFF8A80 : SECOND_LINE);
+            line.setFontFeatureSettings("tnum");
+            line.setPadding(SupernovaStyle.dp(getContext(), 20), SupernovaStyle.dp(getContext(), 3), 0,
+                            SupernovaStyle.dp(getContext(), 3));
+            column.addView(line, new LayoutParams(-1, -2));
+        }
+    }
+
+    /**
+     * What changed (tv/24): the titles that arrived in the library while this scan ran, each with its New pill, and
+     * the count found missing (listed in Library Care › Missing files).
+     */
+    private void whatChanged(LinearLayout column, ScanProgress scan)
+    {
+        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        List<String> titles = new java.util.ArrayList<>();
+        long from = scan.startedUtcMs / 1000 - 1;
+        long to = (scan.startedUtcMs + Math.max(0, scan.durationMs)) / 1000 + 60;
+        if (snapshot != null)
+        {
+            List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> all =
+                new java.util.ArrayList<>(snapshot.movies);
+            all.addAll(snapshot.episodes);
+            for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : all)
+            {
+                if (entry.added >= from && entry.added <= to && titles.size() < 20)
+                {
+                    titles.add(com.archos.mediacenter.video.leanback.PreviewPages.displayName(entry));
+                }
+            }
+        }
+        if (titles.isEmpty() && scan.removed <= 0)
+        {
+            return;
+        }
+        heading(column, "What changed", "scan", true);
+        for (String title : titles)
+        {
+            statRow(column, "film", title, "Added by this scan", "New", false);
+        }
+        if (scan.removed > 0)
+        {
+            statRow(column, "folder", scan.removed + (scan.removed == 1 ? " file missing" : " files missing"),
+                    "Listed in Library Care › Missing files", "Missing", false);
+        }
     }
 
     /** A read-only label and value (soft label, white value; RULES text on the page). */

@@ -104,6 +104,7 @@ final class ScanProgressTracker
         row.value = new ScanProgress(batch, source, label, Math.max(0, checked), total, added, removed, updated,
                                      row.value == null ? utc : row.value.startedUtcMs,
                                      Math.max(0, elapsed - row.started), !terminal, stopping, reason);
+        ScanTranscript.record(row.value, phase, utc > 0 ? utc : System.currentTimeMillis());
         if (terminal && wasRunning)
         {
             remember(finishedSources, key, 256);
