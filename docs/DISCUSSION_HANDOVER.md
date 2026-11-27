@@ -7,6 +7,9 @@
   player's three?), then ONE coding run: Settings + item 12 (R2, DT3) + item 13 (today's notes) + item 14 (the NOVA
   clean-out, brought forward) + the flaky test. Ask the owner for a 0.158.12 diagnostics report first, and whether
   to add N3 (USB after sleep, the owner tests it).
+- **Settings review finished (27 Nov):** all four rounds approved; write the final SETTINGS.md before the run.
+- **Hold on new design (owner, 27 Nov):** no Media Transfers, onboarding or Trakt list row until the owner says;
+  meanwhile the owner uses 0.158.12 and reports bugs, added to REVIEW_0158_12.md.
 - Approved today: launch focus on Home (RULES), the Extras window 1280 × 720 (`details-v3/tv/29`), tab entry and Up
   through a page (RULES §4), the soft inner shade (RULES §14).
 
