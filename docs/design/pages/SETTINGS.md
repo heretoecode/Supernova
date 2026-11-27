@@ -43,7 +43,8 @@ Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
   code large, a QR code that opens that page with the code filled in (it also lets a new user join), and the page
   turns into the signed-in page by itself once done. Signed in: account name, last synced, what Trakt holds (films
   and episodes watched, lists, ratings), **Sync now**, Change account, Sign out; room to show more later.
-- Hide spoilers and the rest as drawn (`07`–`10`). New mock-up for the Trakt page: to draw before the build.
+- Hide spoilers and the rest as drawn (`07`–`10`). **Trakt page approved (owner, 27 Nov): `11a` signed out, `11b`
+  signed in** (frame `11`, the panel, is dropped); to be tuned once the owner signs in with real data.
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·
