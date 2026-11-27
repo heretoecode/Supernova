@@ -2195,14 +2195,23 @@ public final class PreviewMoviePage extends ScrollView {
         com.archos.mediacenter.video.leanback.FloatingPanel panel =
             new com.archos.mediacenter.video.leanback.FloatingPanel(getContext(), "Subtitles");
         panel.heading("Built In");
+        List<TextView> builtIn = new ArrayList<>();
         if (builtInSubtitles.isEmpty())
-            panel.opener("subtitles.builtin.none", "sub", "None in the file", "", () -> {
-            });
+            builtIn.add(panel.opener("subtitles.builtin.none", "sub", "None in the file", "", () -> {
+            }));
         for (String language : builtInSubtitles)
-            panel.opener("subtitles.builtin:" + language, "language", language, "In the file", () -> {
-            });
+            builtIn.add(panel.opener("subtitles.builtin:" + language, "language", language, "In the file", () -> {
+            }));
+        // The file's own tracks are information here (they are chosen in the player): no ›, not focusable.
+        for (TextView value : builtIn) {
+            View row = (View)value.getParent();
+            row.setFocusable(false);
+            View chevron = row.findViewWithTag("chevron");
+            if (chevron != null)
+                chevron.setVisibility(GONE);
+        }
         panel.heading("Subtitle Files");
-        panel.opener("subtitles.files", "file", "Subtitle files", "Beside the video", () -> {
+        TextView files = panel.opener("subtitles.files", "file", "Subtitle files", "Beside the video", () -> {
             panel.dismiss();
             subtitleFiles.run();
         });
@@ -2212,7 +2221,7 @@ public final class PreviewMoviePage extends ScrollView {
             if (subtitlesOnline != null)
                 subtitlesOnline.run();
         });
-        panel.show(null);
+        panel.show((View)files.getParent());
     }
 
     /** RULES §14d (one row everywhere): Home's row card, 400 × 225 at 1080p, 40 px apart. */
