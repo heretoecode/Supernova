@@ -749,16 +749,18 @@ function s15() {
 function s16(focus = '0.158.9') {
   const V = [['0.158.9', '26 Nov 2026'], ['0.158.7', '24 Nov 2026'], ['0.158.6', '22 Nov 2026'], ['0.158.5', '21 Nov 2026'],
     ['0.158.4', '20 Nov 2026']];
+  const btn = (ic, t, f) => `<span style="height:52px;padding:0 22px;border-radius:20px;display:flex;align-items:center;
+    gap:12px;font-size:26px;${f ? 'background:#f4f6fb;color:#0b0d12' : 'box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45)'}">
+    ${svg(ic, 24)}${t}${svg(I.chev, 22)}</span>`;
   const head = `<div class="abouthd"><div class="mark"></div><div><div class="an">Supernova 0.158.9</div><div class="ab">Built 26 Nov
-    2026 · based on NOVA 6.6.4 · Android TV 11</div></div></div>`;
+    2026 · based on NOVA 6.6.4 · Android TV 11</div><div style="display:flex;gap:12px;margin-top:22px">
+    ${btn(I.heartc, 'Services', focus === 'Credits')}${btn(I.licence, 'Open-source licences', focus === 'Licences')}</div>
+    </div></div>`;
   return page('About', [
     [I.news, 'What\'s New', V.map(([v, d]) => ({ ic: I.version, n: v, l: d, k: 'go', v: '', on: v === focus }))
       .concat([{ ic: I.all, n: 'All versions', l: 'Back to 0.135', k: 'go', v: '' }])],
-    [I.more, 'More', [
-      { ic: I.heartc, n: 'Credits', l: 'The services and components Supernova uses', k: 'go', v: '', on: focus === 'Credits' },
-      { ic: I.licence, n: 'Open-source licences', l: 'Every component and its licence', k: 'go', v: '', on: focus === 'Licences' },
-    ]],
-  ], { pre: `${head}<div style="height:58px"></div>`, cap: '16 · About (whole tab)' });
+  ], { pre: `${head}<div style="height:58px"></div>`, arrows: false,
+    cap: '16 · About (whole tab): Services and Open-source licences under the name; What\'s New below' });
 }
 
 function s17() {
@@ -788,7 +790,7 @@ function creditsList(f) {
 
 function s18() {
   return s16('Credits').replace(/<div class="cap2">.*<\/div>$/, '') + creditsList(true)
-    + '<div class="cap2">18 · OK on About › Credits: the list floats beside the page</div>';
+    + '<div class="cap2">18 · OK on Services: the list floats beside the page</div>';
 }
 
 function s18b() {
@@ -811,7 +813,7 @@ function licList(f) {
 
 function s19() {
   return s16('Licences').replace(/<div class="cap2">.*<\/div>$/, '') + licList(true)
-    + '<div class="cap2">19 · OK on About › Open-source licences: grouped, with search</div>';
+    + '<div class="cap2">19 · OK on Open-source licences: grouped, with search</div>';
 }
 
 function s19b() {
@@ -830,7 +832,7 @@ const ROUNDS = {
   'round-3': [['07-library', s07, 2700], ['08-clear-viewing-history', s08], ['09-services', s09, 1820],
     ['10-your-services', s10], ['11a-trakt-signed-out', s11a], ['11b-trakt-signed-in', s11b, 1500]],
   'round-4': [['12-system', s12, 2900], ['13-what-to-back-up', s13], ['14-restore', s14], ['14b-in-this-backup', s14b],
-    ['15-restore-progress', s15, 1500], ['16-about', s16], ['17-whats-new-notes', s17], ['18-credits', s18], ['18b-credits-tmdb', s18b],
+    ['15-restore-progress', s15, 1500], ['16-about', s16, 1240], ['17-whats-new-notes', s17], ['18-credits', s18], ['18b-credits-tmdb', s18b],
     ['19-licences', s19], ['19b-licence-ffmpeg', s19b]],
 };
 

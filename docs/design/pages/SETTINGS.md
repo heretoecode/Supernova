@@ -60,8 +60,10 @@ Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
   Supernova › Backups and they appear here." With none yet: "No backups yet. Back up now, or copy one from another
   device into Download › Supernova › Backups." (the folder named as it is set). What to back up `13` v2 approved.
 - About uses the official Supernova mark (RULES §21).
-- Credits and Licences (`18`–`19b`): OK on the About row opens the list floating beside the page, the row still
-  focused behind it; OK on an item opens its pop-up a step down and left in front of the list; Back steps back.
+- **About (owner, 27 Nov; `16` v3):** two small buttons under the version line, **Services ›** and **Open-source
+  licences ›** (no "More" section at the foot); What's New below. OK on a button opens its list floating beside the
+  page, the button still focused behind it (`18`, `19`); OK on an item opens its pop-up a step down and left in front
+  of the list (`18b`, `19b`); Back steps back.
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·
