@@ -212,7 +212,14 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **The chosen item has the white tick on the right** — never a radio circle, never a blue tick.
 - **No Cancel / Done buttons:** Back closes. A choice takes effect at once (a chosen service moves up into
   "Selected" straight away, animated).
-- Countries get flags; languages use flags only for real locales, otherwise a neutral globe.
+- Countries get flags. **Every language gets a flag (owner, 27 Nov; replaces "flags only for real locales"):** the
+  country most tied to it (English · UK, Spanish · Spain, Portuguese · Portugal, Arabic · Saudi Arabia, Hindi · India,
+  Swahili · Kenya, Chinese · China, Persian · Iran, Hebrew · Israel, Malay · Malaysia …; a regional variant uses its
+  own country: Brazilian Portuguese · Brazil, Latin American Spanish · Mexico, Canadian French · Canada). A test lists
+  every language the app can show and fails if one has no flag. **The neutral mark** (only for "Automatic", "The
+  film's original language", "Unknown" and languages with no country, e.g. Latin, Esperanto) is redesigned: a
+  flag-shaped rounded tile in soft grey, the same size as a flag, with the two-letter code in white ("LA", "EO") or
+  a small sparkle for Automatic / original; never the old globe.
 - Codes get plain words (subtitle encodings: no bare "CP1252").
 - **Used for every long list** (owner, 13 Nov; mock-ups `choice-list/01`–`04`): interface, audio, subtitle, download and
   Details languages; Country; Your services; subtitle encodings; the player's Subtitle track and Audio track lists (with

@@ -22,6 +22,11 @@ Rounds: 1 Playback, Audio (`01`–`02`) · 2 Subtitles (`03`–`06`) · 3 Librar
 (`12`–`19`). **New, proposed by Claude, to approve or park:** Playback › Start a little earlier (rewind on resume);
 Subtitles › Subtitles for the hard of hearing (SDH: Prefer · Avoid · Either); Library › Hide spoilers; Trakt panel's
 Sync now. Look for new videos (approved 26 Nov) is drawn on Library. Notes go here, round by round.
+**Round 1, Playback and Audio (owner, 27 Nov): approved as drawn** (`01`, `02`): Start a little earlier kept (Off ·
+5 · 10 · 30 s, default 5); Skipping keeps four choices in Settings (Off · Show button · Skip · Skip when
+binge-watching); steppers as drawn. **Flags (owner, 27 Nov):** every language in every list (audio, subtitles,
+interface, Details, downloads, the player's track lists) has its own flag; a coding check fails the build if any
+language falls back to the plain globe. RULES §9 updated. The neutral mark is redesigned (see RULES §9).
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·
