@@ -82,7 +82,7 @@ episode shows its own scores where they exist, otherwise "Unknown".
 
 ## Extras tab (`tv/18`, `tv/19`)
 Shared rows, one per kind, Trailers first; most specific first (episode, season, show). YouTube's red mark the size
-of the streaming logos, centred on each card. OK plays it in a **floating window of 1280 × 720 at 1080p** (owner, 27 Nov: smaller than "as large as
+of the streaming logos, centred on each card. OK plays it in a **floating window of 1280 × 720 at 1080p** (owner, 27 Nov, mock-up `tv/29` approved: smaller than "as large as
 possible", so it feels like playing on top of Supernova; YouTube still serves HD at that size), centred, rounded
 corners and the artwork edge, a soft shadow, page and top bar blurred and dimmed behind, no title,
 **no YouTube controls**, a thin progress line at the foot; Back closes.
