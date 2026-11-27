@@ -121,8 +121,35 @@ public final class CustomLibraryPage {
         return PreferenceManager.getDefaultSharedPreferences(c).edit().remove(KEY).commit();
     }
 
+    /**
+     * D18 (0.158.9 report: 2.4 % slow frames on this page): the page asks for its titles on every bind, so the last
+     * answer is kept for the same library snapshot and the same settings.
+     */
+    private transient Snapshot cachedFor;
+    private transient String cachedSettings;
+    private transient List<Entry> cached;
+
     public List<Entry> entries(Snapshot snapshot) {
+        String settings = settingsKey();
+        if (snapshot == cachedFor && settings.equals(cachedSettings) && cached != null)
+            return new ArrayList<>(cached);
+        List<Entry> result = filter(snapshot);
+        cachedFor = snapshot;
+        cachedSettings = settings;
+        cached = result;
+        return new ArrayList<>(result);
+    }
+
+    private String settingsKey() {
+        return type + "|" + genres + "|" + allGenres + "|" + year + "|" + yearTo + "|" + language + "|" + studio
+            + "|" + collection + "|" + watched + "|" + rating + "|" + sort + "|" + descending;
+    }
+
+    private List<Entry> filter(Snapshot snapshot) {
         List<Entry> source = new ArrayList<>(), result = new ArrayList<>();
+        Set<String> continuing = new java.util.HashSet<>();
+        for (Entry item : snapshot.continuingShows)
+            continuing.add(item.key());
         if (!type.equals("tv"))
             source.addAll(snapshot.movies);
         if (!type.equals("movies"))
@@ -139,7 +166,7 @@ public final class CustomLibraryPage {
                                                         : entry.media instanceof Tvshow
                     && ((Tvshow) entry.media).getEpisodeCount() > 0 && ((Tvshow) entry.media).isWatched();
             boolean progress = entry.media instanceof Video && ((Video) entry.media).getResumeMs() > 0
-                || snapshot.continuingShows.stream().anyMatch(item -> item.key().equals(entry.key()));
+                || continuing.contains(entry.key());
             if (watched.equals("watched") && !seen || watched.equals("unwatched") && seen
                 || watched.equals("progress") && !progress)
                 continue;
