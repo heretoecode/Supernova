@@ -609,6 +609,50 @@ function s11() {
     cap: '11 · Trakt, signed in (signed out: a QR code and a short code to enter on trakt.tv)' });
 }
 
+
+function s11a() {
+  const step = (n, t) => `<div style="display:flex;gap:22px;align-items:baseline;margin-top:26px;font-size:30px">
+    <span style="width:44px;height:44px;border-radius:22px;background:#24272d;display:flex;align-items:center;
+    justify-content:center;font-size:24px;font-weight:500;flex:none">${n}</span><span>${t}</span></div>`;
+  return bar() + tabs('Services', null) + `<div class="crumb"><em>Services ›</em>Trakt</div>
+    <div style="position:absolute;left:76px;top:300px;width:980px">
+    <div style="font-size:40px;font-weight:500">Sign in to Trakt</div>
+    <div style="font-size:26px;color:#c9d3e6;margin-top:10px">Trakt keeps what you watch, your lists and your ratings.</div>
+    ${step(1, 'On your phone or computer, go to <b style="font-weight:500">trakt.tv/activate</b>')}
+    ${step(2, 'Enter this code')}
+    <div style="margin:26px 0 0 66px;display:inline-flex;padding:22px 40px;border-radius:20px;background:#24272d;
+    font-size:64px;font-weight:500;letter-spacing:8px;font-variant-numeric:tabular-nums">AB12-CD34</div>
+    <div style="margin:30px 0 0 66px;display:flex;align-items:center;gap:14px;font-size:26px;color:#c9d3e6">
+    ${F.ring(28)}Waiting for you to confirm · this page carries on by itself</div>
+    <div style="margin:14px 0 0 66px;font-size:24px;color:#c9d3e6">The code works for 10 minutes; a new one appears after
+    that.</div></div>
+    <div style="position:absolute;left:1180px;top:330px;display:flex;flex-direction:column;align-items:flex-start;gap:26px">
+    ${qr(300, 31)}<div style="font-size:26px;color:#c9d3e6;line-height:38px"><b style="color:#fff;font-weight:500">Or scan
+    this</b> to open it with the code<br>filled in. New to Trakt? Join there too.</div></div>
+    <div class="cap2">11a · Services › Trakt, signed out: Trakt's own TV sign-in (no password on the TV)</div>`;
+}
+
+function s11b() {
+  const head = `<div style="display:flex;align-items:center;gap:28px;margin-bottom:8px"><span style="width:96px;height:96px;
+    border-radius:48px;background:linear-gradient(135deg,#ed1c24,#8a1016);display:flex;align-items:center;
+    justify-content:center;font-size:40px;font-weight:700">C</span><div><div style="font-size:40px;font-weight:500">
+    cinephile_42</div><div style="font-size:25px;color:#c9d3e6;margin-top:6px">Signed in to Trakt · last synced Today
+    18:32</div></div></div><div style="height:58px"></div>`;
+  const st = (ic, n, v, last) => `<div class="stat${last ? ' last' : ''}" style="height:84px"><span class="ic">${svg(ic, 32)}
+    </span><span class="t">${n}</span><span class="v">${v}</span><i class="ln"></i></div>`;
+  const facts = `<style>${F.css4}</style>${hd(I.trakt, 'On Trakt', true)}${st(I.film, 'Films watched', '412')}
+    ${st(I.tv, 'Episodes watched', '3,108 · 96 shows')}${st(I.list, 'Lists', '7')}${st(I.star, 'Ratings', '240')}
+    ${st(I.clock, 'Time watched', '2,904 hours', true)}`;
+  const acct = [
+    { ic: I.sync, n: 'Sync now', l: 'Last: Today 18:32 · also every 6 hours', k: 'act', v: 'Sync now', on: true },
+    { ic: I.swap, n: 'Change account', l: 'Sign in as someone else', k: 'go', v: '' },
+    { ic: I.out, n: 'Sign out', l: 'Your history stays on Trakt', k: 'act', v: 'Sign out', last: true },
+  ];
+  return bar() + tabs('Services', null) + `<div class="crumb"><em>Services ›</em>Trakt</div>
+    <div class="list" style="top:290px">${head}${facts}${hd(I.person, 'Account')}${acct.map(srow).join('')}</div>
+    <div class="cap2">11b · Services › Trakt, signed in: what Trakt holds, then the account</div>`;
+}
+
 // ---------- Round 4: System, About ----------
 function sysSections(focus, over = {}) {
   const S = [
@@ -766,7 +810,7 @@ const ROUNDS = {
   'round-2': [['03-subtitles', s03, 2700], ['04-subtitle-search-languages', s04], ['05-opensubtitles-signed-out', s05],
     ['05b-opensubtitles-sign-in', s05b], ['05c-opensubtitles-signed-in', s05c], ['06-font', s06]],
   'round-3': [['07-library', s07, 2700], ['08-clear-viewing-history', s08], ['09-services', s09, 1820],
-    ['10-your-services', s10], ['11-trakt', s11]],
+    ['10-your-services', s10], ['11a-trakt-signed-out', s11a], ['11b-trakt-signed-in', s11b, 1500]],
   'round-4': [['12-system', s12, 2800], ['13-what-to-back-up', s13], ['14-restore', s14], ['14b-in-this-backup', s14b],
     ['15-restore-progress', s15, 1500], ['16-about', s16], ['17-whats-new-notes', s17], ['18-credits', s18],
     ['19-licences', s19]],
