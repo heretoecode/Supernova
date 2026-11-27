@@ -1,6 +1,6 @@
 name: Supernova 0.157 unsigned conformance
 # 0.157: app source of this branch + the reviewed prebuilt engine from native run 41848351713 (built from a8c82ae52;
-# archive SHA-256 42e1990b…ae8c), installed with that commit's own packaging recipe. Checks the APK is 0.158.11 (1591).
+# archive SHA-256 42e1990b…ae8c), installed with that commit's own packaging recipe. Checks the APK is 0.158.12 (1592).
 # MediaLib/FileCore are prepared exactly as 0.154, without the retired avos source patches.
 on:
   push:
@@ -81,16 +81,16 @@ jobs:
           test "${#apks[@]}" = 1
           analyzer="$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer"
           test "$("$analyzer" manifest application-id "${apks[0]}")" = app.supernova.player
-          test "$("$analyzer" manifest version-name "${apks[0]}")" = 0.158.11
-          test "$("$analyzer" manifest version-code "${apks[0]}")" = 1591
+          test "$("$analyzer" manifest version-name "${apks[0]}")" = 0.158.12
+          test "$("$analyzer" manifest version-code "${apks[0]}")" = 1592
           python3 .github/build/verify-supernova155-native-apk.py --apk "${apks[0]}" --evidence "$RUNNER_TEMP/native155/packaging-inputs.json" | tee build/native155-apk.txt
           mkdir -p "$GITHUB_WORKSPACE/delivery"
-          cp "${apks[0]}" "$GITHUB_WORKSPACE/delivery/Supernova_0.158.11_unsigned.apk"
+          cp "${apks[0]}" "$GITHUB_WORKSPACE/delivery/Supernova_0.158.12_unsigned.apk"
           python3 - "$GITHUB_WORKSPACE/delivery" <<'PYREC'
           import glob,hashlib,json,subprocess,sys,os
           import xml.etree.ElementTree as ET
           from pathlib import Path
-          d=Path(sys.argv[1]);apk=d/'Supernova_0.158.11_unsigned.apk'
+          d=Path(sys.argv[1]);apk=d/'Supernova_0.158.12_unsigned.apk'
           def suite(pattern):
               t=f=e=s=0;classes=set()
               for x in glob.glob(pattern,recursive=True):
@@ -103,7 +103,7 @@ jobs:
           lint_errors=0
           for x in glob.glob('build/reports/lint-results*.xml'):
               lint_errors+=sum(1 for i in ET.parse(x).getroot().iter('issue') if i.get('severity') in ('Error','Fatal'))
-          rec={'schema':1,'version_name':'0.158.11','version_code':1591,'application_id':'app.supernova.player',
+          rec={'schema':1,'version_name':'0.158.12','version_code':1592,'application_id':'app.supernova.player',
                'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
                'signed':False,'apk_sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'apk_bytes':apk.stat().st_size,
                'unit':{k:app[k] for k in ('tests','failures','errors','skipped')},'unit_classes':app['classes'],

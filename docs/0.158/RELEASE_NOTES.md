@@ -4,6 +4,40 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
+## 0.158.12 (code 1592) — 27 Nov 2026: Details, the library pages and the rest of Part C
+**Details**
+- On a tab the hero's foot (about 56 px) peeks above the tabs; the top bar stays over a dimmed fade instead of
+  disappearing.
+- Episodes: a season card leads each season's row (poster, "10 episodes · 2 watched", Open season ›); season headings
+  are plain.
+- More › Subtitles opens a side panel: Built In · Subtitle Files · Online (Find subtitles online).
+- Artwork: "For" at the top, the Suggested badge on TMDB's own pick, no title or footer.
+- Extras: a thin progress line at the foot of the trailer player.
+- The Details tab: each kind's own rows (films: Released, Directed by, Budget …; episodes: Aired, Episode, Guest stars;
+  seasons: Season "2 of 2", Episodes, Episode length, Total running time; shows: First aired, Status "Returning · 2
+  seasons" …); Technical: File or Files and Location, no Container or Bitrate.
+- Rows use Home's card (400 × 225, 40 px apart); "In Your Library".
+
+**Library pages**
+- Sort to its final design: General (Date added · Title · Release date) · Trakt · Series (Last episode added · Number
+  of seasons · Number of episodes) · Files (Running time · Size); the old file sorts are gone.
+- Columns: the menu's names (Number of seasons, Average running time, Total size, Video codec, Location …), Last
+  episode added, the brief's defaults; Date modified dropped.
+- Filters: Watched uses the poster badge's marks; Match has a ticked-list icon.
+- Customise page: Sort by · Order · View · Show; Sort by opens its list and shows the page's real sort; Includes
+  "Movies and TV shows"; Years "From 1990"; Delete page deletes at once with Undo.
+- Deleting a show lists the other video files in its folders with a Not in library pill.
+- Your own page keeps its filtered titles, so scrolling is smoother (D18).
+
+**Files, player and Search**
+- Your Library is read-only: Down / Up scroll it; sizes stacked over their counts; Picture shows the commonest quality.
+- Scan details: What changed (titles added by the scan, files found missing) and Step by step (times to the second).
+- Preparing playback and the player: the episode line, then the facts line (age · year · length · up to four genres).
+- Search: "Stream more from <person>" when only people match.
+- Diagnostics: an off-screen focus is judged after the focus scroll settles (D17).
+- From NOVA: an HDMI refresh-rate switch no longer pauses playback (567d53bb); trakt-java 6.22.0 (b550e893).
+- No blue left on Details' info headings, card progress or the scan line.
+
 ## 0.158.11 (code 1591) — signed 27 Nov 2026 (run 45929267213): the Files page to its sheet
 **Files**
 - Browsing: folders show "Folder · 31 videos · 48.6 GB"; a folder with no videos says "No videos in this folder" with
