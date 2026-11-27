@@ -32,6 +32,18 @@ OpenSubtitles panel when signed out:** OK on the row ("Not signed in ›") opens
 (`05b` v2): one line "A free account downloads 20 subtitles a day.", Username, Password, Sign in, then the QR code
 with "No account yet? Scan to make a free one at opensubtitles.com, then sign in here."; frame `05` is dropped.
 Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
+**Round 3, Library and Services (owner, 27 Nov):**
+- **Every warning where something is lost** (Clear viewing history, Remove Supernova's data from Trakt, Clear
+  diagnostics, Restore this backup) shows "This can't be undone." beside the focused Clear / Remove / Restore button,
+  as the delete warning does (RULES §7b). Keep it is focused first.
+- **"On Trakt too"** appears in Clear viewing history only when signed in to Trakt.
+- **Your services** uses each service's real logo (the mock-up's lettered tiles are stand-ins).
+- **Trakt is a page, not a panel** (as OpenSubtitles): OK on the Trakt row opens "Services › Trakt". Signed out: Trakt
+  signs in on another device (Trakt's own TV sign-in): the page shows "Go to trakt.tv/activate and enter" with the
+  code large, a QR code that opens that page with the code filled in (it also lets a new user join), and the page
+  turns into the signed-in page by itself once done. Signed in: account name, last synced, what Trakt holds (films
+  and episodes watched, lists, ratings), **Sync now**, Change account, Sign out; room to show more later.
+- Hide spoilers and the rest as drawn (`07`–`10`). New mock-up for the Trakt page: to draw before the build.
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·
