@@ -126,6 +126,11 @@ nothing (our subtitle engine times cues from the video, with no display timer to
 - N10 picture-subtitle position and size: needs NOVA's native engine change (setGfxPosition, bottom inset for
   bitmaps), which our engine archive does not have; the rows are built only when the engine honours them.
 
+**Follow-up found while signing 0.158.12**
+- A flaky test: `SubtitleCacheRenameTest` failed once (run 45935732681, attempt 1) because a task the app posts to
+  register its HDMI audio receiver ran after an earlier test's Android runtime was gone; attempt 2 was green. Fix:
+  cancel that posted task when the app is torn down (or guard it), so it can't outlive a test.
+
 ### NOVA check (item 7, 26 Nov, ~17:00 UTC): everything merged since the 25 Nov audit
 Checked NOVA's main branches of aos-Video, aos-MediaLib and aos-FileCoreLibrary; no new release tag.
 
