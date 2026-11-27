@@ -27,6 +27,11 @@ Sync now. Look for new videos (approved 26 Nov) is drawn on Library. Notes go he
 binge-watching); steppers as drawn. **Flags (owner, 27 Nov):** every language in every list (audio, subtitles,
 interface, Details, downloads, the player's track lists) has its own flag; a coding check fails the build if any
 language falls back to the plain globe. RULES §9 updated. The neutral mark is redesigned (see RULES §9).
+**Round 2, Subtitles (owner, 27 Nov): approved with:** **Show subtitles on by default** (out of the box). **No
+OpenSubtitles panel when signed out:** OK on the row ("Not signed in ›") opens the sign-in page straight away
+(`05b` v2): one line "A free account downloads 20 subtitles a day.", Username, Password, Sign in, then the QR code
+with "No account yet? Scan to make a free one at opensubtitles.com, then sign in here."; frame `05` is dropped.
+Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·

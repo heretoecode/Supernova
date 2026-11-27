@@ -393,7 +393,7 @@ function s02() {
 function s03() {
   return page('Subtitles', [
     [I.cc, 'When To Show', [
-      { ic: I.cc, n: 'Show subtitles', l: 'Turn on when a video starts', k: 'sw', v: false },
+      { ic: I.cc, n: 'Show subtitles', l: 'Turn on when a video starts', k: 'sw', v: true },
       { ic: I.full, n: 'Full subtitles in your own language', l: 'When the audio is in your language', k: 'sw', v: true },
       { ic: I.translate, n: 'Also translate other languages', x: 'Experimental', l: 'When no subtitles in your language exist',
         k: 'sw', v: true },
@@ -467,9 +467,12 @@ function s05b() {
     === 'typing' ? '<i class="caret" style="margin-left:4px"></i>' : `<span style="flex:1"></span>${svg(I.eye, 30)}`}</span>
     <i class="ln"></i></div>`).join('');
   return bar() + tabs('Subtitles', null) + `<div class="crumb"><em>Subtitles › OpenSubtitles ›</em>Sign in</div>
-    <div class="form" style="width:900px">${f}<div class="fbtns"><span>${svg(I.person, 22)}Sign in</span></div></div>`
+    <div class="form" style="width:900px"><div style="font-size:25px;color:#c9d3e6;margin:0 0 18px 24px">A free account
+    downloads 20 subtitles a day.</div>${f}<div class="fbtns"><span>${svg(I.person, 22)}Sign in</span></div>
+    <div class="pnl" style="padding:34px 0 0 24px"><div class="qrw" style="margin-top:0">${qr(170, 7)}<div class="qt">
+    <b>No account yet?</b><br>Scan to make a free one at opensubtitles.com,<br>then sign in here.</div></div></div></div>`
     + keyboard('2', '<b>OpenSubtitles:</b> the username and password of your account.<br>Back leaves without signing in.')
-    + '<div class="cap2">05b · Sign in: the one keyboard beside the fields</div>';
+    + '<div class="cap2">05b · OK on OpenSubtitles (signed out) opens this page; no panel first</div>';
 }
 
 function s05c() {
