@@ -94,6 +94,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   ahead of the remote = dull underline. The underline never overlaps a separator line.
 - **Moving along tabs switches the page** straight away.
 - **Up into the tab row always lands on the open tab** (owner, 16 Nov), never the tab above the focus.
+- **Down from the top bar lands on the page's open tab** (owner, 27 Nov), never on its content; Down again enters it.
+- **Up through a page reaches the tab only from its first row, with the page scrolled back to its top** (owner,
+  27 Nov): rows scrolled out of sight stay reachable one by one; a read-only page scrolls with Down / Up first.
 - **Down from a tab goes to that tab's first row.** Memory is kept where you jump away directly (closing and
   reopening a panel, the top bar and back), and a row that opens its own list gets focus back on return (P12).
 - Tab titles **never pop in**: the full set is drawn with the page; content fills in inside with "Loading…", then a
