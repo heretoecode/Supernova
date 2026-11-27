@@ -283,7 +283,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Every piece of artwork has one thin white line on its edge with a soft inner shade** — heroes, row cards,
   Details tab cards, the player strip, library posters, Search thumbnails (§18 v17). **Sizes (owner, 19 Nov, judged
   on the TV, `rows-captions/tv/01`, `02`):** the line at rest is **solid white, 1 px at 1080p** (was 1.5 px at 60%:
-  washed out); the soft shade inside it unchanged. **The focus ring is solid white, 4 px at 1080p** (was 6 px: too
+  washed out). **The inner shade fades (owner, 27 Nov):** a soft gradient from about 35 % black at the
+  white line to nothing about 24 px in (1080p), never a flat band with a visible inner edge. **The focus ring is solid white, 4 px at 1080p** (was 6 px: too
   thick).
 - Focused artwork grows and gets the solid thick white ring (section 3). **Library posters:** the poster and its two
   lines underneath are one card; the whole card grows and the ring goes round both (owner, 13 Nov).
