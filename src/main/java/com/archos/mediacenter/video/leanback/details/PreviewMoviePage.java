@@ -2759,7 +2759,8 @@ public final class PreviewMoviePage extends ScrollView {
         if (value == null || value.trim().isEmpty())
             return;
         TextView heading = text(label, 18);
-        heading.setTextColor(PreviewAccent.color(getContext()));
+        // A6: no blue anywhere (RULES): headings are white.
+        heading.setTextColor(0xFFFFFFFF);
         heading.setPadding(0, dp(22), 0, dp(8));
         page.addView(heading);
         TextView content = text(value.trim(), 14);

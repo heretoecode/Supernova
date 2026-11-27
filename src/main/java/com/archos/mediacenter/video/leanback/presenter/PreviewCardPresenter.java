@@ -228,7 +228,7 @@ public final class PreviewCardPresenter extends Presenter {
             progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
             progress.setMax(100);
             progress.setProgressTintList(
-                ColorStateList.valueOf(PreviewAccent.color(c)));
+                ColorStateList.valueOf(0xFFFFFFFF)); // A6: no blue (RULES)
             progress.setProgressBackgroundTintList(ColorStateList.valueOf(0xff627386));
             FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(-1, dp(3), Gravity.BOTTOM);
             // Inset in the caption, never touching the ring (sheet).

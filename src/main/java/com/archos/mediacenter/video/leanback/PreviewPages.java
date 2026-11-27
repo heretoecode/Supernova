@@ -3364,7 +3364,7 @@ public final class PreviewPages extends FrameLayout {
                 description.setTextColor(0xffaac1d1);
                 v.addView(description);
                 TextView progress = text("", 13);
-                progress.setTextColor(PreviewAccent.color(getContext()));
+                progress.setTextColor(0xFFFFFFFF); // A6: no blue (RULES)
                 progress.setMinHeight(dp(36));
                 v.addView(progress, new LinearLayout.LayoutParams(-1, -2));
                 progress.post(new Runnable() {
