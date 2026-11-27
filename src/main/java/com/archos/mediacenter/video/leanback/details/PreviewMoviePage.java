@@ -379,8 +379,9 @@ public final class PreviewMoviePage extends ScrollView {
                 heroPage.getLayoutParams().height = heroHeight;
             tabBar.getLayoutParams().height = Math.max(dp(26), Math.round(available * 5f / 72));
             ((LinearLayout.LayoutParams)sectionFrame.getLayoutParams()).topMargin = dp(22);
+            // The frame runs from where the tabs land (under the bar and the hero's foot) to 4 % above the foot.
             sectionFrame.getLayoutParams().height =
-                Math.max(dp(90), available - Math.round(available / 6f) - Math.round(available * .04f));
+                Math.max(dp(90), available - tabAnchor(available) - Math.round(available * .04f));
             if (lower != null)
                 lower.getLayoutParams().height =
                     activeSection.equals("Details")
@@ -426,7 +427,8 @@ public final class PreviewMoviePage extends ScrollView {
     /** Reuse the real title/logo; no second asynchronous request or focus target. */
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        float progress = title == null ? 0 : compactTitleProgress(getScrollY(), title.getBottom(), dp(40));
+        // DETAILS.md (21 Nov): no title or logo is repeated when scrolled; content runs on behind the top bar.
+        float progress = 0;
         int content = canvas.save();
         if (progress > 0)
             canvas.clipRect(0, getScrollY() + Math.round(getHeight() / 6f) * progress, getWidth(),
@@ -558,12 +560,16 @@ public final class PreviewMoviePage extends ScrollView {
      * the tabs (DETAILS.md › Whole page); nothing of the title or logo is repeated.
      */
     private int expandedScrollTarget() {
-        if (heroPage == null || heroPage.getHeight() <= 0)
+        if (sectionFrame == null || sectionFrame.getHeight() <= 0)
             return Math.max(0, sectionFrame.getTop() + getPaddingTop() - Math.round(getHeight() / 6f));
-        Rect hero = new Rect(0, 0, heroPage.getWidth(), heroPage.getHeight());
-        offsetDescendantRectToMyCoords(heroPage, hero);
-        int barAndFoot = Math.round((TOP_BAR_PX_1080P + HERO_FOOT_PX_1080P) * getHeight() / 1080f);
-        return Math.max(0, hero.bottom - barAndFoot);
+        Rect frame = new Rect(0, 0, sectionFrame.getWidth(), sectionFrame.getHeight());
+        offsetDescendantRectToMyCoords(sectionFrame, frame);
+        return Math.max(0, frame.top - tabAnchor(getHeight()));
+    }
+
+    /** Where the tab frame's top lands on screen once a tab is open: the bar, the hero's foot, the frame's margin. */
+    private int tabAnchor(int height) {
+        return Math.round((TOP_BAR_PX_1080P + HERO_FOOT_PX_1080P) * height / 1080f) + dp(22);
     }
 
     /** The top bar's height and the hero foot left showing on a tab, at 1080p. */
