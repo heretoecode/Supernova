@@ -339,7 +339,7 @@
     },
     {
       "name": "trakt-java",
-      "version": "6.21.0",
+      "version": "6.22.0",
       "role": "Runtime software",
       "licence": "Apache-2.0",
       "url": "https://github.com/UweTrottmann/trakt-java/",

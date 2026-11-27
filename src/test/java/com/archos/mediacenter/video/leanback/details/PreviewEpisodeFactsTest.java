@@ -59,7 +59,8 @@ public class PreviewEpisodeFactsTest {
             assertTrue(facts.contains("2022"));
             assertTrue(facts.contains("3 February 2022"));
             assertTrue(facts.contains("47 min"));
-            assertTrue(facts.contains("Series original"));
+            // DETAILS.md (21 Nov): an episode's rows are Aired · Episode · Runtime …; no original title.
+            assertTrue(facts.contains("Season 2 · Episode 3"));
             assertFalse(facts.contains("1999"));
             assertFalse(facts.contains("2010"));
             assertFalse(facts.contains("1h 28m"));

@@ -357,8 +357,9 @@ public class PreviewMoviePageTest {
             page.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             assertSame(page.findViewWithTag("section:Details"), page.findFocus());
             primary.requestFocus();
-            // Details v20 (approved 14 Nov 2026): the technical column ends at Added; the file path is not on the tab.
-            assertNotNull(PreviewPagesTest.findText(page, "MKV"));
+            // DETAILS.md (21 Nov): Technical ends with File and Location; no Container row (the file name shows it).
+            assertNull(PreviewPagesTest.findText(page, "MKV"));
+            assertNotNull(PreviewPagesTest.findText(page, "File"));
             ShowTags cast = new ShowTags();
             for (int person = 1; person <= 10; person++)
                 cast.addActorIfAbsent("Fixture Person " + person, "Role " + person);

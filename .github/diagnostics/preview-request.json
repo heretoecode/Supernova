@@ -1,12 +1,9 @@
 {
- "purpose": "0.158.12: Details tests updated to the 21 Nov sheet; four kinds' rows",
+ "purpose": "0.158.12: the three conformance failures (SBOM trakt-java, Container row, episode rows)",
  "tests": [
-  "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
-  "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
-  "com.archos.mediacenter.video.leanback.details.DetailsKindFactsTest",
-  "com.archos.mediacenter.video.leanback.details.ReceptionSupplementTest",
-  "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest",
-  "com.archos.mediacenter.video.leanback.Review01572DetailsTest"
+  "com.archos.mediacenter.video.about.AboutCreditsTest",
+  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+  "com.archos.mediacenter.video.leanback.details.PreviewEpisodeFactsTest"
  ],
  "variants": {
   "normal": {}

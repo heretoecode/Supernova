@@ -1516,11 +1516,11 @@
       "legal_family": "tmdb-java"
     },
     {
-      "coordinate": "com.uwetrottmann.trakt5:trakt-java:6.21.0",
-      "filename": "trakt-java-6.21.0.jar",
-      "sha256": "7d0625a85014133f0a9c0cdd020933d2a60fcfe1329403bc143ae68e31df0024",
+      "coordinate": "com.uwetrottmann.trakt5:trakt-java:6.22.0",
+      "filename": "trakt-java-6.22.0.jar",
+      "sha256": "9d10238b20143fa4cbb6eff394d56638cbfa42d3380e83f7d0512978707f947e",
       "configuration": "noamazonReleaseRuntimeClasspath",
-      "pom_sha256": "15ef1d9a394502e6e135434c65feaf5cfc8e5f29dbb3b5e9643c89a52503c9d9",
+      "pom_sha256": "de915525fc99de4e9eefc82436262729d4a9065a84575b2aa0ac04d191b7a115",
       "declared_licences": [
         "Apache 2.0"
       ],
