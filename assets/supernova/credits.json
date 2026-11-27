@@ -1200,7 +1200,7 @@
       "source": "docs/foundation/RUNTIME_SBOM.json",
       "artifact_sha256": "7d0625a85014133f0a9c0cdd020933d2a60fcfe1329403bc143ae68e31df0024",
       "text_asset": "foundation/legal/trakt-java.txt",
-      "text_sha256": "95ccc94c658fcc70a70999909f4ebb3dda6fbcf863d23cc8e00adc374d1189a1"
+      "text_sha256": "43e8fd3901c5004d0ce1f8b7efa1b10a223a58260a9cfac37e691c6a8aa06175"
     },
     {
       "id": "commons-codec:commons-codec:1.23.0",

@@ -1,9 +1,7 @@
 {
- "purpose": "0.158.12: the three conformance failures (SBOM trakt-java, Container row, episode rows)",
+ "purpose": "0.158.12: credits checksum for the trakt-java legal text",
  "tests": [
-  "com.archos.mediacenter.video.about.AboutCreditsTest",
-  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
-  "com.archos.mediacenter.video.leanback.details.PreviewEpisodeFactsTest"
+  "com.archos.mediacenter.video.about.AboutCreditsTest"
  ],
  "variants": {
   "normal": {}
