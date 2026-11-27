@@ -3,6 +3,11 @@
 Updated 26 November 2026 (discussion: Search and Files reviews finished; FILES.md final; next coding run ready: BRIEF_0158_C › Part C continued). Keep this page short and current: update it at the
 end of every session.
 
+## 0.158 part C continued (27 Nov): **0.158.11 signed** (run 45929267213, from green conformance run 45900631229 on `fa99b91`)
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.11.apk`), the one to install: https://github.com/heretoecode/Supernova/actions/runs/45929267213/artifacts/15166999797. The Files page to its sheet
+(C1–C5), Spatial audio's switch, Trakt history removal on delete, NOVA 60df7be7 and 220f573, artwork memory (D18).
+Work since (C6, A1–A5, D17, N2, N7) goes into 0.158.12; see REPORT_0158_C.md › Not built.
+
 ## 0.158 part C continued (26 Nov): **0.158.10 signed** (run 45879328975, from green conformance run 45872415548 on `2f55102`)
 Artifact `supernova-0157-signed-qa` (`Supernova_0.158.10.apk`), the one to install. Search to its sheet; first passes on
 Home, Details, player and library pages; item 9; M2–M7 except the Files redesign pieces; D14, D16. Built from

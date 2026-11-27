@@ -82,6 +82,12 @@ Release notes: `RELEASE_NOTES.md`. Work branch: `claude/supernova-github-access-
 
 ## Part C continued (26 Nov, after 0.158.9)
 
+### 0.158.11 (code 1591)
+**Signed 27 Nov 2026**: signing run 45929267213, from green conformance run 45900631229 on `fa99b91`; artifact
+`supernova-0157-signed-qa` (`Supernova_0.158.11.apk`): https://github.com/heretoecode/Supernova/actions/runs/45929267213/artifacts/15166999797 **Install this one.** The Files page to its sheet (C1–C5),
+Spatial audio's switch, the Chapters · Episodes line, Trakt history removal on delete, NOVA 60df7be7 and 220f573, D18's
+artwork release. Release notes: RELEASE_NOTES.md › 0.158.11.
+
 ### 0.158.10 (code 1590)
 **Signed 26 Nov 2026**: signing run 45879328975, from green conformance run 45872415548 on `2f55102`; artifact `supernova-0157-signed-qa` (`Supernova_0.158.10.apk`), kept until 10 Dec 2026: https://github.com/heretoecode/Supernova/actions/runs/45879328975/artifacts/15146537628 **Install this one.** Built from `claude/supernova-part-c-build-a9mvtg`, fast-forwarded onto the
 working branch (J20).

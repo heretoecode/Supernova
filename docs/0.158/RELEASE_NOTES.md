@@ -4,7 +4,7 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
-## 0.158.11 (code 1591) — 26 Nov 2026: the Files page to its sheet
+## 0.158.11 (code 1591) — signed 27 Nov 2026 (run 45929267213): the Files page to its sheet
 **Files**
 - Browsing: folders show "Folder · 31 videos · 48.6 GB"; a folder with no videos says "No videos in this folder" with
   Show all files; a folder's menu offers only what applies: Add to library or Scan this folder, and Fix match on a
