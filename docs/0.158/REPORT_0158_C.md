@@ -107,7 +107,7 @@ working branch (J20).
   Biggest Movies.
 
 ### Not built (plain words; rewritten 26 Nov after 0.158.10, exactly what remains)
-Worked through in this order; each line is struck off here as it is built. Built and struck: C1–C5 (0.158.11), C6 (Your Library read-only, values stacked), A5 ("Stream more from <person>"), D17 (the off-screen check now waits for the focus scroll to settle), A2 (the facts line under the episode line on Preparing playback and the player; lists already open on top of the panel), A3 (Filters' badge icons and ticked-list Match, Sort to tv/48, Columns' names and defaults with Last episode added, the Customise page panel to tv/59–68, the Not in library pill (a show's delete warning lists the other video files in its folders)), A4 (Details rows at Home's 400 × 225 card and 40 px gap),
+Worked through in this order; each line is struck off here as it is built. Built and struck: C1–C5 (0.158.11), C6 (Your Library read-only, values stacked), A5 ("Stream more from <person>"), D17 (the off-screen check now waits for the focus scroll to settle), A2 (the facts line under the episode line on Preparing playback and the player; lists already open on top of the panel), A3 (Filters' badge icons and ticked-list Match, Sort to tv/48, Columns' names and defaults with Last episode added, the Customise page panel to tv/59–68, the Not in library pill (a show's delete warning lists the other video files in its folders)), A1 (Details: the hero's foot above the tabs, the season card, On <service> rows, the Subtitles side panel, the Artwork panel, the Extras progress line, the four kinds' Details tab rows, the top bar over a dimmed fade), A4 (Details rows at Home's 400 × 225 card and 40 px gap),
 Spatial audio's switch, the Chapters · Episodes line, Trakt history removal on delete, Excluded from hero list, the
 genre heading's tag icon, D18's artwork release, NOVA `60df7be7` (skip-button focus) and `220f573` (same-title shows).
 
@@ -115,9 +115,6 @@ genre heading's tag icon, D18's artwork release, NOVA `60df7be7` (skip-button fo
 - Scan details: "What changed" and "Step by step" (the scanner keeps no per-scan record yet).
 
 **(A) Page leftovers (items 1–6)**
-- A1 Details: the hero's foot peeking above the tabs; Episodes tab season card; More Like This "On Netflix" rows; the
-  Subtitles side panel and Find subtitles online; the Artwork panel redesign; Extras player; the four kinds' Details
-  tab rows; the blur behind the top bar.
 - A6 App-wide check: speckle, small boxes, focus and path, menus and panels, page by page.
 
 **Item 11**

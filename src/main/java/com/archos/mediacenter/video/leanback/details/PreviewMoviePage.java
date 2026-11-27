@@ -1411,6 +1411,13 @@ public final class PreviewMoviePage extends ScrollView {
                                                    technicalFacts.get("Average file size"));
         Map<String, String> keyFacts = DetailsBlueprintPanel.facts(key), receptionFacts =
                                                                              DetailsBlueprintPanel.facts(reception);
+        // DETAILS.md › Details tab: each kind's own rows.
+        String kind = DetailsKindFacts.kind(selectedEpisode != null, movie != null, seasonNumber, show != null,
+                                            remoteKind);
+        DetailsKindFacts.add(kind, keyFacts, technicalFacts, enriched, episodeFacts,
+                             enrichment == null ? null : enrichment.episodes,
+                             selectedEpisode != null ? selectedEpisode.getSeasonNumber() : seasonNumber,
+                             selectedEpisode != null ? selectedEpisode.getEpisodeNumber() : 0, localEpisodeCount());
         OmdbSupplement.Ratings supplied =
             enrichment != null && selectedEpisode == null && seasonNumber < 0
                 ? enrichment.supplementary
@@ -1430,7 +1437,7 @@ public final class PreviewMoviePage extends ScrollView {
                 informationPanel.updateText(synopsis, keyFacts, technicalFacts);
             } else {
                 DetailsBlueprintPanel blueprint = new DetailsBlueprintPanel(
-                    getContext(), synopsis, keyFacts, technicalFacts, receptionFacts, cast, crew, supplied);
+                    getContext(), kind, synopsis, keyFacts, technicalFacts, receptionFacts, cast, crew, supplied);
                 details.removeAllViews();
                 details.addView(blueprint, new LinearLayout.LayoutParams(-1, -1));
                 informationPanel = blueprint;
@@ -2149,6 +2156,19 @@ public final class PreviewMoviePage extends ScrollView {
                                   .putExtra("show", show.getTvshowId())
                                   .putExtra("season", number)),
                           null);
+    }
+
+    /** The show's (or, on a season page, the season's) episodes in the library. */
+    private int localEpisodeCount() {
+        Snapshot cache = snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache();
+        if (cache == null || show == null)
+            return 0;
+        int count = 0;
+        for (Entry e : cache.episodes)
+            if (e.show == show.getTvshowId() && (seasonNumber < 0 || e.media instanceof Episode
+                                                 && ((Episode)e.media).getSeasonNumber() == seasonNumber))
+                count++;
+        return count;
     }
 
     /** The subtitle tracks inside the file, by language, from its media information. */

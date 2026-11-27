@@ -73,16 +73,87 @@ final class DetailsBlueprintPanel extends LinearLayout {
         {"Added", "Added"}
     };
 
+    /**
+     * The four kinds' rows (DETAILS.md › Details tab, owner 21 Nov): Key information differs by kind; Technical
+     * information is the same for all, with File (films, episodes) or Files (seasons, shows). No Container, Revenue or
+     * Bitrate.
+     */
+    static final String[][] MOVIE_KEY = {
+        {"Released", "Release / first air date", "Air date", "Year"}, {"Runtime", "Runtime"},
+        {"Directed by", "Directed by"}, {"Written by", "Written by"}, {"Genres", "Genres"},
+        {"Studio", "Studio / Network"}, {"Country", "Countries"}, {"Language", "Language"},
+        {"Original title", "Original title", "Series original title"}, {"Budget", "Budget (TMDb)"}
+    };
+    static final String[][] EPISODE_KEY = {
+        {"Aired", "Air date"}, {"Episode", "Episode"}, {"Runtime", "Runtime"}, {"Directed by", "Directed by"},
+        {"Written by", "Written by"}, {"Guest stars", "Guest stars"}, {"Genres", "Genres"},
+        {"Network", "Studio / Network"}, {"Country", "Countries"}, {"Language", "Language"}
+    };
+    static final String[][] SEASON_KEY = {
+        {"Aired", "Season aired", "Air date"}, {"Season", "Season"}, {"Episodes", "Episodes"},
+        {"Episode length", "Episode length"}, {"Total running time", "Total running time"},
+        {"Directed by", "Directed by"}, {"Genres", "Genres"}, {"Network", "Studio / Network"},
+        {"Language", "Language"}
+    };
+    static final String[][] SHOW_KEY = {
+        {"First aired", "Release / first air date"}, {"Status", "Status"}, {"Episodes", "Episodes"},
+        {"Episode length", "Episode length"}, {"Total running time", "Total running time"},
+        {"Created by", "Created by"}, {"Genres", "Genres"}, {"Network", "Studio / Network"},
+        {"Country", "Countries"}, {"Language", "Language"}
+    };
+    static final String[][] KIND_TECH = {
+        {"Resolution", "Resolution"}, {"Video", "Video codec", "File formats"}, {"HDR", "Dynamic range"},
+        {"Frame rate", "Frame rate"}, {"Audio", "Audio tracks", "Audio"}, {"Audio languages", "Audio languages"},
+        {"Subtitles", "Subtitles"}, {"Size", "File size", "Library size"}, {"File", "Selected file", "Files"},
+        {"Location", "Location"}
+    };
+
+    /** "movie", "episode", "season" or "show": which rows the Details tab shows; anything else keeps the old set. */
+    static String[][] keyFields(String kind) {
+        switch (kind == null ? "" : kind) {
+            case "movie":
+                return MOVIE_KEY;
+            case "episode":
+                return EPISODE_KEY;
+            case "season":
+                return SEASON_KEY;
+            case "show":
+                return SHOW_KEY;
+            default:
+                return KEY_FIELDS;
+        }
+    }
+
+    static String[][] techFields(String kind) {
+        return keyFields(kind) == KEY_FIELDS ? TECH_FIELDS : KIND_TECH;
+    }
+
+    private String[][] keyFields = KEY_FIELDS, techFields = TECH_FIELDS;
+
     DetailsBlueprintPanel(Context c, String synopsis, Map<String, String> facts, Map<String, String> technical,
                           Map<String, String> existingReception, View cast, View crew,
                           OmdbSupplement.Ratings supplementary) {
         this(c, synopsis, facts, technical, existingReception, cast, crew, supplementary, null);
     }
 
+    DetailsBlueprintPanel(Context c, String kind, String synopsis, Map<String, String> facts,
+                          Map<String, String> technical, Map<String, String> existingReception, View cast, View crew,
+                          OmdbSupplement.Ratings supplementary) {
+        this(c, synopsis, facts, technical, existingReception, cast, crew, supplementary, null, kind);
+    }
+
     DetailsBlueprintPanel(Context c, String synopsis, Map<String, String> facts, Map<String, String> technical,
                           Map<String, String> existingReception, View cast, View crew,
                           OmdbSupplement.Ratings supplementary, Runnable reviews) {
+        this(c, synopsis, facts, technical, existingReception, cast, crew, supplementary, reviews, null);
+    }
+
+    DetailsBlueprintPanel(Context c, String synopsis, Map<String, String> facts, Map<String, String> technical,
+                          Map<String, String> existingReception, View cast, View crew,
+                          OmdbSupplement.Ratings supplementary, Runnable reviews, String kind) {
         super(c);
+        keyFields = keyFields(kind);
+        techFields = techFields(kind);
         setOrientation(VERTICAL);
         setTag("details.blueprint.v3");
         setFocusable(false);
@@ -105,10 +176,10 @@ final class DetailsBlueprintPanel extends LinearLayout {
         LinearLayout key = column(columns, "Key information", "list", "semantic:details.panel.key.information");
         Map<String, String> keyFacts = new LinkedHashMap<>(facts);
         addPeopleFacts(keyFacts);
-        bindFacts(key, KEY_FIELDS, keyFacts, keyValues);
+        bindFacts(key, keyFields, keyFacts, keyValues);
         LinearLayout tech =
             column(columns, "Technical information", "cog", "semantic:details.panel.technical.information");
-        bindFacts(tech, TECH_FIELDS, technical, technicalValues);
+        bindFacts(tech, techFields, technical, technicalValues);
 
         // B2 (D18): Cast and Crew side by side under the columns, so the whole tab fits one screen.
         LinearLayout people = new LinearLayout(c);
@@ -125,8 +196,8 @@ final class DetailsBlueprintPanel extends LinearLayout {
             synopsisView.setText(value);
         Map<String, String> keyFacts = new LinkedHashMap<>(facts);
         addPeopleFacts(keyFacts);
-        updateValues(keyValues, KEY_FIELDS, keyFacts);
-        updateValues(technicalValues, TECH_FIELDS, technical);
+        updateValues(keyValues, keyFields, keyFacts);
+        updateValues(technicalValues, techFields, technical);
     }
 
     private static String synopsisOrUnknown(String synopsis) {
