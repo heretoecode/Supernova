@@ -53,10 +53,12 @@ Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
   usernames or passwords** (owner): after a restore each connection asks for its sign-in once.
 - **Backups folder ›** opens Supernova's folder picker (RULES §7b): "Choose a folder for backups", Current marked,
   Use this folder · Open, New folder; default Download › Supernova › Backups.
-- **Restore ›** lists every backup found in the backups folder, newest first, including one copied there by hand (a
+- **Restore ›** (owner, 27 Nov: say where backups go) lists every backup found in the backups folder, newest first, including one copied there by hand (a
   fresh install sees it once Android's access to the folder is granted, asked the first time). OK → In This Backup
   (`14b`) → Restore this backup (warning, "This can't be undone." beside the focused button) → progress in the Restore
-  row → Restart now (`15`).
+  row → Restart now (`15`). The list ends with a plain line: "Backups from another device: copy them into Download ›
+  Supernova › Backups and they appear here." With none yet: "No backups yet. Back up now, or copy one from another
+  device into Download › Supernova › Backups." (the folder named as it is set). What to back up `13` v2 approved.
 - About uses the official Supernova mark (RULES §21).
 - Credits and Licences (`18`–`19b`): OK on the About row opens the list floating beside the page, the row still
   focused behind it; OK on an item opens its pop-up a step down and left in front of the list; Back steps back.
