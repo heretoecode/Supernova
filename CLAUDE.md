@@ -7,7 +7,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 
 - An Android TV media player for the owner's **NVIDIA Shield** (52" TV), forked from **NOVA Video Player**
   (Archos). TV only: no phone or tablet layouts.
-- Package `app.supernova.player`. Current released version **0.158.11** (code 1591), signed 27 Nov 2026 (run 45929267213; see `docs/0.158/REPORT_0158_C.md`); 0.158 was signed by
+- Package `app.supernova.player`. Current released version **0.158.12** (code 1592), signed 27 Nov 2026 (run 45945239688; see `docs/0.158/REPORT_0158_C.md`); 0.158 was signed by
   run 44426716646 of `.github/workflows/supernova-0157-qa.yml` (artifact `supernova-0157-signed-qa`); see
   `PROJECT_STATUS.md`. Google Drive
   delivery is not configured.

@@ -3,6 +3,11 @@
 Updated 26 November 2026 (discussion: Search and Files reviews finished; FILES.md final; next coding run ready: BRIEF_0158_C › Part C continued). Keep this page short and current: update it at the
 end of every session.
 
+## 0.158 part C continued (27 Nov): **0.158.12 signed** (run 45945239688, from green conformance run 45935732681 on `b7b14fd`)
+Artifact `supernova-0157-signed-qa` (`Supernova_0.158.12.apk`), the one to install: https://github.com/heretoecode/Supernova/actions/runs/45945239688/artifacts/15174667285. Part C continued is finished:
+Details, the library pages, Your Library, Scan details, the title block, Stream more from a person, D17, D18, NOVA N2
+and N7. Left: N3, N6, N10 (judgement calls J36–J38); see REPORT_0158_C.md › Not built.
+
 ## 0.158 part C continued (27 Nov): **0.158.11 signed** (run 45929267213, from green conformance run 45900631229 on `fa99b91`)
 Artifact `supernova-0157-signed-qa` (`Supernova_0.158.11.apk`), the one to install: https://github.com/heretoecode/Supernova/actions/runs/45929267213/artifacts/15166999797. The Files page to its sheet
 (C1–C5), Spatial audio's switch, Trakt history removal on delete, NOVA 60df7be7 and 220f573, artwork memory (D18).

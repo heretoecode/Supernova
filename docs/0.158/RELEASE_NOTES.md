@@ -4,7 +4,7 @@ Every signed APK has its own notes here, newest first, even when it is only a fi
 The app shows the same notes in About › What's New. Run links and test counts are in `REPORT_0158_A.md` and
 `REPORT_0158_B.md`.
 
-## 0.158.12 (code 1592) — 27 Nov 2026: Details, the library pages and the rest of Part C
+## 0.158.12 (code 1592) — signed 27 Nov 2026 (run 45945239688): Details, the library pages and the rest of Part C
 **Details**
 - On a tab the hero's foot (about 56 px) peeks above the tabs; the top bar stays over a dimmed fade instead of
   disappearing.

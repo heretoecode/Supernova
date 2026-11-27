@@ -82,6 +82,11 @@ Release notes: `RELEASE_NOTES.md`. Work branch: `claude/supernova-github-access-
 
 ## Part C continued (26 Nov, after 0.158.9)
 
+### 0.158.12 (code 1592)
+**Signed 27 Nov 2026**: signing run 45945239688, from green conformance run 45935732681 on `b7b14fd`; artifact
+`supernova-0157-signed-qa` (`Supernova_0.158.12.apk`): https://github.com/heretoecode/Supernova/actions/runs/45945239688/artifacts/15174667285 **Install this one.** Details (A1), the library pages (A3),
+Your Library (C6), Scan details, the title block (A2), Stream more from a person (A5), D17, D18, NOVA N2 and N7. Release notes: RELEASE_NOTES.md › 0.158.12.
+
 ### 0.158.11 (code 1591)
 **Signed 27 Nov 2026**: signing run 45929267213, from green conformance run 45900631229 on `fa99b91`; artifact
 `supernova-0157-signed-qa` (`Supernova_0.158.11.apk`): https://github.com/heretoecode/Supernova/actions/runs/45929267213/artifacts/15166999797 **Install this one.** The Files page to its sheet (C1–C5),
