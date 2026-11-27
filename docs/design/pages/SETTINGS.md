@@ -67,7 +67,8 @@ Signed in (`05c`), languages (`04`) and Font (`06`) as drawn.
 - **What's New in two columns (owner, 27 Nov; `16` v4; replaces the notes pop-up `17`):** versions on the left (about
   a third of the width), every version back to 0.135 in one scrolling list (no All versions row); the right side shows
   the focused version's notes, the newest when the tab opens, changing as focus moves down the list. Right moves into
-  the notes (read-only: Down / Up scroll, arrows in the margin); Left returns to the version.
+  the notes (read-only: Down / Up scroll; the up and down arrows in the right margin, the up one faint while at
+  the top, `16` v5); Left returns to the version.
 
 ## Whole page
 - A full page with tabs, like Files: no tiles, no panel. **Seven tabs:** Playback · Audio · Subtitles · Library ·

@@ -771,7 +771,8 @@ function s16(focus = '0.158.9') {
     </div></div>`;
   const body = `<div style="position:relative;height:940px">${hd(I.news, 'What\'s New', true)}<div style="position:absolute;
     left:0;top:70px;width:600px">${V.concat(older).map(vrow).join('')}</div><div style="position:absolute;left:0;right:0;
-    top:70px;bottom:0">${notes}</div><div style="position:absolute;right:-48px;bottom:30px;color:#fff">${svg(I.down, 32)}</div>
+    top:70px;bottom:0">${notes}</div><div style="position:absolute;right:-48px;top:76px;color:#fff;opacity:.3">${svg(I.up, 32)}
+    </div><div style="position:absolute;right:-48px;bottom:30px;color:#fff">${svg(I.down, 32)}</div>
     </div>`;
   return bar() + tabs('About', null) + `<div class="list" style="top:212px">${head}<div style="height:58px"></div>${body}</div>`
     + `<div class="cap2">16 · About: versions on the left; the focused version's notes on the right (Right to read them)</div>`;
