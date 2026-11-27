@@ -128,10 +128,10 @@ finished to its sheet (every action pressed and rendered) before the next:
      each row's first and last card's global visible rect equals their full size (or reaches the screen edge for rows
      running off it) on all four Details kinds, plus renders of Details › Episodes and More Like This scrolled
      sideways, attached to the report.
-13. **The owner's review of 0.158.11 / .12 on the Shield (27 Nov): `docs/0.158/REVIEW_0158_12.md`, P1–P25.** Order:
+13. **The owner's review of 0.158.11 / .12 on the Shield (27 Nov): `docs/0.158/REVIEW_0158_12.md`, P1–P26.** Order:
    crashes and stale files first (P1–P6: no crash on a file that can't open; reconnecting a server re-links instead
    of adding copies; versions for episodes; stale copies in Missing files with Check now; the wrong-match check),
-   then Home (P7–P9), library pages (P10–P14), Details (P15–P21), player (P22–P23), Search (P24–P25). Each with a test
+   then Home (P7–P9), library pages (P10–P14), Details (P15–P21), player (P22–P23), Search (P24–P25), and the outline on every menu, panel and pop-up (P26, app-wide). Each with a test
    and a render; renders of every page touched attached to the report. Read the newest diagnostics report first
    (the owner sends one with the crashes of 27 Nov).
 Sign each finished page as the next point release (0.158.10, .11 …). **Signing is not the finish line** (CLAUDE.md):
